@@ -1,6 +1,7 @@
 import 'package:flutter_manager/common/localization/chinese_cupertino_localizations.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/manage/cache.dart';
+import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/page/home/index.dart';
@@ -14,7 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 初始化所有管理方法
   await Future.forEach(
-    [router, cache],
+    [router, cache, database],
     (e) => e.initialize(),
   );
   // 初始化窗口管理

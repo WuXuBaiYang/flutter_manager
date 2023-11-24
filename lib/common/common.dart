@@ -3,4 +3,7 @@
 * @author wuxubaiyang
 * @Time 2022/9/8 14:54
 */
-class Common {}
+class Common {
+  // 基本缓存路径
+  static const String baseCachePath = 'flutter_manager';
+}
