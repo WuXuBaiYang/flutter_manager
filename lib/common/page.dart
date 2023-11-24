@@ -28,6 +28,9 @@ abstract class BasePage extends StatelessWidget {
 
   List<SingleChildWidget> get providers;
 
+  // 是否是主页面
+  bool get primary => true;
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -36,13 +39,15 @@ abstract class BasePage extends StatelessWidget {
         return Consumer<ThemeProvider>(
           builder: (_, provider, __) {
             return Material(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildStatusBar(context, provider),
-                  Expanded(child: buildWidget(context)),
-                ],
-              ),
+              child: primary
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildStatusBar(context, provider),
+                        Expanded(child: buildWidget(context)),
+                      ],
+                    )
+                  : buildWidget(context),
             );
           },
         );
