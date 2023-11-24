@@ -1,6 +1,7 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/model.dart';
+import 'package:flutter_manager/provider/theme.dart';
 
 /*
 * 主题配色方案数据对象
@@ -14,9 +15,16 @@ class ThemeSchemeModel extends BaseModel {
   // 主题色
   final Color primary;
 
+  // 次级主题色
+  final Color secondary;
+
+  // 获取配色方案名称
+  String get label => scheme.label;
+
   ThemeSchemeModel.fromScheme(this.scheme,
       {required FlexSchemeColor schemeColor})
-      : primary = schemeColor.primary;
+      : primary = schemeColor.primary,
+        secondary = schemeColor.secondary;
 
   @override
   operator ==(Object other) =>

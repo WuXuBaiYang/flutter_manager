@@ -146,6 +146,65 @@ class ThemeProvider extends BaseProvider {
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
       ),
+      dividerTheme: const DividerThemeData(
+        thickness: 0.3,
+        space: 0,
+      ),
+      focusColor: Colors.transparent,
+      bottomSheetTheme: const BottomSheetThemeData(
+        showDragHandle: true,
+      ),
     );
   }
+}
+
+/*
+* 扩展主题模式枚举类，添加中文名称属性
+*
+* @author wuxubaiyang
+* @Time 2023/11/24 15:47
+*/
+extension ThemeModeExtension on ThemeMode {
+  // 获取主题模式名称
+  String get label => {
+        ThemeMode.light: '浅色模式',
+        ThemeMode.dark: '深色模式',
+        ThemeMode.system: '跟随系统',
+      }[this]!;
+}
+
+/*
+* 扩展主题配色方案枚举类，添加中文名称属性
+* @author wuxubaiyang
+* @Time 2023/11/24 15:48
+*/
+extension FlexSchemeExtension on FlexScheme {
+  // 获取主题配色方案名称
+  String get label => {
+        FlexScheme.redM3: '骚气红',
+        FlexScheme.pinkM3: '温柔粉',
+        FlexScheme.purpleM3: '高贵紫',
+        FlexScheme.indigoM3: '宁静靛',
+        FlexScheme.blueM3: '沉稳蓝',
+        FlexScheme.cyanM3: '清新青',
+        FlexScheme.tealM3: '苍翠绿',
+        FlexScheme.greenM3: '清新绿',
+        FlexScheme.limeM3: '活力黄绿',
+        FlexScheme.yellowM3: '明亮黄',
+        FlexScheme.orangeM3: '暖心橙',
+        FlexScheme.deepOrangeM3: '深邃橙',
+      }[this]!;
+}
+
+/*
+* 扩展亮度枚举类，添加中文名称属性
+* @author wuxubaiyang
+* @Time 2023/11/24 15:49
+*/
+extension BrightnessExtension on Brightness {
+  // 获取亮度名称
+  String get label => {
+        Brightness.light: '浅色',
+        Brightness.dark: '深色',
+      }[this]!;
 }
