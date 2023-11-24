@@ -1,5 +1,6 @@
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/generated/l10n.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -20,6 +21,9 @@ class HomePage extends BasePage {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
+      body: Center(
+        child: Text(S.of(context).test),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           final c = context.read<ThemeProvider>().themeMode;
