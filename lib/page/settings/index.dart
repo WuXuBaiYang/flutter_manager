@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,19 @@ class SettingsPage extends BasePage {
     return ListTile(
       isThreeLine: true,
       title: const Text('Flutter环境'),
+      trailing: IconButton.outlined(
+        iconSize: 16,
+        padding: EdgeInsets.zero,
+        icon: const Icon(Icons.add),
+        constraints: BoxConstraints.tight(
+          const Size.square(24),
+        ),
+        onPressed: () {
+          EnvironmentTool.getEnvironmentPackageList().then((value) {
+            print('object');
+          });
+        },
+      ),
       subtitle: SizedBox(),
     );
   }

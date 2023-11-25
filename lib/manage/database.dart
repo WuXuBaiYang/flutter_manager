@@ -1,5 +1,6 @@
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/common/manage.dart';
+import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:isar/isar.dart';
@@ -26,6 +27,7 @@ class DatabaseManage extends BaseManage {
     isar = await Isar.open(
       [
         ProjectSchema,
+        EnvironmentSchema,
       ],
       directory: dir ?? '',
     );
@@ -33,6 +35,22 @@ class DatabaseManage extends BaseManage {
 
   // 获取全部项目列表
   Future<List<Project>> getProjectList() => isar.projects.where().findAll();
+
+  // 获取全部环境列表
+  Future<List<Environment>> getEnvironmentList() =>
+      isar.environments.where().findAll();
+
+  // 添加环境
+  Future<Environment?> updateEnvironment(Environment item) =>
+      isar.writeTxn<Environment?>(() {
+        return isar.environments.put(item).then(
+              (id) => item..id = id,
+            );
+      });
+
+  // 移除环境
+  Future<bool> removeEnvironment(int id) =>
+      isar.writeTxn<bool>(() => isar.environments.delete(id));
 }
 
 // 单例调用

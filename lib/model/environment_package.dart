@@ -1,0 +1,57 @@
+import 'package:flutter_manager/common/model.dart';
+
+/*
+* flutter环境安装包对象
+* @author wuxubaiyang
+* @Time 2023/11/25 20:39
+*/
+class EnvironmentPackage extends BaseModel {
+  // 平台
+  String platform = '';
+
+  // 下载地址
+  String url = '';
+
+  // 构造函数
+  String hash = '';
+
+  // sha256
+  String sha256 = '';
+
+  // flutter分支
+  String channel = '';
+
+  // flutter版本
+  String version = '';
+
+  // dart版本
+  String dartVersion = '';
+
+  // dart架构
+  String dartArch = '';
+
+  // 发布日期
+  String releaseDate = '';
+
+  // 判断是否为开发稳定版
+  bool get isStable => channel == 'stable';
+
+  // 判断是否为开发测试版
+  bool get isBeta => channel == 'beta';
+
+  // 判断是否为开发版
+  bool get isDev => channel == 'dev';
+
+  @override
+  Map<String, dynamic> to() => {
+        'url': url,
+        'platform': platform,
+        'hash': hash,
+        'sha256': sha256,
+        'channel': channel,
+        'version': version,
+        'dartVersion': dartVersion,
+        'dartArch': dartArch,
+        'releaseDate': releaseDate,
+      };
+}

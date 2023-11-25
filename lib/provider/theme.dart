@@ -142,6 +142,7 @@ class ThemeProvider extends BaseProvider {
     }[brightness]!;
     return themeData.copyWith(
       /// 在此处自定义组件样式
+      focusColor: Colors.transparent,
       cardTheme: const CardTheme(
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
@@ -150,7 +151,6 @@ class ThemeProvider extends BaseProvider {
         thickness: 0.3,
         space: 0,
       ),
-      focusColor: Colors.transparent,
       bottomSheetTheme: const BottomSheetThemeData(
         showDragHandle: true,
       ),
