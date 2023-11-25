@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/widget/theme_scheme.dart';
+import 'package:flutter_manager/widget/dialog/scheme.dart';
+import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -42,7 +43,9 @@ class SettingsPage extends BasePage {
   // 构建Flutter环境设置项
   Widget _buildFlutterEnvironment() {
     return ListTile(
+      isThreeLine: true,
       title: const Text('Flutter环境'),
+      subtitle: SizedBox(),
     );
   }
 
@@ -76,47 +79,14 @@ class SettingsPage extends BasePage {
       title: const Text('应用配色'),
       subtitle: Text(scheme.label),
       trailing: IconButton.outlined(
-        icon: ThemeSchemeView(item: scheme),
-        onPressed: () => _showThemeSchemeDialog(context),
+        icon: ThemeSchemeItem(item: scheme),
+        onPressed: () => ThemeSchemeDialog.show(
+          context,
+          schemes: provider.getThemeSchemeList(context),
+        ).then((value) {
+          if (value != null) provider.changeThemeScheme(context, value);
+        }),
       ),
-    );
-  }
-
-  // 显示主题色彩选择弹窗
-  Future<void> _showThemeSchemeDialog(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
-    final schemes = provider.getThemeSchemeList(context);
-    return showDialog(
-      context: context,
-      builder: (_) {
-        return Center(
-          child: Card(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints.tightFor(width: 240),
-              child: GridView.builder(
-                shrinkWrap: true,
-                itemCount: schemes.length,
-                padding: const EdgeInsets.all(14),
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                  maxCrossAxisExtent: 45,
-                  crossAxisSpacing: 14,
-                  mainAxisSpacing: 14,
-                ),
-                itemBuilder: (_, index) {
-                  final item = schemes[index];
-                  return IconButton.outlined(
-                    tooltip: item.label,
-                    icon: ThemeSchemeView(item: item),
-                    onPressed: () {
-                      provider.changeThemeScheme(context, item);
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

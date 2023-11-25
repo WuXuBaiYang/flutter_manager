@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/theme_scheme.dart';
-
 import 'half_circle.dart';
 
 /*
@@ -8,7 +7,7 @@ import 'half_circle.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 15:36
 */
-class ThemeSchemeView extends StatelessWidget {
+class ThemeSchemeItem extends StatelessWidget {
   // 主题配色项
   final ThemeSchemeModel item;
 
@@ -18,7 +17,7 @@ class ThemeSchemeView extends StatelessWidget {
   // 大小
   final double size;
 
-  const ThemeSchemeView({
+  const ThemeSchemeItem({
     super.key,
     required this.item,
     this.size = 24,
@@ -33,8 +32,8 @@ class ThemeSchemeView extends StatelessWidget {
         size: Size.square(size),
         child: CustomPaint(
           painter: HalfCirclePainter((
-            item.primary,
-            item.secondary,
+          item.primary,
+          item.secondary,
           )),
         ),
       ),

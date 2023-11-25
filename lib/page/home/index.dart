@@ -30,7 +30,6 @@ class HomePage extends BasePage {
             selectedIndex: provider.navigationIndex,
             trailing: _buildNavigationRailTrailing(),
             destinations: provider.navigationRailList,
-            labelType: NavigationRailLabelType.selected,
             onDestinationSelected: provider.setNavigationIndex,
           ),
           const VerticalDivider(),
@@ -83,14 +82,17 @@ class HomeProvider extends ChangeNotifier {
   // 导航列表
   final navigationRailList = [
     const NavigationRailDestination(
-      icon: Icon(Icons.flutter_dash),
+      padding: EdgeInsets.only(top: 8),
+      icon: Icon(Icons.home),
       label: Text('项目'),
     ),
     const NavigationRailDestination(
+      padding: EdgeInsets.only(top: 8),
       icon: Icon(Icons.build),
       label: Text('打包'),
     ),
     const NavigationRailDestination(
+      padding: EdgeInsets.only(top: 8),
       icon: Icon(Icons.settings),
       label: Text('设置'),
     ),
