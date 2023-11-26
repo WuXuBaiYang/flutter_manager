@@ -42,10 +42,23 @@ class EnvironmentPackage extends BaseModel {
   // 判断是否为开发版
   bool get isDev => channel == 'dev';
 
+  EnvironmentPackage();
+
+  EnvironmentPackage.from(obj)
+      : platform = obj['platform'] ?? '',
+        url = obj['url'] ?? '',
+        hash = obj['hash'] ?? '',
+        sha256 = obj['sha256'] ?? '',
+        channel = obj['channel'] ?? '',
+        version = obj['version'] ?? '',
+        dartVersion = obj['dartVersion'] ?? '',
+        dartArch = obj['dartArch'] ?? '',
+        releaseDate = obj['releaseDate'] ?? '';
+
   @override
   Map<String, dynamic> to() => {
-        'url': url,
         'platform': platform,
+        'url': url,
         'hash': hash,
         'sha256': sha256,
         'channel': channel,

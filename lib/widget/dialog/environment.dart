@@ -24,6 +24,7 @@ class EnvironmentImportDialog extends StatefulWidget {
       {Environment? environment}) async {
     return showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => EnvironmentImportDialog(
         environment: environment,
       ),
@@ -102,6 +103,12 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _provider.dispose();
+    super.dispose();
   }
 }
 

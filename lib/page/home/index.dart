@@ -51,19 +51,18 @@ class HomePage extends BasePage {
       child: Column(
         children: [
           const Spacer(),
-          FutureBuilder<String>(
-              future: Tool.version,
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return TextButton(
-                    child: Text('v${snapshot.data!}'),
-                    onPressed: () {
-                      /// TODO: 2021/8/31 14:25 版本更新检查
-                    },
-                  );
-                }
-                return const SizedBox();
-              }),
+          FutureProvider<String>(
+            initialData: '',
+            create: (_) => Tool.version,
+            builder: (context, _) {
+              return TextButton(
+                child: Text('v${context.watch<String>()}'),
+                onPressed: () {
+                  /// TODO: 2021/8/31 14:25 版本更新检查
+                },
+              );
+            },
+          ),
           const SizedBox(height: 14),
         ],
       ),

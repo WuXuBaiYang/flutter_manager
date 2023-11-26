@@ -1,9 +1,13 @@
+import 'dart:async';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/environment_package.dart';
+import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/loading.dart';
+import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -19,6 +23,7 @@ class EnvironmentRemoteImportDialog extends StatefulWidget {
       {Environment? environment}) async {
     return showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => const EnvironmentRemoteImportDialog(),
     );
   }
@@ -48,14 +53,11 @@ class _EnvironmentRemoteImportDialogState
           title: const Text('下载并导入'),
           content: ConstrainedBox(
             constraints: const BoxConstraints.tightFor(width: 340),
-            child: IndexedStack(
-              index: currentStep,
-              children: [
-                _buildPackageList(context),
-                _buildPackageDownload(context),
-                _buildPackageImport(context),
-              ],
-            ),
+            child: [
+              _buildPackageList(context),
+              _buildPackageDownload(context),
+              _buildPackageImport(context),
+            ][currentStep],
           ),
           actions: [
             TextButton(
@@ -78,13 +80,13 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建步骤1-选择要下载的环境
   Widget _buildPackageList(BuildContext context) {
-    return FutureBuilder<Map<String, List<EnvironmentPackage>>>(
-      future: EnvironmentTool.getEnvironmentPackageList(),
-      builder: (_, snap) {
+    return Selector<EnvironmentRemoteImportDialogProvider,
+        Map<String, List<EnvironmentPackage>>>(
+      selector: (_, provider) => provider.environmentPackage,
+      builder: (_, package, __) {
         return LoadingView(
-          loading: !snap.hasData,
+          loading: package.isEmpty,
           builder: (_) {
-            final package = snap.data ?? {};
             final stableIndex = package.keys.toList().indexOf('stable');
             return DefaultTabController(
               length: package.length,
@@ -127,9 +129,9 @@ class _EnvironmentRemoteImportDialogState
           subtitle: Text('Dart · ${item.dartVersion} · ${item.dartArch}'),
           trailing: IconButton(
             icon: const Icon(Icons.download_rounded),
-            onPressed: () {},
+            onPressed: () => _provider.startDownload(item.url),
           ),
-          onTap: () {},
+          onTap: () => _provider.startDownload(item.url),
         );
       },
     );
@@ -137,14 +139,54 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建步骤2-下载所选环境
   Widget _buildPackageDownload(BuildContext context) {
-    return SizedBox();
+    return Selector<EnvironmentRemoteImportDialogProvider, DownloadInfoTuple>(
+      selector: (_, provider) => provider.downloadInfo,
+      builder: (_, downloadInfo, __) {
+        final speed = FileTool.formatSize(downloadInfo.speed);
+        final totalSize = FileTool.formatSize(downloadInfo.totalSize);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(downloadInfo.name,
+                maxLines: 1, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 8),
+            StreamProvider<double?>.value(
+              initialData: null,
+              value: _provider.downloadProgress.stream,
+              builder: (context, _) {
+                return LinearProgressIndicator(
+                  value: context.watch<double?>(),
+                );
+              },
+            ),
+            const SizedBox(height: 4),
+            Text('$totalSize · $speed/s'),
+          ],
+        );
+      },
+    );
   }
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
     return SizedBox();
   }
+
+  @override
+  void dispose() {
+    _provider.dispose();
+    super.dispose();
+  }
 }
+
+// 下载信息元组类型
+typedef DownloadInfoTuple = ({
+  String name,
+  String path,
+  int totalSize,
+  int speed
+});
 
 /*
 * 远程环境导入弹窗状态管理
@@ -158,9 +200,75 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 当前步骤
   int get currentStep => _currentStep;
 
-  // 设置当前步骤
-  void setCurrentStep(int step) {
-    _currentStep = step;
+  // 下载取消key
+  CancelToken? _cancelToken;
+
+  // 下载更新定时器
+  Timer? _downloadTimer;
+
+  // 环境安装包
+  final Map<String, List<EnvironmentPackage>> environmentPackage = {};
+
+  // 下载信息元组
+  DownloadInfoTuple? _downloadInfo;
+
+  // 获取下载信息元组
+  DownloadInfoTuple get downloadInfo =>
+      _downloadInfo ?? (name: '', path: '', totalSize: 0, speed: 0);
+
+  // 下载进度流
+  final downloadProgress = StreamController<double?>.broadcast();
+
+  EnvironmentRemoteImportDialogProvider() {
+    loadEnvironmentPackage();
+  }
+
+  // 加载环境包
+  Future<void> loadEnvironmentPackage() async {
+    environmentPackage
+        .addAll(await EnvironmentTool.getEnvironmentPackageList());
     notifyListeners();
+  }
+
+  // 启动下载
+  Future<void> startDownload(String url) async {
+    _currentStep = 1;
+    _cancelToken = CancelToken();
+    final fileName = basename(url);
+    int tempSpeed = 0, totalSize = 0;
+    _downloadTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      _updateDownloadInfo(totalSize: totalSize, speed: tempSpeed);
+      tempSpeed = 0;
+    });
+    _updateDownloadInfo(name: fileName);
+    final result = await EnvironmentTool.downloadPackage(
+      url,
+      cancelToken: _cancelToken,
+      onReceiveProgress: (count, total, speed) {
+        totalSize = total;
+        tempSpeed += speed;
+        downloadProgress.add(count / total);
+      },
+    );
+    _updateDownloadInfo(path: result ?? '');
+  }
+
+  // 更新下载信息
+  void _updateDownloadInfo(
+      {String? name, String? path, int? totalSize, int? speed}) {
+    _downloadInfo = (
+      name: name ?? _downloadInfo?.name ?? '',
+      path: path ?? _downloadInfo?.path ?? '',
+      totalSize: totalSize ?? _downloadInfo?.totalSize ?? 0,
+      speed: speed ?? _downloadInfo?.speed ?? 0,
+    );
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _cancelToken?.cancel();
+    _downloadTimer?.cancel();
+    super.dispose();
   }
 }

@@ -12,6 +12,9 @@ class KnowledgePage extends BasePage {
   const KnowledgePage({super.key});
 
   @override
+  bool get primary => false;
+
+  @override
   List<SingleChildWidget> get providers => [
         ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
       ];

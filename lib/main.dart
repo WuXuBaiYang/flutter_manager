@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'generated/l10n.dart';
+import 'provider/window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,9 @@ void main() async {
       ),
       ChangeNotifierProvider<EnvironmentProvider>(
         create: (_) => EnvironmentProvider(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => WindowProvider(),
       ),
     ],
     child: const MyApp(),

@@ -1,0 +1,29 @@
+import 'package:flutter_manager/common/provider.dart';
+import 'package:window_manager/window_manager.dart';
+
+/*
+* 窗口提供者
+* @author wuxubaiyang
+* @Time 2023/11/26 18:56
+*/
+class WindowProvider extends BaseProvider {
+  // 窗口最大化状态
+  bool _maximized = false;
+
+  // 窗口是否最大化
+  bool get maximized => _maximized;
+
+  // 最大化窗口
+  void maximize({bool vertically = false}) {
+    _maximized = true;
+    windowManager.maximize(vertically: vertically);
+    notifyListeners();
+  }
+
+  // 最小化窗口
+  void unMaximize() {
+    _maximized = false;
+    windowManager.unmaximize();
+    notifyListeners();
+  }
+}

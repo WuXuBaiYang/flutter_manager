@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/provider/window.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:window_manager/window_manager.dart';
@@ -93,26 +94,18 @@ abstract class BasePage extends StatelessWidget {
 
   // 构建窗口最大化按钮
   Widget _buildMaximizeButton(Brightness brightness) {
-    return StatefulBuilder(
-      builder: (_, setState) {
-        return FutureBuilder<bool>(
-          future: windowManager.isMaximized(),
-          builder: (_, snap) {
-            if (snap.data == true) {
-              return WindowCaptionButton.unmaximize(
-                brightness: brightness,
-                onPressed: () => setState(() {
-                  windowManager.unmaximize();
-                }),
-              );
-            }
-            return WindowCaptionButton.maximize(
-              brightness: brightness,
-              onPressed: () => setState(() {
-                windowManager.maximize();
-              }),
-            );
-          },
+    return Selector<WindowProvider, bool>(
+      selector: (_, provider) => provider.maximized,
+      builder: (context, isMaximized, __) {
+        if (isMaximized) {
+          return WindowCaptionButton.unmaximize(
+            brightness: brightness,
+            onPressed: context.read<WindowProvider>().unMaximize,
+          );
+        }
+        return WindowCaptionButton.maximize(
+          brightness: brightness,
+          onPressed: context.read<WindowProvider>().maximize,
         );
       },
     );
