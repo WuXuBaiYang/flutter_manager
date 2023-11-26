@@ -5,7 +5,7 @@ import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/model/theme_scheme.dart';
 
 /*
-* 主题管理
+* 主题提供者
 * @author wuxubaiyang
 * @Time 2022/3/17 14:14
 */

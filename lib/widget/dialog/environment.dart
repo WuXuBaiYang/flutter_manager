@@ -1,9 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/manage/database.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:provider/provider.dart';
 
 /*
 * 环境导入弹窗
@@ -54,7 +55,11 @@ class _EnvironmentLocalImportDialogState
         ),
         TextButton(
           onPressed: () {
-            Loading.show(context, loadFuture: _importFlutter())?.then((_) {
+            if (!_formKey.currentState!.validate()) return;
+            final provider = context.read<EnvironmentProvider>();
+            final path = _localPathController.text;
+            Loading.show(context, loadFuture: provider.importEnvironment(path))
+                ?.then((_) {
               SnackTool.show(context, child: const Text('导入成功'));
               Navigator.pop(context);
             }).catchError((e) {
@@ -106,15 +111,5 @@ class _EnvironmentLocalImportDialogState
     );
     if (dir == null) return;
     _localPathController.text = dir;
-  }
-
-  // 导入flutter环境
-  Future<void> _importFlutter() async {
-    if (!_formKey.currentState!.validate()) return;
-    final path = _localPathController.text;
-    dynamic result = await EnvironmentTool.getEnvironmentInfo(path);
-    if (result == null) throw Exception('查询flutter信息失败');
-    result = await database.updateEnvironment(result);
-    if (result == null) throw Exception('写入失败');
   }
 }

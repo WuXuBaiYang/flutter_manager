@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/manage/router.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ void main() async {
     providers: [
       ChangeNotifierProvider<ThemeProvider>(
         create: (_) => ThemeProvider(),
+      ),
+      ChangeNotifierProvider<EnvironmentProvider>(
+        create: (_) => EnvironmentProvider(),
       ),
     ],
     child: const MyApp(),
