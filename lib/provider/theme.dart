@@ -143,6 +143,9 @@ class ThemeProvider extends BaseProvider {
     return themeData.copyWith(
       /// 在此处自定义组件样式
       focusColor: Colors.transparent,
+      appBarTheme: const AppBarTheme(
+        scrolledUnderElevation: 0,
+      ),
       cardTheme: const CardTheme(
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,

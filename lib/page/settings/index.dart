@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/model/database/environment.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
@@ -27,9 +28,6 @@ class SettingsPage extends BasePage {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('设置'),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -51,7 +49,40 @@ class SettingsPage extends BasePage {
         icon: const Icon(Icons.add),
         onPressed: () => EnvironmentLocalImportDialog.show(context),
       ),
-      subtitle: SizedBox(),
+      subtitle: _buildFlutterEnvironmentList(context),
+    );
+  }
+
+  // 构建Flutter环境列表
+  Widget _buildFlutterEnvironmentList(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints.loose(
+        const Size.fromHeight(240),
+      ),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: Selector<EnvironmentProvider, List<Environment>>(
+          selector: (_, provider) => provider.environments,
+          builder: (_, environments, __) {
+            return ListView.separated(
+              shrinkWrap: true,
+              itemCount: environments.length,
+              separatorBuilder: (_, __) => const Divider(),
+              itemBuilder: (_, index) {
+                final item = environments[index];
+                return ListTile(
+                  title: Text('Flutter · ${item.version} · ${item.channel}'),
+                  subtitle: Text(item.path),
+                  // trailing: IconButton(
+                  //   icon: const Icon(Icons.delete),
+                  //   onPressed: () {},
+                  // ),
+                );
+              },
+            );
+          },
+        ),
+      ),
     );
   }
 

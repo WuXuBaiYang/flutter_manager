@@ -10,11 +10,19 @@ import 'package:flutter_manager/tool/project/environment.dart';
 */
 class EnvironmentProvider extends BaseProvider {
   // 环境变量集合
-  List<Environment>? _environments;
+  List<Environment> environments = [];
 
-  // 获取环境变量集合
-  Future<List<Environment>> getEnvironments() async =>
-      _environments ??= await database.getEnvironmentList();
+  EnvironmentProvider() {
+    // 初始化加载环境列表
+    loadEnvironmentList();
+  }
+
+  // 获取最新的环境变量集合
+  Future<List<Environment>> loadEnvironmentList() async {
+    environments = await database.getEnvironmentList();
+    notifyListeners();
+    return environments;
+  }
 
   // 导入环境变量
   Future<Environment?> importEnvironment(String path) async {
@@ -28,8 +36,7 @@ class EnvironmentProvider extends BaseProvider {
   // 添加环境变量
   Future<Environment?> updateEnvironment(Environment item) async {
     final result = await database.updateEnvironment(item);
-    _environments = null;
-    notifyListeners();
+    await loadEnvironmentList();
     return result;
   }
 }
