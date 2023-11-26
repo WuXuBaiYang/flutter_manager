@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
@@ -12,13 +13,19 @@ import 'package:provider/provider.dart';
 * @Time 2023/11/26 10:17
 */
 class EnvironmentLocalImportDialog extends StatefulWidget {
-  const EnvironmentLocalImportDialog({super.key});
+  // 环境对象
+  final Environment? environment;
+
+  const EnvironmentLocalImportDialog({super.key, this.environment});
 
   // 展示弹窗
-  static Future<void> show(BuildContext context) async {
+  static Future<void> show(BuildContext context,
+      {Environment? environment}) async {
     await showDialog<void>(
       context: context,
-      builder: (_) => const EnvironmentLocalImportDialog(),
+      builder: (_) => EnvironmentLocalImportDialog(
+        environment: environment,
+      ),
     );
   }
 
@@ -37,13 +44,18 @@ class _EnvironmentLocalImportDialogState
   final _formKey = GlobalKey<FormState>();
 
   // 本地路径选择输入框控制器
-  final _localPathController = TextEditingController();
+  late final _localPathController = TextEditingController(
+    text: widget.environment?.path ?? '',
+  );
+
+  // 判断是否为编辑模式
+  bool get _isEdit => widget.environment != null;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       scrollable: true,
-      title: const Text('导入本地环境'),
+      title: Text('${_isEdit ? '编辑' : '导入'}本地环境'),
       content: ConstrainedBox(
         constraints: const BoxConstraints.tightFor(width: 300),
         child: _buildForm(),
@@ -58,15 +70,19 @@ class _EnvironmentLocalImportDialogState
             if (!_formKey.currentState!.validate()) return;
             final provider = context.read<EnvironmentProvider>();
             final path = _localPathController.text;
-            Loading.show(context, loadFuture: provider.importEnvironment(path))
-                ?.then((_) {
-              SnackTool.show(context, child: const Text('导入成功'));
+            final future = _isEdit
+                ? provider.refreshEnvironment(widget.environment!..path = path)
+                : provider.importEnvironment(path);
+            Loading.show(context, loadFuture: future)?.then((_) {
+              SnackTool.show(context,
+                  child: Text('${_isEdit ? '修改' : '导入'}成功'));
               Navigator.pop(context);
             }).catchError((e) {
-              SnackTool.show(context, child: Text('导入失败：$e'));
+              SnackTool.show(context,
+                  child: Text('${_isEdit ? '修改' : '导入'}失败：$e'));
             });
           },
-          child: const Text('导入'),
+          child: Text(_isEdit ? '修改' : '导入'),
         ),
       ],
     );
@@ -106,8 +122,9 @@ class _EnvironmentLocalImportDialogState
   // 导入本地路径
   void _importLocalPath() async {
     final dir = await FilePicker.platform.getDirectoryPath(
-      dialogTitle: '请选择flutter路径',
       lockParentWindow: true,
+      dialogTitle: '请选择flutter路径',
+      initialDirectory: _localPathController.text,
     );
     if (dir == null) return;
     _localPathController.text = dir;

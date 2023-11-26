@@ -7,7 +7,7 @@ class Environment {
   Id id = Isar.autoIncrement;
 
   // 环境目录
-  @Index(unique: true)
+  @Index(unique: true, replace: true)
   String path = '';
 
   // flutter版本号

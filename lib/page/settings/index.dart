@@ -3,6 +3,8 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
@@ -64,23 +66,79 @@ class SettingsPage extends BasePage {
         child: Selector<EnvironmentProvider, List<Environment>>(
           selector: (_, provider) => provider.environments,
           builder: (_, environments, __) {
+            if (environments.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.all(14),
+                child: Text('暂无环境'),
+              );
+            }
             return ListView.separated(
               shrinkWrap: true,
               itemCount: environments.length,
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (_, index) {
                 final item = environments[index];
-                return ListTile(
-                  title: Text('Flutter · ${item.version} · ${item.channel}'),
-                  subtitle: Text(item.path),
-                  // trailing: IconButton(
-                  //   icon: const Icon(Icons.delete),
-                  //   onPressed: () {},
-                  // ),
-                );
+                return _buildFlutterEnvironmentListItem(context, item);
               },
             );
           },
+        ),
+      ),
+    );
+  }
+
+  // 构建Flutter环境列表项
+  Widget _buildFlutterEnvironmentListItem(
+      BuildContext context, Environment item) {
+    final provider = context.read<EnvironmentProvider>();
+    final title = 'Flutter · ${item.version} · ${item.channel}';
+    return Dismissible(
+      key: ObjectKey(item.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        color: Colors.redAccent,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 14),
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      onDismissed: (_) {
+        provider.removeEnvironment(item);
+        SnackTool.showConst(context,
+            child: Text('$title 环境已移除'),
+            action: SnackBarAction(
+              label: '撤销',
+              onPressed: () => provider.updateEnvironment(item),
+            ));
+      },
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(item.path),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              iconSize: 18,
+              icon: const Icon(Icons.edit),
+              onPressed: () {
+                EnvironmentLocalImportDialog.show(
+                  context,
+                  environment: item,
+                );
+              },
+            ),
+            IconButton(
+              iconSize: 18,
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                Loading.show(
+                  context,
+                  loadFuture: provider.refreshEnvironment(item),
+                )?.then((_) {}).catchError((e) {
+                  SnackTool.show(context, child: Text('导入失败：$e'));
+                });
+              },
+            ),
+          ],
         ),
       ),
     );
