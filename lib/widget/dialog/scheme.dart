@@ -16,7 +16,7 @@ class ThemeSchemeDialog extends StatefulWidget {
     required this.schemes,
   });
 
-  // 展示对话框
+  // 展示弹窗
   static Future<ThemeSchemeModel?> show(
     BuildContext context, {
     required List<ThemeSchemeModel> schemes,
@@ -39,30 +39,15 @@ class ThemeSchemeDialog extends StatefulWidget {
 * @Time 2023/11/25 19:39
 */
 class _ThemeSchemeDialogState extends State<ThemeSchemeDialog> {
-  // 网格代理
-  final _gridDelegate = const SliverGridDelegateWithMaxCrossAxisExtent(
-    maxCrossAxisExtent: 45,
-    crossAxisSpacing: 14,
-    mainAxisSpacing: 14,
-  );
-
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints.tightFor(width: 240),
-          child: GridView.builder(
-            shrinkWrap: true,
-            gridDelegate: _gridDelegate,
-            itemCount: widget.schemes.length,
-            padding: const EdgeInsets.all(14),
-            itemBuilder: (_, index) {
-              final item = widget.schemes[index];
-              return _buildThemeSchemeItem(item);
-            },
-          ),
-        ),
+    return AlertDialog(
+      scrollable: true,
+      title: const Text('选择主题配色'),
+      content: Wrap(
+        spacing: 14,
+        runSpacing: 14,
+        children: widget.schemes.map(_buildThemeSchemeItem).toList(),
       ),
     );
   }

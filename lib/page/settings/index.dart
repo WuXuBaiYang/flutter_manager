@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:provider/provider.dart';
@@ -32,7 +33,7 @@ class SettingsPage extends BasePage {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildFlutterEnvironment(),
+            _buildFlutterEnvironment(context),
             _buildThemeMode(context),
             _buildThemeScheme(context),
           ],
@@ -42,22 +43,13 @@ class SettingsPage extends BasePage {
   }
 
   // 构建Flutter环境设置项
-  Widget _buildFlutterEnvironment() {
+  Widget _buildFlutterEnvironment(BuildContext context) {
     return ListTile(
       isThreeLine: true,
       title: const Text('Flutter环境'),
       trailing: IconButton.outlined(
-        iconSize: 16,
-        padding: EdgeInsets.zero,
         icon: const Icon(Icons.add),
-        constraints: BoxConstraints.tight(
-          const Size.square(24),
-        ),
-        onPressed: () {
-          EnvironmentTool.getEnvironmentPackageList().then((value) {
-            print('object');
-          });
-        },
+        onPressed: () => EnvironmentLocalImportDialog.show(context),
       ),
       subtitle: SizedBox(),
     );

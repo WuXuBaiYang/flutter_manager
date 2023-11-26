@@ -36,7 +36,6 @@ dependencies:
   shared_preferences: ^2.2.2
   provider: ^6.1.1
   extended_image: ^8.2.0
-  lottie: ^2.7.0
   easy_refresh: ^3.3.2+4
   logger: ^2.0.2+1
   crypto: ^3.0.3
@@ -49,6 +48,7 @@ dependencies:
   window_manager: ^0.3.7
   package_info_plus: ^5.0.1
   dio: ^5.3.4
+  file_picker: ^6.1.1
 
 dev_dependencies:
   flutter_test:
