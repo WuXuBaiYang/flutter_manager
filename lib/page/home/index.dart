@@ -1,5 +1,6 @@
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/page/knowledge/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
@@ -93,6 +94,11 @@ class HomeProvider extends ChangeNotifier {
     ),
     const NavigationRailDestination(
       padding: EdgeInsets.only(top: 8),
+      icon: Icon(Icons.document_scanner),
+      label: Text('知识库'),
+    ),
+    const NavigationRailDestination(
+      padding: EdgeInsets.only(top: 8),
       icon: Icon(Icons.settings),
       label: Text('设置'),
     ),
@@ -102,6 +108,7 @@ class HomeProvider extends ChangeNotifier {
   final navigationRailPageList = [
     const ProjectPage(),
     const PackagePage(),
+    const KnowledgePage(),
     const SettingsPage(),
   ];
 

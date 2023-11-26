@@ -27,6 +27,9 @@ class RoutePath {
   // 打包页
   static const String package = '/package';
 
+  // 知识库
+  static const String knowledge = '/knowledge';
+
   // 设置页
   static const String settings = '/settings';
 }

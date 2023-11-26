@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -12,25 +13,25 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentLocalImportDialog extends StatefulWidget {
+class EnvironmentImportDialog extends StatefulWidget {
   // 环境对象
   final Environment? environment;
 
-  const EnvironmentLocalImportDialog({super.key, this.environment});
+  const EnvironmentImportDialog({super.key, this.environment});
 
   // 展示弹窗
   static Future<void> show(BuildContext context,
       {Environment? environment}) async {
-    await showDialog<void>(
+    return showDialog<void>(
       context: context,
-      builder: (_) => EnvironmentLocalImportDialog(
+      builder: (_) => EnvironmentImportDialog(
         environment: environment,
       ),
     );
   }
 
   @override
-  State<StatefulWidget> createState() => _EnvironmentLocalImportDialogState();
+  State<StatefulWidget> createState() => _EnvironmentImportDialogState();
 }
 
 /*
@@ -38,64 +39,48 @@ class EnvironmentLocalImportDialog extends StatefulWidget {
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class _EnvironmentLocalImportDialogState
-    extends State<EnvironmentLocalImportDialog> {
-  // 表单key
-  final _formKey = GlobalKey<FormState>();
-
-  // 本地路径选择输入框控制器
-  late final _localPathController = TextEditingController(
-    text: widget.environment?.path ?? '',
-  );
-
-  // 判断是否为编辑模式
-  bool get _isEdit => widget.environment != null;
+class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
+  // 状态代理
+  late final _provider =
+      EnvironmentImportDialogProvider(widget.environment?.path);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      scrollable: true,
-      title: Text('${_isEdit ? '编辑' : '导入'}本地环境'),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints.tightFor(width: 300),
-        child: _buildForm(),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
-        ),
-        TextButton(
-          onPressed: () {
-            if (!_formKey.currentState!.validate()) return;
-            final provider = context.read<EnvironmentProvider>();
-            final path = _localPathController.text;
-            final future = _isEdit
-                ? provider.refreshEnvironment(widget.environment!..path = path)
-                : provider.importEnvironment(path);
-            Loading.show(context, loadFuture: future)?.then((_) {
-              SnackTool.show(context,
-                  child: Text('${_isEdit ? '修改' : '导入'}成功'));
-              Navigator.pop(context);
-            }).catchError((e) {
-              SnackTool.show(context,
-                  child: Text('${_isEdit ? '修改' : '导入'}失败：$e'));
-            });
-          },
-          child: Text(_isEdit ? '修改' : '导入'),
-        ),
-      ],
+    final environment = widget.environment;
+    final isEdit = environment != null;
+    return ChangeNotifierProvider.value(
+      value: _provider,
+      builder: (context, _) {
+        return AlertDialog(
+          scrollable: true,
+          title: Text('${isEdit ? '编辑' : '导入'}环境'),
+          content: ConstrainedBox(
+            constraints: const BoxConstraints.tightFor(width: 300),
+            child: _buildForm(context),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => _provider.import(context, environment),
+              child: Text(isEdit ? '修改' : '导入'),
+            ),
+          ],
+        );
+      },
     );
   }
 
   // 构建表单
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
     return Form(
-      key: _formKey,
+      key: _provider.formKey,
       child: Column(
         children: [
           TextFormField(
-            controller: _localPathController,
+            controller: _provider.localPathController,
             validator: (v) {
               if (v == null || v.isEmpty) {
                 return '路径不能为空';
@@ -109,7 +94,7 @@ class _EnvironmentLocalImportDialogState
               labelText: 'flutter路径',
               hintText: '请选择flutter路径',
               suffixIcon: IconButton(
-                onPressed: _importLocalPath,
+                onPressed: _provider.importLocalPath,
                 icon: const Icon(Icons.folder),
               ),
             ),
@@ -118,15 +103,47 @@ class _EnvironmentLocalImportDialogState
       ),
     );
   }
+}
+
+/*
+* 环境导入弹窗状态管理
+* @author wuxubaiyang
+* @Time 2023/11/26 16:11
+*/
+class EnvironmentImportDialogProvider extends BaseProvider {
+  // 表单key
+  final formKey = GlobalKey<FormState>();
+
+  // 本地路径选择输入框控制器
+  late TextEditingController localPathController;
+
+  EnvironmentImportDialogProvider(String? initialPath)
+      : localPathController = TextEditingController(text: initialPath);
+
+  // 导入环境
+  Future<void> import(BuildContext context, Environment? environment) async {
+    if (!formKey.currentState!.validate()) return;
+    final path = localPathController.text;
+    final isEdit = environment != null;
+    final provider = context.read<EnvironmentProvider>();
+    final future = isEdit
+        ? provider.refreshEnvironment(environment..path = path)
+        : provider.importEnvironment(path);
+    Loading.show(context, loadFuture: future)?.then((_) {
+      Navigator.pop(context);
+    }).catchError((e) {
+      SnackTool.show(context, child: Text('${isEdit ? '修改' : '导入'}失败：$e'));
+    });
+  }
 
   // 导入本地路径
-  void _importLocalPath() async {
+  Future<void> importLocalPath() async {
     final dir = await FilePicker.platform.getDirectoryPath(
       lockParentWindow: true,
       dialogTitle: '请选择flutter路径',
-      initialDirectory: _localPathController.text,
+      initialDirectory: localPathController.text,
     );
     if (dir == null) return;
-    _localPathController.text = dir;
+    localPathController.text = dir;
   }
 }

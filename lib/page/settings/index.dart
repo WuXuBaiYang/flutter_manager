@@ -6,6 +6,7 @@ import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
+import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:provider/provider.dart';
@@ -47,9 +48,19 @@ class SettingsPage extends BasePage {
     return ListTile(
       isThreeLine: true,
       title: const Text('Flutter环境'),
-      trailing: IconButton.outlined(
-        icon: const Icon(Icons.add),
-        onPressed: () => EnvironmentLocalImportDialog.show(context),
+      trailing: PopupMenuButton(
+        icon: const Icon(Icons.add_circle_outline),
+        itemBuilder: (_) => [
+          PopupMenuItem(
+            child: const Text('本地导入'),
+            onTap: () => EnvironmentImportDialog.show(context),
+          ),
+          PopupMenuItem(
+            child: const Text('远程导入'),
+            onTap: () => EnvironmentRemoteImportDialog.show(context),
+          ),
+        ],
+        onSelected: (_) {},
       ),
       subtitle: _buildFlutterEnvironmentList(context),
     );
@@ -120,7 +131,7 @@ class SettingsPage extends BasePage {
               iconSize: 18,
               icon: const Icon(Icons.edit),
               onPressed: () {
-                EnvironmentLocalImportDialog.show(
+                EnvironmentImportDialog.show(
                   context,
                   environment: item,
                 );
