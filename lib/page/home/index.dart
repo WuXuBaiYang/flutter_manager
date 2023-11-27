@@ -83,7 +83,7 @@ class HomeProvider extends ChangeNotifier {
   final navigationRailList = [
     const NavigationRailDestination(
       padding: EdgeInsets.only(top: 8),
-      icon: Icon(Icons.home),
+      icon: Icon(Icons.home_rounded),
       label: Text('项目'),
     ),
     const NavigationRailDestination(

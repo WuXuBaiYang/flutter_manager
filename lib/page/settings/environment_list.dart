@@ -59,13 +59,14 @@ class EnvironmentList extends StatelessWidget {
     return Dismissible(
       key: ObjectKey(item.id),
       direction: DismissDirection.endToStart,
+      onDismissed: (_) => _removeEnvironment(context, item, title),
+      confirmDismiss: (_) => _confirmDismiss(context, item),
       background: Container(
         color: Colors.redAccent,
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 14),
         child: const Icon(Icons.delete, color: Colors.white),
       ),
-      onDismissed: (_) => _removeEnvironment(context, item, title),
       child: ListTile(
         title: Text(title),
         subtitle: Text(item.path),
@@ -115,6 +116,12 @@ class EnvironmentList extends StatelessWidget {
         onPressed: () => provider.updateEnvironment(item),
       ),
     );
+  }
+
+  // 环境移除确认
+  Future<bool> _confirmDismiss(BuildContext context, Environment item) async {
+    /// TODO: 环境移除确认,验证是否有项目依赖该文件
+    return true;
   }
 
   // 刷新环境
