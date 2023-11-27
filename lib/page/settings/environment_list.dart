@@ -56,7 +56,7 @@ class EnvironmentList extends StatelessWidget {
       BuildContext context, Environment item) {
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Dismissible(
-      key: ObjectKey(item.id),
+      key: ValueKey(item.id),
       direction: DismissDirection.endToStart,
       onDismissed: (_) => _removeEnvironment(context, item),
       confirmDismiss: (_) => _confirmDismiss(context, item),

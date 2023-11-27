@@ -130,7 +130,6 @@ class ProjectPage extends BasePage {
                     onTap: () {
                       /// TODO: 跳转到项目详情页
                     },
-                    onLongPress: () {},
                   ),
                 ),
               ),
