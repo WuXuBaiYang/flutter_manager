@@ -45,15 +45,15 @@ class LocalPathTextFormField extends StatelessWidget {
         hintText: hint,
         labelText: label,
         suffixIcon: IconButton(
-          onPressed: _importLocalPath,
+          onPressed: _pickLocalPath,
           icon: const Icon(Icons.folder),
         ),
       ),
     );
   }
 
-  // 导入本地路径
-  Future<void> _importLocalPath() async {
+  // 选择本地路径
+  Future<void> _pickLocalPath() async {
     final dir = await FilePicker.platform.getDirectoryPath(
       dialogTitle: label,
       lockParentWindow: true,

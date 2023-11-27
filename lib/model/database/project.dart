@@ -24,7 +24,7 @@ class Project {
   bool pinned = false;
 
   // 项目排序
-  int sort = 0;
+  int order = 0;
 
   // 创建时间
   DateTime createAt = DateTime.now();

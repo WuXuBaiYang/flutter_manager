@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
@@ -10,11 +9,11 @@ import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
 
-// 已下载文件元组
-typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
-
 // 环境安装包结果类型
 typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
+
+// 已下载文件元组
+typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
 
 /*
 * 环境管理工具
@@ -178,16 +177,16 @@ class EnvironmentTool {
     return result;
   }
 
+  // 获取下载缓存目录
+  static Future<String?> _getDownloadCachePath() => FileTool.getDirPath(
+        join(Common.baseCachePath, _downloadCachePath),
+        root: FileDir.applicationDocuments,
+      );
+
   // 获取默认的安装包目录
   static Future<String?> getDefaultInstallPath(
       EnvironmentPackage package) async {
     final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
     return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
   }
-
-  // 获取下载缓存目录
-  static Future<String?> _getDownloadCachePath() => FileTool.getDirPath(
-        join(Common.baseCachePath, _downloadCachePath),
-        root: FileDir.applicationDocuments,
-      );
 }

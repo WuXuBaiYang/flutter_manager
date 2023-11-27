@@ -1,9 +1,14 @@
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/color_item.dart';
 import 'package:flutter_manager/widget/dialog/color.dart';
+import 'package:flutter_manager/widget/image.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
@@ -73,23 +78,62 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
   // 构建表单
   Widget _buildForm(BuildContext context) {
     const contentPadding = EdgeInsets.only(right: 4);
+    final borderRadius = BorderRadius.circular(6);
+    const logoSize = Size.square(55);
     return Form(
       key: _provider.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          TextFormField(
-            controller: _provider.labelController,
-            decoration: const InputDecoration(
-              labelText: '别名',
-              hintText: '请输入别名',
-            ),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '请输入项目别名';
-              }
-              return null;
-            },
+          Row(
+            children: [
+              Selector<ProjectImportDialogProvider, String?>(
+                selector: (_, provider) => provider.logoPath,
+                builder: (_, logoPath, __) {
+                  return SizedBox.fromSize(
+                    size: logoSize,
+                    child: ClipRRect(
+                      borderRadius: borderRadius,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
+                          borderRadius: borderRadius,
+                        ),
+                        child: InkWell(
+                          borderRadius: borderRadius,
+                          onTap: _provider.pickLogoPath,
+                          child: logoPath?.isNotEmpty == true
+                              ? ImageView.file(
+                                  File(logoPath ?? ''),
+                                  fit: BoxFit.cover,
+                                  size: logoSize.shortestSide,
+                                )
+                              : const Icon(Icons.add),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: TextFormField(
+                  controller: _provider.labelController,
+                  decoration: const InputDecoration(
+                    labelText: '别名',
+                    hintText: '请输入别名',
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return '请输入项目别名';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           LocalPathTextFormField(
@@ -105,10 +149,9 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
             onPathUpdate: _provider.pathUpdate,
           ),
           const SizedBox(height: 8),
-          Selector<ProjectImportDialogProvider, Color?>(
+          Selector<ProjectImportDialogProvider, Color>(
             selector: (_, provider) => provider.color,
             builder: (_, color, __) {
-              color ??= Colors.transparent;
               return ListTile(
                 title: const Text('颜色'),
                 contentPadding: contentPadding,
@@ -175,7 +218,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
   Color? _color;
 
   // 获取项目颜色
-  Color? get color => _color;
+  Color get color => _color ?? Colors.transparent;
 
   // 项目别名输入控制器
   late final TextEditingController labelController;
@@ -195,6 +238,10 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     if (labelController.text.isEmpty) {
       final projectName = await ProjectTool.getProjectName(path) ?? '';
       labelController.text = projectName;
+    }
+    if (_logoPath?.isNotEmpty != true) {
+      _logoPath = await ProjectTool.getProjectLogo(path);
+      notifyListeners();
     }
   }
 
@@ -216,5 +263,33 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     if (!formKey.currentState!.validate()) return;
     final isEdit = project != null;
     final provider = context.read<ProjectProvider>();
+    Loading.show<Project?>(context,
+        loadFuture: provider.updateProject(
+          Project()
+            ..label = labelController.text
+            ..path = pathController.text
+            ..logo = _logoPath ?? ''
+            ..color = color.value
+            ..pinned = pinned,
+        ))?.then((result) {
+      Navigator.pop(context, result);
+    }).catchError((e) {
+      final message = '${isEdit ? '修改' : '导入'}失败：$e';
+      SnackTool.showMessage(context, message: message);
+    });
+  }
+
+  // 选择项目图标路径
+  Future<String?> pickLogoPath() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      lockParentWindow: true,
+      dialogTitle: '选择项目图',
+      initialDirectory: pathController.text,
+    );
+    if (result?.files.isNotEmpty != true) return null;
+    _logoPath = result!.files.first.path;
+    notifyListeners();
+    return _logoPath;
   }
 }

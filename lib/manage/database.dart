@@ -33,12 +33,24 @@ class DatabaseManage extends BaseManage {
     );
   }
 
-  // 获取全部项目列表
-  Future<List<Project>> getProjectList() => isar.projects.where().findAll();
+  // 获取项目列表
+  Future<List<Project>> getProjectList([bool pinned = false]) => isar.projects
+      .where()
+      .filter()
+      .pinnedEqualTo(pinned)
+      .sortByOrderDesc()
+      .findAll();
 
   // 添加/更新项目
   Future<Project?> updateProject(Project item) => isar.writeTxn<Project?>(() {
-        return isar.projects.put(item).then(
+        final length = isar.projects
+            .where()
+            .filter()
+            .pinnedEqualTo(item.pinned)
+            .sortByOrderDesc()
+            .findAllSync()
+            .length;
+        return isar.projects.put(item..order = length).then(
               (id) => item..id = id,
             );
       });

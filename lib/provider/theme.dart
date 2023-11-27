@@ -42,33 +42,6 @@ class ThemeProvider extends BaseProvider {
   ThemeData get darkThemeData =>
       _darkThemeData ??= _genThemeData(Brightness.dark);
 
-  // 获取主题色
-  Color getPrimary(BuildContext context) => getThemeData(context).primaryColor;
-
-  // 获取主标题文本样式
-  TextStyle? getPrimaryTitleStyle(BuildContext context) =>
-      getThemeData(context).textTheme.headlineLarge;
-
-  // 获取次标题文本样式
-  TextStyle? getSecondaryTitleStyle(BuildContext context) =>
-      getThemeData(context).textTheme.headlineMedium;
-
-  // 获取主文本样式
-  TextStyle? getPrimaryStyle(BuildContext context) =>
-      getThemeData(context).textTheme.bodyLarge;
-
-  // 获取次文本样式
-  TextStyle? getSecondaryStyle(BuildContext context) =>
-      getThemeData(context).textTheme.bodyMedium;
-
-  // 获取splash色值
-  Color getSplashColor(BuildContext context) =>
-      getThemeData(context).splashColor;
-
-  // 判断当前是否为暗色模式
-  bool isDark(BuildContext context) =>
-      getBrightness(context) == Brightness.dark;
-
   // 获取当前主题数据
   ThemeData getThemeData(BuildContext context) =>
       _themeData ??= _genThemeData(getBrightness(context));

@@ -77,13 +77,12 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
 
   // 构建透明色块
   Widget _buildTransparent(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
-    final splashColor = provider.getSplashColor(context);
-    final opacity = provider.isDark(context) ? 0.05 : 0.2;
+    final opacity =
+        Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.2;
     return ColorPickerItem(
       isSelected: widget.current == Colors.transparent,
       onPressed: () => Navigator.pop(context, Colors.transparent),
-      color: splashColor.withOpacity(opacity),
+      color: Theme.of(context).splashColor.withOpacity(opacity),
     );
   }
 }
