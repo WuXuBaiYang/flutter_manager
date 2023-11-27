@@ -12,6 +12,9 @@ class EnvironmentPackage extends BaseModel {
   // 下载地址
   String url = '';
 
+  // 文件名
+  String fileName = '';
+
   // 构造函数
   String hash = '';
 
@@ -47,6 +50,7 @@ class EnvironmentPackage extends BaseModel {
   EnvironmentPackage.from(obj)
       : platform = obj['platform'] ?? '',
         url = obj['url'] ?? '',
+        fileName = obj['fileName'] ?? '',
         hash = obj['hash'] ?? '',
         sha256 = obj['sha256'] ?? '',
         channel = obj['channel'] ?? '',
@@ -59,6 +63,7 @@ class EnvironmentPackage extends BaseModel {
   Map<String, dynamic> to() => {
         'platform': platform,
         'url': url,
+        'fileName': fileName,
         'hash': hash,
         'sha256': sha256,
         'channel': channel,

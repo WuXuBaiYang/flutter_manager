@@ -10,6 +10,12 @@ import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
 
+// 已下载文件元组
+typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
+
+// 环境安装包结果类型
+typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
+
 /*
 * 环境工具
 * @author wuxubaiyang
@@ -97,8 +103,7 @@ class EnvironmentTool {
   }
 
   // 获取当前平台的环境安装包列表
-  static Future<Map<String, List<EnvironmentPackage>>>
-      getEnvironmentPackageList() async {
+  static Future<EnvironmentPackageResult> getEnvironmentPackageList() async {
     final json = cache.getJson(_environmentPackageCacheKey);
     if (json != null) {
       return json.map<String, List<EnvironmentPackage>>((key, value) {
@@ -113,9 +118,11 @@ class EnvironmentTool {
     final baseUrl = resp.data['base_url'];
     final result = <String, List<EnvironmentPackage>>{};
     for (final e in resp.data['releases'] ?? []) {
+      final archive = e['archive'] ?? '';
       final package = EnvironmentPackage()
         ..platform = platform
-        ..url = '$baseUrl/${e['archive'] ?? ''}'
+        ..url = '$baseUrl/$archive'
+        ..fileName = basename(archive)
         ..hash = e['hash'] ?? ''
         ..sha256 = e['sha256'] ?? ''
         ..channel = e['channel'] ?? ''
@@ -139,9 +146,7 @@ class EnvironmentTool {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
   }) async {
-    final baseDir = await FileTool.getDirPath(
-        join(Common.baseCachePath, _downloadCachePath),
-        root: FileDir.applicationDocuments);
+    final baseDir = await _getDownloadCachePath();
     if (baseDir == null) throw Exception('获取下载目录失败');
     final savePath = join(baseDir, basename(url));
     if (File(savePath).existsSync()) return savePath;
@@ -154,4 +159,28 @@ class EnvironmentTool {
     if (tempPath == null) throw Exception('下载文件失败');
     return tempPath.renameSync(savePath).path;
   }
+
+  // 获取已下载文件列表
+  static Future<DownloadedFileTuple> getDownloadedFileList() async {
+    final result = (downloaded: <String>[], tmp: <String>[]);
+    final baseDir = await _getDownloadCachePath();
+    if (baseDir == null) return result;
+    final dir = Directory(baseDir);
+    if (!dir.existsSync()) return result;
+    dir.listSync().forEach((e) {
+      final path = e.path;
+      if (path.contains('.tmp')) {
+        result.tmp.add(path);
+      } else {
+        result.downloaded.add(path);
+      }
+    });
+    return result;
+  }
+
+  // 获取下载缓存目录
+  static Future<String?> _getDownloadCachePath() => FileTool.getDirPath(
+        join(Common.baseCachePath, _downloadCachePath),
+        root: FileDir.applicationDocuments,
+      );
 }
