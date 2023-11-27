@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
-import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/tool/loading.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
@@ -32,6 +28,9 @@ class SettingsPage extends BasePage {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('设置'),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [

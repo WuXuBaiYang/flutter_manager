@@ -32,8 +32,8 @@ class ThemeSchemeItem extends StatelessWidget {
         size: Size.square(size),
         child: CustomPaint(
           painter: HalfCirclePainter((
-          item.primary,
-          item.secondary,
+            item.primary,
+            item.secondary,
           )),
         ),
       ),

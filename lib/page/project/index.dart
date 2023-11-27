@@ -23,7 +23,11 @@ class ProjectPage extends BasePage {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('项目页'),
+        title: const Text('项目'),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {},
       ),
     );
   }
