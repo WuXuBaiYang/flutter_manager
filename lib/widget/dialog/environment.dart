@@ -79,19 +79,25 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
       key: _provider.formKey,
       child: Column(
         children: [
-          LocalPathTextFormField(
-            label: 'flutter路径',
-            hint: '请选择flutter路径',
-            validator: (v) {
-              if (!EnvironmentTool.isPathAvailable(v!)) {
-                return '路径不可用';
-              }
-              return null;
-            },
-            controller: _provider.localPathController,
-          ),
-        ],
+          _buildFormFieldPath(context),
+        ].expand((e) => [e, const SizedBox(height: 8)]).toList()
+          ..removeLast(),
       ),
+    );
+  }
+
+  // 构建表单项-flutter路径
+  Widget _buildFormFieldPath(BuildContext context) {
+    return LocalPathTextFormField(
+      label: 'flutter路径',
+      hint: '请选择flutter路径',
+      validator: (v) {
+        if (!EnvironmentTool.isPathAvailable(v!)) {
+          return '路径不可用';
+        }
+        return null;
+      },
+      controller: _provider.localPathController,
     );
   }
 

@@ -132,19 +132,29 @@ class _EnvironmentRemoteImportDialogState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          LocalPathTextFormField(
-            label: '安装路径',
-            hint: '请选择安装路径',
-            controller: _provider.localPathController,
-          ),
-          const SizedBox(height: 14),
-          Card(
-            child: ListTile(
-              title: Text('Flutter · ${package.version} · ${package.channel}'),
-              subtitle: Text(package.fileName),
-            ),
-          ),
-        ],
+          _buildFormFieldPath(context),
+          _buildFormFieldInfo(context, package),
+        ].expand((e) => [e, const SizedBox(height: 8)]).toList()
+          ..removeLast(),
+      ),
+    );
+  }
+
+  // 构建表单项-路径
+  Widget _buildFormFieldPath(BuildContext context) {
+    return LocalPathTextFormField(
+      label: '安装路径',
+      hint: '请选择安装路径',
+      controller: _provider.localPathController,
+    );
+  }
+
+  // 构建表单项-信息
+  Widget _buildFormFieldInfo(BuildContext context, EnvironmentPackage package) {
+    return Card(
+      child: ListTile(
+        title: Text(package.title),
+        subtitle: Text(package.fileName),
       ),
     );
   }

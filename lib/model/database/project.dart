@@ -17,6 +17,9 @@ class Project {
   @Index(unique: true, replace: true)
   String path = '';
 
+  // 环境id
+  Id envId = Isar.autoIncrement;
+
   // 项目颜色
   int color = Colors.transparent.value;
 

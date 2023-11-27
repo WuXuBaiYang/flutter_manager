@@ -58,8 +58,12 @@ class DatabaseManage extends BaseManage {
   }
 
   // 移除项目
-  Future<bool> removeProject(int id) =>
+  Future<bool> removeProject(Id id) =>
       isar.writeTxn<bool>(() => isar.projects.delete(id));
+
+  // 根据id获取环境信息
+  Future<Environment?> getEnvironmentById(Id id) =>
+      isar.environments.where().idEqualTo(id).findFirst();
 
   // 获取全部环境列表
   Future<List<Environment>> getEnvironmentList() =>
@@ -74,7 +78,7 @@ class DatabaseManage extends BaseManage {
       });
 
   // 移除环境
-  Future<bool> removeEnvironment(int id) =>
+  Future<bool> removeEnvironment(Id id) =>
       isar.writeTxn<bool>(() => isar.environments.delete(id));
 }
 

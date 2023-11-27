@@ -47,6 +47,9 @@ class EnvironmentPackage extends BaseModel {
 
   EnvironmentPackage();
 
+  // 获取标题
+  String get title => 'Flutter · $version · $channel';
+
   EnvironmentPackage.from(obj)
       : platform = obj['platform'] ?? '',
         url = obj['url'] ?? '',

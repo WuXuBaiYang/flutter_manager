@@ -54,12 +54,11 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项
   Widget _buildFlutterEnvironmentListItem(
       BuildContext context, Environment item) {
-    final title = 'Flutter · ${item.version} · ${item.channel}';
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Dismissible(
       key: ObjectKey(item.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => _removeEnvironment(context, item, title),
+      onDismissed: (_) => _removeEnvironment(context, item),
       confirmDismiss: (_) => _confirmDismiss(context, item),
       background: Container(
         color: Colors.redAccent,
@@ -68,7 +67,7 @@ class EnvironmentList extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: ListTile(
-        title: Text(title),
+        title: Text(item.title),
         subtitle: Text(item.path),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -104,13 +103,12 @@ class EnvironmentList extends StatelessWidget {
   }
 
   // 移除环境
-  void _removeEnvironment(
-      BuildContext context, Environment item, String title) {
+  void _removeEnvironment(BuildContext context, Environment item) {
     final provider = context.read<EnvironmentProvider>();
     provider.removeEnvironment(item);
     SnackTool.showMessage(
       context,
-      message: '$title 环境已移除',
+      message: '${item.title} 环境已移除',
       action: SnackBarAction(
         label: '撤销',
         onPressed: () => provider.updateEnvironment(item),

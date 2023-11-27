@@ -77,7 +77,7 @@ class EnvironmentRemoteList extends StatelessWidget {
         final savePath = downloadFile.downloaded
             .firstWhere((e) => e.contains(item.fileName), orElse: () => '');
         return ListTile(
-          title: Text('Flutter · ${item.version}'),
+          title: Text(item.title),
           subtitle: Text('Dart · ${item.dartVersion} · ${item.dartArch}'),
           trailing: IconButton(
             icon: Icon(savePath.isNotEmpty

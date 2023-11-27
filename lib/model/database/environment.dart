@@ -36,6 +36,10 @@ class Environment {
 
   Environment();
 
+  // 获取环境信息标题
+  @ignore
+  String get title => 'Flutter · $version · $channel';
+
   Environment.from(obj)
       : path = obj['path'] ?? '',
         channel = obj['channel'] ?? '',
