@@ -97,6 +97,7 @@ class SettingsPage extends BasePage {
       title: const Text('应用配色'),
       subtitle: Text(scheme.label),
       trailing: ThemeSchemeItem(
+        size: 40,
         scheme: scheme,
         isSelected: true,
         tooltip: '更换配色',
