@@ -18,12 +18,12 @@ class HomePage extends BasePage {
 
   @override
   List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => HomePageProvider()),
       ];
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.watch<HomeProvider>();
+    final provider = context.watch<HomePageProvider>();
     return Scaffold(
       body: Row(
         children: [
@@ -75,7 +75,7 @@ class HomePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/21 14:02
 */
-class HomeProvider extends ChangeNotifier {
+class HomePageProvider extends ChangeNotifier {
   // 导航下标管理
   int _navigationIndex = 0;
 

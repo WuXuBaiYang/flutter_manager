@@ -17,7 +17,7 @@ typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
 typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
 
 /*
-* 环境工具
+* 环境管理工具
 * @author wuxubaiyang
 * @Time 2023/11/25 20:30
 */

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -16,7 +17,7 @@ class ProjectPage extends BasePage {
 
   @override
   List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => ProjectProvider()),
+        ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
       ];
 
   @override
@@ -27,7 +28,7 @@ class ProjectPage extends BasePage {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () => ProjectImportDialog.show(context),
       ),
     );
   }
@@ -38,4 +39,4 @@ class ProjectPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectProvider extends ChangeNotifier {}
+class ProjectPageProvider extends ChangeNotifier {}

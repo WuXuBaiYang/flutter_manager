@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/local_path.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +20,9 @@ class EnvironmentImportDialog extends StatefulWidget {
   const EnvironmentImportDialog({super.key, this.environment});
 
   // 展示弹窗
-  static Future<void> show(BuildContext context,
-      {Environment? environment}) async {
-    return showDialog<void>(
+  static Future<Environment?> show(BuildContext context,
+      {Environment? environment}) {
+    return showDialog<Environment>(
       context: context,
       barrierDismissible: false,
       builder: (_) => EnvironmentImportDialog(
@@ -41,8 +42,7 @@ class EnvironmentImportDialog extends StatefulWidget {
 */
 class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
   // 状态代理
-  late final _provider =
-      EnvironmentImportDialogProvider(widget.environment?.path);
+  late final _provider = EnvironmentImportDialogProvider(widget.environment);
 
   @override
   Widget build(BuildContext context) {
@@ -82,6 +82,12 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
           LocalPathTextFormField(
             label: 'flutter路径',
             hint: '请选择flutter路径',
+            validator: (v) {
+              if (!EnvironmentTool.isPathAvailable(v!)) {
+                return '路径不可用';
+              }
+              return null;
+            },
             controller: _provider.localPathController,
           ),
         ],
@@ -106,22 +112,22 @@ class EnvironmentImportDialogProvider extends BaseProvider {
   final formKey = GlobalKey<FormState>();
 
   // 本地路径选择输入框控制器
-  late TextEditingController localPathController;
+  late final TextEditingController localPathController;
 
-  EnvironmentImportDialogProvider(String? initialPath)
-      : localPathController = TextEditingController(text: initialPath);
+  EnvironmentImportDialogProvider(Environment? item)
+      : localPathController = TextEditingController(text: item?.path ?? '');
 
   // 导入环境
   Future<void> import(BuildContext context, Environment? environment) async {
     if (!formKey.currentState!.validate()) return;
-    final path = localPathController.text;
     final isEdit = environment != null;
+    final path = localPathController.text;
     final provider = context.read<EnvironmentProvider>();
     final future = isEdit
         ? provider.refreshEnvironment(environment..path = path)
         : provider.importEnvironment(path);
-    Loading.show(context, loadFuture: future)?.then((_) {
-      Navigator.pop(context);
+    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
+      Navigator.pop(context, result);
     }).catchError((e) {
       final message = '${isEdit ? '修改' : '导入'}失败：$e';
       SnackTool.showMessage(context, message: message);

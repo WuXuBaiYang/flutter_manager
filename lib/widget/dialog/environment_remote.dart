@@ -23,9 +23,9 @@ class EnvironmentRemoteImportDialog extends StatefulWidget {
   const EnvironmentRemoteImportDialog({super.key});
 
   // 展示弹窗
-  static Future<void> show(BuildContext context,
-      {Environment? environment}) async {
-    return showDialog<void>(
+  static Future<Environment?> show(BuildContext context,
+      {Environment? environment}) {
+    return showDialog<Environment>(
       context: context,
       barrierDismissible: false,
       builder: (_) => const EnvironmentRemoteImportDialog(),
@@ -135,7 +135,6 @@ class _EnvironmentRemoteImportDialogState
           LocalPathTextFormField(
             label: '安装路径',
             hint: '请选择安装路径',
-            checkAvailable: false,
             controller: _provider.localPathController,
           ),
           const SizedBox(height: 14),
@@ -238,8 +237,8 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
     final path = localPathController.text;
     final provider = context.read<EnvironmentProvider>();
     final future = provider.importArchiveEnvironment(archiveFile, path);
-    Loading.show(context, loadFuture: future)?.then((_) {
-      Navigator.pop(context);
+    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
+      Navigator.pop(context, result);
     }).catchError((e) {
       final message = '导入失败：$e';
       SnackTool.showMessage(context, message: message);

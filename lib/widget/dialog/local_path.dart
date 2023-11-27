@@ -1,6 +1,5 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/tool/project/environment.dart';
 
 /*
 * 本地路径文本输入框组件
@@ -11,21 +10,25 @@ class LocalPathTextFormField extends StatelessWidget {
   // 输入框控制器
   final TextEditingController controller;
 
+  // 验证器
+  final FormFieldValidator<String>? validator;
+
+  // 路径选择更新回调
+  final VoidCallback? onPathUpdate;
+
   // 标签
   final String label;
 
   // 提示
   final String hint;
 
-  // 检查是否有效
-  final bool checkAvailable;
-
   const LocalPathTextFormField({
     super.key,
     required this.controller,
     this.hint = '',
     this.label = '',
-    this.checkAvailable = true,
+    this.validator,
+    this.onPathUpdate,
   });
 
   @override
@@ -36,10 +39,7 @@ class LocalPathTextFormField extends StatelessWidget {
         if (v == null || v.isEmpty) {
           return '路径不能为空';
         }
-        if (checkAvailable && !EnvironmentTool.isPathAvailable(v)) {
-          return '路径不可用';
-        }
-        return null;
+        return validator?.call(v);
       },
       decoration: InputDecoration(
         hintText: hint,
@@ -61,5 +61,6 @@ class LocalPathTextFormField extends StatelessWidget {
     );
     if (dir == null) return;
     controller.text = dir;
+    onPathUpdate?.call();
   }
 }

@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'generated/l10n.dart';
+import 'provider/project.dart';
 import 'provider/window.dart';
 
 void main() async {
@@ -39,11 +40,14 @@ void main() async {
       ChangeNotifierProvider<ThemeProvider>(
         create: (_) => ThemeProvider(),
       ),
+      ChangeNotifierProvider(
+        create: (_) => WindowProvider(),
+      ),
       ChangeNotifierProvider<EnvironmentProvider>(
         create: (_) => EnvironmentProvider(),
       ),
       ChangeNotifierProvider(
-        create: (_) => WindowProvider(),
+        create: (_) => ProjectProvider(),
       ),
     ],
     child: const MyApp(),

@@ -16,7 +16,7 @@ class KnowledgePage extends BasePage {
 
   @override
   List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => KnowledgeProvider()),
+        ChangeNotifierProvider(create: (_) => KnowledgePageProvider()),
       ];
 
   @override
@@ -34,4 +34,4 @@ class KnowledgePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgeProvider extends ChangeNotifier {}
+class KnowledgePageProvider extends ChangeNotifier {}

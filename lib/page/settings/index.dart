@@ -22,7 +22,7 @@ class SettingsPage extends BasePage {
 
   @override
   List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsPageProvider()),
       ];
 
   @override
@@ -115,4 +115,4 @@ class SettingsPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsProvider extends ChangeNotifier {}
+class SettingsPageProvider extends ChangeNotifier {}
