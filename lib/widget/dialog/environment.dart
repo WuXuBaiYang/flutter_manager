@@ -139,7 +139,8 @@ class EnvironmentImportDialogProvider extends BaseProvider {
     Loading.show(context, loadFuture: future)?.then((_) {
       Navigator.pop(context);
     }).catchError((e) {
-      SnackTool.show(context, child: Text('${isEdit ? '修改' : '导入'}失败：$e'));
+      final message = '${isEdit ? '修改' : '导入'}失败：$e';
+      SnackTool.showMessage(context, message: message);
     });
   }
 

@@ -19,6 +19,8 @@ class Loading {
     Widget? child,
   }) async {
     final navigator = Navigator.of(context);
+    final start = DateTime.now();
+    const duration = Duration(milliseconds: 300);
     try {
       if (_loadingDialog != null) navigator.maybePop();
       _loadingDialog = showDialog<void>(
@@ -26,17 +28,15 @@ class Loading {
         barrierDismissible: dismissible,
         builder: (_) => _buildLoadingView(child, constraints),
       )..whenComplete(() => _loadingDialog = null);
-      final start = DateTime.now();
-      const duration = Duration(milliseconds: 300);
       final result = await loadFuture;
-      // 如果传入的future加载时间过短（还不够弹窗动画时间），则进行等待
-      final end = DateTime.now().subtract(duration);
-      if (end.compareTo(start) < 0) await Future.delayed(duration);
       return result;
     } catch (e) {
       LogTool.e('弹窗请求异常：', error: e);
       rethrow;
     } finally {
+      // 如果传入的future加载时间过短（还不够弹窗动画时间），则进行等待
+      final end = DateTime.now().subtract(duration);
+      if (end.compareTo(start) < 0) await Future.delayed(duration);
       if (_loadingDialog != null) await navigator.maybePop();
     }
   }
