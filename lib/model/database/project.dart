@@ -18,7 +18,7 @@ class Project {
   String path = '';
 
   // 项目颜色
-  int? color;
+  int color = Colors.transparent.value;
 
   // 是否订到顶部
   bool pinned = false;
@@ -33,5 +33,5 @@ class Project {
   DateTime updateAt = DateTime.now();
 
   // 获取颜色
-  Color? getColor() => color != null ? Color(color!) : null;
+  Color getColor() => Color(color);
 }

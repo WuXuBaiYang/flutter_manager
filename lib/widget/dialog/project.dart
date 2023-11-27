@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/local_path.dart';
+import 'package:flutter_manager/widget/color_item.dart';
+import 'package:flutter_manager/widget/dialog/color.dart';
+import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -50,7 +52,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
           scrollable: true,
           title: Text('${isEdit ? '编辑' : '导入'}项目'),
           content: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(width: 240),
+            constraints: const BoxConstraints.tightFor(width: 260),
             child: _buildForm(context),
           ),
           actions: [
@@ -70,6 +72,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建表单
   Widget _buildForm(BuildContext context) {
+    const contentPadding = EdgeInsets.only(right: 4);
     return Form(
       key: _provider.formKey,
       child: Column(
@@ -101,9 +104,49 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
             },
             onPathUpdate: _provider.pathUpdate,
           ),
+          const SizedBox(height: 8),
+          Selector<ProjectImportDialogProvider, Color?>(
+            selector: (_, provider) => provider.color,
+            builder: (_, color, __) {
+              color ??= Colors.transparent;
+              return ListTile(
+                title: const Text('颜色'),
+                contentPadding: contentPadding,
+                trailing: ColorPickerItem(
+                  size: 30,
+                  color: color,
+                  isSelected: true,
+                  onPressed: () => _showColorPicker(context, color),
+                ),
+                onTap: () => _showColorPicker(context, color),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          Selector<ProjectImportDialogProvider, bool>(
+            selector: (_, provider) => provider.pinned,
+            builder: (_, pinned, __) {
+              return CheckboxListTile(
+                value: pinned,
+                title: const Text('置顶'),
+                contentPadding: contentPadding,
+                onChanged: _provider.pinnedUpdate,
+              );
+            },
+          ),
         ],
       ),
     );
+  }
+
+  // 展示颜色选择器
+  Future<void> _showColorPicker(BuildContext context, Color? color) {
+    return ColorPickerDialog.show(
+      context,
+      current: color,
+      useTransparent: true,
+      colors: Colors.primaries,
+    ).then(_provider.colorUpdate);
   }
 }
 
@@ -121,6 +164,18 @@ class ProjectImportDialogProvider extends ChangeNotifier {
 
   // 获取项目图标路径
   String get logoPath => _logoPath ?? '';
+
+  // 项目是否置顶
+  bool? _pinned;
+
+  // 获取项目是否置顶
+  bool get pinned => _pinned ?? false;
+
+  // 项目颜色
+  Color? _color;
+
+  // 获取项目颜色
+  Color? get color => _color;
 
   // 项目别名输入控制器
   late final TextEditingController labelController;
@@ -141,6 +196,19 @@ class ProjectImportDialogProvider extends ChangeNotifier {
       final projectName = await ProjectTool.getProjectName(path) ?? '';
       labelController.text = projectName;
     }
+  }
+
+  // 项目置顶状态更新
+  void pinnedUpdate(bool? value) {
+    _pinned = value;
+    notifyListeners();
+  }
+
+  // 项目颜色更新
+  void colorUpdate(Color? value) {
+    if (value == null) return;
+    _color = value;
+    notifyListeners();
   }
 
   // 导入项目

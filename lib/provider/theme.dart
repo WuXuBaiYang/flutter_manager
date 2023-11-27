@@ -61,6 +61,14 @@ class ThemeProvider extends BaseProvider {
   TextStyle? getSecondaryStyle(BuildContext context) =>
       getThemeData(context).textTheme.bodyMedium;
 
+  // 获取splash色值
+  Color getSplashColor(BuildContext context) =>
+      getThemeData(context).splashColor;
+
+  // 判断当前是否为暗色模式
+  bool isDark(BuildContext context) =>
+      getBrightness(context) == Brightness.dark;
+
   // 获取当前主题数据
   ThemeData getThemeData(BuildContext context) =>
       _themeData ??= _genThemeData(getBrightness(context));

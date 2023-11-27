@@ -5,7 +5,7 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
-import 'package:flutter_manager/widget/dialog/local_path.dart';
+import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
 /*

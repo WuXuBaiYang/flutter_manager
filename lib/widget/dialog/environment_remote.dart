@@ -12,7 +12,7 @@ import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote_list.dart';
 import 'package:provider/provider.dart';
 
-import 'local_path.dart';
+import '../local_path.dart';
 
 /*
 * 环境导入弹窗-远程
