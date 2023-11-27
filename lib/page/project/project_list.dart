@@ -32,21 +32,9 @@ class ProjectGridView extends StatelessWidget {
 
   // 右键菜单
   ContextMenu get _contextMenu => ContextMenu(entries: const [
-        MenuItem(
-          value: 0,
-          label: '置顶',
-          icon: Icons.push_pin_rounded,
-        ),
-        MenuItem(
-          value: 1,
-          label: '编辑',
-          icon: Icons.edit,
-        ),
-        MenuItem(
-          value: 2,
-          label: '删除',
-          icon: Icons.delete,
-        ),
+        MenuItem<int>(value: 0, label: '置顶', icon: Icons.push_pin_rounded),
+        MenuItem<int>(value: 1, label: '编辑', icon: Icons.edit),
+        MenuItem<int>(value: 2, label: '删除', icon: Icons.delete),
       ]);
 
   @override
