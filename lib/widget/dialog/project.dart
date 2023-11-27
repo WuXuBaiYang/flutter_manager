@@ -228,6 +228,8 @@ class ProjectImportDialogProvider extends ChangeNotifier {
 
   ProjectImportDialogProvider(Project? item)
       : _logoPath = item?.logo,
+        _pinned = item?.pinned,
+        _color = Color(item?.color ?? Colors.transparent.value),
         pathController = TextEditingController(text: item?.path),
         labelController = TextEditingController(text: item?.label);
 

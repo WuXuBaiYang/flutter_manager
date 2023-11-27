@@ -50,6 +50,7 @@ dependencies:
   dio: ^5.3.4
   file_picker: ^6.1.1
   archive: ^3.4.9
+  flutter_context_menu: ^0.1.3
 
 dev_dependencies:
   flutter_test:

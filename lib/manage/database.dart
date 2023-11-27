@@ -42,18 +42,20 @@ class DatabaseManage extends BaseManage {
       .findAll();
 
   // 添加/更新项目
-  Future<Project?> updateProject(Project item) => isar.writeTxn<Project?>(() {
-        final length = isar.projects
-            .where()
-            .filter()
-            .pinnedEqualTo(item.pinned)
-            .sortByOrderDesc()
-            .findAllSync()
-            .length;
-        return isar.projects.put(item..order = length).then(
-              (id) => item..id = id,
-            );
-      });
+  Future<Project?> updateProject(Project item) {
+    final length = isar.projects
+        .where()
+        .filter()
+        .pinnedEqualTo(item.pinned)
+        .sortByOrderDesc()
+        .findAllSync()
+        .length;
+    return isar.writeTxn<Project?>(() {
+      return isar.projects.put(item..order = length).then(
+            (id) => item..id = id,
+          );
+    });
+  }
 
   // 移除项目
   Future<bool> removeProject(int id) =>

@@ -29,11 +29,10 @@ class ProjectProvider extends BaseProvider {
   }
 
   // 获取项目集合
-  Future<List<Project>> loadProjectList() async {
+  Future<void> loadProjectList() async {
     _pinnedProjects = await database.getProjectList(true);
     _projects = await database.getProjectList();
     notifyListeners();
-    return projects;
   }
 
   // 添加项目信息
@@ -47,5 +46,19 @@ class ProjectProvider extends BaseProvider {
     );
     await loadProjectList();
     return result;
+  }
+
+  // 项目置顶
+  Future<void> pinned(Project project, [bool pinned = true]) async {
+    await database.updateProject(
+      project..pinned = pinned,
+    );
+    return loadProjectList();
+  }
+
+  // 删除项目
+  Future<void> deleteProject(Project project) async {
+    await database.removeProject(project.id);
+    return loadProjectList();
   }
 }

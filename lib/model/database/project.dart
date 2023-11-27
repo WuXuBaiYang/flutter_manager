@@ -33,5 +33,5 @@ class Project {
   DateTime updateAt = DateTime.now();
 
   // 获取颜色
-  Color getColor() => Color(color);
+  Color getColor([double opacity = 1]) => Color(color).withOpacity(opacity);
 }
