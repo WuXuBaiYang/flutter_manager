@@ -50,6 +50,7 @@ class SettingsPage extends BasePage {
       isThreeLine: true,
       title: const Text('Flutter环境'),
       trailing: PopupMenuButton(
+        tooltip: '添加环境',
         icon: const Icon(Icons.add_circle_outline),
         itemBuilder: (_) => [
           PopupMenuItem(
@@ -97,6 +98,7 @@ class SettingsPage extends BasePage {
       title: const Text('应用配色'),
       subtitle: Text(scheme.label),
       trailing: IconButton.outlined(
+        tooltip: '更换配色',
         icon: ThemeSchemeItem(item: scheme),
         onPressed: () => ThemeSchemeDialog.show(
           context,

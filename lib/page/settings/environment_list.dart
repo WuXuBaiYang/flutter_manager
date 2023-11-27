@@ -85,12 +85,14 @@ class EnvironmentList extends StatelessWidget {
             ],
             IconButton(
               iconSize: 18,
+              tooltip: '编辑环境',
               icon: const Icon(Icons.edit),
               onPressed: () =>
                   EnvironmentImportDialog.show(context, environment: item),
             ),
             IconButton(
               iconSize: 18,
+              tooltip: '刷新环境',
               icon: const Icon(Icons.refresh),
               onPressed: () => _refreshEnvironment(context, item),
             ),
