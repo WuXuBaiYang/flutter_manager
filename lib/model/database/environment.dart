@@ -22,9 +22,6 @@ class Environment {
   // 框架版本
   String frameworkReversion = '';
 
-  // 更新时间
-  String updatedAt = '';
-
   // 引擎版本
   String engineReversion = '';
 
@@ -33,6 +30,9 @@ class Environment {
 
   // 开发版本
   String devToolsVersion = '';
+
+  // 更新时间
+  String updatedAt = '';
 
   Environment();
 

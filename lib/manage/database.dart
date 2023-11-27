@@ -36,11 +36,22 @@ class DatabaseManage extends BaseManage {
   // 获取全部项目列表
   Future<List<Project>> getProjectList() => isar.projects.where().findAll();
 
+  // 添加/更新项目
+  Future<Project?> updateProject(Project item) => isar.writeTxn<Project?>(() {
+        return isar.projects.put(item).then(
+              (id) => item..id = id,
+            );
+      });
+
+  // 移除项目
+  Future<bool> removeProject(int id) =>
+      isar.writeTxn<bool>(() => isar.projects.delete(id));
+
   // 获取全部环境列表
   Future<List<Environment>> getEnvironmentList() =>
       isar.environments.where().findAll();
 
-  // 添加环境
+  // 添加/更新环境
   Future<Environment?> updateEnvironment(Environment item) =>
       isar.writeTxn<Environment?>(() {
         return isar.environments.put(item).then(
