@@ -1,11 +1,10 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
-import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/dialog/local_path.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -80,25 +79,10 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
       key: _provider.formKey,
       child: Column(
         children: [
-          TextFormField(
+          LocalPathTextFormField(
+            label: 'flutter路径',
+            hint: '请选择flutter路径',
             controller: _provider.localPathController,
-            validator: (v) {
-              if (v == null || v.isEmpty) {
-                return '路径不能为空';
-              }
-              if (!EnvironmentTool.isPathAvailable(v)) {
-                return '路径不可用';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelText: 'flutter路径',
-              hintText: '请选择flutter路径',
-              suffixIcon: IconButton(
-                onPressed: _provider.importLocalPath,
-                icon: const Icon(Icons.folder),
-              ),
-            ),
           ),
         ],
       ),
@@ -142,16 +126,5 @@ class EnvironmentImportDialogProvider extends BaseProvider {
       final message = '${isEdit ? '修改' : '导入'}失败：$e';
       SnackTool.showMessage(context, message: message);
     });
-  }
-
-  // 导入本地路径
-  Future<void> importLocalPath() async {
-    final dir = await FilePicker.platform.getDirectoryPath(
-      lockParentWindow: true,
-      dialogTitle: '请选择flutter路径',
-      initialDirectory: localPathController.text,
-    );
-    if (dir == null) return;
-    localPathController.text = dir;
   }
 }

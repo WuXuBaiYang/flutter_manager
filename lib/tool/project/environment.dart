@@ -178,6 +178,13 @@ class EnvironmentTool {
     return result;
   }
 
+  // 获取默认的安装包目录
+  static Future<String?> getDefaultInstallPath(
+      EnvironmentPackage package) async {
+    final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
+    return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
+  }
+
   // 获取下载缓存目录
   static Future<String?> _getDownloadCachePath() => FileTool.getDirPath(
         join(Common.baseCachePath, _downloadCachePath),

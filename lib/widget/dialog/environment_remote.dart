@@ -4,11 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/environment_package.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote_list.dart';
-import 'package:flutter_manager/widget/loading.dart';
 import 'package:provider/provider.dart';
+
+import 'local_path.dart';
 
 /*
 * 环境导入弹窗-远程
@@ -49,6 +53,7 @@ class _EnvironmentRemoteImportDialogState
       builder: (context, _) {
         final currentStep =
             context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
+        final savePath = _provider.downloadInfo?.path;
         return AlertDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
           content: ConstrainedBox(
@@ -65,10 +70,8 @@ class _EnvironmentRemoteImportDialogState
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: currentStep >= 2
-                  ? () {
-                      ///
-                    }
+              onPressed: (currentStep >= 2 && savePath != null)
+                  ? () => _provider.import(context, savePath)
                   : null,
               child: const Text('导入'),
             ),
@@ -122,7 +125,29 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    return SizedBox();
+    final package = _provider.downloadInfo?.package;
+    if (package == null) return const Text('缺少必须参数');
+    return Form(
+      key: _provider.formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LocalPathTextFormField(
+            label: '安装路径',
+            hint: '请选择安装路径',
+            checkAvailable: false,
+            controller: _provider.localPathController,
+          ),
+          const SizedBox(height: 14),
+          Card(
+            child: ListTile(
+              title: Text('Flutter · ${package.version} · ${package.channel}'),
+              subtitle: Text(package.fileName),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -146,6 +171,12 @@ typedef DownloadInfoTuple = ({
 * @Time 2023/11/26 16:28
 */
 class EnvironmentRemoteImportDialogProvider extends BaseProvider {
+  // 表单key
+  final formKey = GlobalKey<FormState>();
+
+  // 输入框控制器
+  final localPathController = TextEditingController();
+
   // 当前步骤
   int _currentStep = 0;
 
@@ -193,10 +224,26 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 开始导入
   Future<void> startImport(EnvironmentPackage package, String filePath) async {
     _currentStep = 2;
+    localPathController.text =
+        await EnvironmentTool.getDefaultInstallPath(package) ?? '';
     _updateDownloadInfo(
       package: package,
       path: filePath,
     );
+  }
+
+  // 导入环境
+  Future<void> import(BuildContext context, String archiveFile) async {
+    if (!formKey.currentState!.validate()) return;
+    final path = localPathController.text;
+    final provider = context.read<EnvironmentProvider>();
+    final future = provider.importArchiveEnvironment(archiveFile, path);
+    Loading.show(context, loadFuture: future)?.then((_) {
+      Navigator.pop(context);
+    }).catchError((e) {
+      final message = '导入失败：$e';
+      SnackTool.showMessage(context, message: message);
+    });
   }
 
   // 更新下载信息

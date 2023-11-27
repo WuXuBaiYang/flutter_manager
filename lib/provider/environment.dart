@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -31,6 +32,16 @@ class EnvironmentProvider extends BaseProvider {
     result = await updateEnvironment(result);
     if (result == null) throw Exception('写入flutter信息失败');
     return result;
+  }
+
+  // 导入压缩包的环境变量
+  Future<Environment> importArchiveEnvironment(
+      String archiveFile, String savePath) async {
+    // await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
+    final dir = Directory(savePath);
+    final tmp = dir.listSync();
+    if (tmp.length <= 1) savePath = tmp.first.path;
+    return importEnvironment(savePath);
   }
 
   // 刷新环境变量

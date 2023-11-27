@@ -49,6 +49,7 @@ dependencies:
   package_info_plus: ^5.0.1
   dio: ^5.3.4
   file_picker: ^6.1.1
+  archive: ^3.4.9
 
 dev_dependencies:
   flutter_test:
