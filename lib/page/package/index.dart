@@ -23,7 +23,7 @@ class PackagePage extends BasePage {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('打包页'),
+        title: const Text('打包'),
       ),
     );
   }

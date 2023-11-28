@@ -8,9 +8,6 @@ import 'package:provider/provider.dart';
 * @Time 2023/11/28 11:18
 */
 class SettingItem extends StatelessWidget {
-  // 设置项下标
-  final int index;
-
   // 别名
   final String label;
 
@@ -21,8 +18,7 @@ class SettingItem extends StatelessWidget {
   final Widget? child;
 
   const SettingItem({
-    super.key,
-    required this.index,
+    required super.key,
     required this.label,
     this.child,
     this.content,
@@ -30,15 +26,15 @@ class SettingItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<SettingProvider, int?>(
-      selector: (_, provider) => provider.index,
-      builder: (_, index, __) {
+    return Selector<SettingProvider, Key?>(
+      selector: (_, provider) => provider.selectedKey,
+      builder: (_, key, __) {
         return ListTile(
           trailing: child,
           subtitle: content,
           title: Text(label),
+          selected: key == super.key,
           isThreeLine: content != null,
-          selected: index == this.index,
         );
       },
     );

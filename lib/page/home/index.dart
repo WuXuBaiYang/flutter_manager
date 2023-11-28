@@ -24,10 +24,8 @@ class HomePage extends BasePage {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.watch<HomePageProvider>();
-    context.watch<SettingProvider>().addListener(
-          provider.goToSettingsPage,
-        );
+    final provider = context.watch<HomePageProvider>()
+      ..registerSettingsJumper(context);
     return Scaffold(
       body: Row(
         children: [
@@ -125,7 +123,14 @@ class HomePageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 跳转到设置页
-  void goToSettingsPage() =>
-      setNavigationIndex(navigationRailPageList.length - 1);
+  // 注册监听回调
+  VoidCallback? _settingListener;
+
+  // 注册设置跳转监听
+  void registerSettingsJumper(BuildContext context) {
+    if (_settingListener != null) return;
+    context.read<SettingProvider>().addListener(_settingListener ??= () {
+          setNavigationIndex(navigationRailPageList.length - 1);
+        });
+  }
 }

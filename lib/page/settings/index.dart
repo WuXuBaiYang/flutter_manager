@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
+import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
@@ -28,11 +29,13 @@ class SettingsPage extends BasePage {
 
   @override
   Widget buildWidget(BuildContext context) {
+    context.read<SettingsPageProvider>().registerSettingsJumper(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
       ),
       body: SingleChildScrollView(
+        controller: context.read<SettingsPageProvider>().scrollController,
         child: Column(
           children: [
             _buildFlutterEnvironment(context),
@@ -47,9 +50,9 @@ class SettingsPage extends BasePage {
   // 构建Flutter环境设置项
   Widget _buildFlutterEnvironment(BuildContext context) {
     return SettingItem(
-      index: 0,
       label: 'Flutter环境',
       content: const EnvironmentList(),
+      key: context.read<SettingProvider>().environmentKey,
       child: PopupMenuButton(
         tooltip: '添加环境',
         icon: const Icon(Icons.add_circle_outline),
@@ -71,8 +74,8 @@ class SettingsPage extends BasePage {
   Widget _buildThemeMode(BuildContext context) {
     final provider = context.read<ThemeProvider>();
     return SettingItem(
-      index: 1,
       label: '配色模式',
+      key: context.read<SettingProvider>().themeModeKey,
       content: Text(provider.getBrightness(context).label),
       child: DropdownButton<ThemeMode>(
         value: provider.themeMode,
@@ -95,9 +98,9 @@ class SettingsPage extends BasePage {
     final provider = context.read<ThemeProvider>();
     final scheme = provider.getThemeSchemeModel(context);
     return SettingItem(
-      index: 2,
       label: '应用配色',
       content: Text(scheme.label),
+      key: context.read<SettingProvider>().themeSchemeKey,
       child: ThemeSchemeItem(
         size: 40,
         scheme: scheme,
@@ -120,4 +123,23 @@ class SettingsPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPageProvider extends ChangeNotifier {}
+class SettingsPageProvider extends ChangeNotifier {
+  // 注册监听回调
+  VoidCallback? _settingListener;
+
+  // 滚动控制器
+  final scrollController = ScrollController();
+
+  // 注册设置跳转监听
+  void registerSettingsJumper(BuildContext context) {
+    if (_settingListener != null) return;
+    // 注册设置跳转监听
+    context.read<SettingProvider>().addListener(_settingListener ??= () {
+          final key = context.read<SettingProvider>().selectedKey;
+          if (key != null) {
+            final context = key.currentContext;
+            if (context != null) Scrollable.ensureVisible(context);
+          }
+        });
+  }
+}

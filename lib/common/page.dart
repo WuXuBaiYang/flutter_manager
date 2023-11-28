@@ -37,20 +37,17 @@ abstract class BasePage extends StatelessWidget {
     return MultiProvider(
       providers: providers,
       builder: (context, _) {
-        return Consumer<ThemeProvider>(
-          builder: (_, provider, __) {
-            return Material(
-              child: primary
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildStatusBar(context, provider),
-                        Expanded(child: buildWidget(context)),
-                      ],
-                    )
-                  : buildWidget(context),
-            );
-          },
+        final provider = context.watch<ThemeProvider>();
+        return Material(
+          child: primary
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildStatusBar(context, provider),
+                    Expanded(child: buildWidget(context)),
+                  ],
+                )
+              : buildWidget(context),
         );
       },
     );
