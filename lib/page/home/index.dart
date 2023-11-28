@@ -4,6 +4,7 @@ import 'package:flutter_manager/page/knowledge/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
+import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -24,6 +25,9 @@ class HomePage extends BasePage {
   @override
   Widget buildWidget(BuildContext context) {
     final provider = context.watch<HomePageProvider>();
+    context.watch<SettingProvider>().addListener(
+          provider.goToSettingsPage,
+        );
     return Scaffold(
       body: Row(
         children: [
@@ -120,4 +124,8 @@ class HomePageProvider extends ChangeNotifier {
     _navigationIndex = index;
     notifyListeners();
   }
+
+  // 跳转到设置页
+  void goToSettingsPage() =>
+      setNavigationIndex(navigationRailPageList.length - 1);
 }

@@ -17,6 +17,9 @@ class EnvironmentProvider extends BaseProvider {
   // 获取环境变量集合
   List<Environment> get environments => _environments ?? [];
 
+  // 判断是否存在环境信息
+  bool get hasEnvironment => environments.isNotEmpty;
+
   EnvironmentProvider() {
     initialize();
   }

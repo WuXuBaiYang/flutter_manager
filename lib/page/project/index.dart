@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:provider/provider.dart';
@@ -38,7 +40,20 @@ class ProjectPage extends BasePage {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () => ProjectImportDialog.show(context),
+        onPressed: () {
+          if (context.read<EnvironmentProvider>().hasEnvironment) {
+            ProjectImportDialog.show(context);
+          } else {
+            SnackTool.showMessage(
+              context,
+              message: '缺少Flutter环境',
+              action: SnackBarAction(
+                label: '去设置',
+                onPressed: context.read<SettingProvider>().goEnvironmentAdd,
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -60,7 +75,8 @@ class ProjectPage extends BasePage {
               onDelete: provider.remove,
               onReorder: provider.reorder,
               onPinned: provider.togglePinned,
-              onEdit: (item) => ProjectImportDialog.show(context, project: item),
+              onEdit: (item) =>
+                  ProjectImportDialog.show(context, project: item),
               onDetail: (item) {
                 /// TODO: 跳转项目详情页
               },
