@@ -49,7 +49,7 @@ class ProjectPage extends BasePage {
               message: '缺少Flutter环境',
               action: SnackBarAction(
                 label: '去设置',
-                onPressed: context.read<SettingProvider>().goEnvironmentAdd,
+                onPressed: context.read<SettingProvider>().goEnvironment,
               ),
             );
           }

@@ -6,6 +6,7 @@ import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
+import 'package:flutter_manager/widget/setting_item.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -45,10 +46,11 @@ class SettingsPage extends BasePage {
 
   // 构建Flutter环境设置项
   Widget _buildFlutterEnvironment(BuildContext context) {
-    return ListTile(
-      isThreeLine: true,
-      title: const Text('Flutter环境'),
-      trailing: PopupMenuButton(
+    return SettingItem(
+      index: 0,
+      label: 'Flutter环境',
+      content: const EnvironmentList(),
+      child: PopupMenuButton(
         tooltip: '添加环境',
         icon: const Icon(Icons.add_circle_outline),
         itemBuilder: (_) => [
@@ -63,17 +65,17 @@ class SettingsPage extends BasePage {
         ],
         onSelected: (_) {},
       ),
-      subtitle: const EnvironmentList(),
     );
   }
 
   // 构建主题模式设置项
   Widget _buildThemeMode(BuildContext context) {
     final provider = context.read<ThemeProvider>();
-    return ListTile(
-      title: const Text('配色模式'),
-      subtitle: Text(provider.getBrightness(context).label),
-      trailing: DropdownButton<ThemeMode>(
+    return SettingItem(
+      index: 1,
+      label: '配色模式',
+      content: Text(provider.getBrightness(context).label),
+      child: DropdownButton<ThemeMode>(
         value: provider.themeMode,
         items: ThemeMode.values
             .map((mode) => DropdownMenuItem(
@@ -93,10 +95,11 @@ class SettingsPage extends BasePage {
   Widget _buildThemeScheme(BuildContext context) {
     final provider = context.read<ThemeProvider>();
     final scheme = provider.getThemeSchemeModel(context);
-    return ListTile(
-      title: const Text('应用配色'),
-      subtitle: Text(scheme.label),
-      trailing: ThemeSchemeItem(
+    return SettingItem(
+      index: 2,
+      label: '应用配色',
+      content: Text(scheme.label),
+      child: ThemeSchemeItem(
         size: 40,
         scheme: scheme,
         isSelected: true,
@@ -110,6 +113,23 @@ class SettingsPage extends BasePage {
         }),
       ),
     );
+    // return ListTile(
+    //   title: const Text('应用配色'),
+    //   subtitle: Text(scheme.label),
+    //   trailing: ThemeSchemeItem(
+    //     size: 40,
+    //     scheme: scheme,
+    //     isSelected: true,
+    //     tooltip: '更换配色',
+    //     onPressed: () => ThemeSchemeDialog.show(
+    //       context,
+    //       schemes: provider.getThemeSchemeList(context),
+    //       current: provider.getThemeSchemeModel(context),
+    //     ).then((value) {
+    //       if (value != null) provider.changeThemeScheme(context, value);
+    //     }),
+    //   ),
+    // );
   }
 }
 

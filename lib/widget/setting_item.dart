@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 /*
 * 设置项子项
@@ -10,37 +9,38 @@ import 'package:shimmer/shimmer.dart';
 */
 class SettingItem extends StatelessWidget {
   // 设置项下标
-  final SettingIndexTuple indexTuple;
+  final int index;
+
+  // 别名
+  final String label;
+
+  // 内容体
+  final Widget? content;
 
   // 子元素
-  final Widget child;
+  final Widget? child;
 
   const SettingItem({
     super.key,
-    required this.indexTuple,
-    required this.child,
+    required this.index,
+    required this.label,
+    this.child,
+    this.content,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Selector<SettingProvider, SettingIndexTuple?>(
-      selector: (_, provider) => provider.indexTuple,
-      builder: (_, tuple, __) {
-        return Shimmer.fromColors(
-          enabled: _enabledShimmer(tuple),
-          baseColor: Theme.of(context).primaryColor,
-          highlightColor: Theme.of(context).highlightColor,
-          period: context.read<SettingProvider>().clearDelay,
-          child: child,
+    return Selector<SettingProvider, int?>(
+      selector: (_, provider) => provider.index,
+      builder: (_, index, __) {
+        return ListTile(
+          trailing: child,
+          subtitle: content,
+          title: Text(label),
+          isThreeLine: content != null,
+          selected: index == this.index,
         );
       },
     );
-  }
-
-  // 验证是否选中
-  bool _enabledShimmer(SettingIndexTuple? tuple) {
-    if (tuple == null) return false;
-    return tuple.index == indexTuple.index &&
-        tuple.subIndexs.any(indexTuple.subIndexs.contains);
   }
 }
