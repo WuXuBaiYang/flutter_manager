@@ -26,13 +26,17 @@ class ThemeSchemeModel extends BaseModel {
       : primary = schemeColor.primary,
         secondary = schemeColor.secondary;
 
+  // 主题对比
   @override
-  operator ==(Object other) =>
+  bool operator ==(Object other) =>
       identical(this, other) ||
       other is ThemeSchemeModel &&
           runtimeType == other.runtimeType &&
-          scheme == other.scheme;
+          scheme == other.scheme &&
+          primary == other.primary &&
+          secondary == other.secondary;
 
+  // 主题哈希值
   @override
-  int get hashCode => scheme.hashCode;
+  int get hashCode => scheme.hashCode ^ primary.hashCode ^ secondary.hashCode;
 }

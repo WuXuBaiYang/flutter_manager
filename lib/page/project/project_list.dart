@@ -1,10 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/widget/custom_context_menu_region.dart';
 import 'package:flutter_manager/widget/image.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
+
+// 重排序回调
+typedef ProjectReorderCallback = void Function(Project item, int newIndex);
 
 /*
 * 项目网格视图
@@ -27,6 +30,9 @@ class ProjectGridView extends StatelessWidget {
   // 跳转详情页
   final ValueChanged<Project>? onDetail;
 
+  // 位置改变回调
+  final ProjectReorderCallback? onReorder;
+
   const ProjectGridView({
     super.key,
     required this.projects,
@@ -34,31 +40,17 @@ class ProjectGridView extends StatelessWidget {
     this.onPinned,
     this.onDelete,
     this.onDetail,
+    this.onReorder,
   });
 
   // 构建网格代理
   SliverGridDelegate get _gridDelegate =>
       const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 400,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
         mainAxisExtent: 85,
       );
-
-  @override
-  Widget build(BuildContext context) {
-    return ReorderableGridView.builder(
-      shrinkWrap: true,
-      itemCount: projects.length,
-      gridDelegate: _gridDelegate,
-      padding: const EdgeInsets.all(14),
-      onReorder: (oldIndex, newIndex) {},
-      itemBuilder: (_, i) {
-        final item = projects[i];
-        return _buildProjectItem(context, item);
-      },
-    );
-  }
 
   // 右键菜单
   ContextMenu get _contextMenu => ContextMenu(entries: [
@@ -67,6 +59,28 @@ class ProjectGridView extends StatelessWidget {
         MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
       ]);
 
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableGridView.builder(
+      shrinkWrap: true,
+      onReorder: (oldIndex, newIndex) => onReorder?.call(
+        projects[oldIndex],
+        newIndex,
+      ),
+      itemCount: projects.length,
+      gridDelegate: _gridDelegate,
+      padding: const EdgeInsets.all(14),
+      dragWidgetBuilderV2: DragWidgetBuilderV2(
+        isScreenshotDragWidget: false,
+        builder: (_, child, __) => child,
+      ),
+      itemBuilder: (_, i) {
+        final item = projects[i];
+        return _buildProjectItem(context, item);
+      },
+    );
+  }
+
   // 构建项目子项
   Widget _buildProjectItem(BuildContext context, Project item) {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
@@ -74,7 +88,8 @@ class ProjectGridView extends StatelessWidget {
     bodyStyle = bodyStyle?.copyWith(color: color);
     final borderRadius = BorderRadius.circular(4);
     const contentPadding = EdgeInsets.symmetric(horizontal: 14);
-    return ContextMenuRegion(
+    return CustomContextMenuRegion(
+      key: ValueKey(item.id),
       contextMenu: _contextMenu,
       onItemSelected: (c) => c?.call(item),
       child: Card(

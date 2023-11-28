@@ -67,8 +67,9 @@ class ProjectPage extends BasePage {
       builder: (_, projects, __) {
         return ProjectGridView(
           projects: projects,
-          onPinned: (item) => provider.pinned(item),
-          onDelete: (item) => provider.remove(item),
+          onPinned: provider.pinned,
+          onDelete: provider.remove,
+          onReorder: provider.reorder,
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) {
             /// TODO: 跳转项目详情页

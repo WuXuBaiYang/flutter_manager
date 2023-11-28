@@ -95,3 +95,11 @@ String md5(String value) => crypto.md5.convert(utf8.encode(value)).toString();
 
 // 区间计算
 T range<T extends num>(T value, T begin, T end) => max(begin, min(end, value));
+
+// 交换集合中两个位置的元素
+List<T> swap<T>(List<T> list, int oldIndex, int newIndex) {
+  if (oldIndex == newIndex) return list;
+  final T item = list.removeAt(oldIndex);
+  list.insert(newIndex, item);
+  return list;
+}

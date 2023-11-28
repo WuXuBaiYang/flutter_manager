@@ -34,7 +34,7 @@ class ProjectProvider extends BaseProvider {
     notifyListeners();
   }
 
-  // 添加项目信息
+  // 添加/编辑项目信息
   Future<Project?> update(Project item) async {
     dynamic cacheFile = item.logo;
     if (File(item.logo).existsSync()) {
@@ -59,5 +59,11 @@ class ProjectProvider extends BaseProvider {
   Future<void> remove(Project project) async {
     await database.removeProject(project.id);
     return initialize();
+  }
+
+  // 项目重排序
+  Future<void> reorder(Project item, int newIndex) async {
+    await database.reorderProject(item, newIndex);
+    await initialize();
   }
 }

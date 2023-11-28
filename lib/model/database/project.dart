@@ -36,5 +36,39 @@ class Project {
   DateTime updateAt = DateTime.now();
 
   // 获取颜色
-  Color getColor([double opacity = 1]) => Color(color).withOpacity(opacity);
+  Color getColor([double opacity = 1]) {
+    if (color == Colors.transparent.value) return Colors.transparent;
+    return Color(color).withOpacity(opacity);
+  }
+
+  // 项目对比
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Project &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          label == other.label &&
+          logo == other.logo &&
+          path == other.path &&
+          envId == other.envId &&
+          color == other.color &&
+          pinned == other.pinned &&
+          order == other.order &&
+          createAt == other.createAt &&
+          updateAt == other.updateAt;
+
+  // 项目hash
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      label.hashCode ^
+      logo.hashCode ^
+      path.hashCode ^
+      envId.hashCode ^
+      color.hashCode ^
+      pinned.hashCode ^
+      order.hashCode ^
+      createAt.hashCode ^
+      updateAt.hashCode;
 }

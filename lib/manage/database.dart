@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/manage.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:isar/isar.dart';
 
 /*
@@ -54,6 +55,25 @@ class DatabaseManage extends BaseManage {
       return isar.projects.put(item..order = length).then(
             (id) => item..id = id,
           );
+    });
+  }
+
+  // 更新项目排序
+  Future<void> reorderProject(Project item, int newOrder) {
+    // 根据pinned取出全部项目
+    var projects = isar.projects
+        .where()
+        .filter()
+        .pinnedEqualTo(item.pinned)
+        .sortByOrderDesc()
+        .findAllSync();
+    final length = projects.length;
+    return isar.writeTxn<void>(() {
+      // 交换目标项目的位置并重新设置order
+      projects = swap(projects, projects.indexOf(item), newOrder);
+      projects.asMap().forEach((i, e) => e.order = length - i);
+      // 批量更新
+      return isar.projects.putAll(projects);
     });
   }
 

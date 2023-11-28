@@ -50,4 +50,33 @@ class Environment {
         frameworkReversion = obj['frameworkReversion'] ?? '',
         engineReversion = obj['engineReversion'] ?? '',
         updatedAt = obj['updatedAt'] ?? '';
+
+  // 环境对比
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Environment &&
+          runtimeType == other.runtimeType &&
+          path == other.path &&
+          channel == other.channel &&
+          gitUrl == other.gitUrl &&
+          version == other.version &&
+          dartVersion == other.dartVersion &&
+          devToolsVersion == other.devToolsVersion &&
+          frameworkReversion == other.frameworkReversion &&
+          engineReversion == other.engineReversion &&
+          updatedAt == other.updatedAt;
+
+  // 环境哈希值
+  @override
+  int get hashCode =>
+      path.hashCode ^
+      channel.hashCode ^
+      gitUrl.hashCode ^
+      version.hashCode ^
+      dartVersion.hashCode ^
+      devToolsVersion.hashCode ^
+      frameworkReversion.hashCode ^
+      engineReversion.hashCode ^
+      updatedAt.hashCode;
 }
