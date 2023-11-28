@@ -35,7 +35,7 @@ class Environment {
   String updatedAt = '';
 
   // 排序
-  int order = 0;
+  int order = -1;
 
   Environment();
 

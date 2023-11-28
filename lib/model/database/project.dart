@@ -18,7 +18,7 @@ class Project {
   String path = '';
 
   // 环境id
-  int envId = 0;
+  int envId = -1;
 
   // 项目颜色
   int color = Colors.transparent.value;
@@ -27,7 +27,7 @@ class Project {
   bool pinned = false;
 
   // 项目排序
-  int order = 0;
+  int order = -1;
 
   // 创建时间
   DateTime createAt = DateTime.now();

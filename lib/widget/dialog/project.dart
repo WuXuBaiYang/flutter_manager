@@ -295,7 +295,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
         _color = Color(item?.color ?? Colors.transparent.value),
         pathController = TextEditingController(text: item?.path),
         labelController = TextEditingController(text: item?.label) {
-    if (item != null) {
+    if (item != null && item.envId >= 0) {
       database.getEnvironmentById(item.envId).then((env) {
         environmentUpdate(env);
       });

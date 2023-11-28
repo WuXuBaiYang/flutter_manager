@@ -5,11 +5,13 @@ import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:desktop_drop/desktop_drop.dart';
 
 /*
 * 项目页
@@ -33,37 +35,31 @@ class ProjectPage extends BasePage {
       appBar: AppBar(
         title: const Text('项目'),
       ),
-      body: Selector<ProjectProvider, bool>(
-        selector: (_, provider) => provider.hasProject,
-        builder: (_, hasProject, __) {
-          return EmptyBoxView(
-            isEmpty: !hasProject,
-            hint: '添加项目或\n拖拽项目放在这里',
-            child: Column(
-              children: [
-                _buildPinnedProjects(context),
-                Expanded(child: _buildProjects(context)),
-              ],
-            ),
-          );
+      body: DropTarget(
+        onDragDone: (details) {
+          context.read<ProjectPageProvider>().addNewDropProject(
+              context, details.files.map((e) => e.path).toList());
         },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          if (context.read<EnvironmentProvider>().hasEnvironment) {
-            ProjectImportDialog.show(context);
-          } else {
-            SnackTool.showMessage(
-              context,
-              message: '缺少Flutter环境',
-              action: SnackBarAction(
-                label: '去设置',
-                onPressed: context.read<SettingProvider>().goEnvironment,
+        child: Selector<ProjectProvider, bool>(
+          selector: (_, provider) => provider.hasProject,
+          builder: (_, hasProject, __) {
+            return EmptyBoxView(
+              isEmpty: !hasProject,
+              hint: '添加项目或\n拖拽项目放在这里',
+              child: Column(
+                children: [
+                  _buildPinnedProjects(context),
+                  Expanded(child: _buildProjects(context)),
+                ],
               ),
             );
-          }
-        },
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () =>
+            context.read<ProjectPageProvider>().addNewProject(context),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -142,5 +138,43 @@ class ProjectPageProvider extends ChangeNotifier {
         onPressed: () => provider.update(item),
       ),
     );
+  }
+
+  // 添加新项目
+  void addNewProject(BuildContext context, {Project? project}) {
+    if (context.read<EnvironmentProvider>().hasEnvironment) {
+      ProjectImportDialog.show(context, project: project);
+    } else {
+      SnackTool.showMessage(
+        context,
+        message: '缺少Flutter环境',
+        action: SnackBarAction(
+          label: '去设置',
+          onPressed: context.read<SettingProvider>().goEnvironment,
+        ),
+      );
+    }
+  }
+
+  // 添加新的拖拽项目
+  Future<void> addNewDropProject(
+      BuildContext context, List<String> paths) async {
+    if (paths.isEmpty) return;
+    if (paths.length == 1) {
+      final path = paths.first;
+      // 验证路径是否有效
+      if (!ProjectTool.isPathAvailable(path)) {
+        SnackTool.showMessage(context, message: '无效的项目路径!');
+        return;
+      }
+      return addNewProject(
+        context,
+        project: Project()
+          ..path = path
+          ..label = await ProjectTool.getProjectName(path) ?? ''
+          ..logo = await ProjectTool.getProjectLogo(path) ?? '',
+      );
+    }
+    SnackTool.showMessage(context, message: '请勿同时拖入多个项目!');
   }
 }

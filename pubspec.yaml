@@ -44,7 +44,6 @@ dependencies:
   flex_color_scheme: ^7.3.1
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
-  desktop_drop: ^0.4.4
   window_manager: ^0.3.7
   package_info_plus: ^5.0.1
   dio: ^5.3.4
@@ -52,6 +51,7 @@ dependencies:
   archive: ^3.4.9
   flutter_context_menu: ^0.1.3
   reorderable_grid_view: ^2.2.8
+  desktop_drop: ^0.4.4
 
 dev_dependencies:
   flutter_test:
