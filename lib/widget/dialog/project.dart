@@ -348,6 +348,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
             ..label = labelController.text
             ..path = pathController.text
             ..logo = _logoPath ?? ''
+            ..envId = _environment?.id ?? 0
             ..color = color.value
             ..pinned = pinned,
         ))?.then((result) {
