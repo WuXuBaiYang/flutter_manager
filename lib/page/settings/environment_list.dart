@@ -40,10 +40,10 @@ class EnvironmentList extends StatelessWidget {
               shrinkWrap: true,
               itemCount: environments.length,
               buildDefaultDragHandles: false,
-              proxyDecorator: (child, __, ___) => Card(
-                margin: EdgeInsets.zero,
-                child: child,
-              ),
+              proxyDecorator: (_, index, ___) {
+                final item = environments[index];
+                return _buildFlutterEnvironmentListItemProxy(item);
+              },
               onReorder: context.read<EnvironmentProvider>().reorder,
               itemBuilder: (_, index) {
                 final item = environments[index];
@@ -108,6 +108,18 @@ class EnvironmentList extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // 构建Flutter环境列表项代理
+  Widget _buildFlutterEnvironmentListItemProxy(Environment item) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: ListTile(
+        title: Text(item.title),
+        subtitle: Text(item.path),
+        trailing: const Icon(Icons.drag_handle),
       ),
     );
   }
