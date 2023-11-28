@@ -42,12 +42,12 @@ class EnvironmentList extends StatelessWidget {
               buildDefaultDragHandles: false,
               proxyDecorator: (_, index, ___) {
                 final item = environments[index];
-                return _buildFlutterEnvironmentListItemProxy(item);
+                return _buildEnvironmentListItemProxy(item);
               },
               onReorder: context.read<EnvironmentProvider>().reorder,
               itemBuilder: (_, index) {
                 final item = environments[index];
-                return _buildFlutterEnvironmentListItem(context, item, index);
+                return _buildEnvironmentListItem(context, item, index);
               },
             );
           },
@@ -57,7 +57,7 @@ class EnvironmentList extends StatelessWidget {
   }
 
   // 构建Flutter环境列表项
-  Widget _buildFlutterEnvironmentListItem(
+  Widget _buildEnvironmentListItem(
       BuildContext context, Environment item, int index) {
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Dismissible(
@@ -113,7 +113,7 @@ class EnvironmentList extends StatelessWidget {
   }
 
   // 构建Flutter环境列表项代理
-  Widget _buildFlutterEnvironmentListItemProxy(Environment item) {
+  Widget _buildEnvironmentListItemProxy(Environment item) {
     return Card(
       margin: EdgeInsets.zero,
       child: ListTile(
