@@ -1,4 +1,8 @@
+import 'dart:async';
 import 'package:flutter_manager/common/provider.dart';
+
+// 设置项下标元组
+typedef SettingIndexTuple = ({int? index, List<int> subIndexs});
 
 /*
 * 设置提供者
@@ -6,29 +10,32 @@ import 'package:flutter_manager/common/provider.dart';
 * @Time 2023/11/28 10:54
 */
 class SettingProvider extends BaseProvider {
-  // 设置项的指定位置
-  int? _index;
+  // 事件销毁延迟
+  final Duration clearDelay = const Duration(milliseconds: 800);
 
-  // 获取设置项的指定位置
-  int? get index => _index;
+  // 选中的设置项下标元组
+  SettingIndexTuple? _indexTuple;
 
-  // 设置项子项位置
-  int? _subIndex;
-
-  // 获取设置项子项位置
-  int? get subIndex => _subIndex;
+  // 获取选中的设置项下标元组
+  SettingIndexTuple? get indexTuple => _indexTuple;
 
   // 跳转到flutter环境设置
-  void goEnvironmentAdd() {
-    _index = 0;
-    _subIndex = 1;
+  void goEnvironmentAdd() => goSetting((index: 0, subIndexs: [1]));
+
+  // 跳转到指定设置项
+  void goSetting(SettingIndexTuple indexTuple) {
+    _indexTuple = indexTuple;
+    // 一定时间后销毁此次事件
+    Timer.periodic(clearDelay, (t) {
+      clear();
+      t.cancel();
+    });
     notifyListeners();
   }
 
   // 清除设置项
   void clear() {
-    _index = null;
-    _subIndex = null;
+    _indexTuple = null;
     notifyListeners();
   }
 }
