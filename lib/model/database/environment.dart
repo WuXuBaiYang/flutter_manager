@@ -34,6 +34,9 @@ class Environment {
   // 更新时间
   String updatedAt = '';
 
+  // 排序
+  int order = 0;
+
   Environment();
 
   // 获取环境信息标题
@@ -49,7 +52,8 @@ class Environment {
         devToolsVersion = obj['devToolsVersion'] ?? '',
         frameworkReversion = obj['frameworkReversion'] ?? '',
         engineReversion = obj['engineReversion'] ?? '',
-        updatedAt = obj['updatedAt'] ?? '';
+        updatedAt = obj['updatedAt'] ?? '',
+        order = obj['order'] ?? 0;
 
   // 环境对比
   @override
@@ -65,9 +69,11 @@ class Environment {
           devToolsVersion == other.devToolsVersion &&
           frameworkReversion == other.frameworkReversion &&
           engineReversion == other.engineReversion &&
-          updatedAt == other.updatedAt;
+          updatedAt == other.updatedAt &&
+          order == other.order;
 
   // 环境哈希值
+  @ignore
   @override
   int get hashCode =>
       path.hashCode ^
@@ -78,5 +84,6 @@ class Environment {
       devToolsVersion.hashCode ^
       frameworkReversion.hashCode ^
       engineReversion.hashCode ^
-      updatedAt.hashCode;
+      updatedAt.hashCode ^
+      order.hashCode;
 }

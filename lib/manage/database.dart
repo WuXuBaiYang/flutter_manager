@@ -63,7 +63,6 @@ class DatabaseManage extends BaseManage {
 
   // 更新项目排序
   Future<void> reorderProject(Project item, int newOrder) {
-    // 根据pinned取出全部项目
     var projects = isar.projects
         .where()
         .filter()
@@ -72,10 +71,8 @@ class DatabaseManage extends BaseManage {
         .findAllSync();
     final length = projects.length;
     return isar.writeTxn<void>(() {
-      // 交换目标项目的位置并重新设置order
       projects = swap(projects, projects.indexOf(item), newOrder);
       projects.asMap().forEach((i, e) => e.order = length - i);
-      // 批量更新
       return isar.projects.putAll(projects);
     });
   }
@@ -93,12 +90,28 @@ class DatabaseManage extends BaseManage {
       isar.environments.where().findAll();
 
   // 添加/更新环境
-  Future<Environment?> updateEnvironment(Environment item) =>
-      isar.writeTxn<Environment?>(() {
-        return isar.environments.put(item).then(
-              (id) => item..id = id,
-            );
-      });
+  Future<Environment?> updateEnvironment(Environment item) {
+    final length = isar.environments.where().findAllSync().length;
+    return isar.writeTxn<Environment?>(() {
+      return isar.environments.put(item..order = length).then(
+            (id) => item..id = id,
+          );
+    });
+  }
+
+  // 更新环境排序
+  Future<void> reorderEnvironment(Environment item, int newOrder) {
+    // 取出全部环境
+    var environments = isar.environments.where().findAllSync();
+    final length = environments.length;
+    return isar.writeTxn<void>(() {
+      // 交换目标环境的位置并重新设置order
+      environments = swap(environments, environments.indexOf(item), newOrder);
+      environments.asMap().forEach((i, e) => e.order = i);
+      // 批量更新
+      return isar.environments.putAll(environments);
+    });
+  }
 
   // 移除环境
   Future<bool> removeEnvironment(Id id) =>

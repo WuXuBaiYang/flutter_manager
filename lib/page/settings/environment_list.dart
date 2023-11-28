@@ -36,10 +36,13 @@ class EnvironmentList extends StatelessWidget {
                 child: Text('暂无环境'),
               );
             }
-            return ListView.separated(
+            return ReorderableListView.builder(
               shrinkWrap: true,
               itemCount: environments.length,
-              separatorBuilder: (_, __) => const Divider(),
+              buildDefaultDragHandles: false,
+              onReorder: (oldIndex, newIndex) => context
+                  .read<EnvironmentProvider>()
+                  .reorder(environments[oldIndex], newIndex),
               itemBuilder: (_, index) {
                 final item = environments[index];
                 return _buildFlutterEnvironmentListItem(context, item);
@@ -95,6 +98,11 @@ class EnvironmentList extends StatelessWidget {
               tooltip: '刷新环境',
               icon: const Icon(Icons.refresh),
               onPressed: () => _refreshEnvironment(context, item),
+            ),
+            const SizedBox(width: 8),
+            ReorderableDragStartListener(
+              index: item.order,
+              child: const Icon(Icons.drag_handle),
             ),
           ],
         ),

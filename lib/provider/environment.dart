@@ -81,4 +81,10 @@ class EnvironmentProvider extends BaseProvider {
     final label = result.first.label;
     return '${length > 1 ? '$label 等 ${length - 1} 个' : label}项目正在依赖该环境，无法移除';
   }
+
+  // 环境重排序
+  Future<void> reorder(Environment item, int newIndex) async {
+    await database.reorderEnvironment(item, newIndex);
+    await initialize();
+  }
 }

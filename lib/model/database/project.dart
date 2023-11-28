@@ -59,6 +59,7 @@ class Project {
           updateAt == other.updateAt;
 
   // 项目hash
+  @ignore
   @override
   int get hashCode =>
       id.hashCode ^
