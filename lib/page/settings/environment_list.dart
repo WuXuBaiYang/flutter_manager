@@ -40,6 +40,10 @@ class EnvironmentList extends StatelessWidget {
               shrinkWrap: true,
               itemCount: environments.length,
               buildDefaultDragHandles: false,
+              proxyDecorator: (child, __, ___) => Card(
+                margin: EdgeInsets.zero,
+                child: child,
+              ),
               onReorder: (oldIndex, newIndex) => context
                   .read<EnvironmentProvider>()
                   .reorder(environments[oldIndex], newIndex),
