@@ -68,11 +68,13 @@ class ProjectPage extends BasePage {
         return Card(
           child: ConstrainedBox(
             constraints: BoxConstraints.loose(
-              const Size.fromHeight(200),
+              const Size.fromHeight(190),
             ),
             child: ProjectGridView(
               projects: pinnedProjects,
-              onDelete: provider.remove,
+              onDelete: (item) => context
+                  .read<ProjectPageProvider>()
+                  .removeProject(context, item),
               onReorder: provider.reorder,
               onPinned: provider.togglePinned,
               onEdit: (item) =>
@@ -95,9 +97,10 @@ class ProjectPage extends BasePage {
       builder: (_, projects, __) {
         return ProjectGridView(
           projects: projects,
-          onDelete: provider.remove,
           onReorder: provider.reorder,
           onPinned: provider.togglePinned,
+          onDelete: (item) =>
+              context.read<ProjectPageProvider>().removeProject(context, item),
           padding: const EdgeInsets.all(14).copyWith(
             bottom: kToolbarHeight + 24,
           ),
@@ -116,4 +119,17 @@ class ProjectPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPageProvider extends ChangeNotifier {}
+class ProjectPageProvider extends ChangeNotifier {
+  // 移除项目
+  void removeProject(BuildContext context, Project item) {
+    final provider = context.read<ProjectProvider>()..remove(item);
+    SnackTool.showMessage(
+      context,
+      message: '${item.label} 项目已移除',
+      action: SnackBarAction(
+        label: '撤销',
+        onPressed: () => provider.update(item),
+      ),
+    );
+  }
+}

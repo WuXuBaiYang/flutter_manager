@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/model/database/project.dart';
@@ -9,6 +8,9 @@ import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 // 重排序回调
 typedef ProjectReorderCallback = void Function(Project item, int newIndex);
+
+// 确认删除回调
+typedef ProjectConfirmDismissCallback = Future<bool?> Function(Project item);
 
 /*
 * 项目网格视图
@@ -34,6 +36,9 @@ class ProjectGridView extends StatelessWidget {
   // 位置改变回调
   final ProjectReorderCallback? onReorder;
 
+  // 确认删除回调
+  final ProjectConfirmDismissCallback? confirmDismiss;
+
   // 内间距
   final EdgeInsetsGeometry padding;
 
@@ -45,6 +50,7 @@ class ProjectGridView extends StatelessWidget {
     this.onDelete,
     this.onDetail,
     this.onReorder,
+    this.confirmDismiss,
     this.padding = const EdgeInsets.all(14),
   });
 
@@ -54,7 +60,7 @@ class ProjectGridView extends StatelessWidget {
         maxCrossAxisExtent: 400,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        mainAxisExtent: 85,
+        mainAxisExtent: 80,
       );
 
   // 右键菜单
@@ -99,35 +105,47 @@ class ProjectGridView extends StatelessWidget {
       onItemSelected: (c) => c?.call(item),
       child: Card(
         elevation: item.pinned ? 5 : null,
-        child: Container(
-          color: item.getColor(0.2),
-          child: ListTile(
-            contentPadding: contentPadding,
-            title: Text(
-              item.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            subtitle: Text(
-              item.path,
-              maxLines: 2,
-              style: bodyStyle,
-              overflow: TextOverflow.ellipsis,
-            ),
-            leading: ImageView.file(
-              File(item.logo),
-              size: 45,
-              borderRadius: borderRadius,
-            ),
-            trailing: Transform.rotate(
-              angle: item.pinned ? 45 : 0,
-              child: IconButton(
-                iconSize: 18,
-                icon: const Icon(Icons.push_pin_outlined),
-                onPressed: () => onPinned?.call(item),
+        child: Dismissible(
+          key: ValueKey(item.id),
+          direction: DismissDirection.endToStart,
+          onDismissed: (_) => onDelete?.call(item),
+          confirmDismiss: (_) => confirmDismiss?.call(item) ?? Future.value(true),
+          background: Container(
+            color: Colors.redAccent,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 14),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          child: Container(
+            color: item.getColor(0.2),
+            child: ListTile(
+              contentPadding: contentPadding,
+              title: Text(
+                item.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
+              subtitle: Text(
+                item.path,
+                maxLines: 2,
+                style: bodyStyle,
+                overflow: TextOverflow.ellipsis,
+              ),
+              leading: ImageView.file(
+                File(item.logo),
+                size: 45,
+                borderRadius: borderRadius,
+              ),
+              trailing: Transform.rotate(
+                angle: item.pinned ? 45 : 0,
+                child: IconButton(
+                  iconSize: 18,
+                  icon: const Icon(Icons.push_pin_outlined),
+                  onPressed: () => onPinned?.call(item),
+                ),
+              ),
+              onTap: () => onDetail?.call(item),
             ),
-            onTap: () => onDetail?.call(item),
           ),
         ),
       ),
