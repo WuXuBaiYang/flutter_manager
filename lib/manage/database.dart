@@ -34,6 +34,10 @@ class DatabaseManage extends BaseManage {
     );
   }
 
+  // 根据环境id获取项目列表
+  Future<List<Project>> getProjectsByEnvironmentId(Id id) =>
+      isar.projects.where().filter().envIdEqualTo(id).findAll();
+
   // 获取项目列表
   Future<List<Project>> getProjectList([bool pinned = false]) => isar.projects
       .where()

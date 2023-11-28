@@ -63,7 +63,6 @@ class SettingsPage extends BasePage {
             onTap: () => EnvironmentRemoteImportDialog.show(context),
           ),
         ],
-        onSelected: (_) {},
       ),
     );
   }
@@ -113,23 +112,6 @@ class SettingsPage extends BasePage {
         }),
       ),
     );
-    // return ListTile(
-    //   title: const Text('应用配色'),
-    //   subtitle: Text(scheme.label),
-    //   trailing: ThemeSchemeItem(
-    //     size: 40,
-    //     scheme: scheme,
-    //     isSelected: true,
-    //     tooltip: '更换配色',
-    //     onPressed: () => ThemeSchemeDialog.show(
-    //       context,
-    //       schemes: provider.getThemeSchemeList(context),
-    //       current: provider.getThemeSchemeModel(context),
-    //     ).then((value) {
-    //       if (value != null) provider.changeThemeScheme(context, value);
-    //     }),
-    //   ),
-    // );
   }
 }
 

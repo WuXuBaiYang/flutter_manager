@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:archive/archive_io.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -70,5 +71,14 @@ class EnvironmentProvider extends BaseProvider {
     final result = await database.removeEnvironment(item.id);
     await initialize();
     return result;
+  }
+
+  // 验证是否可移除环境变量
+  Future<String?> removeValidator(Environment item) async {
+    final result = await database.getProjectsByEnvironmentId(item.id);
+    if (result.isEmpty) return null;
+    final length = result.length;
+    final label = result.first.label;
+    return '${length > 1 ? '$label 等 $length 个' : label}项目正在依赖该环境，无法移除';
   }
 }

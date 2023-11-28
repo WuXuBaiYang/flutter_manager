@@ -116,10 +116,14 @@ class EnvironmentList extends StatelessWidget {
   }
 
   // 环境移除确认
-  Future<bool> _confirmDismiss(BuildContext context, Environment item) async {
-    /// TODO: 环境移除确认,验证是否有项目依赖该文件
-    return true;
-  }
+  Future<bool> _confirmDismiss(BuildContext context, Environment item) =>
+      context.read<EnvironmentProvider>().removeValidator(item).then(
+        (result) {
+          final canRemove = result == null;
+          if (!canRemove) SnackTool.showMessage(context, message: result);
+          return canRemove;
+        },
+      );
 
   // 刷新环境
   void _refreshEnvironment(BuildContext context, Environment item) {
