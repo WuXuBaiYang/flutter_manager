@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
+import 'package:flutter_manager/manage/database.dart';
+import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/widget/custom_context_menu_region.dart';
+import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:flutter_manager/widget/image.dart';
+import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 // 确认删除回调
@@ -117,22 +121,17 @@ class ProjectGridView extends StatelessWidget {
             color: item.getColor(0.2),
             child: ListTile(
               contentPadding: contentPadding,
-              title: Text(
-                item.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              subtitle: Text(
-                item.path,
-                maxLines: 2,
-                style: bodyStyle,
-                overflow: TextOverflow.ellipsis,
-              ),
-              leading: ImageView.file(
-                File(item.logo),
-                size: 45,
-                borderRadius: borderRadius,
-              ),
+              title: Row(children: [
+                Expanded(child: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                const SizedBox(width: 8),
+                _buildEnvironmentBadge(item),
+              ]),
+              subtitle: Text(item.path,
+                  maxLines: 2,
+                  style: bodyStyle,
+                  overflow: TextOverflow.ellipsis),
+              leading: ImageView.file(File(item.logo),
+                  size: 45, borderRadius: borderRadius),
               trailing: Transform.rotate(
                 angle: item.pinned ? 45 : 0,
                 child: IconButton(
@@ -146,6 +145,19 @@ class ProjectGridView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  // 构建项目环境标签
+  Widget _buildEnvironmentBadge(Project item) {
+    return FutureProvider<Environment?>(
+      initialData: null,
+      create: (_) => database.getEnvironmentById(item.envId),
+      builder: (context, _) {
+        final environment = context.watch<Environment?>();
+        if (environment == null) return const SizedBox();
+        return EnvironmentBadge(environment: environment);
+      },
     );
   }
 }
