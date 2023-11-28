@@ -3,7 +3,6 @@ import 'package:flutter_manager/common/manage.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:isar/isar.dart';
 
 /*
@@ -25,13 +24,10 @@ class DatabaseManage extends BaseManage {
   Future<void> initialize() async {
     final dir = await FileTool.getDirPath(Common.baseCachePath,
         root: FileDir.applicationDocuments);
-    isar = await Isar.open(
-      [
-        ProjectSchema,
-        EnvironmentSchema,
-      ],
-      directory: dir ?? '',
-    );
+    isar = await Isar.open([
+      ProjectSchema,
+      EnvironmentSchema,
+    ], directory: dir ?? '');
   }
 
   // 根据环境id获取项目列表
@@ -39,43 +35,30 @@ class DatabaseManage extends BaseManage {
       isar.projects.where().filter().envIdEqualTo(id).findAll();
 
   // 获取项目列表
-  Future<List<Project>> getProjectList([bool pinned = false]) => isar.projects
-      .where()
-      .filter()
-      .pinnedEqualTo(pinned)
-      .sortByOrderDesc()
-      .findAll();
+  Future<List<Project>> getProjectList({bool orderDesc = false}) {
+    var queryBuilder = isar.projects.where();
+    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
+    return queryBuilder.sortByOrder().findAll();
+  }
+
+  // 获取项目数量
+  Future<int> get projectCount async => (await getProjectList()).length;
 
   // 添加/更新项目
-  Future<Project?> updateProject(Project item) {
-    final length = isar.projects
-        .where()
-        .filter()
-        .pinnedEqualTo(item.pinned)
-        .findAllSync()
-        .length;
+  Future<Project?> updateProject(Project item) async {
+    final count = await projectCount;
     return isar.writeTxn<Project?>(() {
-      return isar.projects.put(item..order = length).then(
+      return isar.projects.put(item..order = count).then(
             (id) => item..id = id,
           );
     });
   }
 
   // 更新项目排序
-  Future<void> reorderProject(Project item, int newOrder) {
-    var projects = isar.projects
-        .where()
-        .filter()
-        .pinnedEqualTo(item.pinned)
-        .sortByOrderDesc()
-        .findAllSync();
-    final length = projects.length;
-    return isar.writeTxn<void>(() {
-      projects = swap(projects, projects.indexOf(item), newOrder);
-      projects.asMap().forEach((i, e) => e.order = length - i);
-      return isar.projects.putAll(projects);
-    });
-  }
+  Future<List<Project>> updateProjects(List<Project> items) =>
+      isar.writeTxn<List<Project>>(() {
+        return isar.projects.putAll(items).then((_) => items);
+      });
 
   // 移除项目
   Future<bool> removeProject(Id id) =>
@@ -86,32 +69,30 @@ class DatabaseManage extends BaseManage {
       isar.environments.where().idEqualTo(id).findFirst();
 
   // 获取全部环境列表
-  Future<List<Environment>> getEnvironmentList() =>
-      isar.environments.where().findAll();
+  Future<List<Environment>> getEnvironmentList({bool orderDesc = false}) {
+    var queryBuilder = isar.environments.where();
+    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
+    return queryBuilder.sortByOrder().findAll();
+  }
+
+  // 获取环境数量
+  Future<int> get environmentCount async => (await getEnvironmentList()).length;
 
   // 添加/更新环境
-  Future<Environment?> updateEnvironment(Environment item) {
-    final length = isar.environments.where().findAllSync().length;
-    return isar.writeTxn<Environment?>(() {
-      return isar.environments.put(item..order = length).then(
+  Future<Environment> updateEnvironment(Environment item) async {
+    final count = await environmentCount;
+    return isar.writeTxn<Environment>(() {
+      return isar.environments.put(item..order = count).then(
             (id) => item..id = id,
           );
     });
   }
 
-  // 更新环境排序
-  Future<void> reorderEnvironment(Environment item, int newOrder) {
-    // 取出全部环境
-    var environments = isar.environments.where().findAllSync();
-    final length = environments.length;
-    return isar.writeTxn<void>(() {
-      // 交换目标环境的位置并重新设置order
-      environments = swap(environments, environments.indexOf(item), newOrder);
-      environments.asMap().forEach((i, e) => e.order = i);
-      // 批量更新
-      return isar.environments.putAll(environments);
-    });
-  }
+  // 更新环境集合
+  Future<List<Environment>> updateEnvironments(List<Environment> items) =>
+      isar.writeTxn<List<Environment>>(() {
+        return isar.environments.putAll(items).then((_) => items);
+      });
 
   // 移除环境
   Future<bool> removeEnvironment(Id id) =>

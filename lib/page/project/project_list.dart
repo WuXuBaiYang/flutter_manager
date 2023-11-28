@@ -6,9 +6,6 @@ import 'package:flutter_manager/widget/custom_context_menu_region.dart';
 import 'package:flutter_manager/widget/image.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
-// 重排序回调
-typedef ProjectReorderCallback = void Function(Project item, int newIndex);
-
 // 确认删除回调
 typedef ProjectConfirmDismissCallback = Future<bool?> Function(Project item);
 
@@ -34,7 +31,7 @@ class ProjectGridView extends StatelessWidget {
   final ValueChanged<Project>? onDetail;
 
   // 位置改变回调
-  final ProjectReorderCallback? onReorder;
+  final ReorderCallback? onReorder;
 
   // 确认删除回调
   final ProjectConfirmDismissCallback? confirmDismiss;
@@ -77,10 +74,9 @@ class ProjectGridView extends StatelessWidget {
       padding: padding,
       itemCount: projects.length,
       gridDelegate: _gridDelegate,
-      onReorder: (oldIndex, newIndex) => onReorder?.call(
-        projects[oldIndex],
-        newIndex,
-      ),
+      onReorder: (oldIndex, newIndex) {
+        return onReorder?.call(oldIndex, newIndex);
+      },
       dragWidgetBuilderV2: DragWidgetBuilderV2(
         isScreenshotDragWidget: false,
         builder: (_, child, __) => child,
@@ -109,7 +105,8 @@ class ProjectGridView extends StatelessWidget {
           key: ValueKey(item.id),
           direction: DismissDirection.endToStart,
           onDismissed: (_) => onDelete?.call(item),
-          confirmDismiss: (_) => confirmDismiss?.call(item) ?? Future.value(true),
+          confirmDismiss: (_) =>
+              confirmDismiss?.call(item) ?? Future.value(true),
           background: Container(
             color: Colors.redAccent,
             alignment: Alignment.centerRight,

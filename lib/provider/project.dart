@@ -4,6 +4,10 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/tool/tool.dart';
+
+// 项目信息元组类型
+typedef ProjectTuple = ({List<Project> projects, List<Project> pinnedProjects});
 
 /*
 * 项目提供者
@@ -14,17 +18,14 @@ class ProjectProvider extends BaseProvider {
   // 最大置顶数量
   static const int maxPinnedCount = 4;
 
-  // 置顶项目集合
-  List<Project>? _pinnedProjects;
-
-  // 获取置顶项目集合
-  List<Project> get pinnedProjects => _pinnedProjects ?? [];
-
-  // 项目集合
-  List<Project>? _projects;
+  // 项目元组
+  ProjectTuple? _projectTuple;
 
   // 获取项目集合
-  List<Project> get projects => _projects ?? [];
+  List<Project> get projects => _projectTuple?.projects ?? [];
+
+  // 获取置顶项目集合
+  List<Project> get pinnedProjects => _projectTuple?.pinnedProjects ?? [];
 
   // 判断是否存在项目
   bool get hasProject => projects.isNotEmpty || pinnedProjects.isNotEmpty;
@@ -35,8 +36,10 @@ class ProjectProvider extends BaseProvider {
 
   // 获取项目集合
   Future<void> initialize() async {
-    _pinnedProjects = await database.getProjectList(true);
-    _projects = await database.getProjectList();
+    final result = await database.getProjectList(orderDesc: true);
+    _projectTuple = (projects: <Project>[], pinnedProjects: <Project>[]);
+    forEachFun(Project e) => (e.pinned ? pinnedProjects : projects).add(e);
+    result.forEach(forEachFun);
     notifyListeners();
   }
 
@@ -63,13 +66,46 @@ class ProjectProvider extends BaseProvider {
 
   // 移除项目
   Future<void> remove(Project project) async {
-    await database.removeProject(project.id);
+    if (!await database.removeProject(project.id)) return;
     return initialize();
   }
 
+  // 对置顶项目重排序
+  Future<void> reorderPinned(int oldIndex, int newIndex) async {
+    final temp = _swapAndOrder(
+      pinnedProjects.reversed.toList(),
+      oldIndex,
+      newIndex,
+    );
+    _projectTuple = (
+      projects: projects,
+      pinnedProjects: temp.reversed.toList(),
+    );
+    notifyListeners();
+    await database.updateProjects(temp);
+  }
+
   // 项目重排序
-  Future<void> reorder(Project item, int newIndex) async {
-    await database.reorderProject(item, newIndex);
-    await initialize();
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final temp = _swapAndOrder(
+      projects.reversed.toList(),
+      oldIndex,
+      newIndex,
+    );
+    _projectTuple = (
+      projects: temp.reversed.toList(),
+      pinnedProjects: pinnedProjects,
+    );
+    notifyListeners();
+    await database.updateProjects(temp);
+  }
+
+  // 交换并重排序
+  List<Project> _swapAndOrder(List<Project> list, int oldIndex, int newIndex) {
+    newIndex = newIndex > oldIndex ? newIndex + 1 : newIndex;
+    final temp = swap(list, oldIndex, newIndex);
+    temp.asMap().forEach((i, e) => e.order = i);
+    temp.sort((a, b) => a.order.compareTo(b.order));
+    return temp;
   }
 }

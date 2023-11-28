@@ -44,12 +44,10 @@ class EnvironmentList extends StatelessWidget {
                 margin: EdgeInsets.zero,
                 child: child,
               ),
-              onReorder: (oldIndex, newIndex) => context
-                  .read<EnvironmentProvider>()
-                  .reorder(environments[oldIndex], newIndex),
+              onReorder: context.read<EnvironmentProvider>().reorder,
               itemBuilder: (_, index) {
                 final item = environments[index];
-                return _buildFlutterEnvironmentListItem(context, item);
+                return _buildFlutterEnvironmentListItem(context, item, index);
               },
             );
           },
@@ -60,7 +58,7 @@ class EnvironmentList extends StatelessWidget {
 
   // 构建Flutter环境列表项
   Widget _buildFlutterEnvironmentListItem(
-      BuildContext context, Environment item) {
+      BuildContext context, Environment item, int index) {
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Dismissible(
       key: ValueKey(item.id),
@@ -105,7 +103,7 @@ class EnvironmentList extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             ReorderableDragStartListener(
-              index: item.order,
+              index: index,
               child: const Icon(Icons.drag_handle),
             ),
           ],

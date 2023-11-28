@@ -99,6 +99,7 @@ T range<T extends num>(T value, T begin, T end) => max(begin, min(end, value));
 // 交换集合中两个位置的元素
 List<T> swap<T>(List<T> list, int oldIndex, int newIndex) {
   if (oldIndex == newIndex) return list;
+  newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
   final T item = list.removeAt(oldIndex);
   list.insert(newIndex, item);
   return list;

@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:archive/archive_io.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/tool.dart';
 
 /*
 * 环境变量提供者
@@ -26,10 +25,11 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 初始化加载环境变量
-  Future<List<Environment>> initialize() async {
-    _environments = await database.getEnvironmentList();
+  Future<void> initialize() async {
+    _environments = await database.getEnvironmentList(
+      orderDesc: true,
+    );
     notifyListeners();
-    return environments;
   }
 
   // 导入环境变量
@@ -43,7 +43,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 导入压缩包的环境变量
   Future<Environment> importArchive(String archiveFile, String savePath) async {
-    await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
+    // await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
     final dir = Directory(savePath);
     final tmp = dir.listSync();
     if (tmp.length <= 1) savePath = tmp.first.path;
@@ -67,10 +67,9 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 移除环境变量
-  Future<bool> remove(Environment item) async {
-    final result = await database.removeEnvironment(item.id);
-    await initialize();
-    return result;
+  Future<void> remove(Environment item) async {
+    if (!await database.removeEnvironment(item.id)) return;
+    return initialize();
   }
 
   // 验证是否可移除环境变量
@@ -83,8 +82,12 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 环境重排序
-  Future<void> reorder(Environment item, int newIndex) async {
-    await database.reorderEnvironment(item, newIndex);
-    await initialize();
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final temp = swap(environments.reversed.toList(), oldIndex, newIndex);
+    temp.asMap().forEach((i, e) => e.order = i);
+    temp.sort((a, b) => a.order.compareTo(b.order));
+    _environments = temp.reversed.toList();
+    notifyListeners();
+    await database.updateEnvironments(temp);
   }
 }

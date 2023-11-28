@@ -85,7 +85,7 @@ class ProjectPage extends BasePage {
               onDelete: (item) => context
                   .read<ProjectPageProvider>()
                   .removeProject(context, item),
-              onReorder: provider.reorder,
+              onReorder: provider.reorderPinned,
               onPinned: provider.togglePinned,
               onEdit: (item) =>
                   ProjectImportDialog.show(context, project: item),
