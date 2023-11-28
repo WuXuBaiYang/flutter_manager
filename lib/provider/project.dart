@@ -26,6 +26,9 @@ class ProjectProvider extends BaseProvider {
   // 获取项目集合
   List<Project> get projects => _projects ?? [];
 
+  // 判断是否存在项目
+  bool get hasProject => projects.isNotEmpty || pinnedProjects.isNotEmpty;
+
   ProjectProvider() {
     initialize();
   }

@@ -7,6 +7,7 @@ import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -32,11 +33,20 @@ class ProjectPage extends BasePage {
       appBar: AppBar(
         title: const Text('项目'),
       ),
-      body: Column(
-        children: [
-          _buildPinnedProjects(context),
-          Expanded(child: _buildProjects(context)),
-        ],
+      body: Selector<ProjectProvider, bool>(
+        selector: (_, provider) => provider.hasProject,
+        builder: (_, hasProject, __) {
+          return EmptyBoxView(
+            isEmpty: !hasProject,
+            hint: '右下角添加项目',
+            child: Column(
+              children: [
+                _buildPinnedProjects(context),
+                Expanded(child: _buildProjects(context)),
+              ],
+            ),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -95,6 +105,7 @@ class ProjectPage extends BasePage {
     return Selector<ProjectProvider, List<Project>>(
       selector: (_, provider) => provider.projects,
       builder: (_, projects, __) {
+        if (projects.isEmpty) return const SizedBox();
         return ProjectGridView(
           projects: projects,
           onReorder: provider.reorder,
