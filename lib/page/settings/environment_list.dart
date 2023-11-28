@@ -59,7 +59,6 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项
   Widget _buildEnvironmentListItem(
       BuildContext context, Environment item, int index) {
-    final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Dismissible(
       key: ValueKey(item.id),
       direction: DismissDirection.endToStart,
@@ -74,41 +73,48 @@ class EnvironmentList extends StatelessWidget {
       child: ListTile(
         title: Text(item.title),
         subtitle: Text(item.path),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (!pathAvailable) ...[
-              const Tooltip(
-                message: '环境不存在',
-                child: Icon(
-                  Icons.warning_amber_rounded,
-                  color: Colors.redAccent,
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 14),
-            ],
-            IconButton(
-              iconSize: 18,
-              tooltip: '编辑环境',
-              icon: const Icon(Icons.edit),
-              onPressed: () =>
-                  EnvironmentImportDialog.show(context, environment: item),
-            ),
-            IconButton(
-              iconSize: 18,
-              tooltip: '刷新环境',
-              icon: const Icon(Icons.refresh),
-              onPressed: () => _refreshEnvironment(context, item),
-            ),
-            const SizedBox(width: 8),
-            ReorderableDragStartListener(
-              index: index,
-              child: const Icon(Icons.drag_handle),
-            ),
-          ],
-        ),
+        trailing: _buildEnvironmentListItemOptions(context, item, index),
       ),
+    );
+  }
+
+  // 构建Flutter环境列表项选项
+  Widget _buildEnvironmentListItemOptions(
+      BuildContext context, Environment item, int index) {
+    final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!pathAvailable) ...[
+          const Tooltip(
+            message: '环境不存在',
+            child: Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.redAccent,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 14),
+        ],
+        IconButton(
+          iconSize: 18,
+          tooltip: '编辑环境',
+          icon: const Icon(Icons.edit),
+          onPressed: () =>
+              EnvironmentImportDialog.show(context, environment: item),
+        ),
+        IconButton(
+          iconSize: 18,
+          tooltip: '刷新环境',
+          icon: const Icon(Icons.refresh),
+          onPressed: () => _refreshEnvironment(context, item),
+        ),
+        const SizedBox(width: 8),
+        ReorderableDragStartListener(
+          index: index,
+          child: const Icon(Icons.drag_handle),
+        ),
+      ],
     );
   }
 
