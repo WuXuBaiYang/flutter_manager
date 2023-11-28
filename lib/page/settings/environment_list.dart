@@ -104,14 +104,13 @@ class EnvironmentList extends StatelessWidget {
 
   // 移除环境
   void _removeEnvironment(BuildContext context, Environment item) {
-    final provider = context.read<EnvironmentProvider>();
-    provider.removeEnvironment(item);
+    final provider = context.read<EnvironmentProvider>()..remove(item);
     SnackTool.showMessage(
       context,
       message: '${item.title} 环境已移除',
       action: SnackBarAction(
         label: '撤销',
-        onPressed: () => provider.updateEnvironment(item),
+        onPressed: () => provider.update(item),
       ),
     );
   }
@@ -127,10 +126,10 @@ class EnvironmentList extends StatelessWidget {
     final provider = context.read<EnvironmentProvider>();
     Loading.show(
       context,
-      loadFuture: provider.refreshEnvironment(item),
+      loadFuture: provider.update(item),
     )?.then((_) {}).catchError((e) {
       SnackTool.showMessage(context, message: '刷新失败：$e');
-      provider.updateEnvironment(item);
+      provider.update(item);
     });
   }
 }

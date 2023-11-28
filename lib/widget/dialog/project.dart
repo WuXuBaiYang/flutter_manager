@@ -102,7 +102,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
   // 构建表单项-项目图标
   Widget _buildFormFieldLogo(BuildContext context) {
     const logoSize = Size.square(55);
-    final borderRadius = BorderRadius.circular(6);
+    final borderRadius = BorderRadius.circular(4);
     return Selector<ProjectImportDialogProvider, String?>(
       selector: (_, provider) => provider.logoPath,
       builder: (_, logoPath, __) {
@@ -343,7 +343,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     final isEdit = project != null;
     final provider = context.read<ProjectProvider>();
     Loading.show<Project?>(context,
-        loadFuture: provider.updateProject(
+        loadFuture: provider.update(
           Project()
             ..label = labelController.text
             ..path = pathController.text

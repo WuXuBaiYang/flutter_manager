@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/widget/image.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 /*
@@ -12,13 +15,25 @@ class ProjectGridView extends StatelessWidget {
   // 项目集合
   final List<Project> projects;
 
-  // 是否可以置顶
-  final bool pinned;
+  // 置顶回调
+  final ValueChanged<Project>? onPinned;
+
+  // 编辑回调
+  final ValueChanged<Project>? onEdit;
+
+  // 删除回调
+  final ValueChanged<Project>? onDelete;
+
+  // 跳转详情页
+  final ValueChanged<Project>? onDetail;
 
   const ProjectGridView({
     super.key,
     required this.projects,
-    this.pinned = true,
+    this.onEdit,
+    this.onPinned,
+    this.onDelete,
+    this.onDetail,
   });
 
   // 构建网格代理
@@ -30,13 +45,6 @@ class ProjectGridView extends StatelessWidget {
         mainAxisExtent: 85,
       );
 
-  // 右键菜单
-  ContextMenu get _contextMenu => ContextMenu(entries: const [
-        MenuItem<int>(value: 0, label: '置顶', icon: Icons.push_pin_rounded),
-        MenuItem<int>(value: 1, label: '编辑', icon: Icons.edit),
-        MenuItem<int>(value: 2, label: '删除', icon: Icons.delete),
-      ]);
-
   @override
   Widget build(BuildContext context) {
     return ReorderableGridView.builder(
@@ -47,13 +55,61 @@ class ProjectGridView extends StatelessWidget {
       onReorder: (oldIndex, newIndex) {},
       itemBuilder: (_, i) {
         final item = projects[i];
-        return _buildProjectItem(item);
+        return _buildProjectItem(context, item);
       },
     );
   }
 
+  // 右键菜单
+  ContextMenu get _contextMenu => ContextMenu(entries: [
+        MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
+        MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
+        MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
+      ]);
+
   // 构建项目子项
-  Widget _buildProjectItem(Project item) {
-    return SizedBox();
+  Widget _buildProjectItem(BuildContext context, Project item) {
+    var bodyStyle = Theme.of(context).textTheme.bodySmall;
+    final color = bodyStyle?.color?.withOpacity(0.4);
+    bodyStyle = bodyStyle?.copyWith(color: color);
+    final borderRadius = BorderRadius.circular(4);
+    const contentPadding = EdgeInsets.symmetric(horizontal: 14);
+    return ContextMenuRegion(
+      contextMenu: _contextMenu,
+      onItemSelected: (c) => c?.call(item),
+      child: Card(
+        child: Container(
+          color: item.getColor(0.2),
+          child: ListTile(
+            contentPadding: contentPadding,
+            title: Text(
+              item.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              item.path,
+              maxLines: 2,
+              style: bodyStyle,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Transform.rotate(
+              angle: item.pinned ? 90 : 0,
+              child: IconButton(
+                iconSize: 18,
+                icon: const Icon(Icons.push_pin_outlined),
+                onPressed: () => onPinned?.call(item),
+              ),
+            ),
+            leading: ImageView.file(
+              File(item.logo),
+              size: 45,
+              borderRadius: borderRadius,
+            ),
+            onTap: () => onDetail?.call(item),
+          ),
+        ),
+      ),
+    );
   }
 }

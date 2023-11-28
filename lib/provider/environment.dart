@@ -18,56 +18,54 @@ class EnvironmentProvider extends BaseProvider {
   List<Environment> get environments => _environments ?? [];
 
   EnvironmentProvider() {
-    // 初始化加载环境列表
-    loadEnvironmentList();
+    initialize();
   }
 
-  // 获取环境变量集合
-  Future<List<Environment>> loadEnvironmentList() async {
+  // 初始化加载环境变量
+  Future<List<Environment>> initialize() async {
     _environments = await database.getEnvironmentList();
     notifyListeners();
     return environments;
   }
 
   // 导入环境变量
-  Future<Environment> importEnvironment(String path) async {
+  Future<Environment> import(String path) async {
     dynamic result = await EnvironmentTool.getEnvironmentInfo(path);
     if (result == null) throw Exception('查询flutter信息失败');
-    result = await updateEnvironment(result);
+    result = await update(result);
     if (result == null) throw Exception('写入flutter信息失败');
     return result;
   }
 
   // 导入压缩包的环境变量
-  Future<Environment> importArchiveEnvironment(
-      String archiveFile, String savePath) async {
+  Future<Environment> importArchive(String archiveFile, String savePath) async {
     await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
     final dir = Directory(savePath);
     final tmp = dir.listSync();
     if (tmp.length <= 1) savePath = tmp.first.path;
-    return importEnvironment(savePath);
+    return import(savePath);
   }
 
   // 刷新环境变量
-  Future<Environment> refreshEnvironment(Environment item) async {
+  Future<Environment> refresh(Environment item) async {
     dynamic result = await EnvironmentTool.getEnvironmentInfo(item.path);
     if (result == null) throw Exception('查询flutter信息失败');
-    result = await updateEnvironment(result..id = item.id);
+    result = await update(result..id = item.id);
     if (result == null) throw Exception('写入flutter信息失败');
     return result;
   }
 
   // 添加环境变量
-  Future<Environment?> updateEnvironment(Environment item) async {
+  Future<Environment?> update(Environment item) async {
     final result = await database.updateEnvironment(item);
-    await loadEnvironmentList();
+    await initialize();
     return result;
   }
 
   // 移除环境变量
-  Future<bool> removeEnvironment(Environment item) async {
+  Future<bool> remove(Environment item) async {
     final result = await database.removeEnvironment(item.id);
-    await loadEnvironmentList();
+    await initialize();
     return result;
   }
 }

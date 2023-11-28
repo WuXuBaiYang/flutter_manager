@@ -246,7 +246,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
     if (!formKey.currentState!.validate()) return;
     final path = localPathController.text;
     final provider = context.read<EnvironmentProvider>();
-    final future = provider.importArchiveEnvironment(archiveFile, path);
+    final future = provider.importArchive(archiveFile, path);
     Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
       Navigator.pop(context, result);
     }).catchError((e) {

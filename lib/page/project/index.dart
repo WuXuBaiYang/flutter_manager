@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
-import 'package:flutter_manager/widget/image.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -49,15 +47,6 @@ class ProjectPage extends BasePage {
     );
   }
 
-  // 构建网格代理
-  SliverGridDelegate get _gridDelegate =>
-      const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 400,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        mainAxisExtent: 85,
-      );
-
   // 构建置顶项目集合
   Widget _buildPinnedProjects(BuildContext context) {
     final provider = context.read<ProjectProvider>();
@@ -76,64 +65,13 @@ class ProjectPage extends BasePage {
     return Selector<ProjectProvider, List<Project>>(
       selector: (_, provider) => provider.projects,
       builder: (_, projects, __) {
-        return GridView.builder(
-          shrinkWrap: true,
-          itemCount: projects.length,
-          gridDelegate: _gridDelegate,
-          padding: const EdgeInsets.all(14),
-          itemBuilder: (_, i) {
-            final item = projects[i];
-            final bodyStyle = Theme.of(context).textTheme.bodySmall;
-            return Card(
-              child: Container(
-                color: item.getColor(0.2),
-                child: ContextMenuRegion(
-                  contextMenu: ContextMenu(
-                    entries: [
-                      MenuItem(
-                        label: '置顶',
-                        icon: Icons.push_pin_rounded,
-                        onSelected: () => provider.pinned(item),
-                      ),
-                      MenuItem(
-                        label: '编辑',
-                        icon: Icons.edit,
-                        onSelected: () =>
-                            ProjectImportDialog.show(context, project: item),
-                      ),
-                      MenuItem(
-                        label: '删除',
-                        icon: Icons.delete,
-                        onSelected: () => provider.deleteProject(item),
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    title: Text(item.label,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    subtitle: Text(item.path,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: bodyStyle?.copyWith(
-                            color: bodyStyle.color?.withOpacity(0.4))),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-                    trailing: IconButton(
-                      iconSize: 18,
-                      icon: const Icon(Icons.push_pin_outlined),
-                      onPressed: () {},
-                    ),
-                    leading: ImageView.file(
-                      File(item.logo),
-                      size: 45,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    onTap: () {
-                      /// TODO: 跳转到项目详情页
-                    },
-                  ),
-                ),
-              ),
-            );
+        return ProjectGridView(
+          projects: projects,
+          onPinned: (item) => provider.pinned(item),
+          onDelete: (item) => provider.remove(item),
+          onEdit: (item) => ProjectImportDialog.show(context, project: item),
+          onDetail: (item) {
+            /// TODO: 跳转项目详情页
           },
         );
       },

@@ -130,8 +130,8 @@ class EnvironmentImportDialogProvider extends BaseProvider {
     final path = localPathController.text;
     final provider = context.read<EnvironmentProvider>();
     final future = isEdit
-        ? provider.refreshEnvironment(environment..path = path)
-        : provider.importEnvironment(path);
+        ? provider.refresh(environment..path = path)
+        : provider.import(path);
     Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
       Navigator.pop(context, result);
     }).catchError((e) {

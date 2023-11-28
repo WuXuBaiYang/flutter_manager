@@ -24,19 +24,18 @@ class ProjectProvider extends BaseProvider {
   List<Project> get projects => _projects ?? [];
 
   ProjectProvider() {
-    // 初始化加载项目列表
-    loadProjectList();
+    initialize();
   }
 
   // 获取项目集合
-  Future<void> loadProjectList() async {
+  Future<void> initialize() async {
     _pinnedProjects = await database.getProjectList(true);
     _projects = await database.getProjectList();
     notifyListeners();
   }
 
   // 添加项目信息
-  Future<Project?> updateProject(Project item) async {
+  Future<Project?> update(Project item) async {
     dynamic cacheFile = item.logo;
     if (File(item.logo).existsSync()) {
       cacheFile = await ProjectTool.cacheFile(item.logo);
@@ -44,7 +43,7 @@ class ProjectProvider extends BaseProvider {
     final result = await database.updateProject(
       item..logo = cacheFile ?? '',
     );
-    await loadProjectList();
+    await initialize();
     return result;
   }
 
@@ -53,12 +52,12 @@ class ProjectProvider extends BaseProvider {
     await database.updateProject(
       project..pinned = pinned,
     );
-    return loadProjectList();
+    return initialize();
   }
 
-  // 删除项目
-  Future<void> deleteProject(Project project) async {
+  // 移除项目
+  Future<void> remove(Project project) async {
     await database.removeProject(project.id);
-    return loadProjectList();
+    return initialize();
   }
 }
