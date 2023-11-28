@@ -52,6 +52,7 @@ class EmptyBoxView extends StatelessWidget {
           ),
           Text(
             hint,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: color,
               fontSize: titleStyle?.fontSize,

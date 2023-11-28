@@ -38,7 +38,7 @@ class ProjectPage extends BasePage {
         builder: (_, hasProject, __) {
           return EmptyBoxView(
             isEmpty: !hasProject,
-            hint: '右下角添加项目',
+            hint: '添加项目或\n拖拽项目放在这里',
             child: Column(
               children: [
                 _buildPinnedProjects(context),
