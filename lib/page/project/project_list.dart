@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/model/database/project.dart';
@@ -33,6 +34,9 @@ class ProjectGridView extends StatelessWidget {
   // 位置改变回调
   final ProjectReorderCallback? onReorder;
 
+  // 内间距
+  final EdgeInsetsGeometry padding;
+
   const ProjectGridView({
     super.key,
     required this.projects,
@@ -41,6 +45,7 @@ class ProjectGridView extends StatelessWidget {
     this.onDelete,
     this.onDetail,
     this.onReorder,
+    this.padding = const EdgeInsets.all(14),
   });
 
   // 构建网格代理
@@ -63,13 +68,13 @@ class ProjectGridView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ReorderableGridView.builder(
       shrinkWrap: true,
+      padding: padding,
+      itemCount: projects.length,
+      gridDelegate: _gridDelegate,
       onReorder: (oldIndex, newIndex) => onReorder?.call(
         projects[oldIndex],
         newIndex,
       ),
-      itemCount: projects.length,
-      gridDelegate: _gridDelegate,
-      padding: const EdgeInsets.all(14),
       dragWidgetBuilderV2: DragWidgetBuilderV2(
         isScreenshotDragWidget: false,
         builder: (_, child, __) => child,
@@ -93,6 +98,7 @@ class ProjectGridView extends StatelessWidget {
       contextMenu: _contextMenu,
       onItemSelected: (c) => c?.call(item),
       child: Card(
+        elevation: item.pinned ? 5 : null,
         child: Container(
           color: item.getColor(0.2),
           child: ListTile(
@@ -108,18 +114,18 @@ class ProjectGridView extends StatelessWidget {
               style: bodyStyle,
               overflow: TextOverflow.ellipsis,
             ),
+            leading: ImageView.file(
+              File(item.logo),
+              size: 45,
+              borderRadius: borderRadius,
+            ),
             trailing: Transform.rotate(
-              angle: item.pinned ? 90 : 0,
+              angle: item.pinned ? 45 : 0,
               child: IconButton(
                 iconSize: 18,
                 icon: const Icon(Icons.push_pin_outlined),
                 onPressed: () => onPinned?.call(item),
               ),
-            ),
-            leading: ImageView.file(
-              File(item.logo),
-              size: 45,
-              borderRadius: borderRadius,
             ),
             onTap: () => onDetail?.call(item),
           ),

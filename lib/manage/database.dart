@@ -48,7 +48,6 @@ class DatabaseManage extends BaseManage {
         .where()
         .filter()
         .pinnedEqualTo(item.pinned)
-        .sortByOrderDesc()
         .findAllSync()
         .length;
     return isar.writeTxn<Project?>(() {

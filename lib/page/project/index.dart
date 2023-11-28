@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -29,16 +30,11 @@ class ProjectPage extends BasePage {
       appBar: AppBar(
         title: const Text('项目'),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildPinnedProjects(context),
-            _buildProjects(context),
-            const SizedBox(height: kToolbarHeight),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildPinnedProjects(context),
+          Expanded(child: _buildProjects(context)),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -54,7 +50,23 @@ class ProjectPage extends BasePage {
       selector: (_, provider) => provider.pinnedProjects,
       builder: (_, pinnedProjects, __) {
         if (pinnedProjects.isEmpty) return const SizedBox();
-        return SizedBox();
+        return Card(
+          child: ConstrainedBox(
+            constraints: BoxConstraints.loose(
+              const Size.fromHeight(200),
+            ),
+            child: ProjectGridView(
+              projects: pinnedProjects,
+              onDelete: provider.remove,
+              onReorder: provider.reorder,
+              onPinned: provider.togglePinned,
+              onEdit: (item) => ProjectImportDialog.show(context, project: item),
+              onDetail: (item) {
+                /// TODO: 跳转项目详情页
+              },
+            ),
+          ),
+        );
       },
     );
   }
@@ -67,9 +79,12 @@ class ProjectPage extends BasePage {
       builder: (_, projects, __) {
         return ProjectGridView(
           projects: projects,
-          onPinned: provider.pinned,
           onDelete: provider.remove,
           onReorder: provider.reorder,
+          onPinned: provider.togglePinned,
+          padding: const EdgeInsets.all(14).copyWith(
+            bottom: kToolbarHeight + 24,
+          ),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) {
             /// TODO: 跳转项目详情页

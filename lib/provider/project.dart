@@ -11,6 +11,9 @@ import 'package:flutter_manager/tool/project/project.dart';
 * @Time 2023/11/26 18:56
 */
 class ProjectProvider extends BaseProvider {
+  // 最大置顶数量
+  static const int maxPinnedCount = 4;
+
   // 置顶项目集合
   List<Project>? _pinnedProjects;
 
@@ -48,9 +51,9 @@ class ProjectProvider extends BaseProvider {
   }
 
   // 项目置顶
-  Future<void> pinned(Project project, [bool pinned = true]) async {
+  Future<void> togglePinned(Project project) async {
     await database.updateProject(
-      project..pinned = pinned,
+      project..pinned = !project.pinned,
     );
     return initialize();
   }
