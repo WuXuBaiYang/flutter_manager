@@ -8,10 +8,10 @@ import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
+import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'package:desktop_drop/desktop_drop.dart';
 
 /*
 * 项目页
@@ -37,8 +37,10 @@ class ProjectPage extends BasePage {
       ),
       body: _buildDropArea(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            context.read<ProjectPageProvider>().addNewProject(context),
+        onPressed: () {
+          if (!_checkEnvironment(context)) return;
+          ProjectImportDialog.show(context);
+        },
         child: const Icon(Icons.add),
       ),
     );
@@ -47,42 +49,36 @@ class ProjectPage extends BasePage {
   // 构建文件拖拽区域
   Widget _buildDropArea(BuildContext context) {
     final provider = context.read<ProjectPageProvider>();
-    return DropTarget(
-      onDragExited: (_) => provider.dropExited(),
-      onDragEntered: (_) => provider.dropEntered(context),
-      onDragDone: (details) =>
-          provider.dropDone(context, details.files.map((e) => e.path).toList()),
-      child: Selector<ProjectPageProvider, ProjectDropStateTuple?>(
-        selector: (_, provider) => provider.dropState,
-        builder: (_, dropState, __) {
-          final color =
-              dropState?.warning == true ? Colors.red.withOpacity(0.25) : null;
-          return Selector<ProjectProvider, bool>(
-            selector: (_, provider) => provider.hasProject,
-            builder: (_, hasProject, __) {
-              final isEmpty = dropState != null || !hasProject;
-              final message =
-                  dropState?.message ?? (!hasProject ? '添加项目或\n拖拽项目放在这里' : '');
-              return EmptyBoxView(
-                color: color,
-                hint: message,
-                isEmpty: isEmpty,
-                child: _buildContent(context),
-              );
-            },
-          );
-        },
-      ),
+    return DropFileView(
+      onEnterValidator: (_) async {
+        final hasEnvironment =
+            context.read<EnvironmentProvider>().hasEnvironment;
+        return !hasEnvironment ? '请先导入Flutter环境！' : null;
+      },
+      onDoneValidator: (paths) async {
+        if (!_checkEnvironment(context)) return null;
+        return provider.dropDone(context, paths);
+      },
+      child: _buildContent(context),
     );
   }
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return Column(
-      children: [
-        _buildPinnedProjects(context),
-        Expanded(child: _buildProjects(context)),
-      ],
+    return Selector<ProjectProvider, bool>(
+      selector: (_, provider) => provider.hasProject,
+      builder: (_, hasProject, __) {
+        return EmptyBoxView(
+          isEmpty: !hasProject,
+          hint: '添加项目或\n拖拽项目放在这里',
+          child: Column(
+            children: [
+              _buildPinnedProjects(context),
+              Expanded(child: _buildProjects(context)),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -141,10 +137,22 @@ class ProjectPage extends BasePage {
       },
     );
   }
-}
 
-// 项目拖拽状态元组
-typedef ProjectDropStateTuple = ({bool warning, String message});
+  // 检查环境是否存在
+  bool _checkEnvironment(BuildContext context) {
+    final hasEnvironment = context.read<EnvironmentProvider>().hasEnvironment;
+    if (hasEnvironment) return true;
+    SnackTool.showMessage(
+      context,
+      message: '缺少Flutter环境',
+      action: SnackBarAction(
+        label: '去设置',
+        onPressed: context.read<SettingProvider>().goEnvironment,
+      ),
+    );
+    return hasEnvironment;
+  }
+}
 
 /*
 * 项目列表页状态管理
@@ -152,12 +160,6 @@ typedef ProjectDropStateTuple = ({bool warning, String message});
 * @Time 2023/11/24 14:25
 */
 class ProjectPageProvider extends ChangeNotifier {
-  // 项目拖拽状态
-  ProjectDropStateTuple? _dropState;
-
-  // 获取项目拖拽状态
-  ProjectDropStateTuple? get dropState => _dropState;
-
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.read<ProjectProvider>()..remove(item);
@@ -171,57 +173,16 @@ class ProjectPageProvider extends ChangeNotifier {
     );
   }
 
-  // 添加新项目
-  void addNewProject(BuildContext context, {Project? project}) {
-    if (context.read<EnvironmentProvider>().hasEnvironment) {
-      ProjectImportDialog.show(context, project: project);
-    } else {
-      SnackTool.showMessage(
-        context,
-        message: '缺少Flutter环境',
-        action: SnackBarAction(
-          label: '去设置',
-          onPressed: context.read<SettingProvider>().goEnvironment,
-        ),
-      );
-    }
-  }
-
-  // 更新拖拽状态
-  void _updateDropState(bool warning, String message) {
-    _dropState = (warning: warning, message: message);
-    notifyListeners();
-  }
-
-  // 文件拖拽进入区域
-  void dropEntered(BuildContext context) {
-    if (dropState != null) return;
-    final noEnvironment = !context.read<EnvironmentProvider>().hasEnvironment;
-    _updateDropState(
-        noEnvironment, noEnvironment ? '请先导入Flutter环境！' : '松开并导入项目');
-  }
-
   // 文件拖拽完成
-  Future<void> dropDone(BuildContext context, List<String> paths) async {
-    final noEnvironment = !context.read<EnvironmentProvider>().hasEnvironment;
-    if (paths.isEmpty || noEnvironment) return;
+  Future<String?> dropDone(BuildContext context, List<String> paths) async {
+    if (paths.isEmpty) return null;
     final projects =
         (await Future.wait<Project?>(paths.map(ProjectTool.getProjectInfo)))
           ..removeWhere((e) => e == null);
-    if (projects.isEmpty) {
-      _updateDropState(true, '项目无效！');
-      await Future.delayed(const Duration(seconds: 1));
-      return dropExited();
-    }
+    if (projects.isEmpty) return '项目无效！';
     await Future.forEach(projects.map((e) {
       return ProjectImportDialog.show(context, project: e);
     }), (e) => e);
-    dropExited();
-  }
-
-  // 文件拖拽退出区域
-  void dropExited() {
-    _dropState = null;
-    notifyListeners();
+    return null;
   }
 }
