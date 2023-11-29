@@ -116,6 +116,9 @@ class HomePageProvider extends ChangeNotifier {
   // 获取导航下标
   int get navigationIndex => _navigationIndex;
 
+  // 判断传入下标是否为当前下标
+  bool isNavigationIndex(int index) => _navigationIndex == index;
+
   // 设置导航下标
   setNavigationIndex(int index) {
     if (index < 0 || index >= navigationRailList.length) return;

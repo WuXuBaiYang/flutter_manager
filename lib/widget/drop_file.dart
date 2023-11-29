@@ -34,10 +34,14 @@ class DropFileView extends StatelessWidget {
   // 延迟退出时间
   final Duration delayExit;
 
+  // 是否启用
+  final bool enable;
+
   const DropFileView({
     super.key,
     required this.child,
     required this.onDoneValidator,
+    this.enable = true,
     this.onEnterValidator,
     this.onExitValidator,
     this.onUpdateValidator,
@@ -52,6 +56,7 @@ class DropFileView extends StatelessWidget {
       builder: (context, _) {
         final provider = context.read<DropFileViewProvider>();
         return DropTarget(
+            enable: enable,
             onDragEntered: (details) async {
               final message =
                   await onEnterValidator?.call(details.globalPosition);

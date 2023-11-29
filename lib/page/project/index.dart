@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
@@ -52,7 +53,9 @@ class ProjectPage extends BasePage {
   // 构建文件拖拽区域
   Widget _buildDropArea(BuildContext context) {
     final provider = context.read<ProjectPageProvider>();
+    final enable = context.watch<HomePageProvider>().isNavigationIndex(0);
     return DropFileView(
+      enable: enable,
       onDoneValidator: (paths) {
         return provider.dropDone(context, paths);
       },

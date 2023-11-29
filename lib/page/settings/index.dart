@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/model/database/environment.dart';
+import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
+import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:flutter_manager/widget/setting_item.dart';
 import 'package:provider/provider.dart';
@@ -34,15 +38,34 @@ class SettingsPage extends BasePage {
       appBar: AppBar(
         title: const Text('设置'),
       ),
-      body: SingleChildScrollView(
-        controller: context.read<SettingsPageProvider>().scrollController,
-        child: Column(
-          children: [
-            _buildFlutterEnvironment(context),
-            _buildThemeMode(context),
-            _buildThemeScheme(context),
-          ],
-        ),
+      body: _buildDropArea(context),
+    );
+  }
+
+  // 构建拖拽内容区域
+  Widget _buildDropArea(BuildContext context) {
+    final provider = context.read<SettingsPageProvider>();
+    final enable = context.watch<HomePageProvider>().isNavigationIndex(3);
+    return DropFileView(
+      enable: enable,
+      hint: '请放入Flutter环境文件',
+      onDoneValidator: (paths) {
+        return provider.dropDone(context, paths);
+      },
+      child: _buildContent(context),
+    );
+  }
+
+  // 构建内容区域
+  Widget _buildContent(BuildContext context) {
+    return SingleChildScrollView(
+      controller: context.read<SettingsPageProvider>().scrollController,
+      child: Column(
+        children: [
+          _buildFlutterEnvironment(context),
+          _buildThemeMode(context),
+          _buildThemeScheme(context),
+        ],
       ),
     );
   }
@@ -138,5 +161,22 @@ class SettingsPageProvider extends ChangeNotifier {
       final context = provider.selectedKey?.currentContext;
       if (context != null) Scrollable.ensureVisible(context);
     });
+  }
+
+  // 文件拖拽完成
+  Future<String?> dropDone(BuildContext context, List<String> paths) async {
+    if (paths.isEmpty) return null;
+    // 遍历路径集合，从路径中读取项目/环境信息
+    final environments = paths.map((e) {
+      if (!EnvironmentTool.isPathAvailable(e)) return null;
+      return Environment()..path = e;
+    }).toList()
+      ..removeWhere((e) => e == null);
+    // 如果没有有效内容，直接返回
+    if (environments.isEmpty) return '无效内容！';
+    await Future.forEach(environments.map((e) {
+      return EnvironmentImportDialog.show(context, environment: e);
+    }), (e) => e);
+    return null;
   }
 }
