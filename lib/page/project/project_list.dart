@@ -122,7 +122,11 @@ class ProjectGridView extends StatelessWidget {
             child: ListTile(
               contentPadding: contentPadding,
               title: Row(children: [
-                Expanded(child: Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                Text(
+                  item.label.length < 10
+                      ? item.label
+                      : '${item.label.substring(0, 11)}...',
+                ),
                 const SizedBox(width: 8),
                 _buildEnvironmentBadge(item),
               ]),
