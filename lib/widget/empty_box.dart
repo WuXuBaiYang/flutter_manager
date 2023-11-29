@@ -15,49 +15,67 @@ class EmptyBoxView extends StatelessWidget {
   // 提示
   final String hint;
 
+  // 自定义颜色
+  final Color? color;
+
   // 空图片尺寸
   final double placeholderSize;
+
+  // 动画时长
+  final Duration duration;
+
+  // 自定义图标
+  final IconData? iconData;
 
   const EmptyBoxView({
     super.key,
     required this.child,
     required this.isEmpty,
+    this.color,
+    this.iconData,
     this.hint = '',
     this.placeholderSize = 100,
+    this.duration = const Duration(milliseconds: 150),
   });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        child,
-        if (isEmpty) _buildPlaceholder(context),
-      ],
+    final crossFadeState =
+        isEmpty ? CrossFadeState.showSecond : CrossFadeState.showFirst;
+    return AnimatedCrossFade(
+      firstChild: child,
+      duration: duration,
+      crossFadeState: crossFadeState,
+      secondChild: _buildPlaceholder(context),
+      layoutBuilder: (topChild, topChildKey, bottomChild, bottomChildKey) {
+        return Stack(
+          fit: StackFit.expand,
+          clipBehavior: Clip.none,
+          children: [
+            Positioned.fill(key: bottomChildKey, child: bottomChild),
+            Positioned.fill(key: topChildKey, child: topChild),
+          ],
+        );
+      },
     );
   }
 
   // 构建空白占位图
   Widget _buildPlaceholder(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleLarge;
-    final color = titleStyle?.color?.withOpacity(0.1);
+    final color = this.color ?? titleStyle?.color?.withOpacity(0.1);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-            Icons.inbox,
             color: color,
             size: placeholderSize,
+            iconData ?? Icons.inbox,
           ),
-          Text(
-            hint,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: color,
-              fontSize: titleStyle?.fontSize,
-            ),
-          ),
+          Text(hint,
+              textAlign: TextAlign.center,
+              style: titleStyle?.copyWith(color: color)),
         ],
       ),
     );

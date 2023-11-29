@@ -99,6 +99,7 @@ class ProjectGridView extends StatelessWidget {
     bodyStyle = bodyStyle?.copyWith(color: color);
     final borderRadius = BorderRadius.circular(4);
     const contentPadding = EdgeInsets.symmetric(horizontal: 14);
+    const imageSize = Size.square(45);
     return CustomContextMenuRegion(
       key: ValueKey(item.id),
       contextMenu: _contextMenu,
@@ -134,8 +135,10 @@ class ProjectGridView extends StatelessWidget {
                   maxLines: 2,
                   style: bodyStyle,
                   overflow: TextOverflow.ellipsis),
-              leading: ImageView.file(File(item.logo),
-                  size: 45, borderRadius: borderRadius),
+              leading: item.logo.isNotEmpty
+                  ? ImageView.file(File(item.logo),
+                      size: imageSize.shortestSide, borderRadius: borderRadius)
+                  : SizedBox.fromSize(size: imageSize),
               trailing: Transform.rotate(
                 angle: item.pinned ? 45 : 0,
                 child: IconButton(
