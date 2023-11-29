@@ -3,11 +3,11 @@ import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
 
 /*
-* 平台工具类抽象类
+* 平台工具抽象类
 * @author wuxubaiyang
 * @Time 2023/11/29 18:37
 */
-abstract class PlatformTool {
+abstract class PlatformTool with PlatformToolMixin {
   // 平台文件夹路径
   PlatformPath get platform;
 
@@ -25,12 +25,14 @@ abstract class PlatformTool {
   String getPlatformPath(String projectPath) => join(projectPath, platformPath);
 
   // 获取logo
+  @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return {};
   }
 
   // 替换logo
+  @override
   Future<bool> replaceLogo(String projectPath, String logoPath) async {
     final logoMap = await getLogoInfo(projectPath);
     if (logoMap == null) return false;
@@ -50,6 +52,19 @@ abstract class PlatformTool {
     }
     return true;
   }
+}
+
+/*
+* 平台工具抽象类方法
+* @author wuxubaiyang
+* @Time 2023/11/29 20:13
+*/
+abstract mixin class PlatformToolMixin {
+  // 获取logo
+  Future<Map<String, dynamic>?> getLogoInfo(String projectPath);
+
+  // 替换logo
+  Future<bool> replaceLogo(String projectPath, String logoPath);
 }
 
 /*
