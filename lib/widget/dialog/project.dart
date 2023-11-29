@@ -306,40 +306,6 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     }
   }
 
-  // 当项目路径更新时调用
-  Future<void> pathUpdate() async {
-    final path = pathController.text;
-    if (!ProjectTool.isPathAvailable(path)) return;
-    if (labelController.text.isEmpty) {
-      final projectName = await ProjectTool.getProjectName(path) ?? '';
-      labelController.text = projectName;
-    }
-    if (_logoPath?.isNotEmpty != true) {
-      _logoPath = await ProjectTool.getProjectLogo(path);
-      notifyListeners();
-    }
-  }
-
-  // 项目置顶状态更新
-  void pinnedUpdate(bool? value) {
-    _pinned = value;
-    notifyListeners();
-  }
-
-  // 项目颜色更新
-  void colorUpdate(Color? value) {
-    if (value == null) return;
-    _color = value;
-    notifyListeners();
-  }
-
-  // 项目环境更新
-  void environmentUpdate(Environment? value) {
-    if (value == null) return;
-    _environment = value;
-    notifyListeners();
-  }
-
   // 导入项目
   Future<void> import(BuildContext context, Project? project) async {
     if (!formKey.currentState!.validate()) return;
@@ -363,16 +329,50 @@ class ProjectImportDialogProvider extends ChangeNotifier {
   }
 
   // 选择项目图标路径
-  Future<String?> pickLogoPath() async {
+  Future<void> pickLogoPath() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.image,
       lockParentWindow: true,
       dialogTitle: '选择项目图',
       initialDirectory: pathController.text,
     );
-    if (result?.files.isNotEmpty != true) return null;
-    _logoPath = result!.files.first.path;
+    logoUpdate(result?.files.firstOrNull?.path);
+  }
+
+  // 项目图标更新
+  void logoUpdate(String? value) {
+    if (value == null) return;
+    _logoPath = value;
     notifyListeners();
-    return _logoPath;
+  }
+
+  // 当项目路径更新时调用
+  Future<void> pathUpdate() async {
+    final path = pathController.text;
+    final project = await ProjectTool.getProjectInfo(path);
+    if (project == null) return;
+    if (labelController.text.isEmpty) labelController.text = project.label;
+    if (_logoPath?.isNotEmpty != true) logoUpdate(project.logo);
+  }
+
+  // 项目置顶状态更新
+  void pinnedUpdate(bool? value) {
+    if (value == null) return;
+    _pinned = value;
+    notifyListeners();
+  }
+
+  // 项目颜色更新
+  void colorUpdate(Color? value) {
+    if (value == null) return;
+    _color = value;
+    notifyListeners();
+  }
+
+  // 项目环境更新
+  void environmentUpdate(Environment? value) {
+    if (value == null) return;
+    _environment = value;
+    notifyListeners();
   }
 }

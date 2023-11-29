@@ -207,6 +207,20 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 下载进度流
   final downloadProgress = StreamController<double?>.broadcast();
 
+  // 导入环境
+  Future<void> import(BuildContext context, String archiveFile) async {
+    if (!formKey.currentState!.validate()) return;
+    final path = localPathController.text;
+    final provider = context.read<EnvironmentProvider>();
+    final future = provider.importArchive(archiveFile, path);
+    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
+      Navigator.pop(context, result);
+    }).catchError((e) {
+      final message = '导入失败：$e';
+      SnackTool.showMessage(context, message: message);
+    });
+  }
+
   // 启动下载
   Future<void> startDownload(EnvironmentPackage package) async {
     _currentStep = 1;
@@ -239,20 +253,6 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
       package: package,
       path: filePath,
     );
-  }
-
-  // 导入环境
-  Future<void> import(BuildContext context, String archiveFile) async {
-    if (!formKey.currentState!.validate()) return;
-    final path = localPathController.text;
-    final provider = context.read<EnvironmentProvider>();
-    final future = provider.importArchive(archiveFile, path);
-    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
-      Navigator.pop(context, result);
-    }).catchError((e) {
-      final message = '导入失败：$e';
-      SnackTool.showMessage(context, message: message);
-    });
   }
 
   // 更新下载信息

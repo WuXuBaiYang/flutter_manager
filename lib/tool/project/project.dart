@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_manager/common/common.dart';
+import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
@@ -28,6 +29,15 @@ class ProjectTool {
     'macos',
     'windows',
   ];
+
+  // 获取项目信息
+  static Future<Project?> getProjectInfo(String path) async {
+    if (!isPathAvailable(path)) return null;
+    return Project()
+      ..path = path
+      ..label = await ProjectTool.getProjectName(path) ?? ''
+      ..logo = await ProjectTool.getProjectLogo(path) ?? '';
+  }
 
   // 判断当前路径是否可用
   static bool isPathAvailable(String path) {

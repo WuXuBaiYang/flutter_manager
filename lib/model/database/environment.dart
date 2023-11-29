@@ -53,7 +53,7 @@ class Environment {
         frameworkReversion = obj['frameworkReversion'] ?? '',
         engineReversion = obj['engineReversion'] ?? '',
         updatedAt = obj['updatedAt'] ?? '',
-        order = obj['order'] ?? 0;
+        order = obj['order'] ?? -1;
 
   // 环境对比
   @override
