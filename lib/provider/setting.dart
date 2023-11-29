@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -9,12 +8,6 @@ import 'package:flutter_manager/tool/tool.dart';
 * @Time 2023/11/28 10:54
 */
 class SettingProvider extends BaseProvider {
-  // 闪烁间隔
-  final _blinkingDelay = const Duration(milliseconds: 500);
-
-  // 闪烁次数(9=4次)
-  final _blinkingCount = 9;
-
   // 选中的设置项key
   GlobalObjectKey? _selectedKey;
 
@@ -37,11 +30,13 @@ class SettingProvider extends BaseProvider {
 
   // 跳转到指定设置项
   void _goSetting(GlobalObjectKey key) {
-    // 一定时间后销毁此次事件
-    Timer.periodic(_blinkingDelay, (t) {
-      _selectedKey = t.tick % 2 == 0 ? key : null;
-      if (t.tick >= _blinkingCount) t.cancel();
-      notifyListeners();
-    });
+    _selectedKey = key;
+    notifyListeners();
+  }
+
+  // 取消选中
+  void cancelSelected() {
+    _selectedKey = null;
+    notifyListeners();
   }
 }

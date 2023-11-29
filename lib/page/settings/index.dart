@@ -133,13 +133,10 @@ class SettingsPageProvider extends ChangeNotifier {
   // 注册设置跳转监听
   void registerSettingsJumper(BuildContext context) {
     if (_settingListener != null) return;
-    // 注册设置跳转监听
-    context.read<SettingProvider>().addListener(_settingListener ??= () {
-          final key = context.read<SettingProvider>().selectedKey;
-          if (key != null) {
-            final context = key.currentContext;
-            if (context != null) Scrollable.ensureVisible(context);
-          }
-        });
+    final provider = context.read<SettingProvider>();
+    provider.addListener(_settingListener ??= () {
+      final context = provider.selectedKey?.currentContext;
+      if (context != null) Scrollable.ensureVisible(context);
+    });
   }
 }

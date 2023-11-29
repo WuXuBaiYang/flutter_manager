@@ -129,8 +129,11 @@ class HomePageProvider extends ChangeNotifier {
   // 注册设置跳转监听
   void registerSettingsJumper(BuildContext context) {
     if (_settingListener != null) return;
-    context.read<SettingProvider>().addListener(_settingListener ??= () {
-          setNavigationIndex(navigationRailPageList.length - 1);
-        });
+    final provider = context.read<SettingProvider>();
+    provider.addListener(_settingListener ??= () {
+      if (provider.selectedKey != null) {
+        setNavigationIndex(navigationRailPageList.length - 1);
+      }
+    });
   }
 }
