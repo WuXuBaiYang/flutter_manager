@@ -103,7 +103,7 @@ class ProjectProvider extends BaseProvider {
   // 交换并重排序
   List<Project> _swapAndOrder(List<Project> list, int oldIndex, int newIndex) {
     newIndex = newIndex > oldIndex ? newIndex + 1 : newIndex;
-    final temp = swap(list, oldIndex, newIndex);
+    final temp = list.swap(oldIndex, newIndex);
     temp.asMap().forEach((i, e) => e.order = i);
     temp.sort((a, b) => a.order.compareTo(b.order));
     return temp;

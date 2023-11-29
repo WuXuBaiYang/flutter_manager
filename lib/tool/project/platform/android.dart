@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
 
 /*
@@ -28,10 +29,7 @@ class AndroidPlatformTool {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息android:icon="@mipmap/ic_launcher"
     final content = await _getManifestInfo(projectPath);
-    final reg = RegExp(r'android:icon="@(.*)"');
-    // 取出括号内的内容
-    final iconPath = reg.firstMatch(content)?.group(1);
-    if (iconPath == null) return null;
+    final iconPath = content.regFirstGroup(r'android:icon="@(.*)"', 1);
     return null;
   }
 

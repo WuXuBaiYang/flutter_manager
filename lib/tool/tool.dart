@@ -96,11 +96,25 @@ String md5(String value) => crypto.md5.convert(utf8.encode(value)).toString();
 // 区间计算
 T range<T extends num>(T value, T begin, T end) => max(begin, min(end, value));
 
-// 交换集合中两个位置的元素
-List<T> swap<T>(List<T> list, int oldIndex, int newIndex) {
-  if (oldIndex == newIndex) return list;
-  newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
-  final T item = list.removeAt(oldIndex);
-  list.insert(newIndex, item);
-  return list;
+// 扩展集合
+extension ListExtension<T> on List<T> {
+  // 交换集合中两个位置的元素
+  List<T> swap(int oldIndex, int newIndex) {
+    if (oldIndex == newIndex) return this;
+    newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
+    final T item = removeAt(oldIndex);
+    insert(newIndex, item);
+    return this;
+  }
+}
+
+// 扩展字符串
+extension StringExtension on String {
+// 正则匹配第一个分组
+  String regFirstGroup(String source, [int index = 0, bool trim = true]) {
+    final match = RegExp(source).firstMatch(this);
+    final result = match?.group(index) ?? '';
+    if (!trim) return result;
+    return result.trim();
+  }
 }

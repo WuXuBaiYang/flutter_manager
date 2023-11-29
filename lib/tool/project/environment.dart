@@ -7,6 +7,7 @@ import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/environment_package.dart';
 import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
 
 // 环境安装包结果类型
@@ -50,23 +51,18 @@ class EnvironmentTool {
     );
     if (result.exitCode != 0) return null;
     final output = result.stdout.toString();
-    String regFirstGroup(String source, [int index = 1]) {
-      final match = RegExp(source).firstMatch(output);
-      final a = match?.group(0);
-      return (match?.group(index) ?? '').trim();
-    }
-
     return Environment()
       ..path = environmentPath
-      ..version = regFirstGroup(r'Flutter (.*?) •')
-      ..channel = regFirstGroup(r'channel (.*?) •')
-      ..gitUrl = regFirstGroup(r'http.*\.git', 0)
-      ..frameworkReversion = regFirstGroup(r'Framework • revision (.*?) \(')
+      ..gitUrl = output.regFirstGroup(r'http.*\.git')
+      ..version = output.regFirstGroup(r'Flutter (.*?) •', 1)
+      ..channel = output.regFirstGroup(r'channel (.*?) •', 1)
+      ..dartVersion = output.regFirstGroup(r'Dart (.*?) •', 1)
+      ..devToolsVersion = output.regFirstGroup(r'DevTools(.*)', 1)
+      ..frameworkReversion =
+          output.regFirstGroup(r'Framework • revision (.*?) \(', 1)
+      ..engineReversion = output.regFirstGroup(r'Engine • revision (.*)', 1)
       ..updatedAt =
-          regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}', 0)
-      ..engineReversion = regFirstGroup(r'Engine • revision (.*)')
-      ..dartVersion = regFirstGroup(r'Dart (.*?) •')
-      ..devToolsVersion = regFirstGroup(r'DevTools(.*)');
+          output.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}');
   }
 
   // 判断当前路径是否可用

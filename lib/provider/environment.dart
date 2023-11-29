@@ -83,7 +83,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 环境重排序
   Future<void> reorder(int oldIndex, int newIndex) async {
-    final temp = swap(environments.reversed.toList(), oldIndex, newIndex);
+    final temp = environments.reversed.toList().swap(oldIndex, newIndex);
     temp.asMap().forEach((i, e) => e.order = i);
     temp.sort((a, b) => a.order.compareTo(b.order));
     _environments = temp.reversed.toList();

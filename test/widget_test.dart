@@ -12,10 +12,8 @@ import 'package:flutter_manager/main.dart';
 
 void main() {
   test('description', () {
-    const des = 'Tools • Dart 3.2.0 • DevTools 2.28.2';
-    // 正则匹配时间戳
-
-    final reg = RegExp(r'DevTools (.*?)$');
+    const des = 'android:icon="@mipmap/ic_launcher"#zaksjdi';
+    final reg = RegExp(r'android:icon="@(.*)"');
     print(reg.firstMatch(des)?.group(1));
   });
 }
