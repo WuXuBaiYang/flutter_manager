@@ -3,8 +3,10 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:flutter_manager/widget/setting_item.dart';
+import 'package:open_dir/open_dir.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -63,6 +66,7 @@ class SettingsPage extends BasePage {
       child: Column(
         children: [
           _buildFlutterEnvironment(context),
+          _buildFlutterEnvironmentCache(context),
           _buildThemeMode(context),
           _buildThemeScheme(context),
         ],
@@ -89,6 +93,38 @@ class SettingsPage extends BasePage {
             onTap: () => EnvironmentRemoteImportDialog.show(context),
           ),
         ],
+      ),
+    );
+  }
+
+  // 构建Flutter环境缓存设置项
+  Widget _buildFlutterEnvironmentCache(BuildContext context) {
+    return SettingItem(
+      label: 'Flutter环境缓存',
+      key: context.read<SettingProvider>().environmentCacheKey,
+      content: Selector<EnvironmentProvider, List<Environment>>(
+        selector: (_, provider) => provider.environments,
+        builder: (_, environments, __) {
+          return FutureProvider<DownloadFileInfoTuple?>(
+            initialData: null,
+            updateShouldNotify: (_, __) => true,
+            create: (_) => EnvironmentTool.getDownloadFileInfo(),
+            builder: (context, _) {
+              final info = context.watch<DownloadFileInfoTuple?>();
+              final cacheCount = '${info?.count ?? 0}个缓存文件';
+              final cacheSize = FileTool.formatSize(info?.totalSize ?? 0);
+              return Text('$cacheCount/$cacheSize');
+            },
+          );
+        },
+      ),
+      child: IconButton(
+        tooltip: '打开缓存目录',
+        icon: const Icon(Icons.file_open_outlined),
+        onPressed: () async {
+          final dir = await EnvironmentTool.getDownloadCachePath();
+          if (dir != null) OpenDir().openNativeDir(path: dir);
+        },
       ),
     );
   }

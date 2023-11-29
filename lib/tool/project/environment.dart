@@ -15,6 +15,9 @@ typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
 // 已下载文件元组
 typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
 
+// 已下载文件信息元组
+typedef DownloadFileInfoTuple = ({int count, int totalSize});
+
 /*
 * 环境管理工具
 * @author wuxubaiyang
@@ -145,7 +148,7 @@ class EnvironmentTool {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
   }) async {
-    final baseDir = await _getDownloadCachePath();
+    final baseDir = await getDownloadCachePath();
     if (baseDir == null) throw Exception('获取下载目录失败');
     final savePath = join(baseDir, basename(url));
     if (File(savePath).existsSync()) return savePath;
@@ -159,10 +162,25 @@ class EnvironmentTool {
     return tempPath.renameSync(savePath).path;
   }
 
+  // 获取已下载文件信息
+  static Future<DownloadFileInfoTuple> getDownloadFileInfo() async {
+    final result = await getDownloadedFileList();
+    final downloaded = result.downloaded;
+    final tmp = result.tmp;
+    final count = downloaded.length + tmp.length;
+    final totalSize = downloaded.fold<int>(0, (previousValue, element) {
+          return previousValue + File(element).lengthSync();
+        }) +
+        tmp.fold<int>(0, (previousValue, element) {
+          return previousValue + File(element).lengthSync();
+        });
+    return (count: count, totalSize: totalSize);
+  }
+
   // 获取已下载文件列表
   static Future<DownloadedFileTuple> getDownloadedFileList() async {
     final result = (downloaded: <String>[], tmp: <String>[]);
-    final baseDir = await _getDownloadCachePath();
+    final baseDir = await getDownloadCachePath();
     if (baseDir == null) return result;
     final dir = Directory(baseDir);
     if (!dir.existsSync()) return result;
@@ -178,7 +196,7 @@ class EnvironmentTool {
   }
 
   // 获取下载缓存目录
-  static Future<String?> _getDownloadCachePath() => FileTool.getDirPath(
+  static Future<String?> getDownloadCachePath() => FileTool.getDirPath(
         join(Common.baseCachePath, _downloadCachePath),
         root: FileDir.applicationDocuments,
       );

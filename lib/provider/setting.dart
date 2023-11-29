@@ -17,10 +17,14 @@ class SettingProvider extends BaseProvider {
   // 设置项key
   final environmentKey = GlobalObjectKey(Tool.genID()),
       themeModeKey = GlobalObjectKey(Tool.genID()),
-      themeSchemeKey = GlobalObjectKey(Tool.genID());
+      themeSchemeKey = GlobalObjectKey(Tool.genID()),
+      environmentCacheKey = GlobalObjectKey(Tool.genID());
 
   // 跳转到flutter环境设置
   void goEnvironment() => _goSetting(environmentKey);
+
+  // 跳转到flutter环境缓存设置
+  void goEnvironmentCache() => _goSetting(environmentCacheKey);
 
   // 跳转到配色模式设置
   void goThemeMode() => _goSetting(themeModeKey);
