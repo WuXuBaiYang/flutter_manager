@@ -84,7 +84,6 @@ class HomePageProvider extends ChangeNotifier {
   // 导航列表
   final navigationRailList = [
     const NavigationRailDestination(
-      padding: EdgeInsets.only(top: 8),
       icon: Icon(Icons.home_rounded),
       label: Text('项目'),
     ),
