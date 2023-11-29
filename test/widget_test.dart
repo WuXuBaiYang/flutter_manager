@@ -11,20 +11,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_manager/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('description', () {
+    const des = 'Tools • Dart 3.2.0 • DevTools 2.28.2';
+    // 正则匹配时间戳
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    final reg = RegExp(r'DevTools (.*?)$');
+    print(reg.firstMatch(des)?.group(1));
   });
 }

@@ -31,55 +31,18 @@ class EnvironmentTool {
   static const String _environmentPackageInfoUrl =
       'https://storage.flutter-io.cn/flutter_infra_release/releases/releases_{platform}.json';
 
-  // 可执行文件相对路径
-  static const String _executablePath = 'bin/flutter';
+  // 关键文件相对路径
+  static const String _keyFilePath = 'bin/flutter';
 
   // 下载缓存目录
   static const String _downloadCachePath = 'download';
 
-  // 环境信息匹配正则表
-  static final Map<RegExp, Map<String, dynamic> Function(String output)>
-      _environmentRegMap = {
-    RegExp(r'Flutter.*'): (output) {
-      final items = output.split('•');
-      return {
-        'version': items[0].replaceAll('Flutter', '').trim(),
-        'channel': items[1].replaceAll('channel', '').trim(),
-        'gitUrl': items[2].trim(),
-      };
-    },
-    RegExp(r'Framework.*'): (output) {
-      final items = output.split('•');
-      return {
-        'frameworkReversion': items[1]
-            .replaceAll('revision', '')
-            .replaceAll(RegExp(r'\(.*\)'), '')
-            .trim(),
-        'updatedAt': items[2].trim(),
-      };
-    },
-    RegExp(r'Engine.*'): (output) {
-      final items = output.split('•');
-      return {
-        'engineReversion': items[1].replaceAll('revision', '').trim(),
-      };
-    },
-    RegExp(r'Tools.*'): (output) {
-      final items = output.split('•');
-      return {
-        'dartVersion': items[1].replaceAll('Dart', '').trim(),
-        'devToolsVersion':
-            items.length > 2 ? items[2].replaceAll('version', '').trim() : '',
-      };
-    },
-  };
-
   // 获取环境信息
-  static Future<Environment?> getEnvironmentInfo(String path) async {
-    if (!isPathAvailable(path)) return null;
+  static Future<Environment?> getEnvironmentInfo(String environmentPath) async {
+    if (!isPathAvailable(environmentPath)) return null;
     // 执行flutter version命令并将结果格式化对象
     final result = await Process.run(
-      join(path, _executablePath),
+      join(environmentPath, _keyFilePath),
       ['--version'],
       runInShell: true,
       stdoutEncoding: utf8,
@@ -87,20 +50,28 @@ class EnvironmentTool {
     );
     if (result.exitCode != 0) return null;
     final output = result.stdout.toString();
-    final json = _environmentRegMap
-        .map((reg, fun) {
-          final match = reg.stringMatch(output);
-          if (match == null) throw Exception('匹配失败');
-          return MapEntry(reg, fun(match));
-        })
-        .values
-        .reduce((result, e) => result..addAll(e));
-    return Environment.from(json)..path = path;
+    String regFirstGroup(String source, [int index = 1]) {
+      final match = RegExp(source).firstMatch(output);
+      final a = match?.group(0);
+      return (match?.group(index) ?? '').trim();
+    }
+
+    return Environment()
+      ..path = environmentPath
+      ..version = regFirstGroup(r'Flutter (.*?) •')
+      ..channel = regFirstGroup(r'channel (.*?) •')
+      ..gitUrl = regFirstGroup(r'http.*\.git', 0)
+      ..frameworkReversion = regFirstGroup(r'Framework • revision (.*?) \(')
+      ..updatedAt =
+          regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}', 0)
+      ..engineReversion = regFirstGroup(r'Engine • revision (.*)')
+      ..dartVersion = regFirstGroup(r'Dart (.*?) •')
+      ..devToolsVersion = regFirstGroup(r'DevTools(.*)');
   }
 
   // 判断当前路径是否可用
-  static bool isPathAvailable(String path) {
-    final file = File(join(path, _executablePath));
+  static bool isPathAvailable(String environmentPath) {
+    final file = File(join(environmentPath, _keyFilePath));
     return file.existsSync();
   }
 

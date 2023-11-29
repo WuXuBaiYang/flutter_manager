@@ -158,7 +158,7 @@ class EnvironmentList extends StatelessWidget {
     final provider = context.read<EnvironmentProvider>();
     Loading.show(
       context,
-      loadFuture: provider.update(item),
+      loadFuture: provider.refresh(item),
     )?.then((_) {}).catchError((e) {
       SnackTool.showMessage(context, message: '刷新失败：$e');
       provider.update(item);

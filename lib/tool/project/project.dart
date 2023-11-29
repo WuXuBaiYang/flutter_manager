@@ -11,24 +11,14 @@ import 'package:path/path.dart';
 * @Time 2023/11/27 14:43
 */
 class ProjectTool {
-  // pubspec文件相对路径
-  static const String _pubspecFile = 'pubspec.yaml';
+  // 关键文件相对路径
+  static const String _keyFilePath = 'pubspec.yaml';
 
   // 匹配项目名称
   static final RegExp _projectNameReg = RegExp(r'name:.*');
 
   // 缓存路径
   static const String _cachePath = 'cache';
-
-  // 项目平台目录名
-  static const List<String> _projectPlatformDirNames = [
-    'android',
-    'ios',
-    'web',
-    'linux',
-    'macos',
-    'windows',
-  ];
 
   // 获取项目信息
   static Future<Project?> getProjectInfo(String path) async {
@@ -40,14 +30,14 @@ class ProjectTool {
   }
 
   // 判断当前路径是否可用
-  static bool isPathAvailable(String path) {
-    final file = File(join(path, _pubspecFile));
+  static bool isPathAvailable(String projectPath) {
+    final file = File(join(projectPath, _keyFilePath));
     return file.existsSync();
   }
 
   // 读取项目名称
-  static Future<String?> getProjectName(String path) async {
-    final file = File(join(path, _pubspecFile));
+  static Future<String?> getProjectName(String projectPath) async {
+    final file = File(join(projectPath, _keyFilePath));
     if (!file.existsSync()) return null;
     final content = await file.readAsString();
     final result = _projectNameReg.stringMatch(content);
@@ -55,8 +45,8 @@ class ProjectTool {
   }
 
   // 缓存目标文件到缓存目录
-  static Future<String?> cacheFile(String path) async {
-    File file = File(path);
+  static Future<String?> cacheFile(String filePath) async {
+    File file = File(filePath);
     if (!file.existsSync()) return null;
     final baseDir = await _getCachePath();
     if (baseDir == null) return null;
@@ -65,7 +55,7 @@ class ProjectTool {
   }
 
   // 获取项目图标
-  static Future<String?> getProjectLogo(String path) async {
+  static Future<String?> getProjectLogo(String projectPath) async {
     /// TODO: 获取项目图标
     // for (var platform in _projectPlatformDirNames) {
     //   final dir = Directory(join(path, platform));
