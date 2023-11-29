@@ -203,7 +203,8 @@ class ProjectPageProvider extends ChangeNotifier {
 
   // 文件拖拽完成
   Future<void> dropDone(BuildContext context, List<String> paths) async {
-    if (paths.isEmpty) return;
+    final noEnvironment = !context.read<EnvironmentProvider>().hasEnvironment;
+    if (paths.isEmpty || noEnvironment) return;
     final projects =
         (await Future.wait<Project?>(paths.map(ProjectTool.getProjectInfo)))
           ..removeWhere((e) => e == null);
