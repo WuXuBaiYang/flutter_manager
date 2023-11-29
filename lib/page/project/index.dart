@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/project/platform/android.dart';
+import 'package:flutter_manager/tool/project/platform/ios.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
@@ -130,8 +133,19 @@ class ProjectPage extends BasePage {
             bottom: kToolbarHeight + 24,
           ),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
-          onDetail: (item) {
+          onDetail: (item) async {
             /// TODO: 跳转项目详情页
+            /// 获取平台图标
+            // final result = await IosPlatformTool.getLogoInfo(item.path);
+            // print('object');
+
+            /// 替换平台图标
+            // final files = await FilePicker.platform.pickFiles();
+            // final path = files?.files.firstOrNull?.path;
+            // if (path == null) return;
+            // final result =
+            //     await IosPlatformTool.replaceLogo(item.path, path);
+            // print('object');
           },
         );
       },

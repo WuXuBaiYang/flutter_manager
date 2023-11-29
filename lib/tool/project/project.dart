@@ -2,6 +2,13 @@ import 'dart:io';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/project/platform/android.dart';
+import 'package:flutter_manager/tool/project/platform/ios.dart';
+import 'package:flutter_manager/tool/project/platform/linux.dart';
+import 'package:flutter_manager/tool/project/platform/macos.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/tool/project/platform/web.dart';
+import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
 
@@ -19,6 +26,20 @@ class ProjectTool {
 
   // 缓存路径
   static const String _cachePath = 'cache';
+
+  // 平台工具对照表
+  static final Map<PlatformPath, PlatformTool> _platformTools = {
+    PlatformPath.android: AndroidPlatformTool(),
+    PlatformPath.ios: IosPlatformTool(),
+    PlatformPath.web: WebPlatformTool(),
+    PlatformPath.windows: WindowsPlatformTool(),
+    PlatformPath.macos: MacosPlatformTool(),
+    PlatformPath.linux: LinuxPlatformTool(),
+  };
+
+  // 根据传入平台获取对应的平台工具
+  static PlatformTool? getPlatformTool(PlatformPath platform) =>
+      _platformTools[platform];
 
   // 获取项目信息
   static Future<Project?> getProjectInfo(String path) async {
