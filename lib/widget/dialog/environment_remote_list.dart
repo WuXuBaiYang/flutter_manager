@@ -22,19 +22,22 @@ class EnvironmentRemoteList extends StatelessWidget {
   // 缓存搜索框控制器
   final _searchControllerMap = <String, TextEditingController>{};
 
+  // providers
+  final _providers = [
+    FutureProvider<EnvironmentPackageResult>(
+      initialData: const {},
+      create: (_) => EnvironmentTool.getEnvironmentPackageList(),
+    ),
+    FutureProvider<DownloadedFileTuple>(
+      initialData: (downloaded: <String>[], tmp: <String>[]),
+      create: (_) => EnvironmentTool.getDownloadedFileList(),
+    )
+  ];
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        FutureProvider<EnvironmentPackageResult>(
-          initialData: const {},
-          create: (_) => EnvironmentTool.getEnvironmentPackageList(),
-        ),
-        FutureProvider<DownloadedFileTuple>(
-          initialData: (downloaded: <String>[], tmp: <String>[]),
-          create: (_) => EnvironmentTool.getDownloadedFileList(),
-        )
-      ],
+      providers: _providers,
       builder: (context, _) {
         final package = context.watch<EnvironmentPackageResult>();
         final downloadFile = context.watch<DownloadedFileTuple>();
