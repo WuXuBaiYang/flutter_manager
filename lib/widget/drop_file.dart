@@ -41,7 +41,7 @@ class DropFileView extends StatelessWidget {
     this.onEnterValidator,
     this.onExitValidator,
     this.onUpdateValidator,
-    this.hint = '拖拽文件到此处',
+    this.hint = '放到此处',
     this.delayExit = const Duration(seconds: 1),
   });
 
@@ -53,10 +53,9 @@ class DropFileView extends StatelessWidget {
         final provider = context.read<DropFileViewProvider>();
         return DropTarget(
             onDragEntered: (details) async {
-              if (onEnterValidator == null) return;
               final message =
                   await onEnterValidator?.call(details.globalPosition);
-              provider.updateWarningState(message);
+              provider.updateDropState(message != null, message ?? hint);
             },
             onDragExited: (details) async {
               final message =

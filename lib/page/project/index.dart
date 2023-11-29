@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
@@ -50,13 +53,7 @@ class ProjectPage extends BasePage {
   Widget _buildDropArea(BuildContext context) {
     final provider = context.read<ProjectPageProvider>();
     return DropFileView(
-      onEnterValidator: (_) async {
-        final hasEnvironment =
-            context.read<EnvironmentProvider>().hasEnvironment;
-        return !hasEnvironment ? '请先导入Flutter环境！' : null;
-      },
-      onDoneValidator: (paths) async {
-        if (!_checkEnvironment(context)) return null;
+      onDoneValidator: (paths) {
         return provider.dropDone(context, paths);
       },
       child: _buildContent(context),
@@ -69,8 +66,8 @@ class ProjectPage extends BasePage {
       selector: (_, provider) => provider.hasProject,
       builder: (_, hasProject, __) {
         return EmptyBoxView(
+          hint: '添加或拖拽\n项目/环境目录',
           isEmpty: !hasProject,
-          hint: '添加项目或\n拖拽项目放在这里',
           child: Column(
             children: [
               _buildPinnedProjects(context),
@@ -176,11 +173,25 @@ class ProjectPageProvider extends ChangeNotifier {
   // 文件拖拽完成
   Future<String?> dropDone(BuildContext context, List<String> paths) async {
     if (paths.isEmpty) return null;
-    final projects =
-        (await Future.wait<Project?>(paths.map(ProjectTool.getProjectInfo)))
-          ..removeWhere((e) => e == null);
-    if (projects.isEmpty) return '项目无效！';
-    await Future.forEach(projects.map((e) {
+    final provider = context.read<EnvironmentProvider>();
+    // 遍历路径集合，从路径中读取项目/环境信息
+    final temp = (projects: <Project>[], environments: <Environment>[]);
+    for (var e in paths) {
+      final project = await ProjectTool.getProjectInfo(e);
+      if (project != null) temp.projects.add(project);
+      if (EnvironmentTool.isPathAvailable(e)) {
+        temp.environments.add(Environment()..path = e);
+      }
+    }
+    // 如果没有有效内容，直接返回
+    if (temp.projects.isEmpty && temp.environments.isEmpty) return '无效内容！';
+    await Future.forEach(temp.environments.map((e) {
+      return EnvironmentImportDialog.show(context, environment: e);
+    }), (e) => e);
+    if (!provider.hasEnvironment && temp.projects.isNotEmpty) {
+      return '请先添加环境信息';
+    }
+    await Future.forEach(temp.projects.map((e) {
       return ProjectImportDialog.show(context, project: e);
     }), (e) => e);
     return null;
