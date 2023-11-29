@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -24,6 +25,12 @@ class PackagePage extends BasePage {
     return Scaffold(
       appBar: AppBar(
         title: const Text('打包'),
+      ),
+      body: const EmptyBoxView(
+        isEmpty: true,
+        hint: '功能施工中',
+        iconData: Icons.build,
+        child: SizedBox(),
       ),
     );
   }

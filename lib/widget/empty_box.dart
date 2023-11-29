@@ -73,6 +73,7 @@ class EmptyBoxView extends StatelessWidget {
             size: placeholderSize,
             iconData ?? Icons.inbox,
           ),
+          const SizedBox(height: 14),
           Text(hint,
               textAlign: TextAlign.center,
               style: titleStyle?.copyWith(color: color)),
