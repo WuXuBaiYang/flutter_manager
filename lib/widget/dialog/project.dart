@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
@@ -170,11 +171,9 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建表单项-环境
   Widget _buildFormFieldEnvironment(BuildContext context) {
-    return FutureProvider<List<Environment>>(
-      initialData: const [],
-      create: (_) => database.getEnvironmentList(),
-      builder: (context, _) {
-        final environments = context.watch<List<Environment>>();
+    return Selector<EnvironmentProvider, List<Environment>>(
+      selector: (_, provider) => provider.environments,
+      builder: (_, environments, __) {
         return Selector<ProjectImportDialogProvider, Environment?>(
           selector: (_, provider) => provider.environment,
           builder: (_, current, __) {
@@ -300,7 +299,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
         environmentUpdate(env);
       });
     } else {
-      database.getEnvironmentList().then((envs) {
+      database.getEnvironmentList(orderDesc: true).then((envs) {
         if (envs.isNotEmpty) environmentUpdate(envs.first);
       });
     }
