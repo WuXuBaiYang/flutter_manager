@@ -9,8 +9,7 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/project/platform/android.dart';
-import 'package:flutter_manager/tool/project/platform/ios.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
@@ -136,16 +135,16 @@ class ProjectPage extends BasePage {
           onDetail: (item) async {
             /// TODO: 跳转项目详情页
             /// 获取平台图标
-            // final result = await IosPlatformTool.getLogoInfo(item.path);
-            // print('object');
+            const platform = PlatformPath.ios;
+            var a = await ProjectTool.getLogoInfo(platform, item.path);
+            print('object');
 
             /// 替换平台图标
-            // final files = await FilePicker.platform.pickFiles();
-            // final path = files?.files.firstOrNull?.path;
-            // if (path == null) return;
-            // final result =
-            //     await IosPlatformTool.replaceLogo(item.path, path);
-            // print('object');
+            final files = await FilePicker.platform.pickFiles();
+            final path = files?.files.firstOrNull?.path;
+            if (path == null) return;
+            var b = await ProjectTool.replaceLogo(platform, item.path, path);
+            print('object');
           },
         );
       },

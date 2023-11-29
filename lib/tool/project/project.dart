@@ -38,8 +38,8 @@ class ProjectTool {
   };
 
   // 根据传入平台获取对应的平台工具
-  static PlatformTool? getPlatformTool(PlatformPath platform) =>
-      _platformTools[platform];
+  static PlatformTool getPlatformTool(PlatformPath platform) =>
+      _platformTools[platform]!;
 
   // 获取项目信息
   static Future<Project?> getProjectInfo(String path) async {
@@ -82,6 +82,16 @@ class ProjectTool {
     //   final dir = Directory(join(path, platform));
     // }
   }
+
+  // 根据平台获取图标
+  static Future<Map<String, dynamic>?> getLogoInfo(
+          PlatformPath platform, String projectPath) =>
+      getPlatformTool(platform).getLogoInfo(projectPath);
+
+  // 根据平台替换图标
+  static Future<bool> replaceLogo(
+          PlatformPath platform, String projectPath, String logoPath) =>
+      getPlatformTool(platform).replaceLogo(projectPath, logoPath);
 
   // 获取缓存目录
   static Future<String?> _getCachePath() => FileTool.getDirPath(
