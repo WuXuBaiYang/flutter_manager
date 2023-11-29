@@ -126,7 +126,7 @@ class ProjectGridView extends StatelessWidget {
                 Text(
                   item.label.length < 10
                       ? item.label
-                      : '${item.label.substring(0, 11)}...',
+                      : '${item.label.substring(0, 10)}...',
                 ),
                 const SizedBox(width: 8),
                 _buildEnvironmentBadge(item),
