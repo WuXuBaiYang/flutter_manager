@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_manager/model/environment_package.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +60,7 @@ class EnvironmentRemoteList extends StatelessWidget {
                     child: TabBarView(
                       children: List.generate(package.length, (i) {
                         final packages = package.values.elementAt(i);
-                        return _buildPackageChannelTabView(
+                        return _buildPackageChannelTabView(context,
                             package.keys.elementAt(i), packages, downloadFile);
                       }),
                     ),
@@ -77,7 +79,7 @@ class EnvironmentRemoteList extends StatelessWidget {
       _searchControllerMap[key] ??= TextEditingController();
 
   // 构建安装包渠道列表
-  Widget _buildPackageChannelTabView(String channel,
+  Widget _buildPackageChannelTabView(BuildContext context, String channel,
       List<EnvironmentPackage> packages, DownloadedFileTuple downloadFile) {
     final controller = _getSearchController(channel);
     return StatefulBuilder(
@@ -95,7 +97,8 @@ class EnvironmentRemoteList extends StatelessWidget {
                 onChanged: (v) => setState(() {}),
               ),
             ),
-            Expanded(child: _buildPackageChannelList(temp, downloadFile)),
+            Expanded(
+                child: _buildPackageChannelList(context, temp, downloadFile)),
           ],
         );
       },
@@ -103,7 +106,7 @@ class EnvironmentRemoteList extends StatelessWidget {
   }
 
   // 构建安装包渠道列表
-  Widget _buildPackageChannelList(
+  Widget _buildPackageChannelList(BuildContext context,
       List<EnvironmentPackage> packages, DownloadedFileTuple downloadFile) {
     return ListView.separated(
       shrinkWrap: true,
@@ -113,16 +116,35 @@ class EnvironmentRemoteList extends StatelessWidget {
         final item = packages[i];
         final savePath = downloadFile.downloaded
             .firstWhere((e) => e.contains(item.fileName), orElse: () => '');
+        final iconData = savePath.isNotEmpty
+            ? Icons.download_done_rounded
+            : (downloadFile.tmp.any((e) => e.contains(item.fileName))
+                ? Icons.download_for_offline_rounded
+                : Icons.download_rounded);
         return ListTile(
           title: Text(item.title),
           subtitle: Text('Dart · ${item.dartVersion} · ${item.dartArch}'),
-          trailing: IconButton(
-            icon: Icon(savePath.isNotEmpty
-                ? Icons.download_done_rounded
-                : (downloadFile.tmp.any((e) => e.contains(item.fileName))
-                    ? Icons.download_for_offline_rounded
-                    : Icons.download_rounded)),
-            onPressed: () => startDownload?.call(item, savePath),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                tooltip: '复制下载链接',
+                icon: const Icon(Icons.copy_rounded),
+                onPressed: () {
+                  Clipboard.setData(ClipboardData(text: item.url));
+                  SnackTool.showMessage(context, message: '已复制下载链接');
+                },
+              ),
+              IconButton(
+                tooltip: {
+                  Icons.download_rounded: '下载',
+                  Icons.download_done_rounded: '已下载',
+                  Icons.download_for_offline_rounded: '继续下载',
+                }[iconData],
+                icon: Icon(iconData),
+                onPressed: () => startDownload?.call(item, savePath),
+              ),
+            ],
           ),
           onTap: () => startDownload?.call(item, savePath),
         );
