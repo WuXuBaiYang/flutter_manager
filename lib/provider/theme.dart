@@ -138,6 +138,10 @@ class ThemeProvider extends BaseProvider {
       bottomSheetTheme: const BottomSheetThemeData(
         showDragHandle: true,
       ),
+      searchBarTheme: const SearchBarThemeData(
+        elevation: MaterialStatePropertyAll(2),
+        constraints: BoxConstraints.tightFor(height: 45),
+      ),
     );
   }
 }

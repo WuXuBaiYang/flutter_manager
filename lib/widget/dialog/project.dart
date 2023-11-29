@@ -30,6 +30,7 @@ class ProjectImportDialog extends StatefulWidget {
   static Future<Project?> show(BuildContext context, {Project? project}) {
     return showDialog<Project>(
       context: context,
+      barrierDismissible: false,
       builder: (_) => ProjectImportDialog(
         project: project,
       ),

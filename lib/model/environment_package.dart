@@ -50,6 +50,16 @@ class EnvironmentPackage extends BaseModel {
   // 获取标题
   String get title => 'Flutter · $version · $channel';
 
+  // 根据条件搜索判断是否符合要求
+  bool search(String search) {
+    if (search.isEmpty) return true;
+    return title.contains(search) ||
+        platform.contains(search) ||
+        dartVersion.contains(search) ||
+        dartArch.contains(search) ||
+        releaseDate.contains(search);
+  }
+
   EnvironmentPackage.from(obj)
       : platform = obj['platform'] ?? '',
         url = obj['url'] ?? '',

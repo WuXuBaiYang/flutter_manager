@@ -17,7 +17,10 @@ class EnvironmentRemoteList extends StatelessWidget {
   // 开始下载回调
   final StartDownloadCallback? startDownload;
 
-  const EnvironmentRemoteList({super.key, this.startDownload});
+  EnvironmentRemoteList({super.key, this.startDownload});
+
+  // 缓存搜索框控制器
+  final _searchControllerMap = <String, TextEditingController>{};
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,8 @@ class EnvironmentRemoteList extends StatelessWidget {
                     child: TabBarView(
                       children: List.generate(package.length, (i) {
                         final packages = package.values.elementAt(i);
-                        return _buildPackageChannelList(packages, downloadFile);
+                        return _buildPackageChannelTabView(
+                            package.keys.elementAt(i), packages, downloadFile);
                       }),
                     ),
                   ),
@@ -60,6 +64,36 @@ class EnvironmentRemoteList extends StatelessWidget {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  // 根据渠道key获取搜索框控制器
+  TextEditingController _getSearchController(String key) =>
+      _searchControllerMap[key] ??= TextEditingController();
+
+  // 构建安装包渠道列表
+  Widget _buildPackageChannelTabView(String channel,
+      List<EnvironmentPackage> packages, DownloadedFileTuple downloadFile) {
+    final controller = _getSearchController(channel);
+    return StatefulBuilder(
+      builder: (_, setState) {
+        final temp = controller.text.isNotEmpty
+            ? packages.where((e) => e.search(controller.text)).toList()
+            : packages;
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: SearchBar(
+                hintText: '输入过滤条件',
+                controller: controller,
+                onChanged: (v) => setState(() {}),
+              ),
+            ),
+            Expanded(child: _buildPackageChannelList(temp, downloadFile)),
+          ],
         );
       },
     );
