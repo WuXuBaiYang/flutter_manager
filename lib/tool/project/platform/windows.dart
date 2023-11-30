@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:path/path.dart';
 import 'platform.dart';
 
 /*
@@ -10,11 +12,20 @@ class WindowsPlatformTool extends PlatformTool {
   PlatformPath get platform => PlatformPath.windows;
 
   @override
-  String get keyFilePath => '';
+  String get keyFilePath => 'runner/flutter_window.cpp';
+
+  // 资源相对路径
+  final String _resPath = 'runner/resources';
 
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return {};
+    final resPath = getPlatformFilePath(projectPath, _resPath);
+    final files = Directory(resPath).listSync();
+    return files.asMap().map<String, dynamic>((_, item) {
+      final path = item.path;
+      final key = basename(path).split('.').first;
+      return MapEntry(key, path);
+    });
   }
 }
