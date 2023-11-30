@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/route.dart';
+import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/home/index.dart';
@@ -103,9 +105,10 @@ class ProjectPage extends BasePage {
               onPinned: provider.togglePinned,
               onEdit: (item) =>
                   ProjectImportDialog.show(context, project: item),
-              onDetail: (item) async {
-                /// TODO: 跳转项目详情页
-              },
+              onDetail: (item) => router.pushNamed(
+                RoutePath.projectDetail,
+                arguments: (project: item),
+              ),
             ),
           ),
         );
@@ -130,10 +133,10 @@ class ProjectPage extends BasePage {
             bottom: kToolbarHeight + 24,
           ),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
-          onDetail: (item) async {
-            /// TODO: 跳转项目详情页
-
-          },
+          onDetail: (item) => router.pushNamed(
+            RoutePath.projectDetail,
+            arguments: (project: item),
+          ),
         );
       },
     );

@@ -1,3 +1,4 @@
+import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/package/index.dart';
@@ -14,6 +15,7 @@ class RoutePath {
   static Map<String, WidgetBuilder> get routes => {
         home: (_) => const HomePage(),
         project: (_) => const ProjectPage(),
+        projectDetail: (_) => const ProjectDetailPage(),
         package: (_) => const PackagePage(),
         settings: (_) => const SettingsPage(),
       };
@@ -23,6 +25,9 @@ class RoutePath {
 
   // 项目页
   static const String project = '/project';
+
+  // 项目详情页
+  static const String projectDetail = '/project/detail';
 
   // 打包页
   static const String package = '/package';

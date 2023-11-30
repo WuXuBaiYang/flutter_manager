@@ -35,6 +35,13 @@ class RouterManage extends BaseManage {
     return temp != null ? temp as V : temp;
   }
 
+  // 获取页面参数为一个元组
+  V? findTuple<V extends Record>(BuildContext context) {
+    dynamic temp = ModalRoute.of(context)?.settings.arguments;
+    if (temp is Record) return temp as V;
+    return null;
+  }
+
   // 页面跳转
   Future<T?>? push<T>({
     required RoutePageBuilder builder,
