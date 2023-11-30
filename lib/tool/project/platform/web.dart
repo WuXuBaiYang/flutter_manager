@@ -10,11 +10,31 @@ class WebPlatformTool extends PlatformTool {
   PlatformPath get platform => PlatformPath.web;
 
   @override
-  String get keyFilePath => '';
+  String get keyFilePath => 'index.html';
+
+  // manifest.json相对路径
+  final String _manifestPath = 'manifest.json';
+
+  // favicon.ico相对路径
+  final String _faviconPath = 'favicon.png';
+
+  // 读取manifest文件信息
+  Future<Map> _getManifestJson(String projectPath) =>
+      readPlatformFileJson(projectPath, _manifestPath);
 
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return {};
+    final json = await _getManifestJson(projectPath);
+    return {
+      'favicon': getPlatformFilePath(projectPath, _faviconPath),
+      ...(json['icons'] ?? []).asMap().map<String, dynamic>((_, item) {
+        final src = item['src'];
+        final entries = (item as Map)..removeWhere((_, value) => value == src);
+        final key = entries.values.join('_');
+        final value = getPlatformFilePath(projectPath, src);
+        return MapEntry(key, value);
+      })
+    };
   }
 }

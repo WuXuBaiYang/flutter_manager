@@ -15,7 +15,7 @@ class AndroidPlatformTool extends PlatformTool {
   @override
   String keyFilePath = 'build.gradle';
 
-  // manifest相对路径
+  // AndroidManifest.xml相对路径
   final String _manifestPath = 'app/src/main/AndroidManifest.xml';
 
   // 资源目录
