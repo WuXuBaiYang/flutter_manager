@@ -38,9 +38,9 @@ class LinuxPlatformTool extends PlatformTool {
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
     var content = await readPlatformFile(projectPath, _myApplicationPath);
-    for (var e in _labelRegExpList) {
-      final temp = e.pattern.replaceFirst('(.*)', label);
-      content = content.replaceFirst(e, temp.replaceAll('\\', ''));
+    for (var reg in _labelRegExpList) {
+      final temp = reg.pattern.replaceFirst('(.*)', label);
+      content = content.replaceFirst(reg, temp.replaceAll('\\', ''));
     }
     await writePlatformFile(projectPath, _myApplicationPath, content);
     return true;
