@@ -32,9 +32,10 @@ class IosPlatformTool extends PlatformTool {
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final content = jsonDecode(await _getIconInfo(projectPath));
+    final resPath = join(getPlatformPath(projectPath), _iconPath);
     return (content['images'] ?? []).asMap().map<String, dynamic>((_, item) {
       final key = '${item['idiom']}_${item['size']}@${item['scale']}';
-      return MapEntry(key, join(_iconPath, item['filename']));
+      return MapEntry(key, join(resPath, item['filename']));
     });
   }
 }
