@@ -10,5 +10,5 @@ class LinuxPlatformTool extends PlatformTool {
   PlatformPath get platform => PlatformPath.linux;
 
   @override
-  String get keyFilePath => '';
+  String get keyFilePath => 'main.cc';
 }

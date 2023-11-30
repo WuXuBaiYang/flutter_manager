@@ -135,7 +135,7 @@ class ProjectPage extends BasePage {
           onDetail: (item) async {
             /// TODO: 跳转项目详情页
             /// 获取平台图标
-            const platform = PlatformPath.windows;
+            const platform = PlatformPath.macos;
             var a = await ProjectTool.getLogoInfo(platform, item.path);
             print('object');
 
