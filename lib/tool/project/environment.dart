@@ -105,7 +105,7 @@ class EnvironmentTool {
     await cache.setJson(_environmentPackageCacheKey, result.map((key, value) {
       final temp = value.map((e) => e.to()).toList();
       return MapEntry(key, temp);
-    }));
+    }), expiration: const Duration(days: 1));
     return result;
   }
 

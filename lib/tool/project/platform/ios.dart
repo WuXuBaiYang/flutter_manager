@@ -22,18 +22,16 @@ class IosPlatformTool extends PlatformTool {
   late final String _iconInfoPath = '$_iconPath/Contents.json';
 
   // 读取图标信息文件信息
-  Future<String> _getIconInfo(String projectPath) async {
-    final file = File(join(getPlatformPath(projectPath), _iconInfoPath));
-    return file.readAsStringSync();
-  }
+  Future<Map> _getIconInfoJson(String projectPath) =>
+      readPlatformFileJson(projectPath, _iconInfoPath);
 
   // 获取logo
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final content = jsonDecode(await _getIconInfo(projectPath));
+    final json = await _getIconInfoJson(projectPath);
     final resPath = join(getPlatformPath(projectPath), _iconPath);
-    return (content['images'] ?? []).asMap().map<String, dynamic>((_, item) {
+    return (json['images'] ?? []).asMap().map<String, dynamic>((_, item) {
       final key = '${item['idiom']}_${item['size']}@${item['scale']}';
       return MapEntry(key, join(resPath, item['filename']));
     });

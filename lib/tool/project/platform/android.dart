@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
+import 'package:xml/xml.dart';
 import 'platform.dart';
 
 /*
@@ -22,22 +22,25 @@ class AndroidPlatformTool extends PlatformTool {
   final String _resPath = 'app/src/main/res';
 
   // 读取manifest文件信息
-  Future<String> _getManifestInfo(String projectPath) async {
-    final file = File(join(getPlatformPath(projectPath), _manifestPath));
-    return file.readAsStringSync();
-  }
+  Future<XmlDocument> _getManifestDocument(String projectPath) =>
+      readPlatformFileXml(projectPath, _manifestPath);
 
   // 获取logo
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息
-    final content = await _getManifestInfo(projectPath);
-    final iconPath = content.regFirstGroup(r'android:icon="@(.*)"', 1);
+    final document = await _getManifestDocument(projectPath);
+    final iconPath = document
+        .getElement('manifest')
+        ?.getElement('application')
+        ?.getAttribute('android:icon')
+        ?.replaceAll('@', '');
+    if (iconPath?.isEmpty ?? true) return null;
     // 遍历res下所有文件并过滤出目标图片
-    final parentKey = iconPath.split('/').first;
+    final parentKey = iconPath!.split('/').first;
     final iconRegExp = RegExp(iconPath.replaceAll('/', '|'));
-    final dir = Directory(join(getPlatformPath(projectPath), _resPath));
+    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
     // 移除不符合条件的文件
     final files = dir.listSync(recursive: true)
       ..removeWhere((e) {

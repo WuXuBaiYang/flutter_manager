@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
+import 'package:xml/xml.dart';
 
 /*
 * 平台工具抽象类
@@ -23,6 +25,50 @@ abstract class PlatformTool with PlatformToolMixin {
 
   // 获取平台路径
   String getPlatformPath(String projectPath) => join(projectPath, platformPath);
+
+  // 获取平台文件路径
+  String getPlatformFilePath(String projectPath, String filePath) =>
+      join(getPlatformPath(projectPath), filePath);
+
+  // 读取平台文件内容（字符串）
+  Future<String> readPlatformFile(String projectPath, String filePath) {
+    final file = File(getPlatformFilePath(projectPath, filePath));
+    return file.readAsString();
+  }
+
+  // 读取平台文件内容（json）
+  Future<Map> readPlatformFileJson(String projectPath, String filePath) async {
+    final content = await readPlatformFile(projectPath, filePath);
+    return jsonDecode(content);
+  }
+
+  // 读取平台文件内容（xml）
+  Future<XmlDocument> readPlatformFileXml(
+      String projectPath, String filePath) async {
+    final content = await readPlatformFile(projectPath, filePath);
+    return XmlDocument.parse(content);
+  }
+
+  // 写入平台文件内容（字符串）
+  Future<File> writePlatformFile(
+      String projectPath, String filePath, String content) {
+    final file = File(getPlatformFilePath(projectPath, filePath));
+    return file.writeAsString(content);
+  }
+
+  // 写入平台文件内容（json）
+  Future<File> writePlatformFileJson(
+      String projectPath, String filePath, Map content) {
+    final json = const JsonEncoder.withIndent('  ').convert(content);
+    return writePlatformFile(projectPath, filePath, json);
+  }
+
+  // 写入平台文件内容（xml）
+  Future<File> writePlatformFileXml(
+      String projectPath, String filePath, XmlDocument content) {
+    return writePlatformFile(
+        projectPath, filePath, content.toXmlString(pretty: true));
+  }
 
   // 获取logo
   @override
