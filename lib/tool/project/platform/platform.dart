@@ -49,6 +49,13 @@ abstract class PlatformTool with PlatformToolMixin {
     return XmlDocument.parse(content);
   }
 
+  // 读取平台文件内容（xmlFragment）
+  Future<XmlDocumentFragment> readPlatformFileXmlFragment(
+      String projectPath, String filePath) async {
+    final content = await readPlatformFile(projectPath, filePath);
+    return XmlDocumentFragment.parse(content);
+  }
+
   // 写入平台文件内容（字符串）
   Future<File> writePlatformFile(
       String projectPath, String filePath, String content) {
@@ -64,16 +71,24 @@ abstract class PlatformTool with PlatformToolMixin {
   }
 
   // 写入平台文件内容（xml）
-  Future<File> writePlatformFileXml(
-      String projectPath, String filePath, XmlElement element) {
+  Future<File?> writePlatformFileXml(
+    String projectPath,
+    String filePath,
+    XmlDocumentFragment fragment, {
+    bool indentAttribute = true,
+    String indent = '    ',
+  }) async {
+    if (fragment.children.isEmpty) return null;
     return writePlatformFile(
       projectPath,
       filePath,
-      element.toXmlString(
-        pretty: true,
-        indent: '    ',
-        indentAttribute: (e) => true,
-      ),
+      fragment.children
+          .map((e) => e.toXmlString(
+                pretty: true,
+                indent: indent,
+                indentAttribute: (e) => indentAttribute,
+              ))
+          .join(''),
     );
   }
 

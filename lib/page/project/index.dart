@@ -133,7 +133,7 @@ class ProjectPage extends BasePage {
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) async {
             /// TODO: 跳转项目详情页
-            const platform = PlatformPath.android;
+            const platform = PlatformPath.ios;
             final result = await ProjectTool.getLabel(platform, item.path);
 
             String name = '测试项目名';

@@ -66,14 +66,14 @@ class AndroidPlatformTool extends PlatformTool {
 
   @override
   Future<bool> setLabel(String projectPath, String label) async {
-    final content = await readPlatformFile(projectPath, _manifestPath);
-    final fragment = XmlDocumentFragment.parse(content)
-      ..getElement('manifest')
-          ?.getElement('application')
-          ?.setAttribute('android:label', label);
-    final element = fragment.firstElementChild;
-    if (element == null) return false;
-    await writePlatformFileXml(projectPath, _manifestPath, element);
+    if (!isPathAvailable(projectPath)) return false;
+    final fragment =
+        await readPlatformFileXmlFragment(projectPath, _manifestPath);
+    fragment
+        .getElement('manifest')
+        ?.getElement('application')
+        ?.setAttribute('android:label', label);
+    await writePlatformFileXml(projectPath, _manifestPath, fragment);
     return true;
   }
 }
