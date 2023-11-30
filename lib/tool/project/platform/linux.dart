@@ -11,4 +11,5 @@ class LinuxPlatformTool extends PlatformTool {
 
   @override
   String get keyFilePath => 'main.cc';
+
 }

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 
@@ -25,7 +24,6 @@ class AndroidPlatformTool extends PlatformTool {
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
       readPlatformFileXml(projectPath, _manifestPath);
 
-  // 获取logo
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
@@ -54,5 +52,28 @@ class AndroidPlatformTool extends PlatformTool {
       final key = path.substring(index + 1);
       return MapEntry(key, e.path);
     });
+  }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    // 从manifest中获取app名称
+    return (await _getManifestDocument(projectPath))
+        .getElement('manifest')
+        ?.getElement('application')
+        ?.getAttribute('android:label');
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async {
+    final content = await readPlatformFile(projectPath, _manifestPath);
+    final fragment = XmlDocumentFragment.parse(content)
+      ..getElement('manifest')
+          ?.getElement('application')
+          ?.setAttribute('android:label', label);
+    final element = fragment.firstElementChild;
+    if (element == null) return false;
+    await writePlatformFileXml(projectPath, _manifestPath, element);
+    return true;
   }
 }

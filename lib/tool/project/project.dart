@@ -103,6 +103,15 @@ class ProjectTool {
           PlatformPath platform, String projectPath, String logoPath) =>
       getPlatformTool(platform).replaceLogo(projectPath, logoPath);
 
+  // 根据平台获取项目名
+  static Future<String?> getLabel(PlatformPath platform, String projectPath) =>
+      getPlatformTool(platform).getLabel(projectPath);
+
+  // 根据平台设置项目名
+  static Future<bool> setLabel(
+          PlatformPath platform, String projectPath, String label) =>
+      getPlatformTool(platform).setLabel(projectPath, label);
+
   // 获取缓存目录
   static Future<String?> _getCachePath() => FileTool.getDirPath(
         join(Common.baseCachePath, _cachePath),

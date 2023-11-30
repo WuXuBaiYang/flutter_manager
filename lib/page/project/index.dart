@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -105,7 +104,7 @@ class ProjectPage extends BasePage {
               onPinned: provider.togglePinned,
               onEdit: (item) =>
                   ProjectImportDialog.show(context, project: item),
-              onDetail: (item) {
+              onDetail: (item) async {
                 /// TODO: 跳转项目详情页
               },
             ),
@@ -133,18 +132,13 @@ class ProjectPage extends BasePage {
           ),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) async {
-            // /// TODO: 跳转项目详情页
-            // /// 获取平台图标
-            // const platform = PlatformPath.macos;
-            // var a = await ProjectTool.getLogoInfo(platform, item.path);
-            // print('object');
-            //
-            // /// 替换平台图标
-            // final files = await FilePicker.platform.pickFiles();
-            // final path = files?.files.firstOrNull?.path;
-            // if (path == null) return;
-            // var b = await ProjectTool.replaceLogo(platform, item.path, path);
-            // print('object');
+            /// TODO: 跳转项目详情页
+            const platform = PlatformPath.android;
+            final result = await ProjectTool.getLabel(platform, item.path);
+
+            String name = '测试项目名';
+            final b = await ProjectTool.setLabel(platform, item.path, name);
+            print('object');
           },
         );
       },

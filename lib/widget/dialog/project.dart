@@ -351,8 +351,8 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     final path = pathController.text;
     final project = await ProjectTool.getProjectInfo(path);
     if (project == null) return;
-    if (labelController.text.isEmpty) labelController.text = project.label;
-    if (_logoPath?.isNotEmpty != true) logoUpdate(project.logo);
+    labelController.text = project.label;
+    logoUpdate(project.logo);
   }
 
   // 项目置顶状态更新

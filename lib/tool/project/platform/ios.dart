@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:path/path.dart';
 import 'platform.dart';
 
@@ -25,7 +23,6 @@ class IosPlatformTool extends PlatformTool {
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
 
-  // 获取logo
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;

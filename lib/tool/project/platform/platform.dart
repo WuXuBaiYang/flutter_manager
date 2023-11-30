@@ -65,19 +65,24 @@ abstract class PlatformTool with PlatformToolMixin {
 
   // 写入平台文件内容（xml）
   Future<File> writePlatformFileXml(
-      String projectPath, String filePath, XmlDocument content) {
+      String projectPath, String filePath, XmlElement element) {
     return writePlatformFile(
-        projectPath, filePath, content.toXmlString(pretty: true));
+      projectPath,
+      filePath,
+      element.toXmlString(
+        pretty: true,
+        indent: '    ',
+        indentAttribute: (e) => true,
+      ),
+    );
   }
 
-  // 获取logo
   @override
   Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return {};
   }
 
-  // 替换logo
   @override
   Future<bool> replaceLogo(String projectPath, String logoPath) async {
     final logoMap = await getLogoInfo(projectPath);
@@ -98,6 +103,15 @@ abstract class PlatformTool with PlatformToolMixin {
     }
     return true;
   }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return '';
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async => true;
 }
 
 /*
@@ -111,6 +125,12 @@ abstract mixin class PlatformToolMixin {
 
   // 替换logo
   Future<bool> replaceLogo(String projectPath, String logoPath);
+
+  // 获取项目名
+  Future<String?> getLabel(String projectPath);
+
+  // 设置项目名
+  Future<bool> setLabel(String projectPath, String label);
 }
 
 /*
