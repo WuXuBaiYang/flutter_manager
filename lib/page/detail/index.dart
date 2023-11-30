@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -27,9 +28,24 @@ class ProjectDetailPage extends BasePage {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('项目详情页'),
+        leading: BackButton(),
+      ),
+      body: Selector<ProjectDetailPageProvider, Project?>(
+        selector: (_, provider) => provider.project,
+        builder: (_, project, __) {
+          return EmptyBoxView(
+            hint: '项目不存在',
+            isEmpty: project == null,
+            child: _buildContent(context),
+          );
+        },
       ),
     );
+  }
+
+  // 构建内容
+  Widget _buildContent(BuildContext context) {
+    return Container();
   }
 }
 
