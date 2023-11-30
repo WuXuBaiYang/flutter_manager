@@ -37,4 +37,20 @@ class WebPlatformTool extends PlatformTool {
       })
     };
   }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final json = await _getManifestJson(projectPath);
+    return json['name'];
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async {
+    if (!isPathAvailable(projectPath)) return false;
+    final json = await _getManifestJson(projectPath);
+    json['name'] = label;
+    await writePlatformFileJson(projectPath, _manifestPath, json);
+    return true;
+  }
 }
