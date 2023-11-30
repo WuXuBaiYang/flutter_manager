@@ -31,13 +31,13 @@ class WindowsPlatformTool extends PlatformTool {
   }
 
   // label字段匹配
-  final _labelRegExp = r'window.Create\(L"(.*)", origin, size\)';
+  final _labelRegExp = RegExp(r'window.Create\(L"(.*)", origin, size\)');
 
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final content = await readPlatformFile(projectPath, keyFilePath);
-    return content.regFirstGroup(_labelRegExp, 1);
+    return content.regFirstGroup(_labelRegExp.pattern, 1);
   }
 
   @override
@@ -46,8 +46,8 @@ class WindowsPlatformTool extends PlatformTool {
     // 如果输入的label不合法，直接返回false
     if (!RegExp(r'^[a-zA-Z_]+$').hasMatch(label)) return false;
     var content = await readPlatformFile(projectPath, keyFilePath);
-    content = content.replaceAll(
-        RegExp(_labelRegExp), 'window.Create(L"$label", origin, size)');
+    final temp = _labelRegExp.pattern.replaceFirst('(.*)', label);
+    content = content.replaceFirst(_labelRegExp, temp.replaceAll('\\', ''));
     await writePlatformFile(projectPath, keyFilePath, content);
     return true;
   }

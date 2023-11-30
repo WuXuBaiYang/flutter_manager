@@ -133,12 +133,12 @@ class ProjectPage extends BasePage {
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) async {
             /// TODO: 跳转项目详情页
-            const platform = PlatformPath.windows;
-            final result = await ProjectTool.getLabel(platform, item.path);
-
-            String name = 'jtech_aaaaa';
-            final b = await ProjectTool.setLabel(platform, item.path, name);
-            print('object');
+            // const platform = PlatformPath.linux;
+            // final result = await ProjectTool.getLabel(platform, item.path);
+            //
+            // String name = 'jtech_cccc';
+            // final b = await ProjectTool.setLabel(platform, item.path, name);
+            // print('object');
           },
         );
       },
