@@ -1,4 +1,5 @@
 import 'package:path/path.dart';
+import 'package:xml/xml.dart';
 
 import 'platform.dart';
 
@@ -37,5 +38,33 @@ class MacosPlatformTool extends PlatformTool {
       final value = join(resPath, filename);
       return MapEntry(key, value);
     });
+  }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final document = await readPlatformFileXml(projectPath, keyFilePath);
+    final items = document
+        .getElement('plist')
+        ?.getElement('dict')
+        ?.childElements
+        .where((e) => e.innerText == 'CFBundleName');
+    return items?.firstOrNull?.nextElementSibling?.innerText;
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async {
+    if (!isPathAvailable(projectPath)) return false;
+    final fragment =
+        await readPlatformFileXmlFragment(projectPath, keyFilePath);
+    final items = fragment
+        .getElement('plist')
+        ?.getElement('dict')
+        ?.childElements
+        .where((e) => e.innerText == 'CFBundleName');
+    items?.firstOrNull?.nextElementSibling?.innerText = label;
+    await writePlatformFileXml(projectPath, keyFilePath, fragment,
+        indentAttribute: false);
+    return true;
   }
 }
