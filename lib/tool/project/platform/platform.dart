@@ -56,10 +56,20 @@ abstract class PlatformTool with PlatformToolMixin {
     return XmlDocumentFragment.parse(content);
   }
 
+  // 文件写入前自动备份(在目标文件目录中创建.bak文件)
+  Future<void> _autoBackup(String projectPath, String filePath) async {
+    final file = File(getPlatformFilePath(projectPath, filePath));
+    final bakFile = File('${file.path}.bak');
+    if (!bakFile.existsSync() && file.existsSync()) {
+      await file.copy(bakFile.path);
+    }
+  }
+
   // 写入平台文件内容（字符串）
   Future<File> writePlatformFile(
-      String projectPath, String filePath, String content) {
+      String projectPath, String filePath, String content) async {
     final file = File(getPlatformFilePath(projectPath, filePath));
+    await _autoBackup(projectPath, filePath);
     return file.writeAsString(content);
   }
 
