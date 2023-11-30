@@ -133,18 +133,18 @@ class ProjectPage extends BasePage {
           ),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) async {
-            /// TODO: 跳转项目详情页
-            /// 获取平台图标
-            const platform = PlatformPath.macos;
-            var a = await ProjectTool.getLogoInfo(platform, item.path);
-            print('object');
-
-            /// 替换平台图标
-            final files = await FilePicker.platform.pickFiles();
-            final path = files?.files.firstOrNull?.path;
-            if (path == null) return;
-            var b = await ProjectTool.replaceLogo(platform, item.path, path);
-            print('object');
+            // /// TODO: 跳转项目详情页
+            // /// 获取平台图标
+            // const platform = PlatformPath.macos;
+            // var a = await ProjectTool.getLogoInfo(platform, item.path);
+            // print('object');
+            //
+            // /// 替换平台图标
+            // final files = await FilePicker.platform.pickFiles();
+            // final path = files?.files.firstOrNull?.path;
+            // if (path == null) return;
+            // var b = await ProjectTool.replaceLogo(platform, item.path, path);
+            // print('object');
           },
         );
       },

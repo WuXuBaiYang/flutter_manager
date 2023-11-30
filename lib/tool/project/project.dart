@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
+import 'package:image/image.dart' as img;
 
 /*
 * 项目管理工具
@@ -76,11 +78,19 @@ class ProjectTool {
   }
 
   // 获取项目图标
-  static Future<String?> getProjectLogo(String projectPath) async {
-    /// TODO: 获取项目图标
-    // for (var platform in _projectPlatformDirNames) {
-    //   final dir = Directory(join(path, platform));
-    // }
+  static Future<String?> getProjectLogo(String projectPath,
+      {double minSize = 50}) async {
+    for (final tool in _platformTools.values) {
+      final result = await tool.getLogoInfo(projectPath);
+      if (result == null) continue;
+      // 遍历结果找到合适尺寸的图片返回
+      for (final item in result.entries) {
+        final source = await img.decodeImageFile(item.value);
+        final imageSize = min(source?.width ?? 0, source?.height ?? 0);
+        if (imageSize >= minSize) return item.value;
+      }
+    }
+    return null;
   }
 
   // 根据平台获取图标
