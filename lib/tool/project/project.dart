@@ -77,6 +77,13 @@ class ProjectTool {
     return (await file.copy(outputPath)).path;
   }
 
+  // 获取当前项目支持的平台数量
+  static List<PlatformPath> getPlatforms(String projectPath) {
+    final entries = [..._platformTools.entries]
+      ..removeWhere((e) => !e.value.isPathAvailable(projectPath));
+    return entries.map<PlatformPath>((e) => e.key).toList();
+  }
+
   // 获取项目图标
   static Future<String?> getProjectLogo(String projectPath,
       {double minSize = 50}) async {

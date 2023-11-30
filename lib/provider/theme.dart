@@ -126,6 +126,7 @@ class ThemeProvider extends BaseProvider {
       focusColor: Colors.transparent,
       appBarTheme: const AppBarTheme(
         scrolledUnderElevation: 0,
+        titleSpacing: 0,
       ),
       cardTheme: const CardTheme(
         shadowColor: Colors.black26,
@@ -141,6 +142,9 @@ class ThemeProvider extends BaseProvider {
       searchBarTheme: const SearchBarThemeData(
         elevation: MaterialStatePropertyAll(2),
         constraints: BoxConstraints.tightFor(height: 45),
+      ),
+      tabBarTheme: const TabBarTheme(
+        dividerHeight: 0,
       ),
     );
   }

@@ -108,7 +108,7 @@ class ProjectPage extends BasePage {
               onDetail: (item) => router.pushNamed(
                 RoutePath.projectDetail,
                 arguments: (project: item),
-              ),
+              )?.then((_) => provider.initialize()),
             ),
           ),
         );
@@ -136,7 +136,7 @@ class ProjectPage extends BasePage {
           onDetail: (item) => router.pushNamed(
             RoutePath.projectDetail,
             arguments: (project: item),
-          ),
+          )?.then((_) => provider.initialize()),
         );
       },
     );

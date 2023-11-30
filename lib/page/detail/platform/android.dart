@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/detail/index.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -34,8 +33,4 @@ class ProjectPlatformAndroidPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:02
 */
-class ProjectPlatformAndroidPageProvider extends ChangeNotifier {
-  // 获取项目信息
-  Project? getProjectInfo(BuildContext context) =>
-      context.watch<ProjectDetailPageProvider>().project;
-}
+class ProjectPlatformAndroidPageProvider extends ProjectPlatformProvider {}

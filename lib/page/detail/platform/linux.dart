@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/page/detail/index.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -32,4 +33,4 @@ class ProjectPlatformLinuxPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformLinuxPageProvider extends ChangeNotifier {}
+class ProjectPlatformLinuxPageProvider extends ProjectPlatformProvider {}
