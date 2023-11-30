@@ -18,14 +18,13 @@ class HomePage extends BasePage {
   const HomePage({super.key});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => HomePageProvider()),
+  List<SingleChildWidget> getProviders(BuildContext context) => [
+        ChangeNotifierProvider(create: (_) => HomePageProvider(context)),
       ];
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.watch<HomePageProvider>()
-      ..registerSettingsJumper(context);
+    final provider = context.watch<HomePageProvider>();
     return Scaffold(
       body: Row(
         children: [
@@ -115,6 +114,16 @@ class HomePageProvider extends ChangeNotifier {
   // 获取导航下标
   int get navigationIndex => _navigationIndex;
 
+  HomePageProvider(BuildContext context) {
+    // 注册设置跳转方法
+    final provider = context.read<SettingProvider>();
+    provider.addListener(() {
+      if (provider.selectedKey != null) {
+        setNavigationIndex(navigationRailPageList.length - 1);
+      }
+    });
+  }
+
   // 判断传入下标是否为当前下标
   bool isNavigationIndex(int index) => _navigationIndex == index;
 
@@ -123,19 +132,5 @@ class HomePageProvider extends ChangeNotifier {
     if (index < 0 || index >= navigationRailList.length) return;
     _navigationIndex = index;
     notifyListeners();
-  }
-
-  // 注册监听回调
-  VoidCallback? _settingListener;
-
-  // 注册设置跳转监听
-  void registerSettingsJumper(BuildContext context) {
-    if (_settingListener != null) return;
-    final provider = context.read<SettingProvider>();
-    provider.addListener(_settingListener ??= () {
-      if (provider.selectedKey != null) {
-        setNavigationIndex(navigationRailPageList.length - 1);
-      }
-    });
   }
 }

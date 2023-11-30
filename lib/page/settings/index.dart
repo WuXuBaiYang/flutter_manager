@@ -30,13 +30,12 @@ class SettingsPage extends BasePage {
   bool get primary => false;
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(create: (_) => SettingsPageProvider()),
+  List<SingleChildWidget> getProviders(BuildContext context) => [
+        ChangeNotifierProvider(create: (_) => SettingsPageProvider(context)),
       ];
 
   @override
   Widget buildWidget(BuildContext context) {
-    context.read<SettingsPageProvider>().registerSettingsJumper(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
@@ -183,17 +182,13 @@ class SettingsPage extends BasePage {
 * @Time 2023/11/24 14:25
 */
 class SettingsPageProvider extends ChangeNotifier {
-  // 注册监听回调
-  VoidCallback? _settingListener;
-
   // 滚动控制器
   final scrollController = ScrollController();
 
-  // 注册设置跳转监听
-  void registerSettingsJumper(BuildContext context) {
-    if (_settingListener != null) return;
+  SettingsPageProvider(BuildContext context) {
+    // 注册设置跳转方法
     final provider = context.read<SettingProvider>();
-    provider.addListener(_settingListener ??= () {
+    provider.addListener(() {
       final context = provider.selectedKey?.currentContext;
       if (context != null) Scrollable.ensureVisible(context);
     });

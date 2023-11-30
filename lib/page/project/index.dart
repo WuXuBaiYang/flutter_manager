@@ -8,7 +8,6 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
@@ -30,7 +29,7 @@ class ProjectPage extends BasePage {
   bool get primary => false;
 
   @override
-  List<SingleChildWidget> get providers => [
+  List<SingleChildWidget> getProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
       ];
 
@@ -133,12 +132,7 @@ class ProjectPage extends BasePage {
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) async {
             /// TODO: 跳转项目详情页
-            // const platform = PlatformPath.linux;
-            // final result = await ProjectTool.getLabel(platform, item.path);
-            //
-            // String name = 'jtech_cccc';
-            // final b = await ProjectTool.setLabel(platform, item.path, name);
-            // print('object');
+
           },
         );
       },

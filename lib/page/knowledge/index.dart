@@ -16,7 +16,7 @@ class KnowledgePage extends BasePage {
   bool get primary => false;
 
   @override
-  List<SingleChildWidget> get providers => [
+  List<SingleChildWidget> getProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => KnowledgePageProvider()),
       ];
 

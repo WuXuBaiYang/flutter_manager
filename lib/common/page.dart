@@ -27,7 +27,7 @@ abstract class BasePage extends StatelessWidget {
     this.actions = const [],
   });
 
-  List<SingleChildWidget> get providers;
+  List<SingleChildWidget> getProviders(BuildContext context);
 
   // 是否是主页面
   bool get primary => true;
@@ -35,7 +35,7 @@ abstract class BasePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: providers,
+      providers: getProviders(context),
       builder: (context, _) {
         final provider = context.watch<ThemeProvider>();
         return Material(
