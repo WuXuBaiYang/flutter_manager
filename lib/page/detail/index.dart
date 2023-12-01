@@ -79,7 +79,7 @@ class ProjectDetailPage extends BasePage {
               flexibleSpace: FlexibleSpaceBar(
                 background: Card(
                   child: Container(
-                    color: color?.withOpacity(0.2),
+                    color: hasColor ? color?.withOpacity(0.2) : null,
                     child: Row(
                       children: [
                         Expanded(child: _buildAppBarProjectInfo(context)),
@@ -90,6 +90,7 @@ class ProjectDetailPage extends BasePage {
                 ),
               ),
               bottom: TabBar(
+                splashBorderRadius: BorderRadius.circular(4),
                 tabs: provider.platformMap.keys.map((e) {
                   return Tab(text: e.name);
                 }).toList(),
@@ -139,16 +140,21 @@ class ProjectDetailPage extends BasePage {
           Text(project.path,
               maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),
           const SizedBox(height: 8),
-          Wrap(
-            spacing: 6,
-            children: List.generate(platforms.length, (i) {
-              final label = platforms[i].name;
-              return RawChip(
-                label: Text(label),
-                padding: EdgeInsets.zero,
-                labelStyle: Theme.of(context).textTheme.bodySmall,
-              );
-            }),
+          Theme(
+            data: Theme.of(context).copyWith(
+              canvasColor: Colors.transparent,
+            ),
+            child: Wrap(
+              spacing: 6,
+              children: List.generate(platforms.length, (i) {
+                final label = platforms[i].name;
+                return RawChip(
+                  label: Text(label),
+                  padding: EdgeInsets.zero,
+                  labelStyle: Theme.of(context).textTheme.bodySmall,
+                );
+              }),
+            ),
           ),
         ],
       ),
