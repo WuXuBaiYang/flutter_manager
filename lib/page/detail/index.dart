@@ -62,6 +62,8 @@ class ProjectDetailPage extends BasePage {
   // 构建内容
   Widget _buildContent(BuildContext context) {
     final provider = context.read<ProjectDetailPageProvider>();
+    final color = provider.project?.getColor();
+    final hasColor = color != Colors.transparent;
     return DefaultTabController(
       length: PlatformPath.values.length,
       child: NestedScrollView(
@@ -70,16 +72,20 @@ class ProjectDetailPage extends BasePage {
           return [
             SliverAppBar(
               pinned: true,
-              scrolledUnderElevation: 1,
               title: _buildAppBarTitle(context),
               expandedHeight: provider.headerHeight,
+              scrolledUnderElevation: hasColor ? 8 : 1,
+              surfaceTintColor: hasColor ? color : null,
               flexibleSpace: FlexibleSpaceBar(
                 background: Card(
-                  child: Row(
-                    children: [
-                      Expanded(child: _buildAppBarProjectInfo(context)),
-                      _buildAppBarActions(context),
-                    ],
+                  child: Container(
+                    color: color?.withOpacity(0.2),
+                    child: Row(
+                      children: [
+                        Expanded(child: _buildAppBarProjectInfo(context)),
+                        _buildAppBarActions(context),
+                      ],
+                    ),
                   ),
                 ),
               ),
