@@ -3,6 +3,7 @@ import 'package:flutter_manager/page/detail/platform/base.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'platform_item.dart';
 
 /*
 * 项目详情-android平台信息页
@@ -20,6 +21,32 @@ class ProjectPlatformAndroidPage
               ProjectPlatformAndroidPageProvider(context, PlatformPath.android),
         ),
       ];
+
+  @override
+  List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
+    return [
+      ProjectPlatformItem.count(
+        mainAxisCellCount: 2,
+        crossAxisCellCount: 2,
+        child: Text('test'),
+      ),
+      ProjectPlatformItem.count(
+        mainAxisCellCount: 2,
+        crossAxisCellCount: 2,
+        child: Text('test'),
+      ),
+      ProjectPlatformItem.count(
+        mainAxisCellCount: 2,
+        crossAxisCellCount: 2,
+        child: Text('test'),
+      ),
+      ProjectPlatformItem.count(
+        mainAxisCellCount: 2,
+        crossAxisCellCount: 2,
+        child: Text('test'),
+      ),
+    ];
+  }
 }
 
 /*

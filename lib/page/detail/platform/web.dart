@@ -3,6 +3,7 @@ import 'package:flutter_manager/page/detail/platform/base.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'platform_item.dart';
 
 /*
 * 项目详情-web平台信息页
@@ -20,6 +21,11 @@ class ProjectPlatformWebPage
               ProjectPlatformWebPageProvider(context, PlatformPath.web),
         ),
       ];
+
+  @override
+  List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
+    return [];
+  }
 }
 
 /*

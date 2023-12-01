@@ -10,6 +10,8 @@ import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
+import 'platform_item.dart';
+
 /*
 * 项目平台信息页面基类
 * @author wuxubaiyang
@@ -40,34 +42,21 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
 
   // 构建平台信息
   Widget _buildPlatformWidget(BuildContext context) {
-    return GridView.custom(
-      gridDelegate: SliverQuiltedGridDelegate(
-        crossAxisCount: 8,
+    final children = buildPlatformItems(context);
+    return EmptyBoxView(
+      hint: '暂无方法',
+      isEmpty: children.isEmpty,
+      child: StaggeredGrid.count(
+        crossAxisCount: 4,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
-        pattern: [
-          QuiltedGridTile(2, 2),
-          QuiltedGridTile(2, 2),
-          QuiltedGridTile(2, 2),
-          QuiltedGridTile(2, 2),
-        ],
+        children: children,
       ),
-      childrenDelegate: SliverChildListDelegate([
-        ...List.generate(
-            4,
-            (i) => Card(
-                  child: Container(
-                    width: double.infinity,
-                    height: double.infinity,
-                    color: Colors.blue,
-                    child: Center(
-                      child: Text('$i'),
-                    ),
-                  ),
-                )),
-      ]),
     );
   }
+
+  // 获取平台构造项
+  List<ProjectPlatformItem> buildPlatformItems(BuildContext context);
 }
 
 /*
