@@ -9,13 +9,15 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformWebPage extends ProjectPlatformPage {
+class ProjectPlatformWebPage
+    extends ProjectPlatformPage<ProjectPlatformWebPageProvider> {
   const ProjectPlatformWebPage({super.key});
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
-          create: (_) => ProjectPlatformWebPageProvider(context, PlatformPath.web),
+          create: (_) =>
+              ProjectPlatformWebPageProvider(context, PlatformPath.web),
         ),
       ];
 }

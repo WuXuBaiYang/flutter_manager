@@ -60,13 +60,15 @@ class EnvironmentTool {
 
   // 执行环境命令
   static Future<String?> runEnvironmentCommand(
-      String environmentPath, List<String> arguments) async {
+      String environmentPath, List<String> arguments,
+      {String? workingDirectory}) async {
     final result = await Process.run(
       join(environmentPath, _keyFilePath),
       arguments,
       runInShell: true,
       stdoutEncoding: utf8,
       stderrEncoding: utf8,
+      workingDirectory: workingDirectory,
     );
     if (result.exitCode != 0) return null;
     return result.stdout.toString();

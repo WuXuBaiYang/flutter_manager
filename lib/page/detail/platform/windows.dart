@@ -9,7 +9,8 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformWindowsPage extends ProjectPlatformPage {
+class ProjectPlatformWindowsPage
+    extends ProjectPlatformPage<ProjectPlatformWindowsPageProvider> {
   const ProjectPlatformWindowsPage({super.key});
 
   @override

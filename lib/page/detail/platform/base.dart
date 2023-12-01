@@ -3,8 +3,10 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/detail/index.dart';
+import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -12,7 +14,8 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/12/1 9:41
 */
-abstract class ProjectPlatformPage extends BasePage {
+abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
+    extends BasePage {
   const ProjectPlatformPage({
     super.key,
     super.primary = false,
@@ -20,29 +23,23 @@ abstract class ProjectPlatformPage extends BasePage {
 
   @override
   Widget buildWidget(BuildContext context) {
-    return SizedBox();
+    final hasPlatform = context.watch<T>().hasPlatform;
+    return EmptyBoxView(
+      hint: '无平台信息',
+      isEmpty: !hasPlatform,
+      icon: IconButton.outlined(
+        iconSize: 45,
+        icon: const Icon(Icons.add),
+        onPressed: () => Loading.show(context,
+            loadFuture: context.read<T>().createPlatform(context)),
+      ),
+      child: _buildPlatformWidget(context),
+    );
   }
 
-  // 构建空平台信息创建组件
-  Widget _buildEmptyPlatform(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton.outlined(
-            icon: Icon(Icons.add),
-            onPressed: () {},
-          ),
-          Text(
-            '当前项目不存在平台信息',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-      ),
-    );
+  // 构建平台信息
+  Widget _buildPlatformWidget(BuildContext context) {
+    return SizedBox();
   }
 }
 

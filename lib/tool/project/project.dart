@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_manager/common/common.dart';
@@ -53,8 +52,10 @@ class ProjectTool {
     final environment = await database.getEnvironmentById(project.envId);
     if (environment == null) return false;
     final output = await EnvironmentTool.runEnvironmentCommand(
-        environment.path, ['create', platform.name]);
-    return output != null;
+        environment.path, ['create', '--platforms', platform.name, '.'],
+        workingDirectory: project.path);
+    if (output == null) return false;
+    return hasPlatform(platform, project.path);
   }
 
   // 根据传入平台获取对应的平台工具

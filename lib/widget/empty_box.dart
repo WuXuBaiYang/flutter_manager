@@ -27,10 +27,14 @@ class EmptyBoxView extends StatelessWidget {
   // 自定义图标
   final IconData? iconData;
 
+  // 自定义子元素（与iconData互斥）
+  final Widget? icon;
+
   const EmptyBoxView({
     super.key,
     required this.child,
     required this.isEmpty,
+    this.icon,
     this.color,
     this.iconData,
     this.hint = '',
@@ -68,11 +72,12 @@ class EmptyBoxView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            color: color,
-            size: placeholderSize,
-            iconData ?? Icons.inbox,
-          ),
+          icon ??
+              Icon(
+                color: color,
+                size: placeholderSize,
+                iconData ?? Icons.inbox,
+              ),
           const SizedBox(height: 14),
           Text(hint,
               textAlign: TextAlign.center,

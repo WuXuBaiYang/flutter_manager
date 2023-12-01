@@ -9,13 +9,15 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformIosPage extends ProjectPlatformPage {
+class ProjectPlatformIosPage
+    extends ProjectPlatformPage<ProjectPlatformIosPageProvider> {
   const ProjectPlatformIosPage({super.key});
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
-          create: (_) => ProjectPlatformIosPageProvider(context, PlatformPath.ios),
+          create: (_) =>
+              ProjectPlatformIosPageProvider(context, PlatformPath.ios),
         ),
       ];
 }

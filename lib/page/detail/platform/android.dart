@@ -9,7 +9,8 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:02
 */
-class ProjectPlatformAndroidPage extends ProjectPlatformPage {
+class ProjectPlatformAndroidPage
+    extends ProjectPlatformPage<ProjectPlatformAndroidPageProvider> {
   const ProjectPlatformAndroidPage({super.key});
 
   @override
