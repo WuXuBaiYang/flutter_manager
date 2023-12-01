@@ -12,6 +12,7 @@ import 'package:flutter_manager/page/detail/platform/linux.dart';
 import 'package:flutter_manager/page/detail/platform/macos.dart';
 import 'package:flutter_manager/page/detail/platform/web.dart';
 import 'package:flutter_manager/page/detail/platform/windows.dart';
+import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -103,7 +104,7 @@ class ProjectDetailPage extends BasePage {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
-    final platforms = provider.getPlatforms();
+    final platforms = provider.getPlatforms(context);
     return ListTile(
       isThreeLine: true,
       title: Row(
@@ -302,13 +303,6 @@ class ProjectDetailPageProvider extends BaseProvider {
     ),
   };
 
-  // 缓存平台排序
-  List<PlatformPath>? _platformSort;
-
-  // 平台排序
-  List<PlatformPath> get platformSort =>
-      _platformSort ??= ProjectTool.getPlatformSort(project?.id);
-
   ProjectDetailPageProvider(BuildContext context) {
     // 获取项目信息
     final arguments = router.findTuple<ProjectDetailRouteTuple>(context);
@@ -322,6 +316,7 @@ class ProjectDetailPageProvider extends BaseProvider {
       }
     });
     // 根据当前项目的平台排序重新排序平台表
+    final platformSort = context.read<ProjectProvider>().platformSort;
     for (var e in platformSort) {
       final widget = platformMap.remove(e);
       if (widget != null) platformMap[e] = widget;
@@ -329,10 +324,11 @@ class ProjectDetailPageProvider extends BaseProvider {
   }
 
   // 获取支持的平台列表
-  List<PlatformPath> getPlatforms() {
+  List<PlatformPath> getPlatforms(BuildContext context) {
     if (project == null) return [];
     final platforms = ProjectTool.getPlatforms(project!.path);
     // 根据当前项目的平台排序重新排序平台表
+    final platformSort = context.read<ProjectProvider>().platformSort;
     for (var e in platformSort) {
       if (!platforms.contains(e)) continue;
       platforms.remove(e);

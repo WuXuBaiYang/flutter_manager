@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
+import 'package:flutter_manager/page/settings/platform_sort_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/provider/theme.dart';
@@ -67,6 +68,7 @@ class SettingsPage extends BasePage {
         children: [
           _buildFlutterEnvironment(context),
           _buildFlutterEnvironmentCache(context),
+          _buildProjectPlatformSort(context),
           _buildThemeMode(context),
           _buildThemeScheme(context),
         ],
@@ -126,6 +128,15 @@ class SettingsPage extends BasePage {
           Tool.openLocalPath(path);
         },
       ),
+    );
+  }
+
+  // 构建项目平台排序设置项
+  Widget _buildProjectPlatformSort(BuildContext context) {
+    return SettingItem(
+      label: '项目平台排序',
+      key: context.read<SettingProvider>().projectPlatformSortKey,
+      content: const PlatformSortList(),
     );
   }
 

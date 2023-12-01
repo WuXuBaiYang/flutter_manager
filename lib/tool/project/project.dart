@@ -50,27 +50,22 @@ class ProjectTool {
 
   // 获取项目详情页平台排序
   static List<PlatformPath> getPlatformSort([Id? projectId]) {
-    getDefaultSort() {
-      return cache
-              .getJson<List<int>>(_platformSortKey)
-              ?.map<PlatformPath>((e) => PlatformPath.values[e])
-              .toList() ??
-          PlatformPath.values;
-    }
+    getSort(String key) => cache
+        .getJson<List>(key)
+        ?.map<PlatformPath>((e) => PlatformPath.values[e as int])
+        .toList();
+    getDefaultSort() => getSort(_platformSortKey) ?? PlatformPath.values;
 
     if (projectId == null) return getDefaultSort();
-    return cache
-            .getJson<List<int>>('${_platformSortKey}_$projectId')
-            ?.map<PlatformPath>((e) => PlatformPath.values[e])
-            .toList() ??
-        getDefaultSort();
+    return getSort('${_platformSortKey}_$projectId') ?? getDefaultSort();
   }
 
   // 缓存项目详情页平台排序
   static Future<bool> cachePlatformSort(List<PlatformPath> platforms,
       [Id? projectId]) async {
-    final cacheKey = '${_platformSortKey}_${projectId ?? 'def'}';
     final values = platforms.map<int>((e) => e.index).toList();
+    final cacheKey =
+        projectId != null ? '${_platformSortKey}_$projectId' : _platformSortKey;
     return cache.setJson(cacheKey, values);
   }
 

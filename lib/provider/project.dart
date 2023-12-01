@@ -1,10 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:isar/isar.dart';
 
 // 项目信息元组类型
 typedef ProjectTuple = ({List<Project> projects, List<Project> pinnedProjects});
@@ -30,6 +31,16 @@ class ProjectProvider extends BaseProvider {
   // 判断是否存在项目
   bool get hasProject => projects.isNotEmpty || pinnedProjects.isNotEmpty;
 
+  // 默认项目平台排序表
+  List<PlatformPath>? _platformSort;
+
+  // 获取默认项目平台排序表
+  List<PlatformPath> get platformSort =>
+      _platformSort ??= ProjectTool.getPlatformSort();
+
+  // 缓存项目平台排序表
+  final _platformSortMap = <Id, List<PlatformPath>>{};
+
   ProjectProvider() {
     initialize();
   }
@@ -41,6 +52,16 @@ class ProjectProvider extends BaseProvider {
     forEachFun(Project e) => (e.pinned ? pinnedProjects : projects).add(e);
     result.forEach(forEachFun);
     notifyListeners();
+  }
+
+  // 更新项目平台排序
+  Future<bool> updatePlatformSort(List<PlatformPath> platforms,
+      [Id? projectId]) async {
+    projectId != null
+        ? _platformSortMap[projectId] = platforms
+        : _platformSort = platforms;
+    notifyListeners();
+    return ProjectTool.cachePlatformSort(platforms, projectId);
   }
 
   // 添加/编辑项目信息
