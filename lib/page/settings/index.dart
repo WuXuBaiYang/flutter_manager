@@ -8,6 +8,7 @@ import 'package:flutter_manager/provider/setting.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
@@ -121,8 +122,8 @@ class SettingsPage extends BasePage {
         tooltip: '打开缓存目录',
         icon: const Icon(Icons.file_open_outlined),
         onPressed: () async {
-          final dir = await EnvironmentTool.getDownloadCachePath();
-          if (dir != null) OpenDir().openNativeDir(path: dir);
+          final path = await EnvironmentTool.getDownloadCachePath();
+          Tool.openLocalPath(path);
         },
       ),
     );

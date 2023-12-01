@@ -1,5 +1,6 @@
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:flutter/material.dart';
+import 'package:open_dir/open_dir.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'dart:async';
 import 'dart:convert';
@@ -87,6 +88,12 @@ class Tool {
   static Duration toDayZeroDuration({int dayOffset = 1}) {
     if (dayOffset < 1) return Duration.zero;
     return getDayZero(dayOffset: dayOffset).difference(DateTime.now());
+  }
+
+  // 打开本地目录
+  static Future<bool?> openLocalPath(String? path) async {
+    if (path?.isEmpty ?? true) return false;
+    return OpenDir().openNativeDir(path: path!);
   }
 }
 

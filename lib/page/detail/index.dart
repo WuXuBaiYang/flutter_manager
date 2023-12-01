@@ -1,19 +1,26 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/page/detail/platform/android.dart';
+import 'package:flutter_manager/page/detail/platform/ios.dart';
+import 'package:flutter_manager/page/detail/platform/linux.dart';
+import 'package:flutter_manager/page/detail/platform/macos.dart';
+import 'package:flutter_manager/page/detail/platform/web.dart';
+import 'package:flutter_manager/page/detail/platform/windows.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:flutter_manager/widget/image.dart';
+import 'package:flutter_manager/widget/keep_alive.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -76,18 +83,14 @@ class ProjectDetailPage extends BasePage {
                 ),
               ),
               bottom: TabBar(
-                tabs: PlatformPath.values.map((e) {
+                tabs: provider.platformMap.keys.map((e) {
                   return Tab(text: e.name);
                 }).toList(),
               ),
             ),
           ];
         },
-        body: SingleChildScrollView(
-          child: Container(
-            height: 10000,
-          ),
-        ),
+        body: TabBarView(children: provider.platformMap.values.toList()),
       ),
     );
   }
@@ -154,10 +157,31 @@ class ProjectDetailPage extends BasePage {
     return Row(
       children: [
         Wrap(
-          spacing: 8,
+          spacing: 14,
           runSpacing: 8,
-          children: [],
+          children: [
+            IconButton.outlined(
+              tooltip: '修改项目名',
+              icon: const Icon(Icons.edit_attributes_rounded),
+              onPressed: () {
+                /// TODO 修改项目名
+              },
+            ),
+            IconButton.outlined(
+              tooltip: '替换图标',
+              icon: const Icon(Icons.imagesearch_roller_rounded),
+              onPressed: () {
+                /// TODO 替换图标
+              },
+            ),
+            IconButton.outlined(
+              tooltip: '打开项目目录',
+              icon: const Icon(Icons.open_in_browser_rounded),
+              onPressed: () => Tool.openLocalPath(project.path),
+            ),
+          ],
         ),
+        const SizedBox(width: 14),
         FilledButton.icon(
           label: const Text('打包'),
           icon: const Icon(Icons.build),
@@ -240,7 +264,7 @@ class ProjectDetailPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/30 16:35
 */
-class ProjectDetailPageProvider extends ProjectPlatformProvider {
+class ProjectDetailPageProvider extends BaseProvider {
   // 缓存项目信息
   Project? _project;
 
@@ -255,6 +279,28 @@ class ProjectDetailPageProvider extends ProjectPlatformProvider {
 
   // 滚动控制器
   final scrollController = ScrollController();
+
+  // 项目平台对照表
+  final platformMap = <PlatformPath, Widget>{
+    PlatformPath.android: const KeepAliveWrapper(
+      child: ProjectPlatformAndroidPage(),
+    ),
+    PlatformPath.ios: const KeepAliveWrapper(
+      child: ProjectPlatformIosPage(),
+    ),
+    PlatformPath.web: const KeepAliveWrapper(
+      child: ProjectPlatformWebPage(),
+    ),
+    PlatformPath.macos: const KeepAliveWrapper(
+      child: ProjectPlatformMacosPage(),
+    ),
+    PlatformPath.windows: const KeepAliveWrapper(
+      child: ProjectPlatformWindowsPage(),
+    ),
+    PlatformPath.linux: const KeepAliveWrapper(
+      child: ProjectPlatformLinuxPage(),
+    ),
+  };
 
   ProjectDetailPageProvider(BuildContext context) {
     // 获取项目信息
@@ -276,15 +322,4 @@ class ProjectDetailPageProvider extends ProjectPlatformProvider {
     _project = project;
     notifyListeners();
   }
-}
-
-/*
-* 项目平台信息provider
-* @author wuxubaiyang
-* @Time 2023/11/30 18:48
-*/
-class ProjectPlatformProvider extends ChangeNotifier {
-  // 获取项目信息
-  Project? getProjectInfo(BuildContext context) =>
-      context.read<ProjectDetailPageProvider>().project;
 }

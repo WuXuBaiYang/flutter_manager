@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/page/detail/index.dart';
+import 'package:flutter_manager/page/detail/platform/base.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -9,7 +8,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:02
 */
-class ProjectPlatformAndroidPage extends BasePage {
+class ProjectPlatformAndroidPage extends ProjectPlatformPage {
   const ProjectPlatformAndroidPage({super.key});
 
   @override
@@ -17,15 +16,6 @@ class ProjectPlatformAndroidPage extends BasePage {
         ChangeNotifierProvider(
             create: (_) => ProjectPlatformAndroidPageProvider()),
       ];
-
-  @override
-  Widget buildWidget(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('项目详情-android平台信息页'),
-      ),
-    );
-  }
 }
 
 /*
