@@ -14,7 +14,7 @@ class PackagePage extends BasePage {
   const PackagePage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => PackagePageProvider()),
       ];
 

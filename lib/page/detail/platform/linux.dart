@@ -13,10 +13,10 @@ class ProjectPlatformLinuxPage extends ProjectPlatformPage {
   const ProjectPlatformLinuxPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformLinuxPageProvider(_, PlatformPath.linux),
+              ProjectPlatformLinuxPageProvider(context, PlatformPath.linux),
         ),
       ];
 }

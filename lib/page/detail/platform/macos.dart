@@ -13,10 +13,10 @@ class ProjectPlatformMacosPage extends ProjectPlatformPage {
   const ProjectPlatformMacosPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformMacosPageProvider(_, PlatformPath.macos),
+              ProjectPlatformMacosPageProvider(context, PlatformPath.macos),
         ),
       ];
 }

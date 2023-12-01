@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/base.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
@@ -12,9 +13,9 @@ class ProjectPlatformIosPage extends ProjectPlatformPage {
   const ProjectPlatformIosPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
-          create: (_) => ProjectPlatformIosPageProvider(_, PlatformPath.ios),
+          create: (_) => ProjectPlatformIosPageProvider(context, PlatformPath.ios),
         ),
       ];
 }

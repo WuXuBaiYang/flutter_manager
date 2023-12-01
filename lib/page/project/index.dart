@@ -29,7 +29,7 @@ class ProjectPage extends BasePage {
   const ProjectPage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
       ];
 

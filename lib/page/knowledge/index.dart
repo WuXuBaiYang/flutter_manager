@@ -14,7 +14,7 @@ class KnowledgePage extends BasePage {
   const KnowledgePage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => KnowledgePageProvider()),
       ];
 

@@ -13,10 +13,10 @@ class ProjectPlatformWindowsPage extends ProjectPlatformPage {
   const ProjectPlatformWindowsPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformWindowsPageProvider(_, PlatformPath.windows),
+              ProjectPlatformWindowsPageProvider(context, PlatformPath.windows),
         ),
       ];
 }

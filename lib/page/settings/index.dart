@@ -29,8 +29,8 @@ class SettingsPage extends BasePage {
   const SettingsPage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders() => [
-        ChangeNotifierProvider(create: (_) => SettingsPageProvider(_)),
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider(create: (_) => SettingsPageProvider(context)),
       ];
 
   @override

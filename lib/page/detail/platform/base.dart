@@ -22,6 +22,28 @@ abstract class ProjectPlatformPage extends BasePage {
   Widget buildWidget(BuildContext context) {
     return SizedBox();
   }
+
+  // 构建空平台信息创建组件
+  Widget _buildEmptyPlatform(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton.outlined(
+            icon: Icon(Icons.add),
+            onPressed: () {},
+          ),
+          Text(
+            '当前项目不存在平台信息',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 /*
