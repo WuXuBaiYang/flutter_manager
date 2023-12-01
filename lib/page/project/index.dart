@@ -25,13 +25,10 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/24 14:25
 */
 class ProjectPage extends BasePage {
-  const ProjectPage({super.key});
+  const ProjectPage({super.key, super.primary = false});
 
   @override
-  bool get primary => false;
-
-  @override
-  List<SingleChildWidget> getProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
       ];
 

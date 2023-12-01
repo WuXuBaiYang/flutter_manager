@@ -18,7 +18,7 @@ class HomePage extends BasePage {
   const HomePage({super.key});
 
   @override
-  List<SingleChildWidget> getProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => HomePageProvider(context)),
       ];
 

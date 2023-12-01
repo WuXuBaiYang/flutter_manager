@@ -20,22 +20,23 @@ abstract class BasePage extends StatelessWidget {
   // 动作按钮（接在默认操作按钮左边）
   final List<Widget> actions;
 
+  // 是否为主页面
+  final bool primary;
+
   const BasePage({
     super.key,
     this.title,
     this.leading,
+    this.primary = true,
     this.actions = const [],
   });
 
-  List<SingleChildWidget> getProviders(BuildContext context);
-
-  // 是否是主页面
-  bool get primary => true;
+  List<SingleChildWidget> loadProviders(BuildContext context);
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: getProviders(context),
+      providers: loadProviders(context),
       builder: (context, _) {
         final provider = context.watch<ThemeProvider>();
         return Material(

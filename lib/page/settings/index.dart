@@ -25,13 +25,10 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/24 14:25
 */
 class SettingsPage extends BasePage {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, super.primary = false});
 
   @override
-  bool get primary => false;
-
-  @override
-  List<SingleChildWidget> getProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(create: (_) => SettingsPageProvider(context)),
       ];
 
