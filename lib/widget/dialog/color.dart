@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/widget/color_item.dart';
-import 'package:provider/provider.dart';
 
 /*
 * 颜色选择对话框

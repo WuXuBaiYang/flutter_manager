@@ -8,6 +8,8 @@ import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
@@ -69,7 +71,6 @@ class ProjectDetailPage extends BasePage {
                     children: [
                       Expanded(child: _buildAppBarProjectInfo(context)),
                       _buildAppBarActions(context),
-                      const SizedBox(width: 24),
                     ],
                   ),
                 ),
@@ -147,19 +148,29 @@ class ProjectDetailPage extends BasePage {
 
   // 构建标题栏操作按钮
   Widget _buildAppBarActions(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      direction: Axis.vertical,
+    final provider = context.read<ProjectDetailPageProvider>();
+    final project = provider.project;
+    if (project == null) return const SizedBox();
+    return Row(
       children: [
-        TextButton(
-          child: const Text('修改名称'),
-          onPressed: () {},
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [],
         ),
-        TextButton(
-          child: const Text('修改图标'),
-          onPressed: () {},
+        FilledButton.icon(
+          label: const Text('打包'),
+          icon: const Icon(Icons.build),
+          style: ButtonStyle(
+            fixedSize: MaterialStateProperty.all(const Size.fromHeight(55)),
+            shape: MaterialStateProperty.all(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            textStyle: MaterialStateProperty.all(
+                Theme.of(context).textTheme.bodyLarge),
+          ),
+          onPressed: () => ProjectBuildDialog.show(context, project: project),
         ),
+        const SizedBox(width: 14),
       ],
     );
   }
@@ -183,6 +194,26 @@ class ProjectDetailPage extends BasePage {
               Text(project.label),
               const SizedBox(width: 8),
               _buildEnvironmentBadge(project),
+              const SizedBox(width: 4),
+              Transform.translate(
+                offset: Offset.zero.translate(0, 6),
+                child: IconButton(
+                  iconSize: 16,
+                  icon: const Icon(Icons.edit),
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () =>
+                      ProjectImportDialog.show(context, project: project)
+                          .then(provider.updateProject),
+                ),
+              ),
+              const Spacer(),
+              ElevatedButton.icon(
+                label: const Text('打包'),
+                icon: const Icon(Icons.build),
+                onPressed: () =>
+                    ProjectBuildDialog.show(context, project: project),
+              ),
+              const SizedBox(width: 14),
             ],
           ),
         );
