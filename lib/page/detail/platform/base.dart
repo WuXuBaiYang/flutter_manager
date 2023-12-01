@@ -7,6 +7,7 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -39,7 +40,33 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
 
   // 构建平台信息
   Widget _buildPlatformWidget(BuildContext context) {
-    return SizedBox();
+    return GridView.custom(
+      gridDelegate: SliverQuiltedGridDelegate(
+        crossAxisCount: 8,
+        mainAxisSpacing: 8,
+        crossAxisSpacing: 8,
+        pattern: [
+          QuiltedGridTile(2, 2),
+          QuiltedGridTile(2, 2),
+          QuiltedGridTile(2, 2),
+          QuiltedGridTile(2, 2),
+        ],
+      ),
+      childrenDelegate: SliverChildListDelegate([
+        ...List.generate(
+            4,
+            (i) => Card(
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    color: Colors.blue,
+                    child: Center(
+                      child: Text('$i'),
+                    ),
+                  ),
+                )),
+      ]),
+    );
   }
 }
 
