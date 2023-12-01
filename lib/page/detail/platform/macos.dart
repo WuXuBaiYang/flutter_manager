@@ -10,13 +10,14 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformMacosPage extends ProjectPlatformPage {
-  const ProjectPlatformMacosPage(
-      {super.key, super.platformPath = PlatformPath.macos});
+  const ProjectPlatformMacosPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(
-            create: (_) => ProjectPlatformMacosPageProvider()),
+          create: (_) =>
+              ProjectPlatformMacosPageProvider(_, PlatformPath.macos),
+        ),
       ];
 }
 
@@ -25,4 +26,6 @@ class ProjectPlatformMacosPage extends ProjectPlatformPage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformMacosPageProvider extends ProjectPlatformProvider {}
+class ProjectPlatformMacosPageProvider extends ProjectPlatformProvider {
+  ProjectPlatformMacosPageProvider(super.context, super.platform);
+}

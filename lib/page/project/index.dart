@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -28,7 +29,7 @@ class ProjectPage extends BasePage {
   const ProjectPage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
       ];
 
@@ -160,7 +161,7 @@ class ProjectPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPageProvider extends ChangeNotifier {
+class ProjectPageProvider extends BaseProvider {
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.read<ProjectProvider>()..remove(item);

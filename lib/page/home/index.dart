@@ -1,5 +1,6 @@
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/page/knowledge/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
@@ -18,8 +19,8 @@ class HomePage extends BasePage {
   const HomePage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => HomePageProvider(context)),
+  List<SingleChildWidget> loadProviders() => [
+        ChangeNotifierProvider(create: (_) => HomePageProvider(_)),
       ];
 
   @override
@@ -76,7 +77,7 @@ class HomePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/21 14:02
 */
-class HomePageProvider extends ChangeNotifier {
+class HomePageProvider extends BaseProvider {
   // 导航下标管理
   int _navigationIndex = 0;
 

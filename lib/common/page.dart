@@ -19,12 +19,12 @@ abstract class BasePage extends StatelessWidget {
     this.primary = true,
   });
 
-  List<SingleChildWidget> loadProviders(BuildContext context);
+  List<SingleChildWidget> loadProviders();
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: loadProviders(context),
+      providers: loadProviders(),
       builder: (context, _) {
         final provider = context.watch<ThemeProvider>();
         return Material(

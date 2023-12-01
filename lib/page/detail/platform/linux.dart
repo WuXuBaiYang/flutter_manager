@@ -10,16 +10,14 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformLinuxPage extends ProjectPlatformPage {
-  const ProjectPlatformLinuxPage(
-      {super.key, super.platformPath = PlatformPath.linux});
+  const ProjectPlatformLinuxPage({super.key});
 
   @override
-  PlatformPath get platformPath => PlatformPath.linux;
-
-  @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(
-            create: (_) => ProjectPlatformLinuxPageProvider()),
+          create: (_) =>
+              ProjectPlatformLinuxPageProvider(_, PlatformPath.linux),
+        ),
       ];
 }
 
@@ -28,4 +26,6 @@ class ProjectPlatformLinuxPage extends ProjectPlatformPage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformLinuxPageProvider extends ProjectPlatformProvider {}
+class ProjectPlatformLinuxPageProvider extends ProjectPlatformProvider {
+  ProjectPlatformLinuxPageProvider(super.context, super.platform);
+}

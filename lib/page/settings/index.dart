@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
@@ -28,8 +29,8 @@ class SettingsPage extends BasePage {
   const SettingsPage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => SettingsPageProvider(context)),
+  List<SingleChildWidget> loadProviders() => [
+        ChangeNotifierProvider(create: (_) => SettingsPageProvider(_)),
       ];
 
   @override
@@ -189,7 +190,7 @@ class SettingsPage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPageProvider extends ChangeNotifier {
+class SettingsPageProvider extends BaseProvider {
   // 滚动控制器
   final scrollController = ScrollController();
 

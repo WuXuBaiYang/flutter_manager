@@ -37,9 +37,9 @@ class ProjectDetailPage extends BasePage {
   const ProjectDetailPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(
-          create: (_) => ProjectDetailPageProvider(context),
+          create: (_) => ProjectDetailPageProvider(_),
         ),
       ];
 

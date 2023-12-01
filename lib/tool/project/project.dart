@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
+import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
 import 'package:flutter_manager/tool/project/platform/linux.dart';
@@ -44,6 +47,16 @@ class ProjectTool {
     PlatformPath.linux: LinuxPlatformTool(),
   };
 
+  // 创建项目平台
+  static Future<bool> createPlatform(
+      Project project, PlatformPath platform) async {
+    final environment = await database.getEnvironmentById(project.envId);
+    if (environment == null) return false;
+    final output = await EnvironmentTool.runEnvironmentCommand(
+        environment.path, ['create', platform.name]);
+    return output != null;
+  }
+
   // 根据传入平台获取对应的平台工具
   static PlatformTool getPlatformTool(PlatformPath platform) =>
       _platformTools[platform]!;
@@ -67,6 +80,17 @@ class ProjectTool {
     final cacheKey =
         projectId != null ? '${_platformSortKey}_$projectId' : _platformSortKey;
     return cache.setJson(cacheKey, values);
+  }
+
+  // 判断是否存在该平台
+  static bool hasPlatform(PlatformPath platform, String projectPath) =>
+      _platformTools[platform]!.isPathAvailable(projectPath);
+
+  // 获取当前项目支持的平台数量
+  static List<PlatformPath> getPlatforms(String projectPath) {
+    final entries = [..._platformTools.entries]
+      ..removeWhere((e) => !e.value.isPathAvailable(projectPath));
+    return entries.map<PlatformPath>((e) => e.key).toList();
   }
 
   // 获取项目信息
@@ -101,13 +125,6 @@ class ProjectTool {
     if (baseDir == null) return null;
     final outputPath = join(baseDir, '${Tool.genID()}${file.suffixes}');
     return (await file.copy(outputPath)).path;
-  }
-
-  // 获取当前项目支持的平台数量
-  static List<PlatformPath> getPlatforms(String projectPath) {
-    final entries = [..._platformTools.entries]
-      ..removeWhere((e) => !e.value.isPathAvailable(projectPath));
-    return entries.map<PlatformPath>((e) => e.key).toList();
   }
 
   // 获取项目图标

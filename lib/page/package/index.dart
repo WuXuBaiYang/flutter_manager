@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -13,7 +14,7 @@ class PackagePage extends BasePage {
   const PackagePage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(create: (_) => PackagePageProvider()),
       ];
 
@@ -38,4 +39,4 @@ class PackagePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePageProvider extends ChangeNotifier {}
+class PackagePageProvider extends BaseProvider {}

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/base.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
@@ -10,15 +9,13 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/30 17:03
 */
 class ProjectPlatformIosPage extends ProjectPlatformPage {
-  const ProjectPlatformIosPage(
-      {super.key, super.platformPath = PlatformPath.ios});
+  const ProjectPlatformIosPage({super.key});
 
   @override
-  PlatformPath get platformPath => PlatformPath.ios;
-
-  @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => ProjectPlatformIosPageProvider()),
+  List<SingleChildWidget> loadProviders() => [
+        ChangeNotifierProvider(
+          create: (_) => ProjectPlatformIosPageProvider(_, PlatformPath.ios),
+        ),
       ];
 }
 
@@ -27,4 +24,6 @@ class ProjectPlatformIosPage extends ProjectPlatformPage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformIosPageProvider extends ProjectPlatformProvider {}
+class ProjectPlatformIosPageProvider extends ProjectPlatformProvider {
+  ProjectPlatformIosPageProvider(super.context, super.platform);
+}

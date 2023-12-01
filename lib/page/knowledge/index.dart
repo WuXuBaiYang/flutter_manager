@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -13,7 +14,7 @@ class KnowledgePage extends BasePage {
   const KnowledgePage({super.key, super.primary = false});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(create: (_) => KnowledgePageProvider()),
       ];
 
@@ -38,4 +39,4 @@ class KnowledgePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgePageProvider extends ChangeNotifier {}
+class KnowledgePageProvider extends BaseProvider {}

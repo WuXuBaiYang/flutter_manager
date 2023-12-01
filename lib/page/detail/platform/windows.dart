@@ -10,13 +10,14 @@ import 'package:provider/single_child_widget.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformWindowsPage extends ProjectPlatformPage {
-  const ProjectPlatformWindowsPage(
-      {super.key, super.platformPath = PlatformPath.windows});
+  const ProjectPlatformWindowsPage({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> loadProviders() => [
         ChangeNotifierProvider(
-            create: (_) => ProjectPlatformWindowsPageProvider()),
+          create: (_) =>
+              ProjectPlatformWindowsPageProvider(_, PlatformPath.windows),
+        ),
       ];
 }
 
@@ -25,4 +26,6 @@ class ProjectPlatformWindowsPage extends ProjectPlatformPage {
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformWindowsPageProvider extends ProjectPlatformProvider {}
+class ProjectPlatformWindowsPageProvider extends ProjectPlatformProvider {
+  ProjectPlatformWindowsPageProvider(super.context, super.platform);
+}

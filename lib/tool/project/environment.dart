@@ -42,15 +42,8 @@ class EnvironmentTool {
   static Future<Environment?> getEnvironmentInfo(String environmentPath) async {
     if (!isPathAvailable(environmentPath)) return null;
     // 执行flutter version命令并将结果格式化对象
-    final result = await Process.run(
-      join(environmentPath, _keyFilePath),
-      ['--version'],
-      runInShell: true,
-      stdoutEncoding: utf8,
-      stderrEncoding: utf8,
-    );
-    if (result.exitCode != 0) return null;
-    final output = result.stdout.toString();
+    final output = await runEnvironmentCommand(environmentPath, ['--version']);
+    if (output == null) return null;
     return Environment()
       ..path = environmentPath
       ..gitUrl = output.regFirstGroup(r'http.*\.git')
@@ -63,6 +56,20 @@ class EnvironmentTool {
       ..engineReversion = output.regFirstGroup(r'Engine • revision (.*)', 1)
       ..updatedAt =
           output.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}');
+  }
+
+  // 执行环境命令
+  static Future<String?> runEnvironmentCommand(
+      String environmentPath, List<String> arguments) async {
+    final result = await Process.run(
+      join(environmentPath, _keyFilePath),
+      arguments,
+      runInShell: true,
+      stdoutEncoding: utf8,
+      stderrEncoding: utf8,
+    );
+    if (result.exitCode != 0) return null;
+    return result.stdout.toString();
   }
 
   // 判断当前路径是否可用
