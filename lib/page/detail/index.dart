@@ -103,7 +103,7 @@ class ProjectDetailPage extends BasePage {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
-    final platforms = ProjectTool.getPlatforms(project.path);
+    final platforms = provider.getPlatforms();
     return ListTile(
       isThreeLine: true,
       title: Row(
@@ -133,7 +133,7 @@ class ProjectDetailPage extends BasePage {
               maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),
           const SizedBox(height: 8),
           Wrap(
-            spacing: 4,
+            spacing: 6,
             children: List.generate(platforms.length, (i) {
               final label = platforms[i].name;
               return RawChip(
@@ -302,6 +302,13 @@ class ProjectDetailPageProvider extends BaseProvider {
     ),
   };
 
+  // 缓存平台排序
+  List<PlatformPath>? _platformSort;
+
+  // 平台排序
+  List<PlatformPath> get platformSort =>
+      _platformSort ??= ProjectTool.getPlatformSort(project?.id);
+
   ProjectDetailPageProvider(BuildContext context) {
     // 获取项目信息
     final arguments = router.findTuple<ProjectDetailRouteTuple>(context);
@@ -314,6 +321,24 @@ class ProjectDetailPageProvider extends BaseProvider {
         notifyListeners();
       }
     });
+    // 根据当前项目的平台排序重新排序平台表
+    for (var e in platformSort) {
+      final widget = platformMap.remove(e);
+      if (widget != null) platformMap[e] = widget;
+    }
+  }
+
+  // 获取支持的平台列表
+  List<PlatformPath> getPlatforms() {
+    if (project == null) return [];
+    final platforms = ProjectTool.getPlatforms(project!.path);
+    // 根据当前项目的平台排序重新排序平台表
+    for (var e in platformSort) {
+      if (!platforms.contains(e)) continue;
+      platforms.remove(e);
+      platforms.add(e);
+    }
+    return platforms;
   }
 
   // 更新项目信息

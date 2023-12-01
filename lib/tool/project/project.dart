@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_manager/common/common.dart';
+import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:isar/isar.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
 
@@ -20,6 +22,9 @@ import 'package:image/image.dart' as img;
 * @Time 2023/11/27 14:43
 */
 class ProjectTool {
+  // 项目详情页平台排序缓存key
+  static const String _platformSortKey = 'platform_sort';
+
   // 关键文件相对路径
   static const String _keyFilePath = 'pubspec.yaml';
 
@@ -42,6 +47,32 @@ class ProjectTool {
   // 根据传入平台获取对应的平台工具
   static PlatformTool getPlatformTool(PlatformPath platform) =>
       _platformTools[platform]!;
+
+  // 获取项目详情页平台排序
+  static List<PlatformPath> getPlatformSort([Id? projectId]) {
+    getDefaultSort() {
+      return cache
+              .getJson<List<int>>(_platformSortKey)
+              ?.map<PlatformPath>((e) => PlatformPath.values[e])
+              .toList() ??
+          PlatformPath.values;
+    }
+
+    if (projectId == null) return getDefaultSort();
+    return cache
+            .getJson<List<int>>('${_platformSortKey}_$projectId')
+            ?.map<PlatformPath>((e) => PlatformPath.values[e])
+            .toList() ??
+        getDefaultSort();
+  }
+
+  // 缓存项目详情页平台排序
+  static Future<bool> cachePlatformSort(List<PlatformPath> platforms,
+      [Id? projectId]) async {
+    final cacheKey = '${_platformSortKey}_${projectId ?? 'def'}';
+    final values = platforms.map<int>((e) => e.index).toList();
+    return cache.setJson(cacheKey, values);
+  }
 
   // 获取项目信息
   static Future<Project?> getProjectInfo(String path) async {
