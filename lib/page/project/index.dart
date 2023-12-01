@@ -98,11 +98,11 @@ class ProjectPage extends BasePage {
             ),
             child: ProjectGridView(
               projects: pinnedProjects,
+              onReorder: provider.reorderPinned,
+              onPinned: provider.togglePinned,
               onDelete: (item) => context
                   .read<ProjectPageProvider>()
                   .removeProject(context, item),
-              onReorder: provider.reorderPinned,
-              onPinned: provider.togglePinned,
               onEdit: (item) =>
                   ProjectImportDialog.show(context, project: item),
               onDetail: (item) => router.pushNamed(
@@ -127,11 +127,11 @@ class ProjectPage extends BasePage {
           projects: projects,
           onReorder: provider.reorder,
           onPinned: provider.togglePinned,
-          onDelete: (item) =>
-              context.read<ProjectPageProvider>().removeProject(context, item),
           padding: const EdgeInsets.all(14).copyWith(
             bottom: kToolbarHeight + 24,
           ),
+          onDelete: (item) =>
+              context.read<ProjectPageProvider>().removeProject(context, item),
           onEdit: (item) => ProjectImportDialog.show(context, project: item),
           onDetail: (item) => router.pushNamed(
             RoutePath.projectDetail,

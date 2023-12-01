@@ -57,7 +57,7 @@ abstract class BasePage extends StatelessWidget {
 
   // 构建状态条
   Widget _buildStatusBar(BuildContext context, ThemeProvider provider) {
-    final brightness = provider.getBrightness(context);
+    final brightness = context.read<ThemeProvider>().getBrightness(context);
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: DragToMoveArea(

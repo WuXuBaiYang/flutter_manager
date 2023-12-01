@@ -15,8 +15,7 @@ import 'package:flutter_manager/widget/dialog/environment_remote.dart';
 import 'package:flutter_manager/widget/dialog/scheme.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
-import 'package:flutter_manager/widget/setting_item.dart';
-import 'package:open_dir/open_dir.dart';
+import 'package:flutter_manager/page/settings/setting_item.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 

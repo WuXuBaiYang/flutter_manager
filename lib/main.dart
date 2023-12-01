@@ -66,11 +66,11 @@ class MyApp extends StatelessWidget {
     final provider = context.watch<ThemeProvider>();
     return MaterialApp(
       title: 'Flutter项目管理',
+      theme: provider.themeData,
       themeMode: provider.themeMode,
+      darkTheme: provider.darkThemeData,
       navigatorKey: router.navigateKey,
       debugShowCheckedModeBanner: false,
-      darkTheme: provider.darkThemeData,
-      theme: provider.getThemeData(context),
       supportedLocales: S.delegate.supportedLocales,
       localizationsDelegates: const [
         S.delegate,

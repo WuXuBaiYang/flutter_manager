@@ -34,6 +34,13 @@ class ThemeProvider extends BaseProvider {
   // 缓存暗色主题数据
   ThemeData? _darkThemeData;
 
+  // 获取主题亮度
+  Brightness getBrightness(BuildContext context) => {
+        ThemeMode.dark: Brightness.dark,
+        ThemeMode.light: Brightness.light,
+        ThemeMode.system: MediaQuery.platformBrightnessOf(context),
+      }[themeMode]!;
+
   // 获取当前主题模式
   ThemeMode get themeMode => _themeMode ??=
       ThemeMode.values[cache.getInt(_themeModeKey) ?? _defaultThemeMode.index];
@@ -42,16 +49,19 @@ class ThemeProvider extends BaseProvider {
   ThemeData get darkThemeData =>
       _darkThemeData ??= _genThemeData(Brightness.dark);
 
-  // 获取当前主题数据
-  ThemeData getThemeData(BuildContext context) =>
-      _themeData ??= _genThemeData(getBrightness(context));
+  // 默认主体
+  ThemeData get themeData => _themeData ??= _genThemeData(Brightness.light);
 
-  // 获取当前主题亮度
-  Brightness getBrightness(BuildContext context) => {
-        ThemeMode.light: Brightness.light,
-        ThemeMode.dark: Brightness.dark,
-        ThemeMode.system: MediaQuery.of(context).platformBrightness,
-      }[themeMode]!;
+  // 获取主题配色方案
+  FlexScheme get _themeScheme => _scheme ??= FlexScheme
+      .values[cache.getInt(_themeSchemeKey) ?? _defaultThemeScheme.index];
+
+  // 更新主题数据
+  Future<void> _updateThemeData(BuildContext context) async {
+    _themeData = _genThemeData(Brightness.light);
+    _darkThemeData = _genThemeData(Brightness.dark);
+    notifyListeners();
+  }
 
   // 切换主题模式
   Future<void> changeThemeMode(
@@ -69,17 +79,9 @@ class ThemeProvider extends BaseProvider {
     _updateThemeData(context);
   }
 
-  // 更新主题数据
-  Future<void> _updateThemeData(BuildContext context) async {
-    _themeData = _genThemeData(getBrightness(context));
-    _darkThemeData = _genThemeData(Brightness.dark);
-    notifyListeners();
-  }
-
   // 获取全部支持的配色方案
   List<ThemeSchemeModel> getThemeSchemeList(BuildContext context,
       {bool useMaterial3 = true}) {
-    final brightness = getBrightness(context);
     const schemesMap = FlexColor.schemesWithCustom;
     return FlexScheme.values
         .where((e) {
@@ -91,7 +93,7 @@ class ThemeProvider extends BaseProvider {
             schemeColor: {
               Brightness.light: schemesMap[scheme]!.light,
               Brightness.dark: schemesMap[scheme]!.dark,
-            }[brightness]!))
+            }[getBrightness(context)]!))
         .toList();
   }
 
@@ -105,49 +107,43 @@ class ThemeProvider extends BaseProvider {
         }[getBrightness(context)]!);
   }
 
-  // 获取主题配色方案
-  FlexScheme get _themeScheme => _scheme ??= FlexScheme
-      .values[cache.getInt(_themeSchemeKey) ?? _defaultThemeScheme.index];
+  // 根据主题亮色/暗色获取基本themeData
+  ThemeData _getThemeData(Brightness brightness, [bool useMaterial3 = true]) =>
+      {
+        Brightness.light: FlexThemeData.light(
+            useMaterial3: useMaterial3, scheme: _themeScheme),
+        Brightness.dark: FlexThemeData.dark(
+            useMaterial3: useMaterial3, scheme: _themeScheme),
+      }[brightness]!;
 
   // 根据主题亮度生成不同的主题数据
-  ThemeData _genThemeData(Brightness brightness) {
-    final themeData = {
-      Brightness.light: FlexThemeData.light(
-        scheme: _themeScheme,
-        useMaterial3: true,
-      ),
-      Brightness.dark: FlexThemeData.dark(
-        scheme: _themeScheme,
-        useMaterial3: true,
-      ),
-    }[brightness]!;
-    return themeData.copyWith(
-      /// 在此处自定义组件样式
-      focusColor: Colors.transparent,
-      appBarTheme: const AppBarTheme(
-        scrolledUnderElevation: 0,
-        titleSpacing: 0,
-      ),
-      cardTheme: const CardTheme(
-        shadowColor: Colors.black26,
-        clipBehavior: Clip.antiAlias,
-      ),
-      dividerTheme: const DividerThemeData(
-        thickness: 0.3,
-        space: 0,
-      ),
-      bottomSheetTheme: const BottomSheetThemeData(
-        showDragHandle: true,
-      ),
-      searchBarTheme: const SearchBarThemeData(
-        elevation: MaterialStatePropertyAll(2),
-        constraints: BoxConstraints.tightFor(height: 45),
-      ),
-      tabBarTheme: const TabBarTheme(
-        dividerHeight: 0,
-      ),
-    );
-  }
+  ThemeData _genThemeData(Brightness brightness, [bool useMaterial3 = true]) =>
+      _getThemeData(brightness, useMaterial3).copyWith(
+        /// 在此处自定义组件样式
+        focusColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          scrolledUnderElevation: 0,
+          titleSpacing: 0,
+        ),
+        cardTheme: const CardTheme(
+          shadowColor: Colors.black26,
+          clipBehavior: Clip.antiAlias,
+        ),
+        dividerTheme: const DividerThemeData(
+          thickness: 0.3,
+          space: 0,
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          showDragHandle: true,
+        ),
+        searchBarTheme: const SearchBarThemeData(
+          elevation: MaterialStatePropertyAll(2),
+          constraints: BoxConstraints.tightFor(height: 45),
+        ),
+        tabBarTheme: const TabBarTheme(
+          dividerHeight: 0,
+        ),
+      );
 }
 
 /*
