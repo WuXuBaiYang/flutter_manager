@@ -72,6 +72,7 @@ class ProjectDetailPage extends BasePage {
           return [
             SliverAppBar(
               pinned: true,
+              titleSpacing: 0,
               title: _buildAppBarTitle(context),
               expandedHeight: provider.headerHeight,
               scrolledUnderElevation: hasColor ? 8 : 1,

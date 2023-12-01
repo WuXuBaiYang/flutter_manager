@@ -11,24 +11,12 @@ import 'package:window_manager/window_manager.dart';
 * @Time 2023/11/20 15:30
 */
 abstract class BasePage extends StatelessWidget {
-  // 标题
-  final Widget? title;
-
-  // 前置
-  final Widget? leading;
-
-  // 动作按钮（接在默认操作按钮左边）
-  final List<Widget> actions;
-
   // 是否为主页面
   final bool primary;
 
   const BasePage({
     super.key,
-    this.title,
-    this.leading,
     this.primary = true,
-    this.actions = const [],
   });
 
   List<SingleChildWidget> loadProviders(BuildContext context);
@@ -66,12 +54,7 @@ abstract class BasePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             children: [
-              const SizedBox(width: 8),
-              leading ?? const SizedBox(),
-              title ?? const SizedBox(),
               const Spacer(),
-              ...actions,
-              const SizedBox(width: 14),
               WindowCaptionButton.minimize(
                 brightness: brightness,
                 onPressed: windowManager.minimize,
