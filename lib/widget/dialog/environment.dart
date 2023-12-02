@@ -5,6 +5,7 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/dialog/custom_dialog.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentImportDialog extends StatefulWidget {
+class EnvironmentImportDialog extends StatelessWidget {
   // 环境对象
   final Environment? environment;
 
@@ -32,51 +33,38 @@ class EnvironmentImportDialog extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _EnvironmentImportDialogState();
-}
-
-/*
-* 环境导入弹窗状态管理类
-* @author wuxubaiyang
-* @Time 2023/11/26 10:17
-*/
-class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
-  // 状态代理
-  late final _provider = EnvironmentImportDialogProvider(widget.environment);
-
-  @override
   Widget build(BuildContext context) {
-    final environment = widget.environment;
     final isEdit = environment != null;
-    return ChangeNotifierProvider.value(
-      value: _provider,
-      builder: (context, _) {
-        return AlertDialog(
-          scrollable: true,
-          title: Text('${isEdit ? '编辑' : '导入'}环境'),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(width: 300),
-            child: _buildForm(context),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('取消'),
-            ),
-            TextButton(
-              onPressed: () => _provider.import(context, environment),
-              child: Text(isEdit ? '修改' : '导入'),
-            ),
-          ],
-        );
-      },
+    return CustomDialog(
+      providers: [
+        ChangeNotifierProvider<EnvironmentImportDialogProvider>(
+          create: (_) => EnvironmentImportDialogProvider(environment),
+        ),
+      ],
+      scrollable: true,
+      builder: _buildForm,
+      title: Text('${isEdit ? '编辑' : '导入'}环境'),
+      constraints: const BoxConstraints.tightFor(width: 300),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('取消'),
+        ),
+        TextButton(
+          onPressed: () => context
+              .read<EnvironmentImportDialogProvider>()
+              .import(context, environment),
+          child: Text(isEdit ? '修改' : '导入'),
+        ),
+      ],
     );
   }
 
   // 构建表单
   Widget _buildForm(BuildContext context) {
+    final provider = context.read<EnvironmentImportDialogProvider>();
     return Form(
-      key: _provider.formKey,
+      key: provider.formKey,
       child: Column(
         children: [
           _buildFormFieldPath(context),
@@ -88,6 +76,7 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
 
   // 构建表单项-flutter路径
   Widget _buildFormFieldPath(BuildContext context) {
+    final provider = context.read<EnvironmentImportDialogProvider>();
     return LocalPathTextFormField(
       label: 'flutter路径',
       hint: '请选择flutter路径',
@@ -97,14 +86,8 @@ class _EnvironmentImportDialogState extends State<EnvironmentImportDialog> {
         }
         return null;
       },
-      controller: _provider.localPathController,
+      controller: provider.localPathController,
     );
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
   }
 }
 

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';

@@ -7,7 +7,7 @@ import 'package:flutter_manager/widget/empty_box.dart';
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectBuildDialog extends StatefulWidget {
+class ProjectBuildDialog extends StatelessWidget {
   // 项目信息
   final Project project;
 
@@ -25,16 +25,6 @@ class ProjectBuildDialog extends StatefulWidget {
     );
   }
 
-  @override
-  State<StatefulWidget> createState() => _ProjectBuildDialogState();
-}
-
-/*
-* 项目构建弹窗状态
-* @author wuxubaiyang
-* @Time 2023/12/1 9:17
-*/
-class _ProjectBuildDialogState extends State<ProjectBuildDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

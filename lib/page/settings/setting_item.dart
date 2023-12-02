@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:provider/provider.dart';

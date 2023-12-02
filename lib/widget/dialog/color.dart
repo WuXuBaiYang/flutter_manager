@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/widget/color_item.dart';
+import 'package:flutter_manager/widget/dialog/custom_dialog.dart';
 
 /*
 * 颜色选择对话框
 * @author wuxubaiyang
 * @Time 2023/11/25 19:38
 */
-class ColorPickerDialog extends StatefulWidget {
+class ColorPickerDialog extends StatelessWidget {
   // 色值列表
   final List<Color> colors;
 
@@ -41,35 +42,29 @@ class ColorPickerDialog extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _ColorPickerDialogState();
-}
-
-/*
-* 颜色选择对话框-状态
-* @author wuxubaiyang
-* @Time 2023/11/25 19:39
-*/
-class _ColorPickerDialogState extends State<ColorPickerDialog> {
-  @override
   Widget build(BuildContext context) {
-    Colors.transparent;
-    return AlertDialog(
+    return CustomDialog(
       scrollable: true,
       title: const Text('选择颜色'),
-      content: Wrap(
-        spacing: 14,
-        runSpacing: 14,
-        children: [
-          ...widget.colors.map((item) {
-            return ColorPickerItem(
-              color: item,
-              isSelected: item == widget.current,
-              onPressed: () => Navigator.pop(context, item),
-            );
-          }),
-          if (widget.useTransparent) _buildTransparent(context),
-        ],
-      ),
+      builder: _buildColorGrid,
+    );
+  }
+
+  // 构建颜色网格
+  Widget _buildColorGrid(BuildContext context) {
+    return Wrap(
+      spacing: 14,
+      runSpacing: 14,
+      children: [
+        ...colors.map((item) {
+          return ColorPickerItem(
+            color: item,
+            isSelected: item == current,
+            onPressed: () => Navigator.pop(context, item),
+          );
+        }),
+        if (useTransparent) _buildTransparent(context),
+      ],
     );
   }
 
@@ -78,9 +73,9 @@ class _ColorPickerDialogState extends State<ColorPickerDialog> {
     final opacity =
         Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.2;
     return ColorPickerItem(
-      isSelected: widget.current == Colors.transparent,
-      onPressed: () => Navigator.pop(context, Colors.transparent),
+      isSelected: current == Colors.transparent,
       color: Theme.of(context).splashColor.withOpacity(opacity),
+      onPressed: () => Navigator.pop(context, Colors.transparent),
     );
   }
 }

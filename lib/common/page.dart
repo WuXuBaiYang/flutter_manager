@@ -19,33 +19,37 @@ abstract class BasePage extends StatelessWidget {
     this.primary = true,
   });
 
-  List<SingleChildWidget> loadProviders(BuildContext context);
+  List<SingleChildWidget> loadProviders(BuildContext context) => [];
 
   @override
   Widget build(BuildContext context) {
+    final providers = loadProviders(context);
+    if (providers.isEmpty) return _buildContent(context);
     return MultiProvider(
-      providers: loadProviders(context),
+      providers: providers,
       builder: (context, _) {
-        final provider = context.watch<ThemeProvider>();
-        return Material(
-          child: primary
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildStatusBar(context, provider),
-                    Expanded(child: buildWidget(context)),
-                  ],
-                )
-              : buildWidget(context),
-        );
+        return _buildContent(context);
       },
     );
   }
 
   Widget buildWidget(BuildContext context);
 
+  // 构建内容主体
+  Widget _buildContent(BuildContext context) {
+    return Material(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (primary) _buildStatusBar(context),
+          Expanded(child: buildWidget(context)),
+        ],
+      ),
+    );
+  }
+
   // 构建状态条
-  Widget _buildStatusBar(BuildContext context, ThemeProvider provider) {
+  Widget _buildStatusBar(BuildContext context) {
     final brightness = context.read<ThemeProvider>().getBrightness(context);
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
