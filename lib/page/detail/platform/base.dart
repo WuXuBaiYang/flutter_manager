@@ -9,7 +9,6 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-
 import 'platform_item.dart';
 
 /*
@@ -46,11 +45,14 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
     return EmptyBoxView(
       hint: '暂无方法',
       isEmpty: children.isEmpty,
-      child: StaggeredGrid.count(
-        crossAxisCount: 4,
-        mainAxisSpacing: 8,
-        crossAxisSpacing: 8,
-        children: children,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(4),
+        child: StaggeredGrid.count(
+          crossAxisCount: 4,
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          children: children,
+        ),
       ),
     );
   }

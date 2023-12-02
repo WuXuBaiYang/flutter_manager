@@ -26,24 +26,34 @@ class ProjectPlatformAndroidPage
   List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
     return [
       ProjectPlatformItem.count(
-        mainAxisCellCount: 2,
-        crossAxisCellCount: 2,
-        child: Text('test'),
+        mainAxisCellCount: 1,
+        crossAxisCellCount: 3,
+        title: 'test',
+        children: [],
       ),
       ProjectPlatformItem.count(
-        mainAxisCellCount: 2,
-        crossAxisCellCount: 2,
-        child: Text('test'),
+        mainAxisCellCount: 1,
+        crossAxisCellCount: 1,
+        title: 'test',
+        children: [],
       ),
       ProjectPlatformItem.count(
-        mainAxisCellCount: 2,
-        crossAxisCellCount: 2,
-        child: Text('test'),
+        mainAxisCellCount: 1,
+        crossAxisCellCount: 1,
+        title: 'test',
+        children: [],
       ),
       ProjectPlatformItem.count(
-        mainAxisCellCount: 2,
+        mainAxisCellCount: 1,
+        crossAxisCellCount: 1,
+        title: 'test',
+        children: [],
+      ),
+      ProjectPlatformItem.count(
+        mainAxisCellCount: 1,
         crossAxisCellCount: 2,
-        child: Text('test'),
+        title: 'test',
+        children: [],
       ),
     ];
   }
