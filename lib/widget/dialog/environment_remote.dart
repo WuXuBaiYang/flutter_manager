@@ -10,16 +10,15 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote_list.dart';
+import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
-
-import '../local_path.dart';
 
 /*
 * 环境导入弹窗-远程
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentRemoteImportDialog extends StatefulWidget {
+class EnvironmentRemoteImportDialog extends StatelessWidget {
   const EnvironmentRemoteImportDialog({super.key});
 
   // 展示弹窗
@@ -33,27 +32,14 @@ class EnvironmentRemoteImportDialog extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _EnvironmentRemoteImportDialogState();
-}
-
-/*
-* 环境导入弹窗状态管理类-远程
-* @author wuxubaiyang
-* @Time 2023/11/26 10:17
-*/
-class _EnvironmentRemoteImportDialogState
-    extends State<EnvironmentRemoteImportDialog> {
-  // 状态管理
-  final _provider = EnvironmentRemoteImportDialogProvider();
-
-  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _provider,
+    return ChangeNotifierProvider(
+      create: (_) => EnvironmentRemoteImportDialogProvider(),
       builder: (context, _) {
         final currentStep =
             context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
-        final savePath = _provider.downloadInfo?.path;
+        final provider = context.read<EnvironmentRemoteImportDialogProvider>();
+        final savePath = provider.downloadInfo?.path;
         return AlertDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
           content: ConstrainedBox(
@@ -71,7 +57,7 @@ class _EnvironmentRemoteImportDialogState
             ),
             TextButton(
               onPressed: (currentStep >= 2 && savePath != null)
-                  ? () => _provider.import(context, savePath)
+                  ? () => provider.import(context, savePath)
                   : null,
               child: const Text('导入'),
             ),
@@ -83,17 +69,19 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建步骤1-选择要下载的环境
   Widget _buildPackageList(BuildContext context) {
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
     return EnvironmentRemoteList(
       startDownload: (package, savePath) {
         savePath.isNotEmpty
-            ? _provider.startImport(package, savePath)
-            : _provider.startDownload(package);
+            ? provider.startImport(package, savePath)
+            : provider.startDownload(package);
       },
     );
   }
 
   // 构建步骤2-下载所选环境
   Widget _buildPackageDownload(BuildContext context) {
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
     return Selector<EnvironmentRemoteImportDialogProvider, DownloadInfoTuple?>(
       selector: (_, provider) => provider.downloadInfo,
       builder: (_, downloadInfo, __) {
@@ -108,7 +96,7 @@ class _EnvironmentRemoteImportDialogState
             const SizedBox(height: 8),
             StreamProvider<double?>.value(
               initialData: null,
-              value: _provider.downloadProgress.stream,
+              value: provider.downloadProgress.stream,
               builder: (context, _) {
                 return LinearProgressIndicator(
                   value: context.watch<double?>(),
@@ -125,10 +113,11 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    final package = _provider.downloadInfo?.package;
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
+    final package = provider.downloadInfo?.package;
     if (package == null) return const Text('缺少必须参数');
     return Form(
-      key: _provider.formKey,
+      key: provider.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -142,10 +131,11 @@ class _EnvironmentRemoteImportDialogState
 
   // 构建表单项-路径
   Widget _buildFormFieldPath(BuildContext context) {
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
     return LocalPathTextFormField(
       label: '安装路径',
       hint: '请选择安装路径',
-      controller: _provider.localPathController,
+      controller: provider.localPathController,
     );
   }
 
@@ -157,12 +147,6 @@ class _EnvironmentRemoteImportDialogState
         subtitle: Text(package.fileName),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _provider.dispose();
-    super.dispose();
   }
 }
 

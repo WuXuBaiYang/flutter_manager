@@ -5,7 +5,6 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
-import 'package:flutter_manager/widget/dialog/custom_dialog.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
@@ -35,28 +34,30 @@ class EnvironmentImportDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isEdit = environment != null;
-    return CustomDialog(
-      providers: [
-        ChangeNotifierProvider<EnvironmentImportDialogProvider>(
-          create: (_) => EnvironmentImportDialogProvider(environment),
-        ),
-      ],
-      scrollable: true,
-      builder: _buildForm,
-      title: Text('${isEdit ? '编辑' : '导入'}环境'),
-      constraints: const BoxConstraints.tightFor(width: 300),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
-        ),
-        TextButton(
-          onPressed: () => context
-              .read<EnvironmentImportDialogProvider>()
-              .import(context, environment),
-          child: Text(isEdit ? '修改' : '导入'),
-        ),
-      ],
+    return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
+      create: (_) => EnvironmentImportDialogProvider(environment),
+      builder: (context, _) {
+        return ConstrainedBox(
+          constraints: const BoxConstraints.tightFor(width: 300),
+          child: AlertDialog(
+            scrollable: true,
+            content: _buildForm(context),
+            title: Text('${isEdit ? '编辑' : '导入'}环境'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('取消'),
+              ),
+              TextButton(
+                onPressed: () => context
+                    .read<EnvironmentImportDialogProvider>()
+                    .import(context, environment),
+                child: Text(isEdit ? '修改' : '导入'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

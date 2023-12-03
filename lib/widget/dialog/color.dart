@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/widget/color_item.dart';
-import 'package:flutter_manager/widget/dialog/custom_dialog.dart';
 
 /*
 * 颜色选择对话框
@@ -43,10 +42,10 @@ class ColorPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDialog(
+    return AlertDialog(
       scrollable: true,
       title: const Text('选择颜色'),
-      builder: _buildColorGrid,
+      content: _buildColorGrid(context),
     );
   }
 
