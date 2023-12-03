@@ -37,25 +37,22 @@ class EnvironmentImportDialog extends StatelessWidget {
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
       create: (_) => EnvironmentImportDialogProvider(environment),
       builder: (context, _) {
-        return ConstrainedBox(
-          constraints: const BoxConstraints.tightFor(width: 300),
-          child: AlertDialog(
-            scrollable: true,
-            content: _buildForm(context),
-            title: Text('${isEdit ? '编辑' : '导入'}环境'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('取消'),
-              ),
-              TextButton(
-                onPressed: () => context
-                    .read<EnvironmentImportDialogProvider>()
-                    .import(context, environment),
-                child: Text(isEdit ? '修改' : '导入'),
-              ),
-            ],
-          ),
+        return AlertDialog(
+          scrollable: true,
+          content: _buildForm(context),
+          title: Text('${isEdit ? '编辑' : '导入'}环境'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => context
+                  .read<EnvironmentImportDialogProvider>()
+                  .import(context, environment),
+              child: Text(isEdit ? '修改' : '导入'),
+            ),
+          ],
         );
       },
     );
@@ -64,13 +61,16 @@ class EnvironmentImportDialog extends StatelessWidget {
   // 构建表单
   Widget _buildForm(BuildContext context) {
     final provider = context.read<EnvironmentImportDialogProvider>();
-    return Form(
-      key: provider.formKey,
-      child: Column(
-        children: [
-          _buildFormFieldPath(context),
-        ].expand((e) => [e, const SizedBox(height: 8)]).toList()
-          ..removeLast(),
+    return ConstrainedBox(
+      constraints: const BoxConstraints.tightFor(width: 300),
+      child: Form(
+        key: provider.formKey,
+        child: Column(
+          children: [
+            _buildFormFieldPath(context),
+          ].expand((e) => [e, const SizedBox(height: 8)]).toList()
+            ..removeLast(),
+        ),
       ),
     );
   }
