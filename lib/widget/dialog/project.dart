@@ -10,6 +10,7 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/color_item.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/dialog/color.dart';
 import 'package:flutter_manager/widget/image.dart';
 import 'package:flutter_manager/widget/local_path.dart';
@@ -57,13 +58,11 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
     return ChangeNotifierProvider.value(
       value: _provider,
       builder: (context, _) {
-        return AlertDialog(
+        return CustomDialog(
           scrollable: true,
           title: Text('${isEdit ? '编辑' : '导入'}项目'),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(width: 260),
-            child: _buildForm(context),
-          ),
+          constraints: const BoxConstraints.tightFor(width: 260),
+          content: _buildContent(context),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -79,8 +78,8 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
     );
   }
 
-  // 构建表单
-  Widget _buildForm(BuildContext context) {
+  // 构建内容
+  Widget _buildContent(BuildContext context) {
     return Form(
       key: _provider.formKey,
       child: Column(

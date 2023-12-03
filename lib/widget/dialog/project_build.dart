@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
 /*
@@ -27,17 +28,10 @@ class ProjectBuildDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return CustomDialog(
       title: const Text('打包'),
-      content: ConstrainedBox(
-        constraints: BoxConstraints.tight(const Size.square(200)),
-        child: const EmptyBoxView(
-          isEmpty: true,
-          hint: '功能施工中',
-          iconData: Icons.build,
-          child: SizedBox(),
-        ),
-      ),
+      constraints: BoxConstraints.tight(const Size.square(200)),
+      content: _buildContent(context),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
@@ -48,6 +42,16 @@ class ProjectBuildDialog extends StatelessWidget {
           child: Text('确定'),
         ),
       ],
+    );
+  }
+
+  // 构建内容
+  Widget _buildContent(BuildContext context) {
+    return const EmptyBoxView(
+      isEmpty: true,
+      hint: '功能施工中',
+      iconData: Icons.build,
+      child: SizedBox(),
     );
   }
 }

@@ -42,35 +42,40 @@ class EnvironmentRemoteList extends StatelessWidget {
       providers: _providers,
       builder: (context, _) {
         final package = context.watch<EnvironmentPackageResult>();
-        final downloadFile = context.watch<DownloadedFileTuple>();
         return LoadingView(
           loading: package.isEmpty,
           builder: (_) {
-            final stableIndex = package.keys.toList().indexOf('stable');
-            return DefaultTabController(
-              length: package.length,
-              initialIndex: stableIndex,
-              child: Column(
-                children: [
-                  TabBar(
-                    tabs: List.generate(package.length,
-                        (i) => Tab(text: package.keys.elementAt(i))),
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: List.generate(package.length, (i) {
-                        final packages = package.values.elementAt(i);
-                        return _buildPackageChannelTabView(context,
-                            package.keys.elementAt(i), packages, downloadFile);
-                      }),
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _buildContent(context, package);
           },
         );
       },
+    );
+  }
+
+  // 构建内容
+  Widget _buildContent(BuildContext context, EnvironmentPackageResult package) {
+    final downloadFile = context.watch<DownloadedFileTuple>();
+    final stableIndex = package.keys.toList().indexOf('stable');
+    return DefaultTabController(
+      length: package.length,
+      initialIndex: stableIndex,
+      child: Column(
+        children: [
+          TabBar(
+            tabs: List.generate(
+                package.length, (i) => Tab(text: package.keys.elementAt(i))),
+          ),
+          Expanded(
+            child: TabBarView(
+              children: List.generate(package.length, (i) {
+                final packages = package.values.elementAt(i);
+                return _buildPackageChannelTabView(
+                    context, package.keys.elementAt(i), packages, downloadFile);
+              }),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

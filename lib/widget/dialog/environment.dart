@@ -5,6 +5,7 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
 
@@ -37,10 +38,10 @@ class EnvironmentImportDialog extends StatelessWidget {
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
       create: (_) => EnvironmentImportDialogProvider(environment),
       builder: (context, _) {
-        return AlertDialog(
+        return CustomDialog(
           scrollable: true,
-          content: _buildForm(context),
           title: Text('${isEdit ? '编辑' : '导入'}环境'),
+          content: _buildContent(context),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -58,19 +59,17 @@ class EnvironmentImportDialog extends StatelessWidget {
     );
   }
 
-  // 构建表单
-  Widget _buildForm(BuildContext context) {
+  // 构建内容
+  Widget _buildContent(BuildContext context) {
     final provider = context.read<EnvironmentImportDialogProvider>();
-    return ConstrainedBox(
-      constraints: const BoxConstraints.tightFor(width: 300),
-      child: Form(
-        key: provider.formKey,
-        child: Column(
-          children: [
-            _buildFormFieldPath(context),
-          ].expand((e) => [e, const SizedBox(height: 8)]).toList()
-            ..removeLast(),
-        ),
+    return Form(
+      key: provider.formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildFormFieldPath(context),
+        ].expand((e) => [e, const SizedBox(height: 8)]).toList()
+          ..removeLast(),
       ),
     );
   }

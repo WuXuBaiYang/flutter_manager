@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/theme_scheme.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 
 /*
@@ -47,20 +48,25 @@ class ThemeSchemeDialog extends StatefulWidget {
 class _ThemeSchemeDialogState extends State<ThemeSchemeDialog> {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return CustomDialog(
       scrollable: true,
       title: const Text('选择主题配色'),
-      content: Wrap(
-        spacing: 14,
-        runSpacing: 14,
-        children: widget.schemes.map((item) {
-          return ThemeSchemeItem(
-            scheme: item,
-            isSelected: item == widget.current,
-            onPressed: () => Navigator.pop(context, item),
-          );
-        }).toList(),
-      ),
+      content: _buildContent(),
+    );
+  }
+
+  // 构建内容
+  Widget _buildContent() {
+    return Wrap(
+      spacing: 14,
+      runSpacing: 14,
+      children: widget.schemes.map((item) {
+        return ThemeSchemeItem(
+          scheme: item,
+          isSelected: item == widget.current,
+          onPressed: () => Navigator.pop(context, item),
+        );
+      }).toList(),
     );
   }
 }

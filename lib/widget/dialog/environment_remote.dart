@@ -9,6 +9,7 @@ import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/dialog/environment_remote_list.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';
@@ -40,16 +41,14 @@ class EnvironmentRemoteImportDialog extends StatelessWidget {
             context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
         final provider = context.read<EnvironmentRemoteImportDialogProvider>();
         final savePath = provider.downloadInfo?.path;
-        return AlertDialog(
+        return CustomDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints.tightFor(width: 340),
-            child: [
-              _buildPackageList(context),
-              _buildPackageDownload(context),
-              _buildPackageImport(context),
-            ][currentStep],
-          ),
+          constraints: const BoxConstraints.tightFor(width: 340),
+          content: [
+            _buildPackageList(context),
+            _buildPackageDownload(context),
+            _buildPackageImport(context),
+          ][currentStep],
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
