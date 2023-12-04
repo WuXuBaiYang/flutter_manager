@@ -30,7 +30,6 @@ class ProjectLabelDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDialog(
       title: const Text('别名'),
-      constraints: BoxConstraints.tight(const Size.square(200)),
       content: _buildContent(context),
       actions: [
         TextButton(

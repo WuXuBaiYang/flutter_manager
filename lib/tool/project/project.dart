@@ -14,7 +14,6 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:isar/isar.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
 
@@ -59,24 +58,18 @@ class ProjectTool {
   }
 
   // 获取项目详情页平台排序
-  static List<PlatformType> getPlatformSort([Id? projectId]) {
+  static List<PlatformType> getPlatformSort() {
     getSort(String key) => cache
         .getJson<List>(key)
         ?.map<PlatformType>((e) => PlatformType.values[e as int])
         .toList();
-    getDefaultSort() => getSort(_platformSortKey) ?? PlatformType.values;
-
-    if (projectId == null) return getDefaultSort();
-    return getSort('${_platformSortKey}_$projectId') ?? getDefaultSort();
+    return getSort(_platformSortKey) ?? PlatformType.values;
   }
 
   // 缓存项目详情页平台排序
-  static Future<bool> cachePlatformSort(List<PlatformType> platforms,
-      [Id? projectId]) async {
+  static Future<bool> cachePlatformSort(List<PlatformType> platforms) async {
     final values = platforms.map<int>((e) => e.index).toList();
-    final cacheKey =
-        projectId != null ? '${_platformSortKey}_$projectId' : _platformSortKey;
-    return cache.setJson(cacheKey, values);
+    return cache.setJson(_platformSortKey, values);
   }
 
   // 判断是否存在该平台

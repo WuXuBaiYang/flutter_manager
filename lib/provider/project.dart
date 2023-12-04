@@ -38,9 +38,6 @@ class ProjectProvider extends BaseProvider {
   List<PlatformType> get platformSort =>
       _platformSort ??= ProjectTool.getPlatformSort();
 
-  // 缓存项目平台排序表
-  final _platformSortMap = <Id, List<PlatformType>>{};
-
   ProjectProvider() {
     initialize();
   }
@@ -55,13 +52,10 @@ class ProjectProvider extends BaseProvider {
   }
 
   // 更新项目平台排序
-  Future<bool> updatePlatformSort(List<PlatformType> platforms,
-      [Id? projectId]) async {
-    projectId != null
-        ? _platformSortMap[projectId] = platforms
-        : _platformSort = platforms;
+  Future<bool> updatePlatformSort(List<PlatformType> platforms) async {
+    _platformSort = platforms;
     notifyListeners();
-    return ProjectTool.cachePlatformSort(platforms, projectId);
+    return ProjectTool.cachePlatformSort(platforms);
   }
 
   // 添加/编辑项目信息

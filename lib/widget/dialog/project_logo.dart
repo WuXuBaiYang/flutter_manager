@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/empty_box.dart';
 
 /*
 * 项目修改图标弹窗
@@ -31,7 +30,6 @@ class ProjectLogoDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDialog(
       title: const Text('图标'),
-      constraints: BoxConstraints.tight(const Size.square(200)),
       content: _buildContent(context),
       actions: [
         TextButton(
@@ -48,11 +46,8 @@ class ProjectLogoDialog extends StatelessWidget {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return const EmptyBoxView(
-      isEmpty: true,
-      hint: '功能施工中',
-      iconData: Icons.build,
-      child: SizedBox(),
+    return ExpansionPanelList.radio(
+
     );
   }
 }
