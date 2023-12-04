@@ -3,6 +3,12 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
+// 批量修改label弹窗返回值元组
+typedef ProjectLabelDialogResultTuple = ({
+  String label,
+  List<PlatformType> platforms,
+});
+
 /*
 * 项目修改别名弹窗
 * @author wuxubaiyang
@@ -15,9 +21,9 @@ class ProjectLabelDialog extends StatelessWidget {
   const ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   // 展示弹窗
-  static Future<Map<PlatformType, String>?> show(BuildContext context,
+  static Future<ProjectLabelDialogResultTuple?> show(BuildContext context,
       {required Map<PlatformType, String> platformLabelMap}) async {
-    return showDialog<Map<PlatformType, String>>(
+    return showDialog<ProjectLabelDialogResultTuple>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ProjectLabelDialog(

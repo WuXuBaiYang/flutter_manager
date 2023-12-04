@@ -195,7 +195,8 @@ class ProjectDetailPage extends BasePage {
                   platformLabelMap: provider.labelMap,
                 ).then((result) {
                   if (result != null) {
-                    final future = provider.updateLabels(project.path, result);
+                    final future = provider.updateLabels(
+                        project.path, result.platforms, result.label);
                     Loading.show(context, loadFuture: future);
                   }
                 });
@@ -211,7 +212,8 @@ class ProjectDetailPage extends BasePage {
                     platformLogoMap: provider.logoMap,
                   ).then((result) {
                     if (result != null) {
-                      final future = provider.updateLogos(project.path, result);
+                      final future = provider.updateLogos(
+                          project.path, result.platforms, result.logoPath);
                       Loading.show(context, loadFuture: future);
                     }
                   });

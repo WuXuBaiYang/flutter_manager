@@ -1,9 +1,19 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project_logo.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:flutter_manager/widget/image.dart';
 import 'package:provider/provider.dart';
+
+// 批量修改图标弹窗返回值元组
+typedef ProjectLogoDialogResultTuple = ({
+  String logoPath,
+  List<PlatformType> platforms,
+});
 
 /*
 * 项目修改图标弹窗
@@ -17,10 +27,10 @@ class ProjectLogoDialog extends StatelessWidget {
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   // 展示弹窗
-  static Future<Map<PlatformType, String>?> show(BuildContext context,
+  static Future<ProjectLogoDialogResultTuple?> show(BuildContext context,
       {required Map<PlatformType, List<PlatformLogoTuple>>
           platformLogoMap}) async {
-    return showDialog<Map<PlatformType, String>>(
+    return showDialog<ProjectLogoDialogResultTuple>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ProjectLogoDialog(
@@ -32,11 +42,10 @@ class ProjectLogoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ProjectLogoDialogProvider(
-        platformLogoMap.keys.toList(),
-      ),
+      create: (_) => ProjectLogoDialogProvider(),
       builder: (context, _) {
         return CustomDialog(
+          scrollable: true,
           title: const Text('图标'),
           content: _buildContent(context),
           constraints: const BoxConstraints.tightForFinite(width: 450),
@@ -46,8 +55,9 @@ class ProjectLogoDialog extends StatelessWidget {
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: () {},
               child: const Text('确定'),
+              onPressed: () =>
+                  context.read<ProjectLogoDialogProvider>().submitForm(context),
             ),
           ],
         );
@@ -57,38 +67,124 @@ class ProjectLogoDialog extends StatelessWidget {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return SingleChildScrollView(
-      child: Selector<ProjectLogoDialogProvider,
-          ({PlatformType? expanded, List<PlatformType> checkedList})>(
-        selector: (_, provider) => (
-          expanded: provider.expandedPlatform,
-          checkedList: provider.checkedPlatforms,
-        ),
-        builder: (_, result, __) {
-          return ExpansionPanelList.radio(
-            materialGapSize: 8,
-            initialOpenPanelValue: result.expanded,
-            expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 8),
-            expansionCallback: (index, isExpanded) => context
-                .read<ProjectLogoDialogProvider>()
-                .updateExpandedPlatform(
-                  isExpanded ? null : platformLogoMap.keys.elementAt(index),
-                ),
-            children: List.generate(platformLogoMap.length, (i) {
-              final item = platformLogoMap.entries.elementAt(i);
-              return _buildExpansionPanelItem(
-                  context, item, result.checkedList.contains(item.key));
-            }),
-          );
-        },
+    return Form(
+      key: context.read<ProjectLogoDialogProvider>().formKey,
+      child: Column(
+        children: [
+          _buildFormFieldLogo(context),
+          _buildFormFieldPlatforms(context),
+        ],
       ),
     );
   }
 
-  // 构建展开项
-  ExpansionPanelRadio _buildExpansionPanelItem(BuildContext context,
-      MapEntry<PlatformType, List<PlatformLogoTuple>> item, bool isChecked) {
+  // 构建图标选择
+  Widget _buildFormFieldLogo(BuildContext context) {
+    const logoSize = Size.square(55);
+    final borderRadius = BorderRadius.circular(4);
     final provider = context.read<ProjectLogoDialogProvider>();
+    return FormField<String>(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '请选择图标';
+        }
+        return null;
+      },
+      onSaved: (v) => provider.updateFormData(logoPath: v),
+      builder: (field) {
+        final logoPath = field.value;
+        return InputDecorator(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            errorText: field.errorText,
+          ),
+          child: Center(
+            child: SizedBox.fromSize(
+              size: logoSize,
+              child: ClipRRect(
+                borderRadius: borderRadius,
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    borderRadius: borderRadius,
+                  ),
+                  child: InkWell(
+                    borderRadius: borderRadius,
+                    onTap: () async {
+                      final result = await FilePicker.platform.pickFiles(
+                        type: FileType.image,
+                        lockParentWindow: true,
+                        dialogTitle: '选择项目图标',
+                      );
+                      field.didChange(result?.files.firstOrNull?.path);
+                    },
+                    child: logoPath?.isNotEmpty == true
+                        ? ImageView.file(
+                      File(logoPath ?? ''),
+                      fit: BoxFit.cover,
+                      size: logoSize.shortestSide,
+                    )
+                        : const Icon(Icons.add),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // 构建展开列表
+  Widget _buildFormFieldPlatforms(BuildContext context) {
+    final provider = context.read<ProjectLogoDialogProvider>();
+    return FormField<List<PlatformType>>(
+      initialValue: platformLogoMap.keys.toList(),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return '请选择平台';
+        }
+        return null;
+      },
+      onSaved: (v) => provider.updateFormData(platforms: v),
+      builder: (field) {
+        return InputDecorator(
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            errorText: field.errorText,
+          ),
+          child: Selector<ProjectLogoDialogProvider, PlatformType?>(
+            selector: (_, provider) => provider.expandedPlatform,
+            builder: (_, expandedPlatform, __) {
+              return ExpansionPanelList.radio(
+                materialGapSize: 8,
+                initialOpenPanelValue: expandedPlatform,
+                expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 8),
+                expansionCallback: (index, isExpanded) => context
+                    .read<ProjectLogoDialogProvider>()
+                    .updateExpandedPlatform(
+                      isExpanded ? null : platformLogoMap.keys.elementAt(index),
+                    ),
+                children: List.generate(platformLogoMap.length, (i) {
+                  final item = platformLogoMap.entries.elementAt(i);
+                  return _buildExpansionPanelItem(context, item, field);
+                }),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  // 构建展开项
+  ExpansionPanelRadio _buildExpansionPanelItem(
+    BuildContext context,
+    MapEntry<PlatformType, List<PlatformLogoTuple>> item,
+    FormFieldState<List<PlatformType>> field,
+  ) {
     return ExpansionPanelRadio(
       value: item.key,
       canTapOnHeader: true,
@@ -97,9 +193,12 @@ class ProjectLogoDialog extends StatelessWidget {
           leading: Tooltip(
             message: '替换该平台',
             child: Checkbox(
-              value: isChecked,
-              onChanged: (_) {
-                provider.updateCheckedPlatform(item.key);
+              isError: field.hasError,
+              value: field.value?.contains(item.key) ?? false,
+              onChanged: (v) {
+                final temp = field.value ?? [];
+                v == true ? temp.add(item.key) : temp.remove(item.key);
+                field.didChange(temp);
               },
             ),
           ),
@@ -123,21 +222,17 @@ class ProjectLogoDialog extends StatelessWidget {
 * @Time 2023/12/4 15:26
 */
 class ProjectLogoDialogProvider extends BaseProvider {
+  // 表单key
+  final formKey = GlobalKey<FormState>();
+
   // 当前展开平台
   PlatformType? _expandedPlatform;
 
   // 当前展开平台
   PlatformType? get expandedPlatform => _expandedPlatform;
 
-  // 记录已选平台
-  List<PlatformType> _checkedPlatforms = [];
-
-  // 获取已选平台
-  List<PlatformType> get checkedPlatforms => _checkedPlatforms;
-
-  ProjectLogoDialogProvider(List<PlatformType> platforms) {
-    _checkedPlatforms = platforms;
-  }
+  // 缓存表单值
+  ProjectLogoDialogResultTuple _formData = (logoPath: '', platforms: []);
 
   // 更新展开平台
   void updateExpandedPlatform(PlatformType? platform) {
@@ -145,13 +240,19 @@ class ProjectLogoDialogProvider extends BaseProvider {
     notifyListeners();
   }
 
-  // 更新所选平台
-  void updateCheckedPlatform(PlatformType platform) {
-    _checkedPlatforms = [
-      ..._checkedPlatforms.contains(platform)
-          ? (_checkedPlatforms..remove(platform))
-          : (_checkedPlatforms..add(platform))
-    ];
-    notifyListeners();
+  // 更新表单值
+  void updateFormData({String? logoPath, List<PlatformType>? platforms}) =>
+      _formData = (
+        logoPath: logoPath ?? _formData.logoPath,
+        platforms: platforms ?? _formData.platforms,
+      );
+
+  // 验证表单并返回
+  bool submitForm(BuildContext context) {
+    final formState = formKey.currentState;
+    if (!(formState?.validate() ?? false)) return false;
+    formState!.save();
+    Navigator.pop(context, _formData);
+    return true;
   }
 }
