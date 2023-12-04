@@ -18,24 +18,31 @@ class ProjectLogoGrid extends StatelessWidget {
   // 点击事件
   final ValueChanged<PlatformLogoTuple>? onTap;
 
+  // 内间距
+  final EdgeInsetsGeometry padding;
+
   const ProjectLogoGrid({
     super.key,
     required this.logoList,
     this.onTap,
     this.maxSize = const Size.square(55),
+    this.padding = const EdgeInsets.all(8),
   });
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      alignment: WrapAlignment.center,
-      crossAxisAlignment: WrapCrossAlignment.end,
-      children: List.generate(logoList.length, (i) {
-        final item = logoList[i];
-        return _buildLogoItem(item);
-      }),
+    return Padding(
+      padding: padding,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        alignment: WrapAlignment.center,
+        crossAxisAlignment: WrapCrossAlignment.end,
+        children: List.generate(logoList.length, (i) {
+          final item = logoList[i];
+          return _buildLogoItem(item);
+        }),
+      ),
     );
   }
 

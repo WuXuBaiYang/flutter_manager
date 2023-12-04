@@ -17,6 +17,7 @@ import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
@@ -190,6 +191,10 @@ class ProjectDetailPage extends BasePage {
               icon: const Icon(Icons.edit_attributes_rounded),
               onPressed: () {
                 final provider = context.read<PlatformProvider>();
+                if (provider.labelMap.isEmpty) {
+                  SnackTool.showMessage(context, message: '无可修改别名');
+                  return;
+                }
                 ProjectLabelDialog.show(
                   context,
                   platformLabelMap: provider.labelMap,
@@ -207,6 +212,10 @@ class ProjectDetailPage extends BasePage {
                 icon: const Icon(Icons.imagesearch_roller_rounded),
                 onPressed: () {
                   final provider = context.read<PlatformProvider>();
+                  if (provider.logoMap.isEmpty) {
+                    SnackTool.showMessage(context, message: '无可替换图标');
+                    return;
+                  }
                   ProjectLogoDialog.show(
                     context,
                     platformLogoMap: provider.logoMap,
