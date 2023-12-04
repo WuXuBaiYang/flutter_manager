@@ -129,7 +129,7 @@ extension FileDirExtension on FileDir {
 extension FileExtension on File {
   // 获取文件名
   String? get name {
-    final index = path.lastIndexOf(r'/');
+    final index = path.lastIndexOf(separator);
     if (index >= 0 && index < path.length) {
       return path.substring(index + 1);
     }

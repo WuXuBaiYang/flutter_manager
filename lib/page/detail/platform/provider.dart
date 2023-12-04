@@ -55,24 +55,32 @@ class PlatformProvider extends BaseProvider {
   }
 
   // 获取全平台（存在）标签对照表
-  Map<PlatformType, String?> get labelMap => {
-        PlatformType.android: androidInfo?.label,
-        PlatformType.ios: iosInfo?.label,
-        PlatformType.web: webInfo?.label,
-        PlatformType.windows: windowsInfo?.label,
-        PlatformType.macos: macosInfo?.label,
-        PlatformType.linux: linuxInfo?.label,
-      };
+  Map<PlatformType, String> get labelMap {
+    final result = {
+      PlatformType.android: androidInfo?.label,
+      PlatformType.ios: iosInfo?.label,
+      PlatformType.web: webInfo?.label,
+      PlatformType.windows: windowsInfo?.label,
+      PlatformType.macos: macosInfo?.label,
+      PlatformType.linux: linuxInfo?.label,
+    };
+    result.removeWhere((_, v) => v == null);
+    return result.map((k, v) => MapEntry(k, v!));
+  }
 
   // 获取全平台（存在）图标对照表
-  Map<PlatformType, List<PlatformLogoTuple>?> get logoMap => {
-        PlatformType.android: androidInfo?.logo,
-        PlatformType.ios: iosInfo?.logo,
-        PlatformType.web: webInfo?.logo,
-        PlatformType.windows: windowsInfo?.logo,
-        PlatformType.macos: macosInfo?.logo,
-        PlatformType.linux: linuxInfo?.logo,
-      };
+  Map<PlatformType, List<PlatformLogoTuple>> get logoMap {
+    final result = {
+      PlatformType.android: androidInfo?.logo,
+      PlatformType.ios: iosInfo?.logo,
+      PlatformType.web: webInfo?.logo,
+      PlatformType.windows: windowsInfo?.logo,
+      PlatformType.macos: macosInfo?.logo,
+      PlatformType.linux: linuxInfo?.logo,
+    };
+    result.removeWhere((_, v) => v?.isEmpty ?? true);
+    return result.map((k, v) => MapEntry(k, v!));
+  }
 
   // 批量更新label
   Future<void> updateLabels(

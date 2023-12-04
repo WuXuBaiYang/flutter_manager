@@ -25,21 +25,6 @@ class WindowsPlatformTool extends PlatformTool {
   // 资源相对路径
   final String _resPath = 'runner/resources';
 
-  @override
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
-    final result = <PlatformLogoTuple>[];
-    for (final file in dir.listSync()) {
-      final path = file.path;
-      final name = File(path).suffixes;
-      final size = await getImageSize(path);
-      if (name == null || size == null) continue;
-      result.add((name: name, path: path, size: size));
-    }
-    return result;
-  }
-
   // label字段匹配
   final _labelRegExp = RegExp(r'window.Create\(L"(.*)", origin, size\)');
 
@@ -51,6 +36,21 @@ class WindowsPlatformTool extends PlatformTool {
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );
+  }
+
+  @override
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
+    final result = <PlatformLogoTuple>[];
+    for (final file in dir.listSync()) {
+      final path = file.path;
+      final name = File(path).name;
+      final size = await getImageSize(path);
+      if (name == null || size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   @override

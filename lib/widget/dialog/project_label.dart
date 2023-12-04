@@ -10,13 +10,13 @@ import 'package:flutter_manager/widget/empty_box.dart';
 */
 class ProjectLabelDialog extends StatelessWidget {
   // 平台与label对照表
-  final Map<PlatformType, String?> platformLabelMap;
+  final Map<PlatformType, String> platformLabelMap;
 
   const ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   // 展示弹窗
   static Future<Map<PlatformType, String>?> show(BuildContext context,
-      {required Map<PlatformType, String?> platformLabelMap}) async {
+      {required Map<PlatformType, String> platformLabelMap}) async {
     return showDialog<Map<PlatformType, String>>(
       context: context,
       barrierDismissible: false,
