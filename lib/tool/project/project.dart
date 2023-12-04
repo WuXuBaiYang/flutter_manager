@@ -144,9 +144,7 @@ class ProjectTool {
   static Future<T?> getPlatformInfo<T extends Record>(
       PlatformType platform, String projectPath) async {
     final tool = getPlatformTool(platform);
-    final result = await tool.getPlatformInfo(projectPath);
-    if (result == null) return null;
-    return result as T;
+    return await tool.getPlatformInfo(projectPath) as T?;
   }
 
   // 根据传入平台获取对应的平台工具

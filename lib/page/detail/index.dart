@@ -55,7 +55,12 @@ class ProjectDetailPage extends BasePage {
           return EmptyBoxView(
             hint: '项目不存在',
             isEmpty: project == null,
-            child: _buildContent(context),
+            child: project != null
+                ? ChangeNotifierProvider(
+                    create: (_) => PlatformProvider(project),
+                    child: _buildContent(context),
+                  )
+                : const SizedBox(),
           );
         },
       ),
@@ -65,8 +70,6 @@ class ProjectDetailPage extends BasePage {
   // 构建内容
   Widget _buildContent(BuildContext context) {
     final provider = context.read<ProjectDetailPageProvider>();
-    final project = provider.project;
-    if (project == null) return const SizedBox();
     final color = provider.project?.getColor();
     final hasColor = color != Colors.transparent;
     return DefaultTabController(
@@ -104,11 +107,8 @@ class ProjectDetailPage extends BasePage {
             ),
           ];
         },
-        body: ChangeNotifierProvider(
-          create: (_) => PlatformProvider(project),
-          builder: (_, __) => TabBarView(
-            children: provider.platformMap.values.toList(),
-          ),
+        body: TabBarView(
+          children: provider.platformMap.values.toList(),
         ),
       ),
     );
