@@ -59,7 +59,7 @@ class ProjectDetailPage extends BasePage {
             child: project != null
                 ? ChangeNotifierProvider(
                     create: (_) => PlatformProvider(project),
-                    child: _buildContent(context),
+                    builder: (context, _) => _buildContent(context),
                   )
                 : const SizedBox(),
           );
