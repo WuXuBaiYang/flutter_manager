@@ -1,7 +1,7 @@
 import 'platform.dart';
 
 // web平台参数元组
-typedef WebPlatformTuple = ({
+typedef WebPlatformInfoTuple = ({
   String path,
   String label,
   List<PlatformLogoTuple> logo,

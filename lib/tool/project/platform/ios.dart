@@ -3,7 +3,7 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // ios平台参数元组
-typedef IosPlatformTuple = ({
+typedef IosPlatformInfoTuple = ({
   String path,
   String label,
   List<PlatformLogoTuple> logo,

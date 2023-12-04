@@ -3,7 +3,7 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // macos平台参数元组
-typedef MacosPlatformTuple = ({
+typedef MacosPlatformInfoTuple = ({
   String path,
   String label,
   List<PlatformLogoTuple> logo,

@@ -4,7 +4,7 @@ import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
 
 // windows平台参数元组
-typedef WindowsPlatformTuple = ({
+typedef WindowsPlatformInfoTuple = ({
   String path,
   String label,
   List<PlatformLogoTuple> logo,

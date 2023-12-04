@@ -2,7 +2,7 @@ import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
 
 // linux平台参数元组
-typedef LinuxPlatformTuple = ({
+typedef LinuxPlatformInfoTuple = ({
   String path,
   String label,
   List<PlatformLogoTuple> logo,
