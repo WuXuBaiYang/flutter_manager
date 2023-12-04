@@ -17,7 +17,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
-import 'package:flutter_manager/widget/dialog/project.dart';
+import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:flutter_manager/widget/image.dart';

@@ -11,7 +11,7 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/color_item.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/dialog/color.dart';
+import 'package:flutter_manager/widget/dialog/color_picker.dart';
 import 'package:flutter_manager/widget/image.dart';
 import 'package:flutter_manager/widget/local_path.dart';
 import 'package:provider/provider.dart';

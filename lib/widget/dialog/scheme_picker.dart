@@ -8,14 +8,14 @@ import 'package:flutter_manager/widget/scheme_item.dart';
 * @author wuxubaiyang
 * @Time 2023/11/25 19:38
 */
-class ThemeSchemeDialog extends StatefulWidget {
+class SchemePickerDialog extends StatelessWidget {
   // 主题配色方案列表
   final List<ThemeSchemeModel> schemes;
 
   // 当前主题配色方案
   final ThemeSchemeModel? current;
 
-  const ThemeSchemeDialog({
+  const SchemePickerDialog({
     super.key,
     required this.schemes,
     this.current,
@@ -29,7 +29,7 @@ class ThemeSchemeDialog extends StatefulWidget {
   }) {
     return showDialog<ThemeSchemeModel>(
       context: context,
-      builder: (context) => ThemeSchemeDialog(
+      builder: (context) => SchemePickerDialog(
         schemes: schemes,
         current: current,
       ),
@@ -37,33 +37,23 @@ class ThemeSchemeDialog extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _ThemeSchemeDialogState();
-}
-
-/*
-* 主题配色对话框-状态
-* @author wuxubaiyang
-* @Time 2023/11/25 19:39
-*/
-class _ThemeSchemeDialogState extends State<ThemeSchemeDialog> {
-  @override
   Widget build(BuildContext context) {
     return CustomDialog(
       scrollable: true,
       title: const Text('选择主题配色'),
-      content: _buildContent(),
+      content: _buildContent(context),
     );
   }
 
   // 构建内容
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Wrap(
       spacing: 14,
       runSpacing: 14,
-      children: widget.schemes.map((item) {
+      children: schemes.map((item) {
         return ThemeSchemeItem(
           scheme: item,
-          isSelected: item == widget.current,
+          isSelected: item == current,
           onPressed: () => Navigator.pop(context, item),
         );
       }).toList(),

@@ -11,9 +11,9 @@ import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:flutter_manager/widget/dialog/environment.dart';
-import 'package:flutter_manager/widget/dialog/environment_remote.dart';
-import 'package:flutter_manager/widget/dialog/scheme.dart';
+import 'package:flutter_manager/widget/dialog/environment_import.dart';
+import 'package:flutter_manager/widget/dialog/environment_import_remote.dart';
+import 'package:flutter_manager/widget/dialog/scheme_picker.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:flutter_manager/page/settings/setting_item.dart';
@@ -89,7 +89,7 @@ class SettingsPage extends BasePage {
           ),
           PopupMenuItem(
             child: const Text('远程导入'),
-            onTap: () => EnvironmentRemoteImportDialog.show(context),
+            onTap: () => EnvironmentImportRemoteDialog.show(context),
           ),
         ],
       ),
@@ -173,7 +173,7 @@ class SettingsPage extends BasePage {
         scheme: scheme,
         isSelected: true,
         tooltip: '更换配色',
-        onPressed: () => ThemeSchemeDialog.show(
+        onPressed: () => SchemePickerDialog.show(
           context,
           schemes: provider.getThemeSchemeList(context),
           current: provider.getThemeSchemeModel(context),

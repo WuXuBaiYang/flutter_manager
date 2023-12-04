@@ -19,8 +19,8 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentRemoteImportDialog extends StatelessWidget {
-  const EnvironmentRemoteImportDialog({super.key});
+class EnvironmentImportRemoteDialog extends StatelessWidget {
+  const EnvironmentImportRemoteDialog({super.key});
 
   // 展示弹窗
   static Future<Environment?> show(BuildContext context,
@@ -28,7 +28,7 @@ class EnvironmentRemoteImportDialog extends StatelessWidget {
     return showDialog<Environment>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const EnvironmentRemoteImportDialog(),
+      builder: (_) => const EnvironmentImportRemoteDialog(),
     );
   }
 
