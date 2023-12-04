@@ -1,4 +1,3 @@
-import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
 
@@ -16,7 +15,7 @@ typedef LinuxPlatformTuple = ({
 */
 class LinuxPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.linux;
+  PlatformType get platform => PlatformType.linux;
 
   @override
   String get keyFilePath => 'main.cc';
@@ -31,10 +30,10 @@ class LinuxPlatformTool extends PlatformTool {
   ];
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return LinuxPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

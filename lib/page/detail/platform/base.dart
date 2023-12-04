@@ -68,7 +68,7 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
 */
 abstract class ProjectPlatformProvider extends BaseProvider {
   // 平台类型
-  final PlatformPath platform;
+  final PlatformType platform;
 
   // 缓存是否存在平台信息
   bool _hasPlatform = false;

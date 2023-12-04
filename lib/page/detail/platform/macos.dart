@@ -18,7 +18,7 @@ class ProjectPlatformMacosPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformMacosPageProvider(context, PlatformPath.macos),
+              ProjectPlatformMacosPageProvider(context, PlatformType.macos),
         ),
       ];
 

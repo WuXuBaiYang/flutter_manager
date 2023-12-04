@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
@@ -18,7 +17,7 @@ typedef WindowsPlatformTuple = ({
 */
 class WindowsPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.windows;
+  PlatformType get platform => PlatformType.windows;
 
   @override
   String get keyFilePath => 'runner/main.cpp';
@@ -45,10 +44,10 @@ class WindowsPlatformTool extends PlatformTool {
   final _labelRegExp = RegExp(r'window.Create\(L"(.*)", origin, size\)');
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return WindowsPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

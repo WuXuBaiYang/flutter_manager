@@ -32,14 +32,14 @@ class ProjectProvider extends BaseProvider {
   bool get hasProject => projects.isNotEmpty || pinnedProjects.isNotEmpty;
 
   // 默认项目平台排序表
-  List<PlatformPath>? _platformSort;
+  List<PlatformType>? _platformSort;
 
   // 获取默认项目平台排序表
-  List<PlatformPath> get platformSort =>
+  List<PlatformType> get platformSort =>
       _platformSort ??= ProjectTool.getPlatformSort();
 
   // 缓存项目平台排序表
-  final _platformSortMap = <Id, List<PlatformPath>>{};
+  final _platformSortMap = <Id, List<PlatformType>>{};
 
   ProjectProvider() {
     initialize();
@@ -55,7 +55,7 @@ class ProjectProvider extends BaseProvider {
   }
 
   // 更新项目平台排序
-  Future<bool> updatePlatformSort(List<PlatformPath> platforms,
+  Future<bool> updatePlatformSort(List<PlatformType> platforms,
       [Id? projectId]) async {
     projectId != null
         ? _platformSortMap[projectId] = platforms

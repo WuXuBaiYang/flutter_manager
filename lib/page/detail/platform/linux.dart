@@ -18,7 +18,7 @@ class ProjectPlatformLinuxPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformLinuxPageProvider(context, PlatformPath.linux),
+              ProjectPlatformLinuxPageProvider(context, PlatformType.linux),
         ),
       ];
 

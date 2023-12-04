@@ -1,7 +1,13 @@
 import 'dart:io';
-import 'package:flutter_manager/model/platform.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
+
+// android平台信息元组
+typedef AndroidPlatformInfoTuple = ({
+  String path,
+  String label,
+  List<PlatformLogoTuple>? logo,
+});
 
 /*
 * Android平台工具类
@@ -10,7 +16,7 @@ import 'platform.dart';
 */
 class AndroidPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.android;
+  PlatformType get platform => PlatformType.android;
 
   @override
   String keyFilePath = 'build.gradle';
@@ -26,10 +32,10 @@ class AndroidPlatformTool extends PlatformTool {
       readPlatformFileXml(projectPath, _manifestPath);
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return AndroidPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

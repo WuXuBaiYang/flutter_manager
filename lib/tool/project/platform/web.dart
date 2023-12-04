@@ -1,5 +1,3 @@
-import 'package:flutter_manager/model/platform.dart';
-
 import 'platform.dart';
 
 // web平台参数元组
@@ -16,7 +14,7 @@ typedef WebPlatformTuple = ({
 */
 class WebPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.web;
+  PlatformType get platform => PlatformType.web;
 
   @override
   String get keyFilePath => 'index.html';
@@ -32,10 +30,10 @@ class WebPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _manifestPath);
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return WebPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

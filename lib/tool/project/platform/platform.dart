@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
@@ -17,7 +16,7 @@ typedef PlatformLogoTuple = ({String name, String path, Size size});
 */
 abstract class PlatformTool with PlatformToolMixin {
   // 平台文件夹路径
-  PlatformPath get platform;
+  PlatformType get platform;
 
   // 关键文件相对路径
   String get keyFilePath;
@@ -27,14 +26,14 @@ abstract class PlatformTool with PlatformToolMixin {
 
   // 判断当前路径是否可用
   bool isPathAvailable(String projectPath) =>
-      File(join(getPlatformPath(projectPath), keyFilePath)).existsSync();
+      File(join(getPlatformType(projectPath), keyFilePath)).existsSync();
 
   // 获取平台路径
-  String getPlatformPath(String projectPath) => join(projectPath, platformPath);
+  String getPlatformType(String projectPath) => join(projectPath, platformPath);
 
   // 获取平台文件路径
   String getPlatformFilePath(String projectPath, String filePath) =>
-      join(getPlatformPath(projectPath), filePath);
+      join(getPlatformType(projectPath), filePath);
 
   // 读取平台文件内容（字符串）
   Future<String> readPlatformFile(String projectPath, String filePath) {
@@ -174,7 +173,7 @@ abstract class PlatformTool with PlatformToolMixin {
 */
 abstract mixin class PlatformToolMixin {
   // 获取平台信息
-  Future<PlatformInfo?> getPlatformInfo(String projectPath);
+  Future<Record?> getPlatformInfo(String projectPath);
 
   // 获取logo
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
@@ -194,7 +193,7 @@ abstract mixin class PlatformToolMixin {
 * @author wuxubaiyang
 * @Time 2023/11/29 18:58
 */
-enum PlatformPath {
+enum PlatformType {
   android,
   ios,
   web,

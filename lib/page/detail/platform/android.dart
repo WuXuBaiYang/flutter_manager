@@ -18,7 +18,7 @@ class ProjectPlatformAndroidPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformAndroidPageProvider(context, PlatformPath.android),
+              ProjectPlatformAndroidPageProvider(context, PlatformType.android),
         ),
       ];
 

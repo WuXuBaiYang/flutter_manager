@@ -18,7 +18,7 @@ class ProjectPlatformWebPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformWebPageProvider(context, PlatformPath.web),
+              ProjectPlatformWebPageProvider(context, PlatformType.web),
         ),
       ];
 

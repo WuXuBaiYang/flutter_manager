@@ -4,7 +4,6 @@ import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
-import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -38,18 +37,18 @@ class ProjectTool {
   static const String _cachePath = 'cache';
 
   // 平台工具对照表
-  static final Map<PlatformPath, PlatformTool> _platformTools = {
-    PlatformPath.android: AndroidPlatformTool(),
-    PlatformPath.ios: IosPlatformTool(),
-    PlatformPath.web: WebPlatformTool(),
-    PlatformPath.windows: WindowsPlatformTool(),
-    PlatformPath.macos: MacosPlatformTool(),
-    PlatformPath.linux: LinuxPlatformTool(),
+  static final Map<PlatformType, PlatformTool> _platformTools = {
+    PlatformType.android: AndroidPlatformTool(),
+    PlatformType.ios: IosPlatformTool(),
+    PlatformType.web: WebPlatformTool(),
+    PlatformType.windows: WindowsPlatformTool(),
+    PlatformType.macos: MacosPlatformTool(),
+    PlatformType.linux: LinuxPlatformTool(),
   };
 
   // 创建项目平台
   static Future<bool> createPlatform(
-      Project project, PlatformPath platform) async {
+      Project project, PlatformType platform) async {
     final environment = await database.getEnvironmentById(project.envId);
     if (environment == null) return false;
     final output = await EnvironmentTool.runEnvironmentCommand(
@@ -60,19 +59,19 @@ class ProjectTool {
   }
 
   // 获取项目详情页平台排序
-  static List<PlatformPath> getPlatformSort([Id? projectId]) {
+  static List<PlatformType> getPlatformSort([Id? projectId]) {
     getSort(String key) => cache
         .getJson<List>(key)
-        ?.map<PlatformPath>((e) => PlatformPath.values[e as int])
+        ?.map<PlatformType>((e) => PlatformType.values[e as int])
         .toList();
-    getDefaultSort() => getSort(_platformSortKey) ?? PlatformPath.values;
+    getDefaultSort() => getSort(_platformSortKey) ?? PlatformType.values;
 
     if (projectId == null) return getDefaultSort();
     return getSort('${_platformSortKey}_$projectId') ?? getDefaultSort();
   }
 
   // 缓存项目详情页平台排序
-  static Future<bool> cachePlatformSort(List<PlatformPath> platforms,
+  static Future<bool> cachePlatformSort(List<PlatformType> platforms,
       [Id? projectId]) async {
     final values = platforms.map<int>((e) => e.index).toList();
     final cacheKey =
@@ -81,14 +80,14 @@ class ProjectTool {
   }
 
   // 判断是否存在该平台
-  static bool hasPlatform(PlatformPath platform, String projectPath) =>
+  static bool hasPlatform(PlatformType platform, String projectPath) =>
       _platformTools[platform]!.isPathAvailable(projectPath);
 
   // 获取当前项目支持的平台数量
-  static List<PlatformPath> getPlatforms(String projectPath) {
+  static List<PlatformType> getPlatforms(String projectPath) {
     final entries = [..._platformTools.entries]
       ..removeWhere((e) => !e.value.isPathAvailable(projectPath));
-    return entries.map<PlatformPath>((e) => e.key).toList();
+    return entries.map<PlatformType>((e) => e.key).toList();
   }
 
   // 获取项目信息
@@ -142,8 +141,8 @@ class ProjectTool {
   }
 
   // 获取平台信息
-  static Future<T?> getPlatformInfo<T extends PlatformInfo>(
-      PlatformPath platform, String projectPath) async {
+  static Future<T?> getPlatformInfo<T extends Record>(
+      PlatformType platform, String projectPath) async {
     final tool = getPlatformTool(platform);
     final result = await tool.getPlatformInfo(projectPath);
     if (result == null) return null;
@@ -151,26 +150,26 @@ class ProjectTool {
   }
 
   // 根据传入平台获取对应的平台工具
-  static T getPlatformTool<T extends PlatformTool>(PlatformPath platform) =>
+  static T getPlatformTool<T extends PlatformTool>(PlatformType platform) =>
       _platformTools[platform]! as T;
 
   // 根据平台获取图标
   static Future<List<PlatformLogoTuple>?> getLogoInfo(
-          PlatformPath platform, String projectPath) =>
+          PlatformType platform, String projectPath) =>
       getPlatformTool(platform).getLogoInfo(projectPath);
 
   // 根据平台替换图标
   static Future<bool> replaceLogo(
-          PlatformPath platform, String projectPath, String logoPath) =>
+          PlatformType platform, String projectPath, String logoPath) =>
       getPlatformTool(platform).replaceLogo(projectPath, logoPath);
 
   // 根据平台获取项目名
-  static Future<String?> getLabel(PlatformPath platform, String projectPath) =>
+  static Future<String?> getLabel(PlatformType platform, String projectPath) =>
       getPlatformTool(platform).getLabel(projectPath);
 
   // 根据平台设置项目名
   static Future<bool> setLabel(
-          PlatformPath platform, String projectPath, String label) =>
+          PlatformType platform, String projectPath, String label) =>
       getPlatformTool(platform).setLabel(projectPath, label);
 
   // 获取缓存目录

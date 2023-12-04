@@ -1,4 +1,3 @@
-import 'package:flutter_manager/model/platform.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
@@ -17,7 +16,7 @@ typedef MacosPlatformTuple = ({
 */
 class MacosPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.macos;
+  PlatformType get platform => PlatformType.macos;
 
   @override
   String get keyFilePath => 'Runner/Info.plist';
@@ -33,10 +32,10 @@ class MacosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return MacosPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

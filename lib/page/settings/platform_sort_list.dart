@@ -33,7 +33,7 @@ class PlatformSortList extends StatelessWidget {
 
   // 构建平台列表
   Widget _buildPlatformList(BuildContext context) {
-    return Selector<ProjectProvider, List<PlatformPath>>(
+    return Selector<ProjectProvider, List<PlatformType>>(
       selector: (_, provider) => provider.platformSort,
       builder: (_, platformSort, __) {
         return ReorderableListView.builder(
@@ -70,7 +70,7 @@ class PlatformSortList extends StatelessWidget {
   }
 
   // 构建平台列表项
-  Widget _buildPlatformListItem(BuildContext context, PlatformPath platform) {
+  Widget _buildPlatformListItem(BuildContext context, PlatformType platform) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
     return ActionChip(
       onPressed: () {},

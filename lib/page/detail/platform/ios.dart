@@ -18,7 +18,7 @@ class ProjectPlatformIosPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformIosPageProvider(context, PlatformPath.ios),
+              ProjectPlatformIosPageProvider(context, PlatformType.ios),
         ),
       ];
 

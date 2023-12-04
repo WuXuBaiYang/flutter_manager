@@ -1,4 +1,3 @@
-import 'package:flutter_manager/model/platform.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
@@ -17,7 +16,7 @@ typedef IosPlatformTuple = ({
 */
 class IosPlatformTool extends PlatformTool {
   @override
-  PlatformPath get platform => PlatformPath.ios;
+  PlatformType get platform => PlatformType.ios;
 
   @override
   String keyFilePath = 'Runner/Info.plist';
@@ -33,10 +32,10 @@ class IosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+  Future<Record?> getPlatformInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return IosPlatformInfo(
-      path: getPlatformPath(projectPath),
+    return (
+      path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
       logo: await getLogoInfo(projectPath) ?? [],
     );

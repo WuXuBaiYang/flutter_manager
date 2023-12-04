@@ -18,7 +18,7 @@ class ProjectPlatformWindowsPage
   List<SingleChildWidget> loadProviders(BuildContext context) => [
         ChangeNotifierProvider(
           create: (_) =>
-              ProjectPlatformWindowsPageProvider(context, PlatformPath.windows),
+              ProjectPlatformWindowsPageProvider(context, PlatformType.windows),
         ),
       ];
 

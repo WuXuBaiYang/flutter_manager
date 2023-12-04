@@ -67,7 +67,7 @@ class ProjectDetailPage extends BasePage {
     final color = provider.project?.getColor();
     final hasColor = color != Colors.transparent;
     return DefaultTabController(
-      length: PlatformPath.values.length,
+      length: PlatformType.values.length,
       child: NestedScrollView(
         controller: provider.scrollController,
         headerSliverBuilder: (_, __) {
@@ -295,23 +295,23 @@ class ProjectDetailPageProvider extends BaseProvider {
   final scrollController = ScrollController();
 
   // 项目平台对照表
-  final platformMap = <PlatformPath, Widget>{
-    PlatformPath.android: const KeepAliveWrapper(
+  final platformMap = <PlatformType, Widget>{
+    PlatformType.android: const KeepAliveWrapper(
       child: ProjectPlatformAndroidPage(),
     ),
-    PlatformPath.ios: const KeepAliveWrapper(
+    PlatformType.ios: const KeepAliveWrapper(
       child: ProjectPlatformIosPage(),
     ),
-    PlatformPath.web: const KeepAliveWrapper(
+    PlatformType.web: const KeepAliveWrapper(
       child: ProjectPlatformWebPage(),
     ),
-    PlatformPath.macos: const KeepAliveWrapper(
+    PlatformType.macos: const KeepAliveWrapper(
       child: ProjectPlatformMacosPage(),
     ),
-    PlatformPath.windows: const KeepAliveWrapper(
+    PlatformType.windows: const KeepAliveWrapper(
       child: ProjectPlatformWindowsPage(),
     ),
-    PlatformPath.linux: const KeepAliveWrapper(
+    PlatformType.linux: const KeepAliveWrapper(
       child: ProjectPlatformLinuxPage(),
     ),
   };
@@ -337,7 +337,7 @@ class ProjectDetailPageProvider extends BaseProvider {
   }
 
   // 获取支持的平台列表
-  List<PlatformPath> getPlatforms(BuildContext context) {
+  List<PlatformType> getPlatforms(BuildContext context) {
     if (project == null) return [];
     final platforms = ProjectTool.getPlatforms(project!.path);
     // 根据当前项目的平台排序重新排序平台表
