@@ -21,7 +21,7 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/11/27 14:19
 */
-class ProjectImportDialog extends StatefulWidget {
+class ProjectImportDialog extends StatelessWidget {
   // 项目对象
   final Project? project;
 
@@ -39,24 +39,10 @@ class ProjectImportDialog extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => _ProjectImportDialogState();
-}
-
-/*
-* 项目导入弹窗状态
-* @author wuxubaiyang
-* @Time 2023/11/27 14:20
-*/
-class _ProjectImportDialogState extends State<ProjectImportDialog> {
-  // 状态代理
-  late final _provider = ProjectImportDialogProvider(widget.project);
-
-  @override
   Widget build(BuildContext context) {
-    final project = widget.project;
     final isEdit = project != null;
-    return ChangeNotifierProvider.value(
-      value: _provider,
+    return ChangeNotifierProvider(
+      create: (_) => ProjectImportDialogProvider(project),
       builder: (context, _) {
         return CustomDialog(
           scrollable: true,
@@ -69,7 +55,9 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: () => _provider.import(context, project),
+              onPressed: () => context
+                  .read<ProjectImportDialogProvider>()
+                  .import(context, project),
               child: Text(isEdit ? '修改' : '导入'),
             ),
           ],
@@ -80,8 +68,9 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return Form(
-      key: _provider.formKey,
+      key: provider.formKey,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -104,6 +93,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
   Widget _buildFormFieldLogo(BuildContext context) {
     const logoSize = Size.square(55);
     final borderRadius = BorderRadius.circular(4);
+    final provider = context.read<ProjectImportDialogProvider>();
     return Selector<ProjectImportDialogProvider, String?>(
       selector: (_, provider) => provider.logoPath,
       builder: (_, logoPath, __) {
@@ -120,7 +110,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
               ),
               child: InkWell(
                 borderRadius: borderRadius,
-                onTap: _provider.pickLogoPath,
+                onTap: provider.pickLogoPath,
                 child: logoPath?.isNotEmpty == true
                     ? ImageView.file(
                         File(logoPath ?? ''),
@@ -138,8 +128,9 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建表单项-项目别名
   Widget _buildFormFieldLabel(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return TextFormField(
-      controller: _provider.labelController,
+      controller: provider.labelController,
       decoration: const InputDecoration(
         labelText: '别名',
         hintText: '请输入别名',
@@ -155,22 +146,24 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建表单项-项目路径
   Widget _buildFormFieldPath(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return LocalPathTextFormField(
-      controller: _provider.pathController,
       label: '项目路径',
       hint: '请选择项目路径',
+      onPathUpdate: provider.pathUpdate,
+      controller: provider.pathController,
       validator: (v) {
         if (!ProjectTool.isPathAvailable(v!)) {
           return '路径不可用';
         }
         return null;
       },
-      onPathUpdate: _provider.pathUpdate,
     );
   }
 
   // 构建表单项-环境
   Widget _buildFormFieldEnvironment(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return Selector<EnvironmentProvider, List<Environment>>(
       selector: (_, provider) => provider.environments,
       builder: (_, environments, __) {
@@ -180,6 +173,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
             return DropdownButtonFormField<Environment>(
               value: current,
               hint: const Text('请选择环境'),
+              onChanged: provider.environmentUpdate,
               validator: (value) {
                 if (value == null) {
                   return '请选择环境';
@@ -192,7 +186,6 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
                         child: Text(e.title),
                       ))
                   .toList(),
-              onChanged: _provider.environmentUpdate,
             );
           },
         );
@@ -225,6 +218,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 构建表单项-置顶
   Widget _buildFormFieldPinned(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return Selector<ProjectImportDialogProvider, bool>(
       selector: (_, provider) => provider.pinned,
       builder: (_, pinned, __) {
@@ -232,7 +226,7 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
           value: pinned,
           title: const Text('置顶'),
           contentPadding: _contentPadding,
-          onChanged: _provider.pinnedUpdate,
+          onChanged: provider.pinnedUpdate,
         );
       },
     );
@@ -240,12 +234,13 @@ class _ProjectImportDialogState extends State<ProjectImportDialog> {
 
   // 展示颜色选择器
   Future<void> _showColorPicker(BuildContext context, Color? color) {
+    final provider = context.read<ProjectImportDialogProvider>();
     return ColorPickerDialog.show(
       context,
       current: color,
       useTransparent: true,
       colors: Colors.primaries,
-    ).then(_provider.colorUpdate);
+    ).then(provider.colorUpdate);
   }
 }
 
