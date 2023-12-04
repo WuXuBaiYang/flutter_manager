@@ -244,6 +244,11 @@ class ProjectImportDialog extends StatelessWidget {
   }
 }
 
+// 项目导入弹窗表单数据元组
+typedef ProjectImportDialogFormTuple = ({
+  String? logoPath,
+});
+
 /*
 * 项目导入弹窗状态管理类
 * @author wuxubaiyang

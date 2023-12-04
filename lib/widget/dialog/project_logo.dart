@@ -2,16 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/form/project_logo.dart';
 import 'package:flutter_manager/widget/form/project_logo_panel.dart';
 import 'package:provider/provider.dart';
-
-// 批量修改图标弹窗返回值元组
-typedef ProjectLogoDialogResultTuple = ({
-  String logoPath,
-  List<PlatformType> platforms,
-});
 
 /*
 * 项目修改图标弹窗
@@ -25,10 +18,10 @@ class ProjectLogoDialog extends StatelessWidget {
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   // 展示弹窗
-  static Future<ProjectLogoDialogResultTuple?> show(BuildContext context,
+  static Future<ProjectLogoDialogFormTuple?> show(BuildContext context,
       {required Map<PlatformType, List<PlatformLogoTuple>>
           platformLogoMap}) async {
-    return showDialog<ProjectLogoDialogResultTuple>(
+    return showDialog<ProjectLogoDialogFormTuple>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ProjectLogoDialog(
@@ -92,13 +85,16 @@ class ProjectLogoDialog extends StatelessWidget {
     return ProjectLogoPanelFormField(
       platformLogoMap: platformLogoMap,
       onSaved: (v) => provider.updateFormData(platforms: v?.platforms),
-      initialValue: (
-      expanded: null,
-      platforms: platformLogoMap.keys.toList()
-      ),
+      initialValue: (expanded: null, platforms: platformLogoMap.keys.toList()),
     );
   }
 }
+
+// 项目修改图标弹窗表单数据元组
+typedef ProjectLogoDialogFormTuple = ({
+  String logoPath,
+  List<PlatformType> platforms,
+});
 
 /*
 * 项目修改图标弹窗数据提供者
@@ -110,7 +106,7 @@ class ProjectLogoDialogProvider extends BaseProvider {
   final formKey = GlobalKey<FormState>();
 
   // 缓存表单值
-  ProjectLogoDialogResultTuple _formData = (logoPath: '', platforms: []);
+  ProjectLogoDialogFormTuple _formData = (logoPath: '', platforms: []);
 
   // 更新表单值
   void updateFormData({String? logoPath, List<PlatformType>? platforms}) =>
