@@ -14,6 +14,7 @@ import 'package:flutter_manager/page/detail/platform/provider.dart';
 import 'package:flutter_manager/page/detail/platform/web.dart';
 import 'package:flutter_manager/page/detail/platform/windows.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -187,15 +188,34 @@ class ProjectDetailPage extends BasePage {
             IconButton.outlined(
               tooltip: '修改项目名',
               icon: const Icon(Icons.edit_attributes_rounded),
-              onPressed: () =>
-                  ProjectLabelDialog.show(context, project: project),
+              onPressed: () {
+                final provider = context.read<PlatformProvider>();
+                ProjectLabelDialog.show(
+                  context,
+                  platformLabelMap: provider.labelMap,
+                ).then((result) {
+                  if (result != null) {
+                    final future = provider.updateLabels(project.path, result);
+                    Loading.show(context, loadFuture: future);
+                  }
+                });
+              },
             ),
             IconButton.outlined(
-              tooltip: '替换图标',
-              icon: const Icon(Icons.imagesearch_roller_rounded),
-              onPressed: () =>
-                  ProjectLogoDialog.show(context, project: project),
-            ),
+                tooltip: '替换图标',
+                icon: const Icon(Icons.imagesearch_roller_rounded),
+                onPressed: () {
+                  final provider = context.read<PlatformProvider>();
+                  ProjectLogoDialog.show(
+                    context,
+                    platformLogoMap: provider.logoMap,
+                  ).then((result) {
+                    if (result != null) {
+                      final future = provider.updateLogos(project.path, result);
+                      Loading.show(context, loadFuture: future);
+                    }
+                  });
+                }),
             IconButton.outlined(
               tooltip: '打开项目目录',
               icon: const Icon(Icons.open_in_browser_rounded),

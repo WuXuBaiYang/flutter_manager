@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
@@ -9,19 +9,20 @@ import 'package:flutter_manager/widget/empty_box.dart';
 * @Time 2023/12/1 9:17
 */
 class ProjectLogoDialog extends StatelessWidget {
-  // 项目信息
-  final Project project;
+  // 平台与图标表
+  final Map<PlatformType, List<PlatformLogoTuple>?> platformLogoMap;
 
-  const ProjectLogoDialog({super.key, required this.project});
+  const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   // 展示弹窗
-  static Future<void> show(BuildContext context,
-      {required Project project}) async {
-    return showDialog<void>(
+  static Future<Map<PlatformType, String>?> show(BuildContext context,
+      {required Map<PlatformType, List<PlatformLogoTuple>?>
+          platformLogoMap}) async {
+    return showDialog<Map<PlatformType, String>>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ProjectLogoDialog(
-        project: project,
+        platformLogoMap: platformLogoMap,
       ),
     );
   }

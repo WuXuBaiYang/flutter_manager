@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
@@ -9,19 +9,19 @@ import 'package:flutter_manager/widget/empty_box.dart';
 * @Time 2023/12/1 9:17
 */
 class ProjectLabelDialog extends StatelessWidget {
-  // 项目信息
-  final Project project;
+  // 平台与label对照表
+  final Map<PlatformType, String?> platformLabelMap;
 
-  const ProjectLabelDialog({super.key, required this.project});
+  const ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   // 展示弹窗
-  static Future<void> show(BuildContext context,
-      {required Project project}) async {
-    return showDialog<void>(
+  static Future<Map<PlatformType, String>?> show(BuildContext context,
+      {required Map<PlatformType, String?> platformLabelMap}) async {
+    return showDialog<Map<PlatformType, String>>(
       context: context,
       barrierDismissible: false,
       builder: (_) => ProjectLabelDialog(
-        project: project,
+        platformLabelMap: platformLabelMap,
       ),
     );
   }

@@ -54,6 +54,44 @@ class PlatformProvider extends BaseProvider {
     notifyListeners();
   }
 
+  // 获取全平台（存在）标签对照表
+  Map<PlatformType, String?> get labelMap => {
+        PlatformType.android: androidInfo?.label,
+        PlatformType.ios: iosInfo?.label,
+        PlatformType.web: webInfo?.label,
+        PlatformType.windows: windowsInfo?.label,
+        PlatformType.macos: macosInfo?.label,
+        PlatformType.linux: linuxInfo?.label,
+      };
+
+  // 获取全平台（存在）图标对照表
+  Map<PlatformType, List<PlatformLogoTuple>?> get logoMap => {
+        PlatformType.android: androidInfo?.logo,
+        PlatformType.ios: iosInfo?.logo,
+        PlatformType.web: webInfo?.logo,
+        PlatformType.windows: windowsInfo?.logo,
+        PlatformType.macos: macosInfo?.logo,
+        PlatformType.linux: linuxInfo?.logo,
+      };
+
+  // 批量更新label
+  Future<void> updateLabels(
+      String projectPath, Map<PlatformType, String> labelMap) async {
+    await Future.wait(labelMap.entries.map(
+      (e) => ProjectTool.setLabel(e.key, projectPath, e.value),
+    ));
+    return initialize(projectPath);
+  }
+
+  // 批量更新图标
+  Future<void> updateLogos(
+      String projectPath, Map<PlatformType, String> logoMap) async {
+    await Future.wait(logoMap.entries.map(
+      (e) => ProjectTool.replaceLogo(e.key, projectPath, e.value),
+    ));
+    return initialize(projectPath);
+  }
+
   // 更新label
   Future<bool> updateLabel(
       PlatformType platform, String projectPath, String label) async {
