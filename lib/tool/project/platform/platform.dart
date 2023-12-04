@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
@@ -172,6 +173,9 @@ abstract class PlatformTool with PlatformToolMixin {
 * @Time 2023/11/29 20:13
 */
 abstract mixin class PlatformToolMixin {
+  // 获取平台信息
+  Future<PlatformInfo?> getPlatformInfo(String projectPath);
+
   // 获取logo
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
 

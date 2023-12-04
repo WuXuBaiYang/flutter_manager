@@ -4,6 +4,7 @@ import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -57,10 +58,6 @@ class ProjectTool {
     if (output == null) return false;
     return hasPlatform(platform, project.path);
   }
-
-  // 根据传入平台获取对应的平台工具
-  static PlatformTool getPlatformTool(PlatformPath platform) =>
-      _platformTools[platform]!;
 
   // 获取项目详情页平台排序
   static List<PlatformPath> getPlatformSort([Id? projectId]) {
@@ -143,6 +140,19 @@ class ProjectTool {
     }
     return null;
   }
+
+  // 获取平台信息
+  static Future<T?> getPlatformInfo<T extends PlatformInfo>(
+      PlatformPath platform, String projectPath) async {
+    final tool = getPlatformTool(platform);
+    final result = await tool.getPlatformInfo(projectPath);
+    if (result == null) return null;
+    return result as T;
+  }
+
+  // 根据传入平台获取对应的平台工具
+  static T getPlatformTool<T extends PlatformTool>(PlatformPath platform) =>
+      _platformTools[platform]! as T;
 
   // 根据平台获取图标
   static Future<List<PlatformLogoTuple>?> getLogoInfo(

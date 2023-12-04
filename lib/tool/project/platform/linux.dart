@@ -1,6 +1,13 @@
+import 'package:flutter_manager/model/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
-
 import 'platform.dart';
+
+// linux平台参数元组
+typedef LinuxPlatformTuple = ({
+  String path,
+  String label,
+  List<PlatformLogoTuple> logo,
+});
 
 /*
 * linux平台工具类
@@ -22,6 +29,16 @@ class LinuxPlatformTool extends PlatformTool {
     RegExp(r'gtk_header_bar_set_title\(header_bar, "(.*)"\);'),
     RegExp(r'gtk_window_set_title\(window, "(.*)"\);'),
   ];
+
+  @override
+  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return LinuxPlatformInfo(
+      path: getPlatformPath(projectPath),
+      label: await getLabel(projectPath) ?? '',
+      logo: await getLogoInfo(projectPath) ?? [],
+    );
+  }
 
   @override
   Future<String?> getLabel(String projectPath) async {

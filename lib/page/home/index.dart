@@ -59,7 +59,7 @@ class HomePage extends BasePage {
             builder: (context, _) {
               return TextButton(
                 child: Text('v${context.watch<String>()}'),
-                onPressed: () {
+                onPressed: () async {
                   /// TODO: 2021/8/31 14:25 版本更新检查
                 },
               );

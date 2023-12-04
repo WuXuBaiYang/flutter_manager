@@ -1,6 +1,14 @@
+import 'package:flutter_manager/model/platform.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
+
+// ios平台参数元组
+typedef IosPlatformTuple = ({
+  String path,
+  String label,
+  List<PlatformLogoTuple> logo,
+});
 
 /*
 * ios平台工具类
@@ -23,6 +31,16 @@ class IosPlatformTool extends PlatformTool {
   // 读取图标信息文件信息
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
+
+  @override
+  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return IosPlatformInfo(
+      path: getPlatformPath(projectPath),
+      label: await getLabel(projectPath) ?? '',
+      logo: await getLogoInfo(projectPath) ?? [],
+    );
+  }
 
   @override
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {

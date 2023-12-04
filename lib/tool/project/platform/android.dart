@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_manager/model/platform.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 
@@ -23,6 +24,16 @@ class AndroidPlatformTool extends PlatformTool {
   // 读取manifest文件信息
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
       readPlatformFileXml(projectPath, _manifestPath);
+
+  @override
+  Future<PlatformInfo?> getPlatformInfo(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return AndroidPlatformInfo(
+      path: getPlatformPath(projectPath),
+      label: await getLabel(projectPath) ?? '',
+      logo: await getLogoInfo(projectPath) ?? [],
+    );
+  }
 
   @override
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
