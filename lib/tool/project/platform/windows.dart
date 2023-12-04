@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:path/path.dart';
 import 'platform.dart';
 
 /*
@@ -19,15 +19,18 @@ class WindowsPlatformTool extends PlatformTool {
   final String _resPath = 'runner/resources';
 
   @override
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final resPath = getPlatformFilePath(projectPath, _resPath);
-    final files = Directory(resPath).listSync();
-    return files.asMap().map<String, dynamic>((_, item) {
-      final path = item.path;
-      final key = basename(path).split('.').first;
-      return MapEntry(key, path);
-    });
+    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
+    final result = <PlatformLogoTuple>[];
+    for (final file in dir.listSync()) {
+      final path = file.path;
+      final name = File(path).suffixes;
+      final size = await getImageSize(path);
+      if (name == null || size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   // label字段匹配

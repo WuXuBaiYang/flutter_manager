@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
 import 'package:xml/xml.dart';
+
+// 平台图标信息元组
+typedef PlatformLogoTuple = ({String name, String path, Size size});
 
 /*
 * 平台工具抽象类
@@ -112,29 +117,41 @@ abstract class PlatformTool with PlatformToolMixin {
     );
   }
 
+  // 获取图片尺寸
+  Future<Size?> getImageSize(String logoPath) async {
+    final image = await img.decodeImageFile(logoPath);
+    final width = image?.width.toDouble();
+    final height = image?.height.toDouble();
+    if (width == null || height == null) return null;
+    return Size(width, height);
+  }
+
   @override
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    return {};
+    return <PlatformLogoTuple>[];
   }
 
   @override
   Future<bool> replaceLogo(String projectPath, String logoPath) async {
-    final logoMap = await getLogoInfo(projectPath);
-    if (logoMap == null) return false;
+    final logoInfoList = await getLogoInfo(projectPath);
+    if (logoInfoList == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
-    for (final item in logoMap.entries) {
-      final source = await img.decodeImageFile(item.value);
-      if (source == null) continue;
-      final suffixes = basename(item.value).split('.').lastOrNull;
+    for (final item in logoInfoList) {
+      final imageSize = await getImageSize(logoPath);
+      if (imageSize == null) continue;
+      final suffixes = File(item.path).suffixes;
       if (suffixes?.isEmpty ?? true) continue;
       var cmd = img.Command()
         ..decodeImageFile(logoPath)
-        ..copyResize(width: source.width, height: source.height);
+        ..copyResize(
+          width: imageSize.width.toInt(),
+          height: imageSize.height.toInt(),
+        );
       if (suffixes == 'png') cmd = cmd..encodePng();
       if (suffixes == 'jpg') cmd = cmd..encodeJpg();
       if (suffixes == 'ico') cmd = cmd..encodeIco();
-      await (cmd..writeToFile(item.value)).executeThread();
+      await (cmd..writeToFile(item.path)).executeThread();
     }
     return true;
   }
@@ -156,7 +173,7 @@ abstract class PlatformTool with PlatformToolMixin {
 */
 abstract mixin class PlatformToolMixin {
   // 获取logo
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath);
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
 
   // 替换logo
   Future<bool> replaceLogo(String projectPath, String logoPath);

@@ -23,19 +23,29 @@ class WebPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _manifestPath);
 
   @override
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getManifestJson(projectPath);
-    return {
-      'favicon': getPlatformFilePath(projectPath, _faviconPath),
-      ...(json['icons'] ?? []).asMap().map<String, dynamic>((_, item) {
-        final src = item['src'];
-        final entries = (item as Map)..removeWhere((_, value) => value == src);
-        final key = entries.values.join('_');
-        final value = getPlatformFilePath(projectPath, src);
-        return MapEntry(key, value);
-      })
-    };
+    final faviconSize =
+        await getImageSize(getPlatformFilePath(projectPath, _faviconPath));
+    final result = <PlatformLogoTuple>[
+      if (faviconSize != null)
+        (
+          name: 'favicon',
+          path: getPlatformFilePath(projectPath, _faviconPath),
+          size: faviconSize,
+        )
+    ];
+    for (final item in json['icons'] ?? []) {
+      final src = item['src'];
+      final entries = (item as Map)..removeWhere((_, value) => value == src);
+      final name = entries.values.join('_');
+      final path = getPlatformFilePath(projectPath, src);
+      final size = await getImageSize(path);
+      if (size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   @override

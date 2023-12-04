@@ -25,7 +25,7 @@ class AndroidPlatformTool extends PlatformTool {
       readPlatformFileXml(projectPath, _manifestPath);
 
   @override
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息
     final document = await _getManifestDocument(projectPath);
@@ -40,18 +40,16 @@ class AndroidPlatformTool extends PlatformTool {
     final iconRegExp = RegExp(iconPath.replaceAll('/', '|'));
     final dir = Directory(getPlatformFilePath(projectPath, _resPath));
     // 移除不符合条件的文件
-    final files = dir.listSync(recursive: true)
-      ..removeWhere((e) {
-        return !e.path.contains(iconRegExp) ||
-            !e.parent.path.contains(parentKey);
-      });
-    // 将符合条件的文件转换为指定格式的map<图片清晰度，图片路径>
-    return files.asMap().map<String, dynamic>((_, e) {
-      final path = e.parent.path;
-      final index = path.lastIndexOf('-');
-      final key = path.substring(index + 1);
-      return MapEntry(key, e.path);
-    });
+    final result = <PlatformLogoTuple>[];
+    for (final file in dir.listSync(recursive: true)) {
+      final parent = file.parent.path, path = file.path;
+      if (!parent.contains(parentKey) || !path.contains(iconRegExp)) continue;
+      final name = parent.substring(parent.lastIndexOf('-') + 1);
+      final size = await getImageSize(path);
+      if (size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   @override

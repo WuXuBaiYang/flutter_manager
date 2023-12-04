@@ -135,17 +135,17 @@ class ProjectTool {
       final result = await tool.getLogoInfo(projectPath);
       if (result == null) continue;
       // 遍历结果找到合适尺寸的图片返回
-      for (final item in result.entries) {
-        final source = await img.decodeImageFile(item.value);
+      for (final item in result) {
+        final source = await img.decodeImageFile(item.path);
         final imageSize = min(source?.width ?? 0, source?.height ?? 0);
-        if (imageSize >= minSize) return item.value;
+        if (imageSize >= minSize) return item.path;
       }
     }
     return null;
   }
 
   // 根据平台获取图标
-  static Future<Map<String, dynamic>?> getLogoInfo(
+  static Future<List<PlatformLogoTuple>?> getLogoInfo(
           PlatformPath platform, String projectPath) =>
       getPlatformTool(platform).getLogoInfo(projectPath);
 

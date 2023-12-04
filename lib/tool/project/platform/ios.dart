@@ -25,18 +25,22 @@ class IosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<Map<String, dynamic>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getIconInfoJson(projectPath);
     final resPath = getPlatformFilePath(projectPath, _iconPath);
-    return (json['images'] ?? []).asMap().map<String, dynamic>((_, item) {
+    final result = <PlatformLogoTuple>[];
+    for (final item in json['images'] ?? []) {
       final filename = item['filename'];
       final entries = (item as Map)
         ..removeWhere((_, value) => value == filename);
-      final key = entries.values.join('_');
-      final value = join(resPath, filename);
-      return MapEntry(key, value);
-    });
+      final name = entries.values.join('_');
+      final path = join(resPath, filename);
+      final size = await getImageSize(path);
+      if (size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   @override
