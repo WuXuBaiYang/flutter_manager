@@ -18,6 +18,8 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
+import 'package:flutter_manager/widget/dialog/project_label.dart';
+import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:flutter_manager/widget/image.dart';
@@ -177,16 +179,14 @@ class ProjectDetailPage extends BasePage {
             IconButton.outlined(
               tooltip: '修改项目名',
               icon: const Icon(Icons.edit_attributes_rounded),
-              onPressed: () {
-                /// TODO 修改项目名
-              },
+              onPressed: () =>
+                  ProjectLabelDialog.show(context, project: project),
             ),
             IconButton.outlined(
               tooltip: '替换图标',
               icon: const Icon(Icons.imagesearch_roller_rounded),
-              onPressed: () {
-                /// TODO 替换图标
-              },
+              onPressed: () =>
+                  ProjectLogoDialog.show(context, project: project),
             ),
             IconButton.outlined(
               tooltip: '打开项目目录',
