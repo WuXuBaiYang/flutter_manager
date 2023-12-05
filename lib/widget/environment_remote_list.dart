@@ -62,8 +62,9 @@ class EnvironmentRemoteList extends StatelessWidget {
       child: Column(
         children: [
           TabBar(
-            tabs: List.generate(
-                package.length, (i) => Tab(text: package.keys.elementAt(i))),
+            tabs: List.generate(package.length, (i) {
+              return Tab(text: package.keys.elementAt(i));
+            }),
           ),
           Expanded(
             child: TabBarView(

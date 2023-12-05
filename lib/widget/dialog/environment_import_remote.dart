@@ -56,7 +56,15 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
             ),
             TextButton(
               onPressed: (currentStep >= 2 && savePath != null)
-                  ? () => provider.import(context, savePath)
+                  ? () => Loading.show(
+                        context,
+                        loadFuture: provider.submitForm(context, savePath),
+                      )?.then((result) {
+                        if (result != null) Navigator.pop(context, result);
+                      }).catchError((e) {
+                        SnackTool.showMessage(context,
+                            message: '操作失败：${e.toString()}');
+                      })
                   : null,
               child: const Text('导入'),
             ),
@@ -134,7 +142,8 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
     return LocalPathTextFormField(
       label: '安装路径',
       hint: '请选择安装路径',
-      controller: provider.localPathController,
+      initialValue: provider.formData.path,
+      onSaved: (v) => provider.updateFormData(path: v),
     );
   }
 
@@ -157,6 +166,11 @@ typedef DownloadInfoTuple = ({
   int speed
 });
 
+// 环境远程导入弹窗表单数据元组
+typedef EnvironmentImportRemoteDialogFormTuple = ({
+  String path,
+});
+
 /*
 * 远程环境导入弹窗状态管理
 * @author wuxubaiyang
@@ -165,9 +179,6 @@ typedef DownloadInfoTuple = ({
 class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
-
-  // 输入框控制器
-  final localPathController = TextEditingController();
 
   // 当前步骤
   int _currentStep = 0;
@@ -187,21 +198,27 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 获取下载信息元组
   DownloadInfoTuple? get downloadInfo => _downloadInfo;
 
+  // 表单数据
+  EnvironmentImportRemoteDialogFormTuple _formData = (path: '');
+
+  // 获取表单数据
+  EnvironmentImportRemoteDialogFormTuple get formData => _formData;
+
   // 下载进度流
   final downloadProgress = StreamController<double?>.broadcast();
 
+  // 更新表单数据
+  void updateFormData({String? path}) =>
+      _formData = (path: path ?? _formData.path);
+
   // 导入环境
-  Future<void> import(BuildContext context, String archiveFile) async {
-    if (!formKey.currentState!.validate()) return;
-    final path = localPathController.text;
+  Future<Environment?> submitForm(
+      BuildContext context, String archiveFile) async {
+    final formState = formKey.currentState;
+    if (!(formState?.validate() ?? false)) return null;
+    formState!.save();
     final provider = context.read<EnvironmentProvider>();
-    final future = provider.importArchive(archiveFile, path);
-    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
-      Navigator.pop(context, result);
-    }).catchError((e) {
-      final message = '导入失败：$e';
-      SnackTool.showMessage(context, message: message);
-    });
+    return provider.importArchive(archiveFile, _formData.path);
   }
 
   // 启动下载
@@ -230,12 +247,8 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 开始导入
   Future<void> startImport(EnvironmentPackage package, String filePath) async {
     _currentStep = 2;
-    localPathController.text =
-        await EnvironmentTool.getDefaultInstallPath(package) ?? '';
-    _updateDownloadInfo(
-      package: package,
-      path: filePath,
-    );
+    updateFormData(path: await EnvironmentTool.getDefaultInstallPath(package));
+    _updateDownloadInfo(package: package, path: filePath);
   }
 
   // 更新下载信息

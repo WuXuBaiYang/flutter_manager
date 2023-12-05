@@ -7,8 +7,11 @@ import 'package:flutter/material.dart';
 * @Time 2023/11/27 10:58
 */
 class LocalPathTextFormField extends StatelessWidget {
+  // 表单项key
+  final GlobalKey<FormFieldState<String>> fieldKey;
+
   // 输入框控制器
-  final TextEditingController controller;
+  final TextEditingController? controller;
 
   // 验证器
   final FormFieldValidator<String>? validator;
@@ -25,22 +28,28 @@ class LocalPathTextFormField extends StatelessWidget {
   // 提示
   final String hint;
 
+  // 初始值
+  final String? initialValue;
+
   LocalPathTextFormField({
     super.key,
+    GlobalKey<FormFieldState<String>>? fieldKey,
     this.onSaved,
     this.hint = '',
     this.validator,
     this.label = '',
     this.onPathSelected,
-    String? initialValue,
-    TextEditingController? controller,
-  }) : controller = controller ?? TextEditingController(text: initialValue);
+    this.initialValue,
+    this.controller,
+  }) : fieldKey = fieldKey ?? GlobalKey<FormFieldState<String>>();
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: fieldKey,
       onSaved: onSaved,
       controller: controller,
+      initialValue: initialValue,
       validator: (v) {
         if (v == null || v.isEmpty) {
           return '路径不能为空';
@@ -60,13 +69,18 @@ class LocalPathTextFormField extends StatelessWidget {
 
   // 选择本地路径
   Future<void> _pickLocalPath() async {
+    final initDir = controller?.text ?? fieldKey.currentState?.value;
     final dir = await FilePicker.platform.getDirectoryPath(
       dialogTitle: label,
       lockParentWindow: true,
-      initialDirectory: controller.text,
+      initialDirectory: initDir,
     );
     if (dir == null) return;
-    controller.text = dir;
+    if (controller != null) {
+      controller!.text = dir;
+    } else {
+      fieldKey.currentState?.didChange(dir);
+    }
     onPathSelected?.call(dir);
   }
 }
