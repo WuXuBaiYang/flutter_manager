@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -8,6 +11,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/widget/dialog/project_logo.dart';
 
 /*
 * 平台组件数据提供者
@@ -93,9 +97,15 @@ class PlatformProvider extends BaseProvider {
 
   // 批量更新图标
   Future<void> updateLogos(
-      String projectPath, List<PlatformType> platforms, String logoPath) async {
-    await Future.wait(platforms.map(
-      (e) => ProjectTool.replaceLogo(e, projectPath, logoPath),
+    String projectPath,
+    ProjectLogoDialogFormTuple result, {
+    ProgressCallback? progressCallback,
+    int total = -1,
+  }) async {
+    int count = 0;
+    await Future.wait(result.platforms.map(
+      (e) => ProjectTool.replaceLogo(e, projectPath, result.logo,
+          progressCallback: (_, __) => progressCallback?.call(count++, total)),
     ));
     return initialize(projectPath);
   }

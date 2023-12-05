@@ -16,6 +16,7 @@ class Loading {
     required Future<T?> loadFuture,
     bool dismissible = true,
     BoxConstraints? constraints,
+    Stream<double>? progressStream,
     Widget? child,
   }) async {
     final navigator = Navigator.of(context);
@@ -26,7 +27,8 @@ class Loading {
       _loadingDialog = showDialog<void>(
         context: context,
         barrierDismissible: dismissible,
-        builder: (_) => _buildLoadingView(child, constraints),
+        builder: (_) => _buildLoadingView(child,
+            constraints: constraints, progressStream: progressStream),
       )..whenComplete(() => _loadingDialog = null);
       final result = await loadFuture;
       return result;
@@ -43,7 +45,7 @@ class Loading {
 
   // 构建加载视图
   static Widget _buildLoadingView(Widget? child,
-      [BoxConstraints? constraints]) {
+      {BoxConstraints? constraints, Stream<double>? progressStream}) {
     return Center(
       child: Card(
         child: ConstrainedBox(
@@ -57,7 +59,14 @@ class Loading {
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(),
+                StreamBuilder<double>(
+                  stream: progressStream,
+                  builder: (_, snap) {
+                    return CircularProgressIndicator(
+                      value: snap.data,
+                    );
+                  },
+                ),
                 if (child != null) ...[
                   const SizedBox(height: 8),
                   child,

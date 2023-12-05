@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
@@ -151,8 +152,10 @@ class ProjectTool {
 
   // 根据平台替换图标
   static Future<bool> replaceLogo(
-          PlatformType platform, String projectPath, String logoPath) =>
-      getPlatformTool(platform).replaceLogo(projectPath, logoPath);
+          PlatformType platform, String projectPath, String logoPath,
+          {ProgressCallback? progressCallback}) =>
+      getPlatformTool(platform).replaceLogo(projectPath, logoPath,
+          progressCallback: progressCallback);
 
   // 根据平台获取项目名
   static Future<String?> getLabel(PlatformType platform, String projectPath) =>

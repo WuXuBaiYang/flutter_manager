@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:path/path.dart';
@@ -133,10 +134,13 @@ abstract class PlatformTool with PlatformToolMixin {
   }
 
   @override
-  Future<bool> replaceLogo(String projectPath, String logoPath) async {
+  Future<bool> replaceLogo(String projectPath, String logoPath,
+      {ProgressCallback? progressCallback}) async {
     final logoInfoList = await getLogoInfo(projectPath);
     if (logoInfoList == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
+    int index = 0;
+    progressCallback?.call(index, logoInfoList.length);
     for (final item in logoInfoList) {
       final suffixes = File(item.path).suffixes;
       if (suffixes?.isEmpty ?? true) continue;
@@ -150,6 +154,7 @@ abstract class PlatformTool with PlatformToolMixin {
       if (suffixes == '.jpg') cmd = cmd..encodeJpg();
       if (suffixes == '.ico') cmd = cmd..encodeIco();
       await (cmd..writeToFile(item.path)).executeThread();
+      progressCallback?.call(++index, logoInfoList.length);
     }
     return true;
   }
@@ -177,7 +182,8 @@ abstract mixin class PlatformToolMixin {
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
 
   // 替换logo
-  Future<bool> replaceLogo(String projectPath, String logoPath);
+  Future<bool> replaceLogo(String projectPath, String logoPath,
+      {ProgressCallback? progressCallback});
 
   // 获取项目名
   Future<String?> getLabel(String projectPath);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
@@ -212,18 +213,25 @@ class ProjectDetailPage extends BasePage {
                 icon: const Icon(Icons.imagesearch_roller_rounded),
                 onPressed: () {
                   final provider = context.read<PlatformProvider>();
-                  if (provider.logoMap.isEmpty) {
+                  final logoMap = provider.logoMap;
+                  if (logoMap.isEmpty) {
                     SnackTool.showMessage(context, message: '无可替换图标');
                     return;
                   }
                   ProjectLogoDialog.show(
                     context,
-                    platformLogoMap: provider.logoMap,
+                    platformLogoMap: logoMap,
                   ).then((result) {
                     if (result != null) {
-                      final future = provider.updateLogos(
-                          project.path, result.platforms, result.logo);
-                      Loading.show(context, loadFuture: future);
+                      final total =
+                          logoMap.values.fold<int>(0, (p, e) => p + e.length);
+                      final controller = StreamController<double>();
+                      final future = provider.updateLogos(project.path, result,
+                          progressCallback: (count, _) =>
+                              controller.add(count / total));
+                      Loading.show(context,
+                          loadFuture: future,
+                          progressStream: controller.stream);
                     }
                   });
                 }),
