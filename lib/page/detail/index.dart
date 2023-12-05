@@ -222,7 +222,7 @@ class ProjectDetailPage extends BasePage {
                   ).then((result) {
                     if (result != null) {
                       final future = provider.updateLogos(
-                          project.path, result.platforms, result.logoPath);
+                          project.path, result.platforms, result.logo);
                       Loading.show(context, loadFuture: future);
                     }
                   });

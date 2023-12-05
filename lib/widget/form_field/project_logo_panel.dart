@@ -14,6 +14,9 @@ typedef LogoPanelFieldTuple = ({
 * @Time 2023/12/4 19:50
 */
 class ProjectLogoPanelFormField extends StatelessWidget {
+  // 表单项key
+  final Key? fieldKey;
+
   // 初始化值
   final LogoPanelFieldTuple? initialValue;
 
@@ -25,6 +28,7 @@ class ProjectLogoPanelFormField extends StatelessWidget {
 
   const ProjectLogoPanelFormField({
     super.key,
+    this.fieldKey,
     required this.platformLogoMap,
     this.onSaved,
     this.initialValue,
@@ -33,6 +37,8 @@ class ProjectLogoPanelFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormField<LogoPanelFieldTuple>(
+      key: fieldKey,
+      onSaved: onSaved,
       initialValue: initialValue,
       validator: (v) {
         if (v?.platforms.isEmpty ?? true) {
@@ -40,7 +46,6 @@ class ProjectLogoPanelFormField extends StatelessWidget {
         }
         return null;
       },
-      onSaved: onSaved,
       builder: (field) {
         return _buildFormField(context, field);
       },
@@ -124,5 +129,6 @@ class ProjectLogoPanelFormField extends StatelessWidget {
       expanded: field.value?.expanded,
       platforms: temp,
     ));
+    field.validate();
   }
 }

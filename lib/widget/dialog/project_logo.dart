@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/form/project_logo.dart';
-import 'package:flutter_manager/widget/form/project_logo_panel.dart';
+import 'package:flutter_manager/widget/form_field/project_logo.dart';
+import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -33,8 +34,9 @@ class ProjectLogoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ProjectLogoDialogProvider(),
+      create: (_) => ProjectLogoDialogProvider(platformLogoMap),
       builder: (context, _) {
+        final provider = context.read<ProjectLogoDialogProvider>();
         return CustomDialog(
           scrollable: true,
           title: const Text('图标'),
@@ -47,8 +49,12 @@ class ProjectLogoDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () =>
-                  context.read<ProjectLogoDialogProvider>().submitForm(context),
+              onPressed: () => provider.submitForm(context).then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }).catchError((e) {
+                SnackTool.showMessage(context,
+                    message: '图标修改失败：${e.toString()}');
+              }),
             ),
           ],
         );
@@ -75,7 +81,7 @@ class ProjectLogoDialog extends StatelessWidget {
     final provider = context.read<ProjectLogoDialogProvider>();
     return ProjectLogoFormField(
       logoSize: const Size.square(100),
-      onSaved: (v) => provider.updateFormData(logoPath: v),
+      onSaved: (v) => provider.updateFormData(logo: v),
     );
   }
 
@@ -85,14 +91,14 @@ class ProjectLogoDialog extends StatelessWidget {
     return ProjectLogoPanelFormField(
       platformLogoMap: platformLogoMap,
       onSaved: (v) => provider.updateFormData(platforms: v?.platforms),
-      initialValue: (expanded: null, platforms: platformLogoMap.keys.toList()),
+      initialValue: (expanded: null, platforms: provider.formData.platforms),
     );
   }
 }
 
 // 项目修改图标弹窗表单数据元组
 typedef ProjectLogoDialogFormTuple = ({
-  String logoPath,
+  String logo,
   List<PlatformType> platforms,
 });
 
@@ -105,22 +111,32 @@ class ProjectLogoDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
-  // 缓存表单值
-  ProjectLogoDialogFormTuple _formData = (logoPath: '', platforms: []);
+  // 表单数据
+  ProjectLogoDialogFormTuple _formData = (logo: '', platforms: []);
 
-  // 更新表单值
-  void updateFormData({String? logoPath, List<PlatformType>? platforms}) =>
+  // 获取表单数据
+  ProjectLogoDialogFormTuple get formData => _formData;
+
+  ProjectLogoDialogProvider(
+      Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap) {
+    updateFormData(platforms: platformLogoMap.keys.toList());
+  }
+
+  // 更新表单数据
+  void updateFormData({
+    String? logo,
+    List<PlatformType>? platforms,
+  }) =>
       _formData = (
-        logoPath: logoPath ?? _formData.logoPath,
+        logo: logo ?? _formData.logo,
         platforms: platforms ?? _formData.platforms,
       );
 
   // 验证表单并返回
-  bool submitForm(BuildContext context) {
+  Future<ProjectLogoDialogFormTuple?> submitForm(BuildContext context) async {
     final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return false;
+    if (!(formState?.validate() ?? false)) return null;
     formState!.save();
-    Navigator.pop(context, _formData);
-    return true;
+    return _formData;
   }
 }

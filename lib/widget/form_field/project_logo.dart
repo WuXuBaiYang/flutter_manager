@@ -9,8 +9,8 @@ import 'package:flutter_manager/widget/image.dart';
 * @Time 2023/12/4 19:31
 */
 class ProjectLogoFormField extends StatelessWidget {
-  // 初始化值
-  final String? initialValue;
+  // 持有key
+  final Key? fieldKey;
 
   // 保存回调
   final FormFieldSetter<String>? onSaved;
@@ -18,12 +18,16 @@ class ProjectLogoFormField extends StatelessWidget {
   // 图标尺寸
   final Size logoSize;
 
+  // 初始值
+  final String? initialValue;
+
   // 圆角
   final BorderRadius borderRadius;
 
   const ProjectLogoFormField({
     super.key,
     this.onSaved,
+    this.fieldKey,
     this.initialValue,
     this.logoSize = const Size.square(55),
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
@@ -32,6 +36,8 @@ class ProjectLogoFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FormField<String>(
+      key: fieldKey,
+      onSaved: onSaved,
       initialValue: initialValue,
       validator: (v) {
         if (v?.isEmpty ?? true) {
@@ -39,7 +45,6 @@ class ProjectLogoFormField extends StatelessWidget {
         }
         return null;
       },
-      onSaved: onSaved,
       builder: (field) {
         return Tooltip(
           message: '选择项目图标',

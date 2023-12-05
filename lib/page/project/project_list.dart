@@ -119,6 +119,8 @@ class ProjectGridView extends StatelessWidget {
             child: const Icon(Icons.delete, color: Colors.white),
           ),
           child: Container(
+            width: double.maxFinite,
+            height: double.maxFinite,
             color: item.getColor(0.2),
             child: ListTile(
               contentPadding: contentPadding,

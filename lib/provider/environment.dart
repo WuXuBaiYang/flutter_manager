@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:archive/archive_io.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/environment.dart';
@@ -43,7 +44,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 导入压缩包的环境变量
   Future<Environment> importArchive(String archiveFile, String savePath) async {
-    // await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
+    await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
     final dir = Directory(savePath);
     final tmp = dir.listSync();
     if (tmp.length <= 1) savePath = tmp.first.path;

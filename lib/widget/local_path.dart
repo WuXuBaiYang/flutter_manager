@@ -14,7 +14,10 @@ class LocalPathTextFormField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
 
   // 路径选择更新回调
-  final VoidCallback? onPathUpdate;
+  final ValueChanged<String?>? onPathSelected;
+
+  // 保存回调
+  final FormFieldSetter<String>? onSaved;
 
   // 标签
   final String label;
@@ -22,18 +25,21 @@ class LocalPathTextFormField extends StatelessWidget {
   // 提示
   final String hint;
 
-  const LocalPathTextFormField({
+  LocalPathTextFormField({
     super.key,
-    required this.controller,
+    this.onSaved,
     this.hint = '',
-    this.label = '',
     this.validator,
-    this.onPathUpdate,
-  });
+    this.label = '',
+    this.onPathSelected,
+    String? initialValue,
+    TextEditingController? controller,
+  }) : controller = controller ?? TextEditingController(text: initialValue);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onSaved: onSaved,
       controller: controller,
       validator: (v) {
         if (v == null || v.isEmpty) {
@@ -61,6 +67,6 @@ class LocalPathTextFormField extends StatelessWidget {
     );
     if (dir == null) return;
     controller.text = dir;
-    onPathUpdate?.call();
+    onPathSelected?.call(dir);
   }
 }
