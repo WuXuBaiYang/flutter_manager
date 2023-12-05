@@ -58,7 +58,10 @@ class ProjectLogoGrid extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints.loose(maxSize),
-              child: ImageView.file(File(item.path)),
+              child: ImageView.file(
+                File(item.path),
+                clearMemoryCacheWhenDispose: true,
+              ),
             ),
             const SizedBox(height: 4),
             Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),

@@ -138,15 +138,13 @@ abstract class PlatformTool with PlatformToolMixin {
     if (logoInfoList == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
     for (final item in logoInfoList) {
-      final imageSize = await getImageSize(item.path);
-      if (imageSize == null) continue;
       final suffixes = File(item.path).suffixes;
       if (suffixes?.isEmpty ?? true) continue;
       var cmd = img.Command()
         ..decodeImageFile(logoPath)
         ..copyResize(
-          width: imageSize.width.toInt(),
-          height: imageSize.height.toInt(),
+          width: item.size.width.toInt(),
+          height: item.size.height.toInt(),
         );
       if (suffixes == '.png') cmd = cmd..encodePng();
       if (suffixes == '.jpg') cmd = cmd..encodeJpg();

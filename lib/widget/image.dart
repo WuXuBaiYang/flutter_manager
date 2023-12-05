@@ -48,6 +48,12 @@ class ImageView extends StatefulWidget {
   // gapLessPlayback
   final bool gapLessPlayback;
 
+  // 是否启用缓存
+  final bool enableMemoryCache;
+
+  // 销毁时释放内存
+  final bool clearMemoryCacheWhenDispose;
+
   const ImageView(
     this.source, {
     super.key,
@@ -64,6 +70,8 @@ class ImageView extends StatefulWidget {
     this.completedState,
     this.noLoadState = true,
     this.gapLessPlayback = false,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheWhenDispose = false,
   });
 
   // 本地图片
@@ -83,6 +91,8 @@ class ImageView extends StatefulWidget {
     this.completedState,
     this.noLoadState = true,
     this.gapLessPlayback = false,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheWhenDispose = false,
     bool? cacheRawData,
     String? imageCacheName,
   }) : source = ImageViewSource.file(
@@ -108,6 +118,8 @@ class ImageView extends StatefulWidget {
     this.completedState,
     this.noLoadState = true,
     this.gapLessPlayback = false,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheWhenDispose = false,
     AssetBundle? bundle,
     String? package,
     bool? cacheRawData,
@@ -137,6 +149,8 @@ class ImageView extends StatefulWidget {
     this.completedState,
     this.noLoadState = true,
     this.gapLessPlayback = false,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheWhenDispose = false,
     bool? cacheRawData,
     String? imageCacheName,
   }) : source = ImageViewSource.memory(
@@ -162,6 +176,8 @@ class ImageView extends StatefulWidget {
     this.completedState,
     this.noLoadState = false,
     this.gapLessPlayback = false,
+    this.enableMemoryCache = true,
+    this.clearMemoryCacheWhenDispose = false,
     Map<String, String>? headers,
     bool? cache,
     int? retries,
@@ -203,6 +219,9 @@ class _ImageViewState extends State<ImageView> {
         fit: widget.fit,
         shape: widget.shape,
         border: widget.border,
+        clearMemoryCacheIfFailed: true,
+        enableMemoryCache: widget.enableMemoryCache,
+        clearMemoryCacheWhenDispose: widget.clearMemoryCacheWhenDispose,
         gaplessPlayback: widget.gapLessPlayback,
         borderRadius: widget.borderRadius,
         width: widget.size ?? widget.width,
