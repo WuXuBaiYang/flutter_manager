@@ -27,7 +27,7 @@ class CustomDialog extends StatelessWidget {
     required this.content,
     this.actions,
     this.scrollable = false,
-    this.constraints = const BoxConstraints(minWidth: 280, maxWidth: 280),
+    this.constraints = const BoxConstraints.tightFor(width: 280),
   });
 
   @override

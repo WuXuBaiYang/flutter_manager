@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -35,8 +36,9 @@ class ProjectLabelDialog extends StatelessWidget {
       builder: (context, _) {
         final provider = context.read<ProjectLabelDialogProvider>();
         return CustomDialog(
-          scrollable: true,
           title: const Text('别名'),
+          constraints: BoxConstraints.tightFor(
+              width: 280, height: platformLabelMap.isEmpty ? 280 : null),
           content: _buildContent(context),
           actions: [
             TextButton(
@@ -60,19 +62,25 @@ class ProjectLabelDialog extends StatelessWidget {
   // 构建内容
   Widget _buildContent(BuildContext context) {
     final provider = context.read<ProjectLabelDialogProvider>();
-    return Form(
-      key: provider.formKey,
-      child: Selector<ProjectLabelDialogProvider, List<PlatformType>>(
-        selector: (_, provider) => provider.linkPlatformList,
-        builder: (_, linkList, __) {
-          final result = provider.groupByLinkPlatform(platformLabelMap);
-          return Column(
-            children: [
-              _buildFormFieldLinkList(context, result.linkMap),
-              _buildFormFieldLabels(context, result.labelMap),
-            ],
-          );
-        },
+    return EmptyBoxView(
+      hint: '无可用平台',
+      isEmpty: platformLabelMap.isEmpty,
+      child: Form(
+        key: provider.formKey,
+        child: Selector<ProjectLabelDialogProvider, List<PlatformType>>(
+          selector: (_, provider) => provider.linkPlatformList,
+          builder: (_, linkList, __) {
+            final result = provider.groupByLinkPlatform(platformLabelMap);
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildFormFieldLinkList(context, result.linkMap),
+                  _buildFormFieldLabels(context, result.labelMap),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

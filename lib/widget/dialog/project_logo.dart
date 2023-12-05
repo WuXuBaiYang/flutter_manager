@@ -3,6 +3,7 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
 import 'package:provider/provider.dart';
@@ -38,10 +39,10 @@ class ProjectLogoDialog extends StatelessWidget {
       builder: (context, _) {
         final provider = context.read<ProjectLogoDialogProvider>();
         return CustomDialog(
-          scrollable: true,
           title: const Text('图标'),
           content: _buildContent(context),
-          constraints: const BoxConstraints.tightForFinite(width: 380),
+          constraints: BoxConstraints.tightFor(
+              width: 380, height: platformLogoMap.isEmpty ? 280 : null),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -63,14 +64,20 @@ class ProjectLogoDialog extends StatelessWidget {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return Form(
-      key: context.read<ProjectLogoDialogProvider>().formKey,
-      child: Column(
-        children: [
-          _buildFormFieldLogo(context),
-          const SizedBox(height: 14),
-          _buildFormFieldPlatforms(context),
-        ],
+    return EmptyBoxView(
+      hint: '暂无可用平台',
+      isEmpty: platformLogoMap.isEmpty,
+      child: Form(
+        key: context.read<ProjectLogoDialogProvider>().formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildFormFieldLogo(context),
+              const SizedBox(height: 14),
+              _buildFormFieldPlatforms(context),
+            ],
+          ),
+        ),
       ),
     );
   }

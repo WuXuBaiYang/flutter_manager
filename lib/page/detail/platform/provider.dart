@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
 import 'package:flutter_manager/tool/project/platform/linux.dart';
@@ -12,6 +14,7 @@ import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
+import 'package:provider/provider.dart';
 
 /*
 * 平台组件数据提供者
@@ -58,32 +61,38 @@ class PlatformProvider extends BaseProvider {
     notifyListeners();
   }
 
-  // 获取全平台（存在）标签对照表
-  Map<PlatformType, String> get labelMap {
+  // 获取全平台（存在）标签对照表(按照设置排序)
+  Map<PlatformType, String> getLabelMap(BuildContext context) {
     final result = {
-      PlatformType.android: androidInfo?.label,
-      PlatformType.ios: iosInfo?.label,
-      PlatformType.web: webInfo?.label,
-      PlatformType.windows: windowsInfo?.label,
-      PlatformType.macos: macosInfo?.label,
-      PlatformType.linux: linuxInfo?.label,
+      if (androidInfo != null) PlatformType.android: androidInfo!.label,
+      if (iosInfo != null) PlatformType.ios: iosInfo!.label,
+      if (webInfo != null) PlatformType.web: webInfo!.label,
+      if (windowsInfo != null) PlatformType.windows: windowsInfo!.label,
+      if (macosInfo != null) PlatformType.macos: macosInfo!.label,
+      if (linuxInfo != null) PlatformType.linux: linuxInfo!.label,
     };
-    result.removeWhere((_, v) => v == null);
-    return result.map((k, v) => MapEntry(k, v!));
+    for (var e in context.read<ProjectProvider>().platformSort) {
+      final value = result.remove(e);
+      if (value != null) result[e] = value;
+    }
+    return result;
   }
 
   // 获取全平台（存在）图标对照表
-  Map<PlatformType, List<PlatformLogoTuple>> get logoMap {
+  Map<PlatformType, List<PlatformLogoTuple>> getLogoMap(BuildContext context) {
     final result = {
-      PlatformType.android: androidInfo?.logo,
-      PlatformType.ios: iosInfo?.logo,
-      PlatformType.web: webInfo?.logo,
-      PlatformType.windows: windowsInfo?.logo,
-      PlatformType.macos: macosInfo?.logo,
-      PlatformType.linux: linuxInfo?.logo,
+      if (androidInfo?.logo != null) PlatformType.android: androidInfo!.logo!,
+      if (iosInfo?.logo != null) PlatformType.ios: iosInfo!.logo,
+      if (webInfo?.logo != null) PlatformType.web: webInfo!.logo,
+      if (windowsInfo?.logo != null) PlatformType.windows: windowsInfo!.logo,
+      if (macosInfo?.logo != null) PlatformType.macos: macosInfo!.logo,
+      if (linuxInfo?.logo != null) PlatformType.linux: linuxInfo!.logo,
     };
-    result.removeWhere((_, v) => v?.isEmpty ?? true);
-    return result.map((k, v) => MapEntry(k, v!));
+    for (var e in context.read<ProjectProvider>().platformSort) {
+      final value = result.remove(e);
+      if (value != null) result[e] = value;
+    }
+    return result;
   }
 
   // 批量更新label

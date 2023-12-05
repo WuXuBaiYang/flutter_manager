@@ -18,7 +18,6 @@ import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
@@ -60,6 +59,7 @@ class ProjectDetailPage extends BasePage {
             isEmpty: project == null,
             child: project != null
                 ? ChangeNotifierProvider(
+                    lazy: false,
                     create: (_) => PlatformProvider(project),
                     builder: (context, _) => _buildContent(context),
                   )
@@ -192,18 +192,12 @@ class ProjectDetailPage extends BasePage {
               icon: const Icon(Icons.edit_attributes_rounded),
               onPressed: () {
                 final provider = context.read<PlatformProvider>();
-                if (provider.labelMap.isEmpty) {
-                  SnackTool.showMessage(context, message: '无可修改别名');
-                  return;
-                }
-                ProjectLabelDialog.show(
-                  context,
-                  platformLabelMap: provider.labelMap,
-                ).then((result) {
-                  if (result != null) {
-                    final future = provider.updateLabels(project.path, result);
-                    Loading.show(context, loadFuture: future);
-                  }
+                final labelMap = provider.getLabelMap(context);
+                ProjectLabelDialog.show(context, platformLabelMap: labelMap)
+                    .then((result) {
+                  if (result == null) return;
+                  Loading.show(context,
+                      loadFuture: provider.updateLabels(project.path, result));
                 });
               },
             ),
@@ -212,26 +206,18 @@ class ProjectDetailPage extends BasePage {
                 icon: const Icon(Icons.imagesearch_roller_rounded),
                 onPressed: () {
                   final provider = context.read<PlatformProvider>();
-                  final logoMap = provider.logoMap;
-                  if (logoMap.isEmpty) {
-                    SnackTool.showMessage(context, message: '无可替换图标');
-                    return;
-                  }
-                  ProjectLogoDialog.show(
-                    context,
-                    platformLogoMap: logoMap,
-                  ).then((result) {
-                    if (result != null) {
-                      final total =
-                          logoMap.values.fold<int>(0, (p, e) => p + e.length);
-                      final controller = StreamController<double>();
-                      final future = provider.updateLogos(project.path, result,
-                          progressCallback: (count, _) =>
-                              controller.add(count / total));
-                      Loading.show(context,
-                          loadFuture: future,
-                          progressStream: controller.stream);
-                    }
+                  final logoMap = provider.getLogoMap(context);
+                  ProjectLogoDialog.show(context, platformLogoMap: logoMap)
+                      .then((result) {
+                    if (result == null) return;
+                    final total =
+                        logoMap.values.fold<int>(0, (p, e) => p + e.length);
+                    final controller = StreamController<double>();
+                    final future = provider.updateLogos(project.path, result,
+                        progressCallback: (count, _) =>
+                            controller.add(count / total));
+                    Loading.show(context,
+                        loadFuture: future, progressStream: controller.stream);
                   });
                 }),
             IconButton.outlined(
