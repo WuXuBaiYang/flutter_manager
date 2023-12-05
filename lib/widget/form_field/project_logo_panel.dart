@@ -124,10 +124,9 @@ class ProjectLogoPanelFormField extends StatelessWidget {
   void _onCheckboxChanged(bool checked,
       FormFieldState<LogoPanelFieldTuple> field, PlatformType platform) {
     final temp = field.value?.platforms ?? [];
-    checked ? temp.add(platform) : temp.remove(platform);
     field.didChange((
       expanded: field.value?.expanded,
-      platforms: temp,
+      platforms: checked ? (temp..add(platform)) : (temp..remove(platform)),
     ));
     field.validate();
   }

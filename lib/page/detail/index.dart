@@ -201,8 +201,7 @@ class ProjectDetailPage extends BasePage {
                   platformLabelMap: provider.labelMap,
                 ).then((result) {
                   if (result != null) {
-                    final future = provider.updateLabels(
-                        project.path, result.platforms, result.label);
+                    final future = provider.updateLabels(project.path, result);
                     Loading.show(context, loadFuture: future);
                   }
                 });

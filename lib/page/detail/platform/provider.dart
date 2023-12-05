@@ -88,8 +88,8 @@ class PlatformProvider extends BaseProvider {
 
   // 批量更新label
   Future<void> updateLabels(
-      String projectPath, List<PlatformType> platforms, String label) async {
-    await Future.wait(labelMap.entries.map(
+      String projectPath, Map<PlatformType, String> platformLabels) async {
+    await Future.wait(platformLabels.entries.map(
       (e) => ProjectTool.setLabel(e.key, projectPath, e.value),
     ));
     return initialize(projectPath);
@@ -97,11 +97,8 @@ class PlatformProvider extends BaseProvider {
 
   // 批量更新图标
   Future<void> updateLogos(
-    String projectPath,
-    ProjectLogoDialogFormTuple result, {
-    ProgressCallback? progressCallback,
-    int total = -1,
-  }) async {
+      String projectPath, ProjectLogoDialogFormTuple result,
+      {ProgressCallback? progressCallback, int total = -1}) async {
     int count = 0;
     await Future.wait(result.platforms.map(
       (e) => ProjectTool.replaceLogo(e, projectPath, result.logo,
