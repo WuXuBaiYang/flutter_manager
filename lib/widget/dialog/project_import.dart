@@ -46,7 +46,6 @@ class ProjectImportDialog extends StatelessWidget {
         return CustomDialog(
           scrollable: true,
           title: Text('${isEdit ? '编辑' : '添加'}项目'),
-          constraints: const BoxConstraints.tightFor(width: 260),
           content: _buildContent(context),
           actions: [
             TextButton(

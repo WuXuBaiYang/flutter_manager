@@ -42,6 +42,7 @@ class SchemePickerDialog extends StatelessWidget {
       scrollable: true,
       title: const Text('选择主题配色'),
       content: _buildContent(context),
+      constraints: const BoxConstraints.tightFor(width: 340),
     );
   }
 

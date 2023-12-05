@@ -52,8 +52,7 @@ class ProjectLogoDialog extends StatelessWidget {
               onPressed: () => provider.submitForm(context).then((result) {
                 if (result != null) Navigator.pop(context, result);
               }).catchError((e) {
-                SnackTool.showMessage(context,
-                    message: '图标修改失败：${e.toString()}');
+                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
               }),
             ),
           ],

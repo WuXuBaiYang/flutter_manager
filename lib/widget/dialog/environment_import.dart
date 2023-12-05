@@ -38,20 +38,26 @@ class EnvironmentImportDialog extends StatelessWidget {
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
       create: (_) => EnvironmentImportDialogProvider(environment),
       builder: (context, _) {
+        final provider = context.read<EnvironmentImportDialogProvider>();
         return CustomDialog(
           scrollable: true,
-          title: Text('${isEdit ? '编辑' : '导入'}环境'),
           content: _buildContent(context),
+          title: Text('${isEdit ? '编辑' : '添加'}环境'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: () => context
-                  .read<EnvironmentImportDialogProvider>()
-                  .import(context, environment),
-              child: Text(isEdit ? '修改' : '导入'),
+              onPressed: () => Loading.show(
+                context,
+                loadFuture: provider.submitForm(context, environment),
+              )?.then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }).catchError((e) {
+                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+              }),
+              child: Text(isEdit ? '修改' : '添加'),
             ),
           ],
         );
@@ -80,16 +86,21 @@ class EnvironmentImportDialog extends StatelessWidget {
     return LocalPathTextFormField(
       label: 'flutter路径',
       hint: '请选择flutter路径',
+      initialValue: provider.formData.path,
       validator: (v) {
         if (!EnvironmentTool.isPathAvailable(v!)) {
           return '路径不可用';
         }
         return null;
       },
-      controller: provider.localPathController,
     );
   }
 }
+
+// 环境导入弹窗表单数据元组
+typedef EnvironmentImportDialogFormTuple = ({
+  String path,
+});
 
 /*
 * 环境导入弹窗状态管理
@@ -100,26 +111,29 @@ class EnvironmentImportDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
-  // 本地路径选择输入框控制器
-  late final TextEditingController localPathController;
+  // 表单数据
+  EnvironmentImportDialogFormTuple _formData = (path: '');
 
-  EnvironmentImportDialogProvider(Environment? item)
-      : localPathController = TextEditingController(text: item?.path ?? '');
+  // 获取表单数据
+  EnvironmentImportDialogFormTuple get formData => _formData;
+
+  EnvironmentImportDialogProvider(Environment? item) {
+    updateFormData(path: item?.path);
+  }
+
+  // 更新表单数据
+  void updateFormData({String? path}) =>
+      _formData = (path: path ?? _formData.path);
 
   // 导入环境
-  Future<void> import(BuildContext context, Environment? environment) async {
-    if (!formKey.currentState!.validate()) return;
-    final isEdit = environment != null;
-    final path = localPathController.text;
+  Future<Environment?> submitForm(
+      BuildContext context, Environment? environment) async {
+    final formState = formKey.currentState;
+    if (!(formState?.validate() ?? false)) return null;
+    formState!.save();
     final provider = context.read<EnvironmentProvider>();
-    final future = isEdit
-        ? provider.refresh(environment..path = path)
-        : provider.import(path);
-    Loading.show<Environment?>(context, loadFuture: future)?.then((result) {
-      Navigator.pop(context, result);
-    }).catchError((e) {
-      final message = '${isEdit ? '修改' : '导入'}失败：$e';
-      SnackTool.showMessage(context, message: message);
-    });
+    return environment != null
+        ? provider.refresh(environment..path = _formData.path)
+        : provider.import(_formData.path);
   }
 }
