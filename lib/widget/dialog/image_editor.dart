@@ -187,9 +187,9 @@ class ImageEditorDialog extends StatelessWidget {
       selector: (_, provider) => provider.actionTuple,
       builder: (_, actionTuple, __) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Expanded(
+            ConstrainedBox(
+              constraints: const BoxConstraints.tightFor(width: 170),
               child: Tooltip(
                 message: '圆角',
                 child: TextButton.icon(
@@ -206,6 +206,7 @@ class ImageEditorDialog extends StatelessWidget {
                 ),
               ),
             ),
+            const Spacer(),
             Transform.flip(
               flipX: actionTuple.flip,
               child: IconButton.filled(
@@ -249,13 +250,13 @@ class ImageEditorDialog extends StatelessWidget {
                   onChanged: !ratioDisable ? provider.changeRatio : null,
                   items: provider.cropAspectRatios.entries
                       .map((e) => DropdownMenuItem<double>(
-                            value: e.key,
-                            child: Text(e.value),
-                          ))
+                    value: e.key,
+                    child: Text(e.value),
+                  ))
                       .toList(),
                 ),
               ),
-            IconButton.filled(
+            IconButton.filledTonal(
               iconSize: 16,
               tooltip: '重置',
               onPressed: provider.reset,
