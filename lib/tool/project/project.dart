@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
@@ -12,8 +13,8 @@ import 'package:flutter_manager/tool/project/platform/macos.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
+import 'package:image/image.dart';
 import 'package:path/path.dart';
-import 'package:image/image.dart' as img;
 
 /*
 * 项目管理工具
@@ -110,8 +111,8 @@ class ProjectTool {
       if (result == null) continue;
       // 遍历结果找到合适尺寸的图片返回
       for (final item in result) {
-        final source = await img.decodeImageFile(item.path);
-        final imageSize = min(source?.width ?? 0, source?.height ?? 0);
+        final src = await decodeImageFile(item.path);
+        final imageSize = min(src?.width ?? 0, src?.height ?? 0);
         if (imageSize >= minSize) return item.path;
       }
     }

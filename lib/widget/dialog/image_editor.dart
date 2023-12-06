@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:extended_image/extended_image.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
@@ -250,9 +249,9 @@ class ImageEditorDialog extends StatelessWidget {
                   onChanged: !ratioDisable ? provider.changeRatio : null,
                   items: provider.cropAspectRatios.entries
                       .map((e) => DropdownMenuItem<double>(
-                    value: e.key,
-                    child: Text(e.value),
-                  ))
+                            value: e.key,
+                            child: Text(e.value),
+                          ))
                       .toList(),
                 ),
               ),
@@ -353,12 +352,13 @@ class ImageEditorDialogProvider extends BaseProvider {
       src = copyRotate(src, angle: editAction.rotateAngle);
     }
     savePath ??= join(baseDir!, genImageFileName());
-    if (_actionTuple.imageType == CropImageType.png) {
-      if (!await encodePngFile(savePath, src)) return null;
-    } else if (_actionTuple.imageType == CropImageType.jpg) {
-      if (!await encodeJpgFile(savePath, src)) return null;
-    } else if (_actionTuple.imageType == CropImageType.ico) {
-      if (!await encodeIcoFile(savePath, src)) return null;
+    switch (_actionTuple.imageType) {
+      case CropImageType.png:
+        if (!await encodePngFile(savePath, src)) return null;
+      case CropImageType.jpg:
+        if (!await encodeJpgFile(savePath, src)) return null;
+      case CropImageType.ico:
+        if (!await encodeIcoFile(savePath, src)) return null;
     }
     return savePath;
   }

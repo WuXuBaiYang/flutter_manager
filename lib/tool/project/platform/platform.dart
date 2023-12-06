@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:image/image.dart';
 import 'package:path/path.dart';
-import 'package:image/image.dart' as img;
 import 'package:xml/xml.dart';
 
 // 平台图标信息元组
@@ -120,7 +120,7 @@ abstract class PlatformTool with PlatformToolMixin {
 
   // 获取图片尺寸
   Future<Size?> getImageSize(String logoPath) async {
-    final image = await img.decodeImageFile(logoPath);
+    final image = await decodeImageFile(logoPath);
     final width = image?.width.toDouble();
     final height = image?.height.toDouble();
     if (width == null || height == null) return null;
@@ -144,16 +144,18 @@ abstract class PlatformTool with PlatformToolMixin {
     for (final item in logoInfoList) {
       final suffixes = File(item.path).suffixes;
       if (suffixes?.isEmpty ?? true) continue;
-      var cmd = img.Command()
-        ..decodeImageFile(logoPath)
-        ..copyResize(
-          width: item.size.width.toInt(),
-          height: item.size.height.toInt(),
-        );
-      if (suffixes == '.png') cmd = cmd..encodePng();
-      if (suffixes == '.jpg') cmd = cmd..encodeJpg();
-      if (suffixes == '.ico') cmd = cmd..encodeIco();
-      await (cmd..writeToFile(item.path)).executeThread();
+      var src = await decodeImageFile(logoPath);
+      if (src == null) continue;
+      final width = src.width.toInt(), height = src.height.toInt();
+      src = copyResize(src, width: width, height: height);
+      switch (suffixes) {
+        case '.png':
+          if (!await encodePngFile(item.path, src)) continue;
+        case '.jpg':
+          if (!await encodeJpgFile(item.path, src)) continue;
+        case '.ico':
+          if (!await encodeIcoFile(item.path, src)) continue;
+      }
       progressCallback?.call(++index, logoInfoList.length);
     }
     return true;
