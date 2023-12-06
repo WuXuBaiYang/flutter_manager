@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
-import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
-import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
@@ -14,7 +12,6 @@ import 'package:flutter_manager/tool/project/platform/macos.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
 import 'package:image/image.dart' as img;
 
@@ -32,9 +29,6 @@ class ProjectTool {
 
   // 匹配项目名称
   static final RegExp _projectNameReg = RegExp(r'name:.*');
-
-  // 缓存路径
-  static const String _cachePath = 'cache';
 
   // 平台工具对照表
   static final Map<PlatformType, PlatformTool> _platformTools = {
@@ -108,16 +102,6 @@ class ProjectTool {
     return result?.split(':').lastOrNull?.trim();
   }
 
-  // 缓存目标文件到缓存目录
-  static Future<String?> cacheFile(String filePath) async {
-    File file = File(filePath);
-    if (!file.existsSync()) return null;
-    final baseDir = await _getCachePath();
-    if (baseDir == null) return null;
-    final outputPath = join(baseDir, '${Tool.genID()}${file.suffixes}');
-    return (await file.copy(outputPath)).path;
-  }
-
   // 获取项目图标
   static Future<String?> getProjectLogo(String projectPath,
       {double minSize = 50}) async {
@@ -165,10 +149,4 @@ class ProjectTool {
   static Future<bool> setLabel(
           PlatformType platform, String projectPath, String label) =>
       getPlatformTool(platform).setLabel(projectPath, label);
-
-  // 获取缓存目录
-  static Future<String?> _getCachePath() => FileTool.getDirPath(
-        join(Common.baseCachePath, _cachePath),
-        root: FileDir.applicationDocuments,
-      );
 }

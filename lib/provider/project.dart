@@ -5,7 +5,6 @@ import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:isar/isar.dart';
 
 // 项目信息元组类型
 typedef ProjectTuple = ({List<Project> projects, List<Project> pinnedProjects});
@@ -62,7 +61,7 @@ class ProjectProvider extends BaseProvider {
   Future<Project?> update(Project item) async {
     dynamic cacheFile = item.logo;
     if (File(item.logo).existsSync()) {
-      cacheFile = await ProjectTool.cacheFile(item.logo);
+      cacheFile = await Tool.cacheFile(item.logo);
     }
     final result = await database.updateProject(
       item..logo = cacheFile ?? '',

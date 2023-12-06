@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/tool/tool.dart';
 
 /*
 * 本地路径文本输入框组件
@@ -70,9 +71,8 @@ class LocalPathFormField extends StatelessWidget {
   // 选择本地路径
   Future<void> _pickLocalPath() async {
     final initDir = controller?.text ?? fieldKey.currentState?.value;
-    final dir = await FilePicker.platform.getDirectoryPath(
+    final dir = await Tool.pickDirectory(
       dialogTitle: label,
-      lockParentWindow: true,
       initialDirectory: initDir,
     );
     if (dir == null) return;

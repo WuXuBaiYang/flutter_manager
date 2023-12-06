@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/theme_scheme.dart';
 import 'half_circle.dart';
@@ -11,7 +13,7 @@ class ThemeSchemeItem extends StatelessWidget {
   // 主题配色项
   final ThemeSchemeModel scheme;
 
-  // 旋转角度
+  // 旋转角度(0-12)
   final double angle;
 
   // 大小
@@ -35,7 +37,7 @@ class ThemeSchemeItem extends StatelessWidget {
     this.tooltip,
     this.size = 45,
     this.onPressed,
-    this.angle = 90,
+    this.angle = 7,
     this.isSelected = false,
     this.padding = const EdgeInsets.all(4),
   });

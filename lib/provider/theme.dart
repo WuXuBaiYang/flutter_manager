@@ -142,6 +142,12 @@ class ThemeProvider extends BaseProvider {
         tabBarTheme: const TabBarTheme(
           dividerHeight: 0,
         ),
+        sliderTheme: const SliderThemeData(
+          trackHeight: 2,
+          thumbShape: RoundSliderThumbShape(enabledThumbRadius: 6),
+          overlayShape: RoundSliderOverlayShape(overlayRadius: 14),
+          showValueIndicator: ShowValueIndicator.onlyForContinuous,
+        ),
       );
 }
 

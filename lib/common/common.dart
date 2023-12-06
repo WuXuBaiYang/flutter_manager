@@ -6,4 +6,7 @@
 class Common {
   // 基本缓存路径
   static const String baseCachePath = 'flutter_manager';
+
+  // 图片缓存路径
+  static const String cacheFilePath = '$baseCachePath/cache_files';
 }

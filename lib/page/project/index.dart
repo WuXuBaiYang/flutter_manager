@@ -14,7 +14,6 @@ import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
-import 'package:flutter_manager/widget/dialog/image_editor.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
@@ -43,10 +42,8 @@ class ProjectPage extends BasePage {
       body: _buildDropArea(context),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // if (!_checkEnvironment(context)) return;
-          // ProjectImportDialog.show(context);
-          const path = 'C:/Users/wuxubaiyang/Desktop/R.jpg';
-          ImageEditorDialog.show(context, path: path);
+          if (!_checkEnvironment(context)) return;
+          ProjectImportDialog.show(context);
         },
         child: const Icon(Icons.add),
       ),

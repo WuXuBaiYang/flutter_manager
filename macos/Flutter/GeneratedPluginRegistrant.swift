@@ -6,7 +6,6 @@ import FlutterMacOS
 import Foundation
 
 import desktop_drop
-import image_editor_common
 import isar_flutter_libs
 import open_dir_macos
 import package_info_plus
@@ -17,7 +16,6 @@ import window_manager
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   DesktopDropPlugin.register(with: registry.registrar(forPlugin: "DesktopDropPlugin"))
-  ImageEditorPlugin.register(with: registry.registrar(forPlugin: "ImageEditorPlugin"))
   IsarFlutterLibsPlugin.register(with: registry.registrar(forPlugin: "IsarFlutterLibsPlugin"))
   OpenDirMacosPlugin.register(with: registry.registrar(forPlugin: "OpenDirMacosPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))

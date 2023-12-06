@@ -1,11 +1,19 @@
+import 'dart:io';
+
 import 'package:crypto/crypto.dart' as crypto;
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/common/common.dart';
+import 'package:flutter_manager/widget/dialog/image_editor.dart';
 import 'package:open_dir/open_dir.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path/path.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'date.dart';
+import 'file.dart';
 import 'log.dart';
 
 /*
@@ -94,6 +102,72 @@ class Tool {
   static Future<bool?> openLocalPath(String? path) async {
     if (path?.isEmpty ?? true) return false;
     return OpenDir().openNativeDir(path: path!);
+  }
+
+  // 缓存目标文件到缓存目录
+  static Future<String?> cacheFile(String filePath) async {
+    File file = File(filePath);
+    if (!file.existsSync()) return null;
+    final baseDir = await getFileCachePath();
+    if (baseDir == null) return null;
+    final outputPath = join(baseDir, '${Tool.genID()}${file.suffixes}');
+    return (await file.copy(outputPath)).path;
+  }
+
+  // 获取文件缓存目录
+  static Future<String?> getFileCachePath() =>
+      FileTool.getDirPath(Common.cacheFilePath,
+          root: FileDir.applicationDocuments);
+
+  // 选择文件
+  static Future<List<String>> pickImages(
+      {String? dialogTitle, String? initialDirectory}) async {
+    if (kIsWeb) return [];
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      lockParentWindow: true,
+      dialogTitle: dialogTitle,
+    );
+    if (result == null || result.files.isEmpty) return [];
+    return result.files.map((e) => e.path!).toList();
+  }
+
+  // 选择单文件
+  static Future<String?> pickImage(
+      {String? dialogTitle, String? initialDirectory}) async {
+    final result = await pickImages(
+        dialogTitle: dialogTitle, initialDirectory: initialDirectory);
+    return result.firstOrNull;
+  }
+
+  // 选择图片并编辑
+  static Future<String?> pickImageWithEdit(
+    BuildContext context, {
+    String? dialogTitle,
+    String? initialDirectory,
+    double? absoluteRatio,
+  }) async {
+    return pickImage(
+      dialogTitle: dialogTitle,
+      initialDirectory: initialDirectory,
+    ).then((result) async {
+      if (result?.isEmpty ?? true) return null;
+      return editImage(context, result!, absoluteRatio: absoluteRatio);
+    });
+  }
+
+  // 图片编辑
+  static Future<String?> editImage(BuildContext context, String imagePath,
+      {double? absoluteRatio}) {
+    return ImageEditorDialog.show(context,
+        path: imagePath, absoluteRatio: absoluteRatio);
+  }
+
+  // 选择目录
+  static Future<String?> pickDirectory(
+      {String? dialogTitle, String? initialDirectory}) async {
+    return FilePicker.platform
+        .getDirectoryPath(lockParentWindow: true, dialogTitle: dialogTitle);
   }
 }
 
