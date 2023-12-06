@@ -37,9 +37,9 @@ class ProjectLabelDialog extends StatelessWidget {
         final provider = context.read<ProjectLabelDialogProvider>();
         return CustomDialog(
           title: const Text('别名'),
+          content: _buildContent(context),
           constraints: BoxConstraints.tightFor(
               width: 280, height: platformLabelMap.isEmpty ? 280 : null),
-          content: _buildContent(context),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

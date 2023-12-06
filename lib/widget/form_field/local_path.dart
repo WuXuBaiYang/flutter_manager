@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 * @author wuxubaiyang
 * @Time 2023/11/27 10:58
 */
-class LocalPathTextFormField extends StatelessWidget {
+class LocalPathFormField extends StatelessWidget {
   // 表单项key
   final GlobalKey<FormFieldState<String>> fieldKey;
 
@@ -31,7 +31,7 @@ class LocalPathTextFormField extends StatelessWidget {
   // 初始值
   final String? initialValue;
 
-  LocalPathTextFormField({
+  LocalPathFormField({
     super.key,
     GlobalKey<FormFieldState<String>>? fieldKey,
     this.onSaved,

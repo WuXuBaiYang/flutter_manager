@@ -6,7 +6,7 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/local_path.dart';
+import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
 
 /*
@@ -83,7 +83,7 @@ class EnvironmentImportDialog extends StatelessWidget {
   // 构建表单项-flutter路径
   Widget _buildFormFieldPath(BuildContext context) {
     final provider = context.read<EnvironmentImportDialogProvider>();
-    return LocalPathTextFormField(
+    return LocalPathFormField(
       label: 'flutter路径',
       hint: '请选择flutter路径',
       initialValue: provider.formData.path,

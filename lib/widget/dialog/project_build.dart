@@ -30,8 +30,8 @@ class ProjectBuildDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDialog(
       title: const Text('打包'),
-      constraints: BoxConstraints.tight(const Size.square(200)),
       content: _buildContent(context),
+      constraints: BoxConstraints.tight(const Size.square(200)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),

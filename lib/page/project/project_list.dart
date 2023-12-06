@@ -6,7 +6,6 @@ import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/widget/custom_context_menu_region.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
-import 'package:flutter_manager/widget/image.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
@@ -138,8 +137,14 @@ class ProjectGridView extends StatelessWidget {
                   style: bodyStyle,
                   overflow: TextOverflow.ellipsis),
               leading: item.logo.isNotEmpty
-                  ? ImageView.file(File(item.logo),
-                      size: imageSize.shortestSide, borderRadius: borderRadius)
+                  ? ClipRRect(
+                      borderRadius: borderRadius,
+                      child: Image.file(
+                        File(item.logo),
+                        width: imageSize.width,
+                        height: imageSize.height,
+                      ),
+                    )
                   : SizedBox.fromSize(size: imageSize),
               trailing: Transform.rotate(
                 angle: item.pinned ? 45 : 0,

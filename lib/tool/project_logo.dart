@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/widget/image.dart';
 import 'project/platform/platform.dart';
 
 /*
@@ -58,9 +57,8 @@ class ProjectLogoGrid extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints.loose(maxSize),
-              child: ImageView.file(
-                File(item.path),
-                clearMemoryCacheWhenDispose: true,
+              child: Image(
+                image: FileImage(File(item.path))..evict(),
               ),
             ),
             const SizedBox(height: 4),

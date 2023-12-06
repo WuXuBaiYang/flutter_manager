@@ -25,7 +25,6 @@ import 'package:flutter_manager/widget/dialog/project_label.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
-import 'package:flutter_manager/widget/image.dart';
 import 'package:flutter_manager/widget/keep_alive.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -172,7 +171,11 @@ class ProjectDetailPage extends BasePage {
           ),
         ],
       ),
-      leading: ImageView.file(File(project.logo), size: 55),
+      leading: Image.file(
+        File(project.logo),
+        width: 55,
+        height: 55,
+      ),
     );
   }
 
@@ -210,8 +213,10 @@ class ProjectDetailPage extends BasePage {
                   ProjectLogoDialog.show(context, platformLogoMap: logoMap)
                       .then((result) {
                     if (result == null) return;
-                    final total =
-                        logoMap.values.fold<int>(0, (p, e) => p + e.length);
+                    final total = logoMap.entries.fold<int>(0, (p, e) {
+                      if (!result.platforms.contains(e.key)) return p;
+                      return p + e.value.length;
+                    });
                     final controller = StreamController<double>();
                     final future = provider.updateLogos(project.path, result,
                         progressCallback: (count, _) =>
@@ -259,7 +264,11 @@ class ProjectDetailPage extends BasePage {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              ImageView.file(File(project.logo), size: 35),
+              Image.file(
+                File(project.logo),
+                width: 35,
+                height: 35,
+              ),
               const SizedBox(width: 14),
               Text(project.label),
               const SizedBox(width: 8),

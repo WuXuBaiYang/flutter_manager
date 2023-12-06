@@ -10,7 +10,7 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/color_picker.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_pinned.dart';
-import 'package:flutter_manager/widget/local_path.dart';
+import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 
@@ -125,7 +125,7 @@ class ProjectImportDialog extends StatelessWidget {
   // 构建表单项-项目路径
   Widget _buildFormFieldPath(BuildContext context) {
     final provider = context.read<ProjectImportDialogProvider>();
-    return LocalPathTextFormField(
+    return LocalPathFormField(
       label: '项目路径',
       hint: '请选择项目路径',
       onPathSelected: provider.pathUpdate,

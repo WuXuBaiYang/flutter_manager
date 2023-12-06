@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/widget/image.dart';
 
 /*
 * 项目图标表单字段组件
@@ -98,7 +97,7 @@ class ProjectLogoFormField extends StatelessWidget {
     if (logoPath?.isEmpty ?? true) return const Icon(Icons.add);
     return ClipRRect(
       borderRadius: borderRadius,
-      child: ImageView.file(
+      child: Image.file(
         File(logoPath ?? ''),
         fit: BoxFit.cover,
         width: logoSize.width,
