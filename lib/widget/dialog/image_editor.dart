@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:extended_image/extended_image.dart';
+import 'dart:math';
+import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
@@ -21,21 +22,21 @@ class ImageEditorDialog extends StatelessWidget {
   final String path;
 
   // 绝对比例（不可编辑）
-  final double? absoluteRatio;
+  final CropAspectRatio? absoluteRatio;
 
   // 初始化裁剪比例
-  final double initializeRatio;
+  final CropAspectRatio initializeRatio;
 
   const ImageEditorDialog({
     super.key,
     required this.path,
     this.absoluteRatio,
-    this.initializeRatio = 0,
+    this.initializeRatio = CropAspectRatio.ratio1_1,
   });
 
   // 展示弹窗
   static Future<String?> show(BuildContext context,
-      {required String path, double? absoluteRatio}) {
+      {required String path, CropAspectRatio? absoluteRatio}) {
     return showDialog<String>(
       context: context,
       barrierDismissible: false,
@@ -49,7 +50,12 @@ class ImageEditorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ImageEditorDialogProvider(initializeRatio),
+      create: (_) => ImageEditorDialogProvider((
+        ratio: initializeRatio,
+        rotate: 0,
+        borderRadius: 0,
+        imageType: CropImageType.png,
+      )),
       builder: (context, _) {
         final provider = context.read<ImageEditorDialogProvider>();
         return CustomDialog(
@@ -159,23 +165,26 @@ class ImageEditorDialog extends StatelessWidget {
   Widget _buildImageEditor(BuildContext context) {
     final provider = context.read<ImageEditorDialogProvider>();
     return ClipRRect(
-        clipBehavior: Clip.antiAlias,
-        borderRadius: BorderRadius.circular(8),
-        child: Selector<ImageEditorDialogProvider, double>(
-          selector: (_, provider) => provider.actionTuple.ratio,
-          builder: (_, ratio, __) {
-            return ExtendedImage.file(
-              File(path),
-              cacheRawData: true,
-              fit: BoxFit.contain,
-              mode: ExtendedImageMode.editor,
-              extendedImageEditorKey: provider.editorKey,
-              initEditorConfigHandler: (_) => EditorConfig(
-                cropAspectRatio: absoluteRatio ?? (ratio < 0 ? null : ratio),
-              ),
-            );
-          },
-        ));
+      clipBehavior: Clip.antiAlias,
+      borderRadius: BorderRadius.circular(8),
+      child: Selector<ImageEditorDialogProvider, (CropAspectRatio, double)>(
+        selector: (_, provider) {
+          final actionTuple = provider.actionTuple;
+          return (actionTuple.ratio, actionTuple.borderRadius);
+        },
+        builder: (_, tuple, __) {
+          return CustomImageCrop(
+            ratio: tuple.$1.ratio,
+            borderRadius: tuple.$2,
+            image: FileImage(File(path)),
+            shape: CustomCropShape.Square,
+            backgroundColor: Colors.transparent,
+            imageFit: CustomImageFit.fillVisibleSpace,
+            cropController: provider.controller,
+          );
+        },
+      ),
+    );
   }
 
   // 构建图片编辑器操作
@@ -193,37 +202,26 @@ class ImageEditorDialog extends StatelessWidget {
                 message: '圆角',
                 child: TextButton.icon(
                   autofocus: true,
-                  onPressed: () => provider.updateActions(borderRadius: 0),
                   icon: const Icon(Icons.rounded_corner_rounded),
+                  onPressed: () => provider.updateActions(borderRadius: 0),
                   label: Slider(
                     max: 80,
-                    label: '${actionTuple.borderRadius}px',
-                    value: actionTuple.borderRadius.toDouble(),
-                    onChanged: (v) =>
-                        provider.updateActions(borderRadius: v.toInt()),
+                    value: actionTuple.borderRadius,
+                    label: '${actionTuple.borderRadius.round()}px',
+                    onChanged: (v) => provider.updateActions(borderRadius: v),
                   ),
                 ),
               ),
             ),
             const Spacer(),
-            Transform.flip(
-              flipX: actionTuple.flip,
-              child: IconButton.filled(
-                iconSize: 16,
-                tooltip: '水平翻转',
-                onPressed: provider.changeFlip,
-                icon: const Icon(Icons.flip),
-                visualDensity: VisualDensity.compact,
-              ),
-            ),
             Transform.rotate(
               angle: actionTuple.rotate,
               child: IconButton.filled(
                 iconSize: 16,
                 tooltip: '向左旋转',
-                onPressed: () => provider.changeRotate(false),
                 visualDensity: VisualDensity.compact,
                 icon: const Icon(Icons.rotate_left_rounded),
+                onPressed: () => provider.changeRotate(false),
               ),
             ),
             Transform.rotate(
@@ -239,7 +237,7 @@ class ImageEditorDialog extends StatelessWidget {
             if (!ratioDisable)
               Tooltip(
                 message: '裁剪比例',
-                child: DropdownButton<double>(
+                child: DropdownButton<CropAspectRatio>(
                   alignment: Alignment.center,
                   value: absoluteRatio ?? actionTuple.ratio,
                   icon: const Padding(
@@ -247,10 +245,10 @@ class ImageEditorDialog extends StatelessWidget {
                     child: Icon(Icons.aspect_ratio),
                   ),
                   onChanged: !ratioDisable ? provider.changeRatio : null,
-                  items: provider.cropAspectRatios.entries
-                      .map((e) => DropdownMenuItem<double>(
-                            value: e.key,
-                            child: Text(e.value),
+                  items: CropAspectRatio.values
+                      .map((e) => DropdownMenuItem<CropAspectRatio>(
+                            value: e,
+                            child: Text(e.label),
                           ))
                       .toList(),
                 ),
@@ -271,10 +269,9 @@ class ImageEditorDialog extends StatelessWidget {
 
 // 图片编辑操作项元组
 typedef ImageEditorActionTuple = ({
-  double ratio,
-  bool flip,
+  CropAspectRatio ratio,
   double rotate,
-  int borderRadius,
+  double borderRadius,
   CropImageType imageType,
 });
 
@@ -284,74 +281,36 @@ typedef ImageEditorActionTuple = ({
 * @Time 2023/12/6 8:51
 */
 class ImageEditorDialogProvider extends BaseProvider {
-  // 图片编辑控制key
-  final editorKey = GlobalKey<ExtendedImageEditorState>();
+  // 图片编辑控制器
+  final controller = CustomImageCropController();
+
+  // 缓存初始化字段
+  final ImageEditorActionTuple _initializeActionTuple;
 
   // 图片编辑操作参数元组
-  ImageEditorActionTuple _actionTuple = (
-    ratio: -1,
-    flip: false,
-    rotate: 0,
-    borderRadius: 0,
-    imageType: CropImageType.png,
-  );
+  ImageEditorActionTuple _actionTuple;
 
   // 获取图片编辑操作参数元组
   ImageEditorActionTuple get actionTuple => _actionTuple;
 
-  // 可用裁剪比例集合
-  final cropAspectRatios = {
-    -1.0: '自定义',
-    CropAspectRatios.original: '原始',
-    CropAspectRatios.ratio1_1: '1:1',
-    CropAspectRatios.ratio4_3: '4:3',
-    CropAspectRatios.ratio3_4: '3:4',
-    CropAspectRatios.ratio16_9: '16:9',
-    CropAspectRatios.ratio9_16: '9:16',
-  };
+  ImageEditorDialogProvider(this._initializeActionTuple)
+      : _actionTuple = _initializeActionTuple;
 
-  ImageEditorDialogProvider(double initializeRatio) {
-    updateActions(ratio: initializeRatio);
-  }
+  // 生成图片文件名称
+  String get _imageFileName => '${Tool.genID()}.${_actionTuple.imageType.name}';
 
   // 另存为其他路径
   Future<String?> saveOtherPath(String path) =>
-      saveCrop(savePath: join(path, genImageFileName()));
+      saveCrop(savePath: join(path, _imageFileName));
 
   // 保存裁剪后的图片并返回路径
   Future<String?> saveCrop({String? savePath}) async {
     final baseDir = await Tool.getFileCachePath();
-    if (baseDir?.isEmpty ?? true) return null;
-    final editorState = editorKey.currentState;
-    final cropRect = editorState?.getCropRect();
-    final editAction = editorState?.editAction;
-    if (editorState == null || cropRect == null || editAction == null) {
-      return null;
-    }
-    var src = await compute(decodeImage, editorState.rawImageData);
+    final cropImage = await controller.onCropImage();
+    if (baseDir == null || cropImage == null) return null;
+    final src = await compute(decodeImage, cropImage.bytes);
     if (src == null) return null;
-    if (editAction.needCrop) {
-      src = copyCrop(
-        src,
-        x: cropRect.left.toInt(),
-        y: cropRect.top.toInt(),
-        width: cropRect.width.toInt(),
-        height: cropRect.height.toInt(),
-        radius: _actionTuple.borderRadius,
-      );
-    }
-    if (editAction.needFlip) {
-      final direction = editAction.flipY && editAction.flipX
-          ? FlipDirection.both
-          : editAction.flipY
-              ? FlipDirection.horizontal
-              : FlipDirection.vertical;
-      src = flip(src, direction: direction);
-    }
-    if (editAction.hasRotateAngle) {
-      src = copyRotate(src, angle: editAction.rotateAngle);
-    }
-    savePath ??= join(baseDir!, genImageFileName());
+    savePath ??= join(baseDir, _imageFileName);
     switch (_actionTuple.imageType) {
       case CropImageType.png:
         if (!await encodePngFile(savePath, src)) return null;
@@ -363,56 +322,45 @@ class ImageEditorDialogProvider extends BaseProvider {
     return savePath;
   }
 
-  // 生成图片文件名称
-  String genImageFileName() => '${Tool.genID()}.${_actionTuple.imageType.name}';
-
-  // 确定裁剪比例
-  void confirmRatio(double ratio) {
-    updateActions(ratio: ratio);
-    notifyListeners();
+  // 修改图片圆角
+  void changeBorderRadius(double radius) {
+    updateActions(borderRadius: radius);
   }
 
   // 修改图片比例
-  void changeRatio(double? ratio) {
+  void changeRatio(CropAspectRatio? ratio) {
     updateActions(ratio: ratio);
-    notifyListeners();
-  }
-
-  // 水平翻转图片
-  void changeFlip() {
-    final editorState = editorKey.currentState;
-    if (editorState == null) return;
-    editorState.flip();
-    updateActions(flip: editorState.editAction?.flipY);
   }
 
   // 旋转图片
   void changeRotate([bool right = true]) {
-    final editorState = editorKey.currentState;
-    if (editorState == null) return;
-    editorState.rotate(right: right);
-    final ratio = editorState.editAction!.rotateAngle / 360;
-    updateActions(rotate: 6 * ratio);
+    final angle = controller.cropImageData?.angle ?? 0;
+    final step = right ? pi / 2 : -(pi / 2);
+    updateActions(rotate: angle + step);
+    controller.addTransition(CropImageData(angle: step));
+  }
+
+  // 缩放图片
+  void changeScale(double scale) {
+    controller.addTransition(CropImageData(scale: scale));
   }
 
   // 重置图片状态
   void reset() {
-    final editorState = editorKey.currentState;
-    if (editorState == null) return;
-    editorState.reset();
-    updateActions(ratio: -1, flip: false, rotate: 0, borderRadius: 0);
+    controller.reset();
+    _actionTuple = _initializeActionTuple;
+    notifyListeners();
   }
 
   // 更新操作元组参数
-  void updateActions(
-      {double? ratio,
-      bool? flip,
-      double? rotate,
-      int? borderRadius,
-      CropImageType? imageType}) {
+  void updateActions({
+    CropAspectRatio? ratio,
+    double? rotate,
+    double? borderRadius,
+    CropImageType? imageType,
+  }) {
     _actionTuple = (
       ratio: ratio ?? _actionTuple.ratio,
-      flip: flip ?? _actionTuple.flip,
       rotate: rotate ?? _actionTuple.rotate,
       borderRadius: borderRadius ?? _actionTuple.borderRadius,
       imageType: imageType ?? _actionTuple.imageType,
@@ -423,3 +371,31 @@ class ImageEditorDialogProvider extends BaseProvider {
 
 // 裁剪图片类型枚举
 enum CropImageType { png, jpg, ico }
+
+// 图片裁剪比例枚举
+enum CropAspectRatio {
+  ratio1_1,
+  ratio4_3,
+  ratio3_4,
+  ratio16_9,
+  ratio9_16,
+}
+
+// 扩展裁剪比例枚举获取ratio字段
+extension CropAspectRatioExtension on CropAspectRatio {
+  Ratio get ratio => {
+        CropAspectRatio.ratio1_1: Ratio(width: 1, height: 1),
+        CropAspectRatio.ratio4_3: Ratio(width: 4, height: 3),
+        CropAspectRatio.ratio3_4: Ratio(width: 3, height: 4),
+        CropAspectRatio.ratio16_9: Ratio(width: 16, height: 9),
+        CropAspectRatio.ratio9_16: Ratio(width: 9, height: 16),
+      }[this]!;
+
+  String get label => {
+        CropAspectRatio.ratio1_1: '1:1',
+        CropAspectRatio.ratio4_3: '4:3',
+        CropAspectRatio.ratio3_4: '3:4',
+        CropAspectRatio.ratio16_9: '16:9',
+        CropAspectRatio.ratio9_16: '9:16',
+      }[this]!;
+}

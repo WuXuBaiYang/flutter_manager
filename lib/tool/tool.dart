@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:crypto/crypto.dart' as crypto;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
@@ -145,7 +144,7 @@ class Tool {
     BuildContext context, {
     String? dialogTitle,
     String? initialDirectory,
-    double? absoluteRatio,
+    CropAspectRatio? absoluteRatio,
   }) async {
     return pickImage(
       dialogTitle: dialogTitle,
@@ -158,7 +157,7 @@ class Tool {
 
   // 图片编辑
   static Future<String?> editImage(BuildContext context, String imagePath,
-      {double? absoluteRatio}) {
+      {CropAspectRatio? absoluteRatio}) {
     return ImageEditorDialog.show(context,
         path: imagePath, absoluteRatio: absoluteRatio);
   }
