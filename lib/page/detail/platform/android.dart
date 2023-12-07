@@ -24,38 +24,7 @@ class ProjectPlatformAndroidPage
 
   @override
   List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
-    return [
-      ProjectPlatformItem.count(
-        mainAxisCellCount: 1,
-        crossAxisCellCount: 3,
-        title: 'test',
-        children: [],
-      ),
-      ProjectPlatformItem.count(
-        mainAxisCellCount: 1,
-        crossAxisCellCount: 1,
-        title: 'test',
-        children: [],
-      ),
-      ProjectPlatformItem.count(
-        mainAxisCellCount: 1,
-        crossAxisCellCount: 1,
-        title: 'test',
-        children: [],
-      ),
-      ProjectPlatformItem.count(
-        mainAxisCellCount: 1,
-        crossAxisCellCount: 1,
-        title: 'test',
-        children: [],
-      ),
-      ProjectPlatformItem.count(
-        mainAxisCellCount: 1,
-        crossAxisCellCount: 2,
-        title: 'test',
-        children: [],
-      ),
-    ];
+    return [];
   }
 }
 
