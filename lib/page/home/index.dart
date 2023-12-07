@@ -62,8 +62,6 @@ class HomePage extends BasePage {
                 child: Text('v${context.watch<String>()}'),
                 onPressed: () async {
                   /// TODO: 2021/8/31 14:25 版本更新检查
-                  const path = 'C:/Users/wuxubaiyang/Desktop/R.jpg';
-                  ImageEditorDialog.show(context, path: path);
                 },
               );
             },
