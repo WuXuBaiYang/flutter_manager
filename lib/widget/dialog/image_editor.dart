@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -164,25 +165,33 @@ class ImageEditorDialog extends StatelessWidget {
   // 构建图片编辑器
   Widget _buildImageEditor(BuildContext context) {
     final provider = context.read<ImageEditorDialogProvider>();
-    return ClipRRect(
-      clipBehavior: Clip.antiAlias,
-      borderRadius: BorderRadius.circular(8),
-      child: Selector<ImageEditorDialogProvider, (CropAspectRatio, double)>(
-        selector: (_, provider) {
-          final actionTuple = provider.actionTuple;
-          return (actionTuple.ratio, actionTuple.borderRadius);
-        },
-        builder: (_, tuple, __) {
-          return CustomImageCrop(
-            ratio: tuple.$1.ratio,
-            borderRadius: tuple.$2,
-            image: FileImage(File(path)),
-            shape: CustomCropShape.Square,
-            backgroundColor: Colors.transparent,
-            imageFit: CustomImageFit.fillVisibleSpace,
-            cropController: provider.controller,
-          );
-        },
+    return Listener(
+      onPointerSignal: (event) {
+        if (event is PointerScrollEvent) {
+          final delta = event.scrollDelta.dy;
+          provider.changeScale(delta > 0);
+        }
+      },
+      child: ClipRRect(
+        clipBehavior: Clip.antiAlias,
+        borderRadius: BorderRadius.circular(8),
+        child: Selector<ImageEditorDialogProvider, (CropAspectRatio, double)>(
+          selector: (_, provider) {
+            final actionTuple = provider.actionTuple;
+            return (actionTuple.ratio, actionTuple.borderRadius);
+          },
+          builder: (_, tuple, __) {
+            return CustomImageCrop(
+              ratio: tuple.$1.ratio,
+              borderRadius: tuple.$2,
+              image: FileImage(File(path)),
+              shape: CustomCropShape.Square,
+              backgroundColor: Colors.transparent,
+              imageFit: CustomImageFit.fillVisibleSpace,
+              cropController: provider.controller,
+            );
+          },
+        ),
       ),
     );
   }
@@ -341,8 +350,12 @@ class ImageEditorDialogProvider extends BaseProvider {
   }
 
   // 缩放图片
-  void changeScale(double scale) {
-    controller.addTransition(CropImageData(scale: scale));
+  void changeScale(bool scaleUp) {
+    final scale = controller.cropImageData?.scale ?? 1;
+    if (scaleUp && scale < 0.5) return;
+    controller.addTransition(CropImageData(
+      scale: scaleUp ? 0.93 : 1.07,
+    ));
   }
 
   // 重置图片状态
