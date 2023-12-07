@@ -37,11 +37,13 @@ abstract class BasePage extends StatelessWidget {
 
   // 构建内容主体
   Widget _buildContent(BuildContext context) {
+    final themeProvider = context.watch<ThemeProvider>();
+    final brightness = themeProvider.getBrightness(context);
     return Material(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (primary) _buildStatusBar(context),
+          if (primary) _buildStatusBar(context, brightness),
           Expanded(child: buildWidget(context)),
         ],
       ),
@@ -49,8 +51,7 @@ abstract class BasePage extends StatelessWidget {
   }
 
   // 构建状态条
-  Widget _buildStatusBar(BuildContext context) {
-    final brightness = context.read<ThemeProvider>().getBrightness(context);
+  Widget _buildStatusBar(BuildContext context, Brightness brightness) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: DragToMoveArea(
