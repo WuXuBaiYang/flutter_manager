@@ -229,6 +229,7 @@ class ProjectDetailPage extends BasePage {
   Widget _buildAppBarTitle(BuildContext context) {
     final provider = context.read<ProjectDetailPageProvider>();
     final project = provider.project;
+    final borderRadius = BorderRadius.circular(8);
     if (project == null) return const SizedBox();
     return Selector<ProjectDetailPageProvider, bool>(
       selector: (_, provider) => provider.isScrollTop,
@@ -239,10 +240,14 @@ class ProjectDetailPage extends BasePage {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Image.file(
-                File(project.logo),
-                width: 35,
-                height: 35,
+              ClipRRect(
+                borderRadius: borderRadius,
+                child: Image.file(
+                  File(project.logo),
+                  fit: BoxFit.cover,
+                  width: 35,
+                  height: 35,
+                ),
               ),
               const SizedBox(width: 14),
               Text(project.label),
