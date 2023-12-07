@@ -19,7 +19,9 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
+import 'package:flutter_manager/widget/dialog/project_font.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/dialog/project_label.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
@@ -186,26 +188,44 @@ class ProjectDetailPage extends BasePage {
     if (project == null) return const SizedBox();
     return Row(
       children: [
-        Wrap(
-          spacing: 14,
-          runSpacing: 8,
-          children: [
-            IconButton.outlined(
-              tooltip: '修改项目名',
-              icon: const Icon(Icons.edit_attributes_rounded),
-              onPressed: () => _replaceLabels(context, project),
+        SizedBox(
+          height: 95,
+          child: Transform.flip(
+            flipX: true,
+            child: Wrap(
+              direction: Axis.vertical,
+              alignment: WrapAlignment.end,
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                IconButton.outlined(
+                  tooltip: '替换图标',
+                  onPressed: () => _replaceLogos(context, project),
+                  icon: const Icon(Icons.imagesearch_roller_rounded),
+                ),
+                IconButton.outlined(
+                  tooltip: '字体管理',
+                  icon: const Icon(Icons.font_download_outlined),
+                  onPressed: () => _fontManager(context, project),
+                ),
+                IconButton.outlined(
+                  tooltip: '修改项目名',
+                  icon: const Icon(Icons.edit_attributes_rounded),
+                  onPressed: () => _replaceLabels(context, project),
+                ),
+                IconButton.outlined(
+                  tooltip: 'Asset管理',
+                  icon: const Icon(Icons.assessment_outlined),
+                  onPressed: ()=> _assetManager(context, project),
+                ),
+                IconButton.outlined(
+                  tooltip: '打开项目目录',
+                  icon: const Icon(Icons.open_in_browser_rounded),
+                  onPressed: () => Tool.openLocalPath(project.path),
+                ),
+              ],
             ),
-            IconButton.outlined(
-              tooltip: '替换图标',
-              onPressed: () => _replaceLogos(context, project),
-              icon: const Icon(Icons.imagesearch_roller_rounded),
-            ),
-            IconButton.outlined(
-              tooltip: '打开项目目录',
-              icon: const Icon(Icons.open_in_browser_rounded),
-              onPressed: () => Tool.openLocalPath(project.path),
-            ),
-          ],
+          ),
         ),
         const SizedBox(width: 14),
         FilledButton.icon(
@@ -328,6 +348,19 @@ class ProjectDetailPage extends BasePage {
             },
           ));
     });
+  }
+
+
+  // Asset管理
+  void _assetManager(BuildContext context, Project project) {
+    final provider = context.read<PlatformProvider>();
+    ProjectAssetDialog.show(context);
+  }
+
+  // 字体管理
+  void _fontManager(BuildContext context, Project project) {
+    final provider = context.read<PlatformProvider>();
+    ProjectFontDialog.show(context);
   }
 }
 
