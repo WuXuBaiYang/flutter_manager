@@ -9,7 +9,6 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
-import 'platform_item.dart';
 
 /*
 * 项目平台信息页面基类
@@ -47,8 +46,8 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
       isEmpty: children.isEmpty,
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(4),
-        child: StaggeredGrid.count(
-          crossAxisCount: 4,
+        child: StaggeredGrid.extent(
+          maxCrossAxisExtent: 100,
           mainAxisSpacing: 4,
           crossAxisSpacing: 4,
           children: children,
@@ -58,7 +57,7 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider>
   }
 
   // 获取平台构造项
-  List<ProjectPlatformItem> buildPlatformItems(BuildContext context);
+  List<Widget> buildPlatformItems(BuildContext context);
 }
 
 /*

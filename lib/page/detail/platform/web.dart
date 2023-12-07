@@ -23,7 +23,7 @@ class ProjectPlatformWebPage
       ];
 
   @override
-  List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
+  List<Widget> buildPlatformItems(BuildContext context) {
     return [];
   }
 }
