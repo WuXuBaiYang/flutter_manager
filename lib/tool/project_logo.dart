@@ -20,11 +20,15 @@ class ProjectLogoGrid extends StatelessWidget {
   // 内间距
   final EdgeInsetsGeometry padding;
 
+  // 对齐
+  final WrapAlignment alignment;
+
   const ProjectLogoGrid({
     super.key,
     required this.logoList,
     this.onTap,
     this.maxSize = const Size.square(55),
+    this.alignment = WrapAlignment.center,
     this.padding = const EdgeInsets.all(8),
   });
 
@@ -35,7 +39,7 @@ class ProjectLogoGrid extends StatelessWidget {
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
-        alignment: WrapAlignment.center,
+        alignment: alignment,
         crossAxisAlignment: WrapCrossAlignment.end,
         children: List.generate(logoList.length, (i) {
           final item = logoList[i];
