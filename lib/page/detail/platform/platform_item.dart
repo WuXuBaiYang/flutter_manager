@@ -31,6 +31,9 @@ class ProjectPlatformItem extends StatelessWidget {
   // 表单提交回调
   final VoidCallback? onSubmitted;
 
+  // 重置操作回调
+  final VoidCallback? onReset;
+
   // 控制器
   final ProjectPlatformItemController? controller;
 
@@ -41,6 +44,7 @@ class ProjectPlatformItem extends StatelessWidget {
     required this.content,
     this.title,
     this.onTap,
+    this.onReset,
     this.controller,
     this.onSubmitted,
   })  : mainAxisExtent = null,
@@ -53,6 +57,7 @@ class ProjectPlatformItem extends StatelessWidget {
     required this.content,
     this.title,
     this.onTap,
+    this.onReset,
     this.controller,
     this.onSubmitted,
   })  : mainAxisCellCount = null,
@@ -64,6 +69,7 @@ class ProjectPlatformItem extends StatelessWidget {
     required this.content,
     this.title,
     this.onTap,
+    this.onReset,
     this.controller,
     this.onSubmitted,
   })  : mainAxisCellCount = null,
@@ -132,6 +138,11 @@ class ProjectPlatformItem extends StatelessWidget {
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
+            if (onReset != null)
+              TextButton(
+                onPressed: !isEdited ? null : onReset,
+                child: const Text('重置'),
+              ),
             TextButton(
               onPressed: !isEdited ? null : _submitForm,
               child: const Text('修改'),

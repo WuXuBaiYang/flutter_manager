@@ -41,14 +41,19 @@ class ProjectPlatformAndroidPage
       selector: (_, provider) => provider.androidInfo?.label,
       builder: (_, label, __) {
         final controller = ProjectPlatformItemController();
+        final textController = TextEditingController(text: label);
         return ProjectPlatformItem.extent(
           mainAxisExtent: 140,
           crossAxisCellCount: 3,
           controller: controller,
+          onReset: () {
+            controller.edit(false);
+            textController.text = label ?? '';
+          },
           onSubmitted: () => _submitLabel(context),
           content: TextFormField(
+            controller: textController,
             onChanged: (v) => controller.edit(v != label),
-            controller: TextEditingController(text: label),
             onSaved: (v) => provider.updateFormData(label: v),
             autovalidateMode: AutovalidateMode.onUserInteraction,
             decoration: const InputDecoration(
