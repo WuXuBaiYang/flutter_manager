@@ -34,12 +34,12 @@ class CustomDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: title,
+      actions: actions,
       scrollable: scrollable,
       content: ConstrainedBox(
         constraints: constraints,
         child: content,
       ),
-      actions: actions,
     );
   }
 }

@@ -60,20 +60,22 @@ class ProjectLogoFormField extends StatelessWidget {
     final inputBorder = logoPath?.isEmpty ?? true
         ? const OutlineInputBorder()
         : InputBorder.none;
-    return ConstrainedBox(
-      constraints: BoxConstraints.tightFor(width: logoSize.width),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          border: inputBorder,
-          errorText: field.errorText,
-          contentPadding: const EdgeInsets.symmetric(vertical: 4),
-        ),
-        child: SizedBox.fromSize(
-          size: logoSize,
-          child: InkWell(
-            borderRadius: borderRadius,
-            onTap: () => _changeLogoFile(context, field),
-            child: _buildFormFieldLogo(logoPath),
+    return ClipRRect(
+      borderRadius: borderRadius,
+      child: GestureDetector(
+        onTap: () => _changeLogoFile(context, field),
+        child: ConstrainedBox(
+          constraints: BoxConstraints.tightFor(width: logoSize.width),
+          child: InputDecorator(
+            decoration: InputDecoration(
+              border: inputBorder,
+              errorText: field.errorText,
+              contentPadding: const EdgeInsets.symmetric(vertical: 4),
+            ),
+            child: SizedBox.fromSize(
+              size: logoSize,
+              child: _buildFormFieldLogo(logoPath),
+            ),
           ),
         ),
       ),
@@ -93,14 +95,11 @@ class ProjectLogoFormField extends StatelessWidget {
   // 构建表单项图标
   Widget _buildFormFieldLogo(String? logoPath) {
     if (logoPath?.isEmpty ?? true) return const Icon(Icons.add);
-    return ClipRRect(
-      borderRadius: borderRadius,
-      child: Image.file(
-        File(logoPath ?? ''),
-        fit: BoxFit.cover,
-        width: logoSize.width,
-        height: logoSize.height,
-      ),
+    return Image.file(
+      File(logoPath ?? ''),
+      fit: BoxFit.cover,
+      width: logoSize.width,
+      height: logoSize.height,
     );
   }
 }
