@@ -69,20 +69,20 @@ class ImageEditorDialog extends StatelessWidget {
           constraints: const BoxConstraints.tightFor(width: 480, height: 350),
           actions: [
             TextButton(
-              onPressed: () => _saveOtherPath(context),
               child: const Text('另存为'),
+              onPressed: () => _saveOtherPath(context),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context, path),
               child: const Text('使用原图'),
+              onPressed: () => Navigator.pop(context, path),
             ),
             TextButton(
-              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
+              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
-              onPressed: () => _saveCrop(context),
               child: const Text('确定'),
+              onPressed: () => _saveCrop(context),
             ),
           ],
         );

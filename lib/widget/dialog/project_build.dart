@@ -34,12 +34,12 @@ class ProjectBuildDialog extends StatelessWidget {
       constraints: BoxConstraints.tight(const Size.square(200)),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
           child: const Text('取消'),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        const TextButton(
-          onPressed: null,
-          child: Text('确定'),
+        TextButton(
+          child: const Text('确定'),
+          onPressed: () {},
         ),
       ],
     );

@@ -37,7 +37,6 @@ class ProjectLogoDialog extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ProjectLogoDialogProvider(platformLogoMap),
       builder: (context, _) {
-        final provider = context.read<ProjectLogoDialogProvider>();
         return CustomDialog(
           title: const Text('图标'),
           content: _buildContent(context),
@@ -45,16 +44,12 @@ class ProjectLogoDialog extends StatelessWidget {
               width: 380, height: platformLogoMap.isEmpty ? 280 : null),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
               child: const Text('取消'),
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () => provider.submitForm(context).then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }).catchError((e) {
-                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-              }),
+              onPressed: () => _submitForm(context),
             ),
           ],
         );
@@ -99,6 +94,16 @@ class ProjectLogoDialog extends StatelessWidget {
       onSaved: (v) => provider.updateFormData(platforms: v?.platforms),
       initialValue: (expanded: null, platforms: provider.formData.platforms),
     );
+  }
+
+  // 提交表单
+  void _submitForm(BuildContext context) {
+    final provider = context.read<ProjectLogoDialogProvider>();
+    provider.submitForm(context).then((result) {
+      if (result != null) Navigator.pop(context, result);
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+    });
   }
 }
 

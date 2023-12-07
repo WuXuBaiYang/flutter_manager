@@ -38,26 +38,18 @@ class EnvironmentImportDialog extends StatelessWidget {
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
       create: (_) => EnvironmentImportDialogProvider(environment),
       builder: (context, _) {
-        final provider = context.read<EnvironmentImportDialogProvider>();
         return CustomDialog(
           scrollable: true,
           content: _buildContent(context),
           title: Text('${isEdit ? '编辑' : '添加'}环境'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
+              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
-              onPressed: () => Loading.show(
-                context,
-                loadFuture: provider.submitForm(context, environment),
-              )?.then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }).catchError((e) {
-                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-              }),
               child: Text(isEdit ? '修改' : '添加'),
+              onPressed: () => _submitForm(context),
             ),
           ],
         );
@@ -94,6 +86,19 @@ class EnvironmentImportDialog extends StatelessWidget {
         return null;
       },
     );
+  }
+
+  // 提交表单
+  void _submitForm(BuildContext context) {
+    final provider = context.read<EnvironmentImportDialogProvider>();
+    Loading.show(
+      context,
+      loadFuture: provider.submitForm(context, environment),
+    )?.then((result) {
+      if (result != null) Navigator.pop(context, result);
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+    });
   }
 }
 

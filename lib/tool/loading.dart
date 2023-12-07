@@ -62,8 +62,17 @@ class Loading {
                 StreamBuilder<double>(
                   stream: progressStream,
                   builder: (_, snap) {
-                    return CircularProgressIndicator(
-                      value: snap.data,
+                    final progress = snap.data;
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircularProgressIndicator(value: progress),
+                        if (progress != null)
+                          Text(
+                            '${(progress * 100).toStringAsFixed(1)}%',
+                            style: const TextStyle(fontSize: 10),
+                          ),
+                      ],
                     );
                   },
                 ),

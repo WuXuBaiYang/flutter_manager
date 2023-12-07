@@ -34,7 +34,6 @@ class ProjectLabelDialog extends StatelessWidget {
     return ChangeNotifierProvider<ProjectLabelDialogProvider>(
       create: (_) => ProjectLabelDialogProvider(platformLabelMap),
       builder: (context, _) {
-        final provider = context.read<ProjectLabelDialogProvider>();
         return CustomDialog(
           title: const Text('别名'),
           content: _buildContent(context),
@@ -42,16 +41,12 @@ class ProjectLabelDialog extends StatelessWidget {
               width: 280, height: platformLabelMap.isEmpty ? 280 : null),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
               child: const Text('取消'),
+              onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              onPressed: () => provider.submitForm().then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }).catchError((e) {
-                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-              }),
               child: const Text('确定'),
+              onPressed: () => _submitForm(context),
             ),
           ],
         );
@@ -152,6 +147,16 @@ class ProjectLabelDialog extends StatelessWidget {
             ),
           )),
     );
+  }
+
+  // 提交表单
+  void _submitForm(BuildContext context) {
+    final provider = context.read<ProjectLabelDialogProvider>();
+    provider.submitForm().then((result) {
+      if (result != null) Navigator.pop(context, result);
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+    });
   }
 }
 

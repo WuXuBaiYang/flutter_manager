@@ -51,21 +51,11 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
           ][currentStep],
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
+              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
-              onPressed: (currentStep >= 2 && savePath != null)
-                  ? () => Loading.show(
-                        context,
-                        loadFuture: provider.submitForm(context, savePath),
-                      )?.then((result) {
-                        if (result != null) Navigator.pop(context, result);
-                      }).catchError((e) {
-                        SnackTool.showMessage(context,
-                            message: '操作失败：${e.toString()}');
-                      })
-                  : null,
+              onPressed: _importPressed(context, currentStep, savePath),
               child: const Text('导入'),
             ),
           ],
@@ -155,6 +145,23 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
         subtitle: Text(package.fileName),
       ),
     );
+  }
+
+  // 导入方法
+  VoidCallback? _importPressed(
+      BuildContext context, int currentStep, String? savePath) {
+    if (currentStep >= 2 || savePath == null) return null;
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
+    return () {
+      Loading.show(
+        context,
+        loadFuture: provider.submitForm(context, savePath),
+      )?.then((result) {
+        if (result != null) Navigator.pop(context, result);
+      }).catchError((e) {
+        SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+      });
+    };
   }
 }
 

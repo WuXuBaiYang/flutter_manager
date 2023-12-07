@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image/image.dart';
@@ -31,13 +30,13 @@ class ImageTool {
   static Future<String?> resizeFile(String path, String savePath,
       {ImageType imageType = ImageType.png, int? width, int? height}) async {
     try {
-      await _encodeFileByType(
+      await _executeCommand(
         Command()
           ..decodeImageFile(path)
           ..copyResize(width: width, height: height),
-        imageType,
         savePath,
-      ).executeThread();
+        imageType,
+      );
     } catch (_) {}
     return null;
   }
@@ -46,19 +45,19 @@ class ImageTool {
   static Future<String?> saveData(Uint8List data, String savePath,
       [ImageType imageType = ImageType.png]) async {
     try {
-      await _encodeFileByType(
+      await _executeCommand(
         Command()..decodeImage(data),
-        imageType,
         savePath,
-      ).executeThread();
+        imageType,
+      );
       return savePath;
     } catch (_) {}
     return null;
   }
 
-  // 图片格式编码
-  static Command _encodeFileByType(
-      Command cmd, ImageType imageType, String savePath) {
+  // 执行命令
+  static Future<Command> _executeCommand(Command cmd, String savePath,
+      [ImageType imageType = ImageType.png]) {
     switch (imageType) {
       case ImageType.png:
         cmd = cmd..encodePngFile(savePath);
@@ -67,7 +66,7 @@ class ImageTool {
       case ImageType.ico:
         cmd = cmd..encodeIcoFile(savePath);
     }
-    return cmd;
+    return cmd.executeThread();
   }
 }
 

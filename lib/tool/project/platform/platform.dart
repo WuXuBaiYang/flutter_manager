@@ -139,10 +139,12 @@ abstract class PlatformTool with PlatformToolMixin {
     progressCallback?.call(index, logoInfoList.length);
     for (final item in logoInfoList) {
       final imageType = convertImageType(File(item.path).suffixes);
-      if (imageType == null) continue;
-      final width = item.size.width.toInt(), height = item.size.height.toInt();
-      await ImageTool.resizeFile(logoPath, item.path,
-          width: width, height: height, imageType: imageType);
+      if (imageType != null) {
+        final width = item.size.width.toInt(),
+            height = item.size.height.toInt();
+        await ImageTool.resizeFile(logoPath, item.path,
+            width: width, height: height, imageType: imageType);
+      }
       progressCallback?.call(++index, logoInfoList.length);
     }
     return true;

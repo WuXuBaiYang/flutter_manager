@@ -42,26 +42,18 @@ class ProjectImportDialog extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ProjectImportDialogProvider(project),
       builder: (context, _) {
-        final provider = context.read<ProjectImportDialogProvider>();
         return CustomDialog(
           scrollable: true,
           title: Text('${isEdit ? '编辑' : '添加'}项目'),
           content: _buildContent(context),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
               child: const Text('取消'),
+              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
               child: Text(isEdit ? '修改' : '添加'),
-              onPressed: () => Loading.show(
-                context,
-                loadFuture: provider.submitForm(context),
-              )?.then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }).catchError((e) {
-                SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-              }),
+              onPressed: () => _submitForm(context),
             ),
           ],
         );
@@ -183,6 +175,19 @@ class ProjectImportDialog extends StatelessWidget {
       initialValue: provider.formData.pinned,
       onSaved: (v) => provider.updateFormData(pinned: v),
     );
+  }
+
+  // 提交表单
+  void _submitForm(BuildContext context) {
+    final provider = context.read<ProjectImportDialogProvider>();
+    Loading.show(
+      context,
+      loadFuture: provider.submitForm(context),
+    )?.then((result) {
+      if (result != null) Navigator.pop(context, result);
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
+    });
   }
 }
 

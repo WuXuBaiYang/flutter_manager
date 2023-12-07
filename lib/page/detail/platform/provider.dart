@@ -109,10 +109,13 @@ class PlatformProvider extends BaseProvider {
       String projectPath, ProjectLogoDialogFormTuple result,
       {ProgressCallback? progressCallback, int total = -1}) async {
     int count = 0;
-    await Future.wait(result.platforms.map(
-      (e) => ProjectTool.replaceLogo(e, projectPath, result.logo,
-          progressCallback: (_, __) => progressCallback?.call(count++, total)),
-    ));
+    for (var e in result.platforms) {
+      await ProjectTool.replaceLogo(e, projectPath, result.logo,
+          progressCallback: (c, t) {
+        progressCallback?.call(count + c, total);
+        if (c >= t) count += c;
+      });
+    }
     return initialize(projectPath);
   }
 

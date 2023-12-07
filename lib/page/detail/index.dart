@@ -193,38 +193,13 @@ class ProjectDetailPage extends BasePage {
             IconButton.outlined(
               tooltip: '修改项目名',
               icon: const Icon(Icons.edit_attributes_rounded),
-              onPressed: () {
-                final provider = context.read<PlatformProvider>();
-                final labelMap = provider.getLabelMap(context);
-                ProjectLabelDialog.show(context, platformLabelMap: labelMap)
-                    .then((result) {
-                  if (result == null) return;
-                  Loading.show(context,
-                      loadFuture: provider.updateLabels(project.path, result));
-                });
-              },
+              onPressed: () => _replaceLabels(context, project),
             ),
             IconButton.outlined(
-                tooltip: '替换图标',
-                icon: const Icon(Icons.imagesearch_roller_rounded),
-                onPressed: () {
-                  final provider = context.read<PlatformProvider>();
-                  final logoMap = provider.getLogoMap(context);
-                  ProjectLogoDialog.show(context, platformLogoMap: logoMap)
-                      .then((result) {
-                    if (result == null) return;
-                    final total = logoMap.entries.fold<int>(0, (p, e) {
-                      if (!result.platforms.contains(e.key)) return p;
-                      return p + e.value.length;
-                    });
-                    final controller = StreamController<double>();
-                    final future = provider.updateLogos(project.path, result,
-                        progressCallback: (count, _) =>
-                            controller.add(count / total));
-                    Loading.show(context,
-                        loadFuture: future, progressStream: controller.stream);
-                  });
-                }),
+              tooltip: '替换图标',
+              onPressed: () => _replaceLogos(context, project),
+              icon: const Icon(Icons.imagesearch_roller_rounded),
+            ),
             IconButton.outlined(
               tooltip: '打开项目目录',
               icon: const Icon(Icons.open_in_browser_rounded),
@@ -311,6 +286,43 @@ class ProjectDetailPage extends BasePage {
         return EnvironmentBadge(environment: environment);
       },
     );
+  }
+
+  // 替换别名
+  void _replaceLabels(BuildContext context, Project project) {
+    final provider = context.read<PlatformProvider>();
+    ProjectLabelDialog.show(
+      context,
+      platformLabelMap: provider.getLabelMap(context),
+    ).then((result) {
+      if (result == null) return;
+      Loading.show(context,
+          loadFuture: provider.updateLabels(project.path, result));
+    });
+  }
+
+  // 替换图标
+  void _replaceLogos(BuildContext context, Project project) {
+    final provider = context.read<PlatformProvider>();
+    final logoMap = provider.getLogoMap(context);
+    ProjectLogoDialog.show(context, platformLogoMap: logoMap).then((result) {
+      if (result == null) return;
+      final controller = StreamController<double>();
+      final total = logoMap.entries.fold<int>(0, (p, e) {
+        if (!result.platforms.contains(e.key)) return p;
+        return p + e.value.length;
+      });
+      Loading.show(context,
+          dismissible: false,
+          progressStream: controller.stream,
+          loadFuture: provider.updateLogos(
+            project.path,
+            result,
+            progressCallback: (count, _) {
+              controller.add(count / total);
+            },
+          ));
+    });
   }
 }
 
