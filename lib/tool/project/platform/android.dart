@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_manager/tool/image.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 
@@ -62,7 +63,7 @@ class AndroidPlatformTool extends PlatformTool {
       final parent = file.parent.path, path = file.path;
       if (!parent.contains(parentKey) || !path.contains(iconRegExp)) continue;
       final name = parent.substring(parent.lastIndexOf('-') + 1);
-      final size = await getImageSize(path);
+      final size = await ImageTool.getSize(path);
       if (size == null) continue;
       result.add((name: name, path: path, size: size));
     }

@@ -96,7 +96,7 @@ class ProjectGridView extends StatelessWidget {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
-    final borderRadius = BorderRadius.circular(4);
+    final borderRadius = BorderRadius.circular(8);
     const contentPadding = EdgeInsets.symmetric(horizontal: 14);
     const imageSize = Size.square(45);
     return CustomContextMenuRegion(
@@ -141,6 +141,7 @@ class ProjectGridView extends StatelessWidget {
                       borderRadius: borderRadius,
                       child: Image.file(
                         File(item.logo),
+                        fit: BoxFit.cover,
                         width: imageSize.width,
                         height: imageSize.height,
                       ),

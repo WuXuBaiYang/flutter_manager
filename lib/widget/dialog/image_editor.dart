@@ -1,16 +1,15 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:custom_image_crop/custom_image_crop.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
-import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
@@ -56,7 +55,7 @@ class ImageEditorDialog extends StatelessWidget {
         ratio: initializeRatio,
         rotate: 0,
         borderRadius: 0,
-        imageType: CropImageType.png,
+        imageType: ImageType.png,
       )),
       builder: (context, _) {
         return CustomDialog(
@@ -70,12 +69,16 @@ class ImageEditorDialog extends StatelessWidget {
           constraints: const BoxConstraints.tightFor(width: 480, height: 350),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
-            ),
-            TextButton(
               onPressed: () => _saveOtherPath(context),
               child: const Text('另存为'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, path),
+              child: const Text('使用原图'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
             ),
             TextButton(
               onPressed: () => _saveCrop(context),
@@ -90,12 +93,12 @@ class ImageEditorDialog extends StatelessWidget {
   // 构建图片类型选择器
   Widget _buildImageTypeSelector(BuildContext context) {
     final provider = context.read<ImageEditorDialogProvider>();
-    return Selector<ImageEditorDialogProvider, CropImageType>(
+    return Selector<ImageEditorDialogProvider, ImageType>(
       selector: (_, provider) => provider._actionTuple.imageType,
       builder: (_, imageType, __) {
         return Row(
           children: [
-            if (imageType == CropImageType.ico)
+            if (imageType == ImageType.ico)
               const Padding(
                 padding: EdgeInsets.only(top: 8),
                 child: Tooltip(
@@ -110,15 +113,15 @@ class ImageEditorDialog extends StatelessWidget {
             const SizedBox(width: 8),
             Tooltip(
               message: '输出图片格式',
-              child: DropdownButton<CropImageType>(
+              child: DropdownButton<ImageType>(
                 value: imageType,
                 icon: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 4),
                   child: Icon(Icons.image),
                 ),
                 onChanged: (v) => provider.updateActions(imageType: v),
-                items: CropImageType.values
-                    .map((e) => DropdownMenuItem<CropImageType>(
+                items: ImageType.values
+                    .map((e) => DropdownMenuItem<ImageType>(
                           value: e,
                           child: Text(' .${e.name}'),
                         ))
@@ -279,7 +282,7 @@ typedef ImageEditorActionTuple = ({
   CropAspectRatio ratio,
   double rotate,
   double borderRadius,
-  CropImageType imageType,
+  ImageType imageType,
 });
 
 /*
@@ -315,18 +318,9 @@ class ImageEditorDialogProvider extends BaseProvider {
     final baseDir = await Tool.getFileCachePath();
     final cropImage = await controller.onCropImage();
     if (baseDir == null || cropImage == null) return null;
-    final src = await compute(decodeImage, cropImage.bytes);
-    if (src == null) return null;
     savePath ??= join(baseDir, _imageFileName);
-    switch (_actionTuple.imageType) {
-      case CropImageType.png:
-        if (!await encodePngFile(savePath, src)) return null;
-      case CropImageType.jpg:
-        if (!await encodeJpgFile(savePath, src)) return null;
-      case CropImageType.ico:
-        if (!await encodeIcoFile(savePath, src)) return null;
-    }
-    return savePath;
+    return ImageTool.saveData(
+        cropImage.bytes, savePath, _actionTuple.imageType);
   }
 
   // 修改图片圆角
@@ -368,7 +362,7 @@ class ImageEditorDialogProvider extends BaseProvider {
     CropAspectRatio? ratio,
     double? rotate,
     double? borderRadius,
-    CropImageType? imageType,
+    ImageType? imageType,
   }) {
     _actionTuple = (
       ratio: ratio ?? _actionTuple.ratio,
@@ -379,9 +373,6 @@ class ImageEditorDialogProvider extends BaseProvider {
     notifyListeners();
   }
 }
-
-// 裁剪图片类型枚举
-enum CropImageType { png, jpg, ico }
 
 // 图片裁剪比例枚举
 enum CropAspectRatio {

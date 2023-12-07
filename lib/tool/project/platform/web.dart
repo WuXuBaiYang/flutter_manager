@@ -1,3 +1,5 @@
+import 'package:flutter_manager/tool/image.dart';
+
 import 'platform.dart';
 
 // web平台参数元组
@@ -44,7 +46,7 @@ class WebPlatformTool extends PlatformTool {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getManifestJson(projectPath);
     final faviconSize =
-        await getImageSize(getPlatformFilePath(projectPath, _faviconPath));
+        await ImageTool.getSize(getPlatformFilePath(projectPath, _faviconPath));
     final result = <PlatformLogoTuple>[
       if (faviconSize != null)
         (
@@ -58,7 +60,7 @@ class WebPlatformTool extends PlatformTool {
       final entries = (item as Map)..removeWhere((_, value) => value == src);
       final name = entries.values.join('_');
       final path = getPlatformFilePath(projectPath, src);
-      final size = await getImageSize(path);
+      final size = await ImageTool.getSize(path);
       if (size == null) continue;
       result.add((name: name, path: path, size: size));
     }

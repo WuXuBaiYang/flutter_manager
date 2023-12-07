@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
 
@@ -46,7 +47,7 @@ class WindowsPlatformTool extends PlatformTool {
     for (final file in dir.listSync()) {
       final path = file.path;
       final name = File(path).name;
-      final size = await getImageSize(path);
+      final size = await ImageTool.getSize(path);
       if (name == null || size == null) continue;
       result.add((name: name, path: path, size: size));
     }

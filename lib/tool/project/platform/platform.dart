@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/file.dart';
-import 'package:image/image.dart';
+import 'package:flutter_manager/tool/image.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 
@@ -118,15 +118,6 @@ abstract class PlatformTool with PlatformToolMixin {
     );
   }
 
-  // 获取图片尺寸
-  Future<Size?> getImageSize(String logoPath) async {
-    final image = await decodeImageFile(logoPath);
-    final width = image?.width.toDouble();
-    final height = image?.height.toDouble();
-    if (width == null || height == null) return null;
-    return Size(width, height);
-  }
-
   @override
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
@@ -136,26 +127,22 @@ abstract class PlatformTool with PlatformToolMixin {
   @override
   Future<bool> replaceLogo(String projectPath, String logoPath,
       {ProgressCallback? progressCallback}) async {
+    convertImageType(String? suffixes) => {
+          '.png': ImageType.png,
+          '.jpg': ImageType.jpg,
+          '.ico': ImageType.ico,
+        }[suffixes];
     final logoInfoList = await getLogoInfo(projectPath);
     if (logoInfoList == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
     int index = 0;
     progressCallback?.call(index, logoInfoList.length);
     for (final item in logoInfoList) {
-      final suffixes = File(item.path).suffixes;
-      if (suffixes?.isEmpty ?? true) continue;
-      var src = await decodeImageFile(logoPath);
-      if (src == null) continue;
-      final width = src.width.toInt(), height = src.height.toInt();
-      src = copyResize(src, width: width, height: height);
-      switch (suffixes) {
-        case '.png':
-          if (!await encodePngFile(item.path, src)) continue;
-        case '.jpg':
-          if (!await encodeJpgFile(item.path, src)) continue;
-        case '.ico':
-          if (!await encodeIcoFile(item.path, src)) continue;
-      }
+      final imageType = convertImageType(File(item.path).suffixes);
+      if (imageType == null) continue;
+      final width = item.size.width.toInt(), height = item.size.height.toInt();
+      await ImageTool.resizeFile(logoPath, item.path,
+          width: width, height: height, imageType: imageType);
       progressCallback?.call(++index, logoInfoList.length);
     }
     return true;

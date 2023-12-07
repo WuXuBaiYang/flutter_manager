@@ -1,3 +1,4 @@
+import 'package:flutter_manager/tool/image.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
@@ -53,7 +54,7 @@ class IosPlatformTool extends PlatformTool {
         ..removeWhere((_, value) => value == filename);
       final name = entries.values.join('_');
       final path = join(resPath, filename);
-      final size = await getImageSize(path);
+      final size = await ImageTool.getSize(path);
       if (size == null) continue;
       result.add((name: name, path: path, size: size));
     }
