@@ -9,6 +9,7 @@ import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
 import 'package:image/image.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
@@ -58,7 +59,6 @@ class ImageEditorDialog extends StatelessWidget {
         imageType: CropImageType.png,
       )),
       builder: (context, _) {
-        final provider = context.read<ImageEditorDialogProvider>();
         return CustomDialog(
           title: Row(
             children: [
@@ -74,31 +74,11 @@ class ImageEditorDialog extends StatelessWidget {
               child: const Text('取消'),
             ),
             TextButton(
-              onPressed: () {
-                Tool.pickDirectory(dialogTitle: '选择保存路径').then((result) async {
-                  if (result?.isEmpty ?? true) return null;
-                  return Loading.show(context,
-                      loadFuture: provider.saveOtherPath(result!));
-                }).then((result) {
-                  if (result?.isEmpty ?? true) return;
-                  SnackTool.showMessage(context, message: '图片已保存到 $result');
-                }).catchError((e) {
-                  SnackTool.showMessage(context,
-                      message: '图片另存为失败：${e.toString()}');
-                });
-              },
+              onPressed: () => _saveOtherPath(context),
               child: const Text('另存为'),
             ),
             TextButton(
-              onPressed: () {
-                Loading.show(context, loadFuture: provider.saveCrop())
-                    ?.then((result) {
-                  Navigator.pop(context, result);
-                }).catchError((e) {
-                  SnackTool.showMessage(context,
-                      message: '图片裁剪失败：${e.toString()}');
-                });
-              },
+              onPressed: () => _saveCrop(context),
               child: const Text('确定'),
             ),
           ],
@@ -244,23 +224,17 @@ class ImageEditorDialog extends StatelessWidget {
               ),
             ),
             if (!ratioDisable)
-              Tooltip(
-                message: '裁剪比例',
-                child: DropdownButton<CropAspectRatio>(
-                  alignment: Alignment.center,
-                  value: absoluteRatio ?? actionTuple.ratio,
-                  icon: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 4),
-                    child: Icon(Icons.aspect_ratio),
-                  ),
-                  onChanged: !ratioDisable ? provider.changeRatio : null,
-                  items: CropAspectRatio.values
-                      .map((e) => DropdownMenuItem<CropAspectRatio>(
-                            value: e,
-                            child: Text(e.label),
-                          ))
-                      .toList(),
-                ),
+              CustomPopupMenuButton<CropAspectRatio>.filled(
+                iconSize: 16,
+                tooltip: '裁剪比例',
+                icon: const Icon(Icons.aspect_ratio),
+                itemBuilder: (_) => CropAspectRatio.values
+                    .map((e) => PopupMenuItem<CropAspectRatio>(
+                          value: e,
+                          child: Text(e.label),
+                        ))
+                    .toList(),
+                onSelected: provider.changeRatio,
               ),
             IconButton.filledTonal(
               iconSize: 16,
@@ -273,6 +247,30 @@ class ImageEditorDialog extends StatelessWidget {
         );
       },
     );
+  }
+
+  // 另存为其他路径
+  void _saveOtherPath(BuildContext context) {
+    final provider = context.read<ImageEditorDialogProvider>();
+    Tool.pickDirectory(dialogTitle: '选择保存路径').then((result) async {
+      if (result?.isEmpty ?? true) return null;
+      return Loading.show(context, loadFuture: provider.saveOtherPath(result!));
+    }).then((result) {
+      if (result?.isEmpty ?? true) return;
+      SnackTool.showMessage(context, message: '图片已保存到 $result');
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '图片另存为失败：${e.toString()}');
+    });
+  }
+
+  // 保存裁剪后的图片
+  void _saveCrop(BuildContext context) {
+    final provider = context.read<ImageEditorDialogProvider>();
+    Loading.show(context, loadFuture: provider.saveCrop())?.then((result) {
+      Navigator.pop(context, result);
+    }).catchError((e) {
+      SnackTool.showMessage(context, message: '图片裁剪失败：${e.toString()}');
+    });
   }
 }
 
