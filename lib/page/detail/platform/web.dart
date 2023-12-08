@@ -6,15 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
-import 'widgets/provider.dart';
 
 /*
 * 项目详情-web平台信息页
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformWebPage
-    extends ProjectPlatformPage<ProjectPlatformWebPageProvider> {
+class ProjectPlatformWebPage extends ProjectPlatformPage<
+    ProjectPlatformWebPageProvider, WebPlatformInfoTuple> {
   const ProjectPlatformWebPage({super.key});
 
   @override
@@ -26,42 +25,34 @@ class ProjectPlatformWebPage
       ];
 
   @override
-  List<Widget> buildPlatformItems(BuildContext context) {
+  List<Widget> buildPlatformItems(BuildContext context,
+      PlatformInfoTuple<WebPlatformInfoTuple>? platformInfo) {
     return [
-      _buildLabelItem(context),
-      _buildLogoItem(context),
+      _buildLabelItem(context, platformInfo),
+      _buildLogoItem(context, platformInfo),
     ];
   }
 
   // 构建标签项
-  Widget _buildLabelItem(BuildContext context) {
+  Widget _buildLabelItem(BuildContext context,
+      PlatformInfoTuple<WebPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformWebPageProvider>();
-    return Selector<PlatformProvider, String>(
-      selector: (_, provider) => provider.webInfo?.label ?? '',
-      builder: (_, label, __) {
-        return LabelPlatformItem(
-          project: provider.getProjectInfo(context),
-          platform: provider.platform,
-          label: label,
-        );
-      },
+    return LabelPlatformItem(
+      platform: provider.platform,
+      label: platformInfo?.label ?? '',
+      project: provider.getProjectInfo(context),
     );
   }
 
   // 构建logo项
-  Widget _buildLogoItem(BuildContext context) {
+  Widget _buildLogoItem(BuildContext context,
+      PlatformInfoTuple<WebPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformWebPageProvider>();
-    return Selector<PlatformProvider, WebPlatformInfoTuple?>(
-      selector: (_, provider) => provider.webInfo,
-      builder: (_, tupleInfo, __) {
-        final logos = tupleInfo?.logo ?? [];
-        return LogoPlatformItem(
-          logos: logos,
-          mainAxisExtent: 250,
-          platform: provider.platform,
-          project: provider.getProjectInfo(context),
-        );
-      },
+    return LogoPlatformItem(
+      mainAxisExtent: 250,
+      platform: provider.platform,
+      logos: platformInfo?.logos ?? [],
+      project: provider.getProjectInfo(context),
     );
   }
 }

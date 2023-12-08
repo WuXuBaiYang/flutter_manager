@@ -7,6 +7,14 @@ import 'package:flutter_manager/tool/image.dart';
 import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 
+// 平台基本信息元组
+typedef PlatformInfoTuple<T extends Record> = ({
+  String path,
+  String label,
+  List<PlatformLogoTuple> logos,
+  T info,
+});
+
 // 平台图标信息元组
 typedef PlatformLogoTuple = ({String name, String path, Size size});
 
@@ -15,7 +23,7 @@ typedef PlatformLogoTuple = ({String name, String path, Size size});
 * @author wuxubaiyang
 * @Time 2023/11/29 18:37
 */
-abstract class PlatformTool with PlatformToolMixin {
+abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   // 平台文件夹路径
   PlatformType get platform;
 
@@ -165,9 +173,9 @@ abstract class PlatformTool with PlatformToolMixin {
 * @author wuxubaiyang
 * @Time 2023/11/29 20:13
 */
-abstract mixin class PlatformToolMixin {
+abstract mixin class PlatformToolMixin<T extends Record> {
   // 获取平台信息
-  Future<Record?> getPlatformInfo(String projectPath);
+  Future<PlatformInfoTuple<T>?> getPlatformInfo(String projectPath);
 
   // 获取logo
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
@@ -183,11 +191,7 @@ abstract mixin class PlatformToolMixin {
   Future<bool> setLabel(String projectPath, String label);
 }
 
-/*
-* 支持平台枚举
-* @author wuxubaiyang
-* @Time 2023/11/29 18:58
-*/
+// 支持平台枚举
 enum PlatformType {
   android,
   ios,

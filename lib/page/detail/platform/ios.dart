@@ -6,15 +6,14 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
-import 'widgets/provider.dart';
 
 /*
 * 项目详情-ios平台信息页
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformIosPage
-    extends ProjectPlatformPage<ProjectPlatformIosPageProvider> {
+class ProjectPlatformIosPage extends ProjectPlatformPage<
+    ProjectPlatformIosPageProvider, IosPlatformInfoTuple> {
   const ProjectPlatformIosPage({super.key});
 
   @override
@@ -26,42 +25,34 @@ class ProjectPlatformIosPage
       ];
 
   @override
-  List<Widget> buildPlatformItems(BuildContext context) {
+  List<Widget> buildPlatformItems(BuildContext context,
+      PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) {
     return [
-      _buildLabelItem(context),
-      _buildLogoItem(context),
+      _buildLabelItem(context, platformInfo),
+      _buildLogoItem(context, platformInfo),
     ];
   }
 
   // 构建标签项
-  Widget _buildLabelItem(BuildContext context) {
+  Widget _buildLabelItem(BuildContext context,
+      PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformIosPageProvider>();
-    return Selector<PlatformProvider, String>(
-      selector: (_, provider) => provider.iosInfo?.label ?? '',
-      builder: (_, label, __) {
-        return LabelPlatformItem(
-          project: provider.getProjectInfo(context),
-          platform: provider.platform,
-          label: label,
-        );
-      },
+    return LabelPlatformItem(
+      platform: provider.platform,
+      label: platformInfo?.label ?? '',
+      project: provider.getProjectInfo(context),
     );
   }
 
   // 构建logo项
-  Widget _buildLogoItem(BuildContext context) {
+  Widget _buildLogoItem(BuildContext context,
+      PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformIosPageProvider>();
-    return Selector<PlatformProvider, IosPlatformInfoTuple?>(
-      selector: (_, provider) => provider.iosInfo,
-      builder: (_, tupleInfo, __) {
-        final logos = tupleInfo?.logo ?? [];
-        return LogoPlatformItem(
-          logos: logos,
-          mainAxisExtent: 610,
-          platform: provider.platform,
-          project: provider.getProjectInfo(context),
-        );
-      },
+    return LogoPlatformItem(
+      mainAxisExtent: 610,
+      platform: provider.platform,
+      logos: platformInfo?.logos ?? [],
+      project: provider.getProjectInfo(context),
     );
   }
 }

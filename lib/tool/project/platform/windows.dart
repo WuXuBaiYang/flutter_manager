@@ -5,11 +5,7 @@ import 'package:flutter_manager/tool/tool.dart';
 import 'platform.dart';
 
 // windows平台参数元组
-typedef WindowsPlatformInfoTuple = ({
-  String path,
-  String label,
-  List<PlatformLogoTuple> logo,
-});
+typedef WindowsPlatformInfoTuple = ();
 
 /*
 * windows平台工具类
@@ -30,12 +26,14 @@ class WindowsPlatformTool extends PlatformTool {
   final _labelRegExp = RegExp(r'window.Create\(L"(.*)", origin, size\)');
 
   @override
-  Future<Record?> getPlatformInfo(String projectPath) async {
+  Future<PlatformInfoTuple<WindowsPlatformInfoTuple>?> getPlatformInfo(
+      String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logo: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogoInfo(projectPath) ?? [],
+      info: (),
     );
   }
 

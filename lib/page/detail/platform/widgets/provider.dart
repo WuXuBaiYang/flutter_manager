@@ -1,17 +1,10 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/tool/project/platform/android.dart';
-import 'package:flutter_manager/tool/project/platform/ios.dart';
-import 'package:flutter_manager/tool/project/platform/linux.dart';
-import 'package:flutter_manager/tool/project/platform/macos.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/project/platform/web.dart';
-import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:provider/provider.dart';
@@ -23,35 +16,16 @@ import 'package:provider/provider.dart';
 */
 class PlatformProvider extends BaseProvider {
   // 平台信息表
-  final _platformInfoMap = <PlatformType, Record?>{};
-
-  // 获取android平台信息
-  AndroidPlatformInfoTuple? get androidInfo =>
-      _platformInfoMap[PlatformType.android] as AndroidPlatformInfoTuple?;
-
-  // 获取ios平台信息
-  IosPlatformInfoTuple? get iosInfo =>
-      _platformInfoMap[PlatformType.ios] as IosPlatformInfoTuple?;
-
-  // 获取web平台信息
-  WebPlatformInfoTuple? get webInfo =>
-      _platformInfoMap[PlatformType.web] as WebPlatformInfoTuple?;
-
-  // 获取windows平台信息
-  WindowsPlatformInfoTuple? get windowsInfo =>
-      _platformInfoMap[PlatformType.windows] as WindowsPlatformInfoTuple?;
-
-  // 获取macos平台信息
-  MacosPlatformInfoTuple? get macosInfo =>
-      _platformInfoMap[PlatformType.macos] as MacosPlatformInfoTuple?;
-
-  // 获取linux平台信息
-  LinuxPlatformInfoTuple? get linuxInfo =>
-      _platformInfoMap[PlatformType.linux] as LinuxPlatformInfoTuple?;
+  final _platformInfoMap = <PlatformType, PlatformInfoTuple?>{};
 
   PlatformProvider(Project project) {
     initialize(project.path);
   }
+
+  // 获取平台信息元组
+  PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(
+          PlatformType platform) =>
+      _platformInfoMap[platform] as PlatformInfoTuple<T>?;
 
   // 初始化平台信息
   Future<void> initialize(String projectPath) async {
@@ -61,38 +35,37 @@ class PlatformProvider extends BaseProvider {
     notifyListeners();
   }
 
+  // 创建新平台
+  Future<bool> createPlatform(
+      BuildContext context, Project project, PlatformType platform) async {
+    final hasPlatform = await ProjectTool.createPlatform(project, platform);
+    await initialize(project.path);
+    return hasPlatform;
+  }
+
   // 获取全平台（存在）标签对照表(按照设置排序)
   Map<PlatformType, String> getLabelMap(BuildContext context) {
-    final result = {
-      if (androidInfo != null) PlatformType.android: androidInfo!.label,
-      if (iosInfo != null) PlatformType.ios: iosInfo!.label,
-      if (webInfo != null) PlatformType.web: webInfo!.label,
-      if (windowsInfo != null) PlatformType.windows: windowsInfo!.label,
-      if (macosInfo != null) PlatformType.macos: macosInfo!.label,
-      if (linuxInfo != null) PlatformType.linux: linuxInfo!.label,
-    };
+    var result = {..._platformInfoMap}..removeWhere((_, v) => v?.label == null);
     for (var e in context.read<ProjectProvider>().platformSort) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
-    return result;
+    return result.map<PlatformType, String>(
+      (k, v) => MapEntry(k, v!.label),
+    );
   }
 
   // 获取全平台（存在）图标对照表
   Map<PlatformType, List<PlatformLogoTuple>> getLogoMap(BuildContext context) {
-    final result = {
-      if (androidInfo?.logo != null) PlatformType.android: androidInfo!.logo!,
-      if (iosInfo?.logo != null) PlatformType.ios: iosInfo!.logo,
-      if (webInfo?.logo != null) PlatformType.web: webInfo!.logo,
-      if (windowsInfo?.logo != null) PlatformType.windows: windowsInfo!.logo,
-      if (macosInfo?.logo != null) PlatformType.macos: macosInfo!.logo,
-      if (linuxInfo?.logo != null) PlatformType.linux: linuxInfo!.logo,
-    };
+    var result = {..._platformInfoMap}
+      ..removeWhere((_, v) => v?.logos.isEmpty ?? true);
     for (var e in context.read<ProjectProvider>().platformSort) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
-    return result;
+    return result.map<PlatformType, List<PlatformLogoTuple>>(
+      (k, v) => MapEntry(k, v!.logos),
+    );
   }
 
   // 批量更新label

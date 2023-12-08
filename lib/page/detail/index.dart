@@ -136,7 +136,6 @@ class ProjectDetailPage extends BasePage {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
-    final platforms = provider.getPlatforms(context);
     return ListTile(
       isThreeLine: true,
       title: Row(
@@ -169,16 +168,21 @@ class ProjectDetailPage extends BasePage {
             data: Theme.of(context).copyWith(
               canvasColor: Colors.transparent,
             ),
-            child: Wrap(
-              spacing: 6,
-              children: List.generate(platforms.length, (i) {
-                final label = platforms[i].name;
-                return RawChip(
-                  label: Text(label),
-                  padding: EdgeInsets.zero,
-                  labelStyle: Theme.of(context).textTheme.bodySmall,
+            child: Consumer<PlatformProvider>(
+              builder: (_, __, ___) {
+                final platforms = provider.getPlatforms(context);
+                return Wrap(
+                  spacing: 6,
+                  children: List.generate(platforms.length, (i) {
+                    final label = platforms[i].name;
+                    return RawChip(
+                      label: Text(label),
+                      padding: EdgeInsets.zero,
+                      labelStyle: Theme.of(context).textTheme.bodySmall,
+                    );
+                  }),
                 );
-              }),
+              },
             ),
           ),
         ],
@@ -210,7 +214,7 @@ class ProjectDetailPage extends BasePage {
         ),
         IconButton.outlined(
           tooltip: '打开项目目录',
-          icon: const Icon(Icons.open_in_browser_rounded),
+          icon: const Icon(Icons.file_open_outlined),
           onPressed: () => Tool.openLocalPath(project.path),
         ),
         FilledButton.icon(

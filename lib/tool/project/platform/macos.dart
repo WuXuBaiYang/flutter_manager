@@ -4,11 +4,7 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // macos平台参数元组
-typedef MacosPlatformInfoTuple = ({
-  String path,
-  String label,
-  List<PlatformLogoTuple> logo,
-});
+typedef MacosPlatformInfoTuple = ();
 
 /*
 * macos平台工具类
@@ -33,12 +29,14 @@ class MacosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<Record?> getPlatformInfo(String projectPath) async {
+  Future<PlatformInfoTuple<MacosPlatformInfoTuple>?> getPlatformInfo(
+      String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logo: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogoInfo(projectPath) ?? [],
+      info: (),
     );
   }
 
