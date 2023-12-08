@@ -11,7 +11,7 @@ import 'package:flutter_manager/page/detail/platform/android.dart';
 import 'package:flutter_manager/page/detail/platform/ios.dart';
 import 'package:flutter_manager/page/detail/platform/linux.dart';
 import 'package:flutter_manager/page/detail/platform/macos.dart';
-import 'package:flutter_manager/page/detail/platform/provider.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/page/detail/platform/web.dart';
 import 'package:flutter_manager/page/detail/platform/windows.dart';
 import 'package:flutter_manager/provider/project.dart';

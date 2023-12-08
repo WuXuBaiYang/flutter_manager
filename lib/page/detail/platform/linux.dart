@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/page/detail/platform/base.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'platform_item.dart';
+import 'widgets/platform_item.dart';
 
 /*
 * 项目详情-linux平台信息页
