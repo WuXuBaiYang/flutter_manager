@@ -188,46 +188,21 @@ class ProjectDetailPage extends BasePage {
     if (project == null) return const SizedBox();
     return Row(
       children: [
-        SizedBox(
-          height: 95,
-          child: Transform.flip(
-            flipX: true,
-            child: Wrap(
-              direction: Axis.vertical,
-              alignment: WrapAlignment.end,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                IconButton.outlined(
-                  tooltip: '替换图标',
-                  onPressed: () => _replaceLogos(context, project),
-                  icon: const Icon(Icons.imagesearch_roller_rounded),
-                ),
-                IconButton.outlined(
-                  tooltip: '字体管理',
-                  icon: const Icon(Icons.font_download_outlined),
-                  onPressed: () => _fontManager(context, project),
-                ),
-                IconButton.outlined(
-                  tooltip: '修改项目名',
-                  icon: const Icon(Icons.edit_attributes_rounded),
-                  onPressed: () => _replaceLabels(context, project),
-                ),
-                IconButton.outlined(
-                  tooltip: 'Asset管理',
-                  icon: const Icon(Icons.assessment_outlined),
-                  onPressed: ()=> _assetManager(context, project),
-                ),
-                IconButton.outlined(
-                  tooltip: '打开项目目录',
-                  icon: const Icon(Icons.open_in_browser_rounded),
-                  onPressed: () => Tool.openLocalPath(project.path),
-                ),
-              ],
-            ),
-          ),
+        IconButton.outlined(
+          tooltip: 'Asset管理',
+          icon: const Icon(Icons.assessment_outlined),
+          onPressed: () => _assetManager(context, project),
         ),
-        const SizedBox(width: 14),
+        IconButton.outlined(
+          tooltip: '字体管理',
+          icon: const Icon(Icons.font_download_outlined),
+          onPressed: () => _fontManager(context, project),
+        ),
+        IconButton.outlined(
+          tooltip: '打开项目目录',
+          icon: const Icon(Icons.open_in_browser_rounded),
+          onPressed: () => Tool.openLocalPath(project.path),
+        ),
         FilledButton.icon(
           label: const Text('打包'),
           icon: const Icon(Icons.build),
@@ -240,63 +215,98 @@ class ProjectDetailPage extends BasePage {
           ),
           onPressed: () => ProjectBuildDialog.show(context, project: project),
         ),
-        const SizedBox(width: 14),
-      ],
+      ].expand((e) => [e, const SizedBox(width: 14)]).toList(),
     );
   }
 
   // 构建标题栏标题
   Widget _buildAppBarTitle(BuildContext context) {
+    return Selector<ProjectDetailPageProvider, bool>(
+      selector: (_, provider) => provider.isScrollTop,
+      builder: (_, isScrollTop, __) {
+        return AnimatedCrossFade(
+          duration: const Duration(milliseconds: 200),
+          crossFadeState: !isScrollTop
+              ? CrossFadeState.showFirst
+              : CrossFadeState.showSecond,
+          firstChild: _buildScrollActions(context),
+          secondChild: _buildScrollTopActions(context),
+        );
+      },
+    );
+  }
+
+  // 构建标题栏默认操作按钮
+  Widget _buildScrollActions(BuildContext context) {
+    final provider = context.read<ProjectDetailPageProvider>();
+    final project = provider.project;
+    if (project == null) return const SizedBox();
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          TextButton.icon(
+            label: const Text('项目名'),
+            icon: const Icon(Icons.edit_attributes_rounded),
+            onPressed: () => _replaceLabels(context, project),
+          ),
+          TextButton.icon(
+            label: const Text('图标'),
+            onPressed: () => _replaceLogos(context, project),
+            icon: const Icon(Icons.imagesearch_roller_rounded),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  // 构建滚动到顶部后的操作按钮
+  Widget _buildScrollTopActions(BuildContext context) {
     final provider = context.read<ProjectDetailPageProvider>();
     final project = provider.project;
     final borderRadius = BorderRadius.circular(8);
     if (project == null) return const SizedBox();
-    return Selector<ProjectDetailPageProvider, bool>(
-      selector: (_, provider) => provider.isScrollTop,
-      builder: (_, isScrollTop, __) {
-        return AnimatedOpacity(
-          opacity: isScrollTop ? 1 : 0,
-          duration: const Duration(milliseconds: 200),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ClipRRect(
-                borderRadius: borderRadius,
-                child: Image.file(
-                  File(project.logo),
-                  fit: BoxFit.cover,
-                  width: 35,
-                  height: 35,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Text(project.label),
-              const SizedBox(width: 8),
-              _buildEnvironmentBadge(project),
-              const SizedBox(width: 4),
-              Transform.translate(
-                offset: Offset.zero.translate(0, 6),
-                child: IconButton(
-                  iconSize: 16,
-                  icon: const Icon(Icons.edit),
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () =>
-                      ProjectImportDialog.show(context, project: project)
-                          .then(provider.updateProject),
-                ),
-              ),
-              const Spacer(),
-              ElevatedButton.icon(
-                label: const Text('打包'),
-                icon: const Icon(Icons.build),
-                onPressed: () =>
-                    ProjectBuildDialog.show(context, project: project),
-              ),
-              const SizedBox(width: 14),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ClipRRect(
+            borderRadius: borderRadius,
+            child: Image.file(
+              File(project.logo),
+              fit: BoxFit.cover,
+              width: 35,
+              height: 35,
+            ),
           ),
-        );
-      },
+          const SizedBox(width: 14),
+          Text(project.label),
+          const SizedBox(width: 8),
+          _buildEnvironmentBadge(project),
+          const SizedBox(width: 4),
+          Transform.translate(
+            offset: Offset.zero.translate(0, 6),
+            child: IconButton(
+              iconSize: 16,
+              icon: const Icon(Icons.edit),
+              visualDensity: VisualDensity.compact,
+              onPressed: () =>
+                  ProjectImportDialog.show(context, project: project)
+                      .then(provider.updateProject),
+            ),
+          ),
+          const Spacer(),
+          TextButton.icon(
+            label: const Text('打包'),
+            icon: const Icon(Icons.build),
+            onPressed: () => ProjectBuildDialog.show(context, project: project),
+          ),
+          const SizedBox(width: 14),
+        ],
+      ),
     );
   }
 
@@ -349,7 +359,6 @@ class ProjectDetailPage extends BasePage {
           ));
     });
   }
-
 
   // Asset管理
   void _assetManager(BuildContext context, Project project) {
