@@ -18,8 +18,14 @@ class PlatformProvider extends BaseProvider {
   // 平台信息表
   final _platformInfoMap = <PlatformType, PlatformInfoTuple?>{};
 
-  PlatformProvider(Project project) {
-    initialize(project.path);
+  // 当前支持的平台列表（排序后）
+  List<PlatformType> _platformList = [];
+
+  // 获取当前支持的平台列表（排序后）
+  List<PlatformType> get platformList => _platformList;
+
+  PlatformProvider(BuildContext context, Project project) {
+    initialize(context, project.path);
   }
 
   // 获取平台信息元组
@@ -28,19 +34,32 @@ class PlatformProvider extends BaseProvider {
       _platformInfoMap[platform] as PlatformInfoTuple<T>?;
 
   // 初始化平台信息
-  Future<void> initialize(String projectPath) async {
+  Future<void> initialize(BuildContext context, String projectPath) async {
+    _platformList = ProjectTool.getPlatforms(projectPath);
+    final platformSort = context.read<ProjectProvider>().platformSort;
+    for (var e in platformSort) {
+      if (!_platformList.contains(e)) continue;
+      _platformList.remove(e);
+      _platformList.add(e);
+    }
     await Future.wait(PlatformType.values.map(
       (e) => _updatePlatformInfo(e, projectPath, false),
     ));
     notifyListeners();
   }
 
-  // 创建新平台
-  Future<bool> createPlatform(
-      BuildContext context, Project project, PlatformType platform) async {
-    final hasPlatform = await ProjectTool.createPlatform(project, platform);
-    await initialize(project.path);
-    return hasPlatform;
+  // 创建平台
+  Future<void> createPlatform(
+      BuildContext context, Project project, PlatformType platform) {
+    return ProjectTool.createPlatform(project, platform)
+        .then((result) async => initialize(context, project.path));
+  }
+
+  // 移除平台
+  Future<void> removePlatform(
+      BuildContext context, Project project, PlatformType platform) {
+    return ProjectTool.removePlatform(project, platform)
+        .then((result) async => initialize(context, project.path));
   }
 
   // 获取全平台（存在）标签对照表(按照设置排序)
@@ -69,27 +88,25 @@ class PlatformProvider extends BaseProvider {
   }
 
   // 批量更新label
-  Future<void> updateLabels(
-      String projectPath, Map<PlatformType, String> platformLabels) async {
-    await Future.wait(platformLabels.entries.map(
+  Future<void> updateLabels(BuildContext context, String projectPath,
+      Map<PlatformType, String> platformLabels) {
+    return Future.wait(platformLabels.entries.map(
       (e) => ProjectTool.setLabel(e.key, projectPath, e.value),
-    ));
-    return initialize(projectPath);
+    )).then((_) async => initialize(context, projectPath));
   }
 
   // 批量更新图标
-  Future<void> updateLogos(
-      String projectPath, ProjectLogoDialogFormTuple result,
-      {ProgressCallback? progressCallback, int total = -1}) async {
+  Future<void> updateLogos(BuildContext context, String projectPath,
+      ProjectLogoDialogFormTuple result,
+      {ProgressCallback? progressCallback, int total = -1}) {
     int count = 0;
-    for (var e in result.platforms) {
-      await ProjectTool.replaceLogo(e, projectPath, result.logo,
+    return Future.forEach(result.platforms, (e) {
+      return ProjectTool.replaceLogo(e, projectPath, result.logo,
           progressCallback: (c, t) {
         progressCallback?.call(count + c, total);
         if (c >= t) count += c;
       });
-    }
-    return initialize(projectPath);
+    }).then((_) async => initialize(context, projectPath));
   }
 
   // 更新label

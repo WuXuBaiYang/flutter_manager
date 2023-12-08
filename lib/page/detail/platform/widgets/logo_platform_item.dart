@@ -56,18 +56,20 @@ class LogoPlatformItem extends StatelessWidget {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          TextButton.icon(
-            label: Text('x${logos.length}'),
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        ProjectLogoGrid(logoList: logos),
+        Align(
+          alignment: Alignment.topRight,
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
             onPressed: () => _replaceLogo(context),
             icon: const Icon(Icons.add_circle_outline_rounded),
           ),
-          ProjectLogoGrid(logoList: logos),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

@@ -76,9 +76,9 @@ abstract class ProjectPlatformProvider extends BaseProvider {
   ProjectPlatformProvider(BuildContext context, this.platform);
 
   // 创建平台信息
-  Future<bool> createPlatform(BuildContext context) async {
+  Future<void> createPlatform(BuildContext context) async {
     final project = getProjectInfo(context);
-    if (project == null) return false;
+    if (project == null) return;
     return context
         .read<PlatformProvider>()
         .createPlatform(context, project, platform);
