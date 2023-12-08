@@ -3,11 +3,9 @@ import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/label_platform_item.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/project_logo.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'widgets/logo_platform_item.dart';
-import 'widgets/platform_item.dart';
 import 'widgets/provider.dart';
 
 /*
@@ -55,8 +53,8 @@ class ProjectPlatformAndroidPage
     final provider = context.read<ProjectPlatformAndroidPageProvider>();
     return Selector<PlatformProvider, AndroidPlatformInfoTuple?>(
       selector: (_, provider) => provider.androidInfo,
-      builder: (_, androidInfo, __) {
-        final logos = androidInfo?.logo ?? [];
+      builder: (_, tupleInfo, __) {
+        final logos = tupleInfo?.logo ?? [];
         return LogoPlatformItem(
           logos: logos,
           platform: provider.platform,

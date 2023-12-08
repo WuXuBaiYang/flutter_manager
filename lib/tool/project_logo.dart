@@ -43,14 +43,14 @@ class ProjectLogoGrid extends StatelessWidget {
         crossAxisAlignment: WrapCrossAlignment.end,
         children: List.generate(logoList.length, (i) {
           final item = logoList[i];
-          return _buildLogoItem(item);
+          return _buildLogoItem(context, item);
         }),
       ),
     );
   }
 
   // 构建图标项
-  Widget _buildLogoItem(PlatformLogoTuple item) {
+  Widget _buildLogoItem(BuildContext context, PlatformLogoTuple item) {
     return InkWell(
       borderRadius: BorderRadius.circular(4),
       onTap: onTap != null ? () => onTap?.call(item) : null,
@@ -61,12 +61,15 @@ class ProjectLogoGrid extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints.loose(maxSize),
-              child: Image(
-                image: FileImage(File(item.path))..evict(),
-              ),
+              child: Image(image: FileImage(File(item.path))..evict()),
             ),
             const SizedBox(height: 4),
-            Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              item.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ],
         ),
       ),
