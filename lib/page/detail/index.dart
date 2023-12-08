@@ -286,7 +286,7 @@ class ProjectDetailPage extends BasePage {
           PopupMenuButton(
             iconSize: 20,
             tooltip: '创建平台',
-            icon: const Icon(Icons.add_circle_outline_rounded),
+            icon: const Icon(Icons.add_link_rounded),
             onSelected: (v) => _createPlatform(context, project, v),
             itemBuilder: (_) => createPlatforms
                 .map((e) => PopupMenuItem(
