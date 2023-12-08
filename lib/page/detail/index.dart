@@ -29,7 +29,6 @@ import 'package:flutter_manager/widget/dialog/project_label.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
-import 'package:flutter_manager/widget/keep_alive.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -390,24 +389,12 @@ class ProjectDetailPageProvider extends BaseProvider {
 
   // 项目平台对照表
   final platformMap = <PlatformType, Widget>{
-    PlatformType.android: const KeepAliveWrapper(
-      child: ProjectPlatformAndroidPage(),
-    ),
-    PlatformType.ios: const KeepAliveWrapper(
-      child: ProjectPlatformIosPage(),
-    ),
-    PlatformType.web: const KeepAliveWrapper(
-      child: ProjectPlatformWebPage(),
-    ),
-    PlatformType.macos: const KeepAliveWrapper(
-      child: ProjectPlatformMacosPage(),
-    ),
-    PlatformType.windows: const KeepAliveWrapper(
-      child: ProjectPlatformWindowsPage(),
-    ),
-    PlatformType.linux: const KeepAliveWrapper(
-      child: ProjectPlatformLinuxPage(),
-    ),
+    PlatformType.android: const ProjectPlatformAndroidPage(),
+    PlatformType.ios: const ProjectPlatformIosPage(),
+    PlatformType.web: const ProjectPlatformWebPage(),
+    PlatformType.macos: const ProjectPlatformMacosPage(),
+    PlatformType.windows: const ProjectPlatformWindowsPage(),
+    PlatformType.linux: const ProjectPlatformLinuxPage(),
   };
 
   ProjectDetailPageProvider(BuildContext context) {

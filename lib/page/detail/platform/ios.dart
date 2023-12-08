@@ -57,7 +57,7 @@ class ProjectPlatformIosPage
         final logos = tupleInfo?.logo ?? [];
         return LogoPlatformItem(
           logos: logos,
-          mainAxisExtent: 715,
+          mainAxisExtent: 610,
           platform: provider.platform,
           project: provider.getProjectInfo(context),
         );
