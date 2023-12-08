@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
@@ -11,10 +12,11 @@ import 'package:flutter_manager/page/detail/platform/android.dart';
 import 'package:flutter_manager/page/detail/platform/ios.dart';
 import 'package:flutter_manager/page/detail/platform/linux.dart';
 import 'package:flutter_manager/page/detail/platform/macos.dart';
-import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/page/detail/platform/web.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/page/detail/platform/windows.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
@@ -41,6 +43,9 @@ typedef ProjectDetailRouteTuple = ({Project project});
 */
 class ProjectDetailPage extends BasePage {
   const ProjectDetailPage({super.key});
+
+  @override
+  bool get primary => false;
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
@@ -76,6 +81,8 @@ class ProjectDetailPage extends BasePage {
     final provider = context.read<ProjectDetailPageProvider>();
     final color = provider.project?.getColor();
     final hasColor = color != Colors.transparent;
+    final themeProvider = context.read<ThemeProvider>();
+    final brightness = themeProvider.getBrightness(context);
     return DefaultTabController(
       length: PlatformType.values.length,
       child: NestedScrollView(
@@ -84,11 +91,15 @@ class ProjectDetailPage extends BasePage {
           return [
             SliverAppBar(
               pinned: true,
-              titleSpacing: 0,
-              title: _buildAppBarTitle(context),
+              titleSpacing: 6,
+              automaticallyImplyLeading: false,
               expandedHeight: provider.headerHeight,
               scrolledUnderElevation: hasColor ? 8 : 1,
               surfaceTintColor: hasColor ? color : null,
+              title: buildStatusBar(context, brightness, actions: [
+                const BackButton(),
+                Expanded(child: _buildAppBarTitle(context)),
+              ]),
               flexibleSpace: FlexibleSpaceBar(
                 background: Card(
                   child: Container(
@@ -256,7 +267,6 @@ class ProjectDetailPage extends BasePage {
             onPressed: () => _replaceLogos(context, project),
             icon: const Icon(Icons.imagesearch_roller_rounded),
           ),
-          const SizedBox(width: 8),
         ],
       ),
     );
@@ -268,45 +278,29 @@ class ProjectDetailPage extends BasePage {
     final project = provider.project;
     final borderRadius = BorderRadius.circular(8);
     if (project == null) return const SizedBox();
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          ClipRRect(
-            borderRadius: borderRadius,
-            child: Image.file(
-              File(project.logo),
-              fit: BoxFit.cover,
-              width: 35,
-              height: 35,
-            ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        ClipRRect(
+          borderRadius: borderRadius,
+          child: Image.file(
+            File(project.logo),
+            fit: BoxFit.cover,
+            width: 30,
+            height: 30,
           ),
-          const SizedBox(width: 14),
-          Text(project.label),
-          const SizedBox(width: 8),
-          _buildEnvironmentBadge(project),
-          const SizedBox(width: 4),
-          Transform.translate(
-            offset: Offset.zero.translate(0, 6),
-            child: IconButton(
-              iconSize: 16,
-              icon: const Icon(Icons.edit),
-              visualDensity: VisualDensity.compact,
-              onPressed: () =>
-                  ProjectImportDialog.show(context, project: project)
-                      .then(provider.updateProject),
-            ),
-          ),
-          const Spacer(),
-          TextButton.icon(
-            label: const Text('打包'),
-            icon: const Icon(Icons.build),
-            onPressed: () => ProjectBuildDialog.show(context, project: project),
-          ),
-          const SizedBox(width: 14),
-        ],
-      ),
+        ),
+        const SizedBox(width: 14),
+        Text(project.label),
+        const SizedBox(width: 8),
+        _buildEnvironmentBadge(project),
+        const Spacer(),
+        TextButton.icon(
+          label: const Text('打包'),
+          icon: const Icon(Icons.build),
+          onPressed: () => ProjectBuildDialog.show(context, project: project),
+        ),
+      ],
     );
   }
 

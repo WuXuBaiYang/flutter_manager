@@ -43,7 +43,7 @@ abstract class BasePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (primary) _buildStatusBar(context, brightness),
+          if (primary) buildStatusBar(context, brightness),
           Expanded(child: buildWidget(context)),
         ],
       ),
@@ -51,7 +51,8 @@ abstract class BasePage extends StatelessWidget {
   }
 
   // 构建状态条
-  Widget _buildStatusBar(BuildContext context, Brightness brightness) {
+  Widget buildStatusBar(BuildContext context, Brightness brightness,
+      {List<Widget> actions = const []}) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: DragToMoveArea(
@@ -59,15 +60,28 @@ abstract class BasePage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4),
           child: Row(
             children: [
-              const Spacer(),
-              WindowCaptionButton.minimize(
-                brightness: brightness,
-                onPressed: windowManager.minimize,
+              if (actions.isEmpty) const Spacer(),
+              ...actions,
+              ClipRRect(
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(4),
+                child: WindowCaptionButton.minimize(
+                  brightness: brightness,
+                  onPressed: windowManager.minimize,
+                ),
               ),
-              _buildMaximizeButton(brightness),
-              WindowCaptionButton.close(
-                brightness: brightness,
-                onPressed: windowManager.close,
+              ClipRRect(
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(4),
+                child: _buildMaximizeButton(brightness),
+              ),
+              ClipRRect(
+                clipBehavior: Clip.antiAlias,
+                borderRadius: BorderRadius.circular(4),
+                child: WindowCaptionButton.close(
+                  brightness: brightness,
+                  onPressed: windowManager.close,
+                ),
               ),
             ].expand<Widget>((child) {
               return [child, const SizedBox(width: 4)];
