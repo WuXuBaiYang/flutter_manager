@@ -1,13 +1,8 @@
 import 'package:flutter_manager/tool/image.dart';
-
 import 'platform.dart';
 
 // web平台参数元组
-typedef WebPlatformInfoTuple = ({
-  String path,
-  String label,
-  List<PlatformLogoTuple> logo,
-});
+typedef WebPlatformInfoTuple = ();
 
 /*
 * web平台工具类
@@ -32,12 +27,14 @@ class WebPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _manifestPath);
 
   @override
-  Future<Record?> getPlatformInfo(String projectPath) async {
+  Future<PlatformInfoTuple<WebPlatformInfoTuple>?> getPlatformInfo(
+      String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logo: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogoInfo(projectPath) ?? [],
+      info: (),
     );
   }
 

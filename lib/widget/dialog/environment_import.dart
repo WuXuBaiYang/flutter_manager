@@ -90,11 +90,11 @@ class EnvironmentImportDialog extends StatelessWidget {
 
   // 提交表单
   void _submitForm(BuildContext context) {
-    final provider = context.read<EnvironmentImportDialogProvider>();
-    Loading.show(
-      context,
-      loadFuture: provider.submitForm(context, environment),
-    ).then((result) {
+    context
+        .read<EnvironmentImportDialogProvider>()
+        .submitForm(context, environment)
+        .loading(context)
+        .then((result) {
       if (result != null) Navigator.pop(context, result);
     }).catchError((e) {
       SnackTool.showMessage(context, message: '操作失败：${e.toString()}');

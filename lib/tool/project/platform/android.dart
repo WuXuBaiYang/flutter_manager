@@ -4,18 +4,14 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // android平台信息元组
-typedef AndroidPlatformInfoTuple = ({
-  String path,
-  String label,
-  List<PlatformLogoTuple>? logo,
-});
+typedef AndroidPlatformInfoTuple = ();
 
 /*
 * Android平台工具类
 * @author wuxubaiyang
 * @Time 2023/11/29 14:55
 */
-class AndroidPlatformTool extends PlatformTool {
+class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   @override
   PlatformType get platform => PlatformType.android;
 
@@ -33,12 +29,14 @@ class AndroidPlatformTool extends PlatformTool {
       readPlatformFileXml(projectPath, _manifestPath);
 
   @override
-  Future<Record?> getPlatformInfo(String projectPath) async {
+  Future<PlatformInfoTuple<AndroidPlatformInfoTuple>?> getPlatformInfo(
+      String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logo: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogoInfo(projectPath) ?? [],
+      info: (),
     );
   }
 

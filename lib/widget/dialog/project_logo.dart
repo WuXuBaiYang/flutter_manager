@@ -98,8 +98,10 @@ class ProjectLogoDialog extends StatelessWidget {
 
   // 提交表单
   void _submitForm(BuildContext context) {
-    final provider = context.read<ProjectLogoDialogProvider>();
-    provider.submitForm(context).then((result) {
+    context
+        .read<ProjectLogoDialogProvider>()
+        .submitForm(context)
+        .then((result) {
       if (result != null) Navigator.pop(context, result);
     }).catchError((e) {
       SnackTool.showMessage(context, message: '操作失败：${e.toString()}');

@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
@@ -51,6 +52,13 @@ class ProjectTool {
         workingDirectory: project.path);
     if (output == null) return false;
     return hasPlatform(platform, project.path);
+  }
+
+  // 移除项目平台
+  static Future<bool> removePlatform(
+      Project project, PlatformType platform) async {
+    await FileTool.clearDir(join(project.path, platform.name));
+    return !hasPlatform(platform, project.path);
   }
 
   // 获取项目详情页平台排序

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/page/detail/platform/base.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
+import 'package:flutter_manager/tool/project/platform/linux.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-import 'platform_item.dart';
+import 'widgets/label_platform_item.dart';
 
 /*
 * 项目详情-linux平台信息页
 * @author wuxubaiyang
 * @Time 2023/11/30 17:04
 */
-class ProjectPlatformLinuxPage
-    extends ProjectPlatformPage<ProjectPlatformLinuxPageProvider> {
+class ProjectPlatformLinuxPage extends ProjectPlatformPage<
+    ProjectPlatformLinuxPageProvider, LinuxPlatformInfoTuple> {
   const ProjectPlatformLinuxPage({super.key});
 
   @override
@@ -23,8 +24,22 @@ class ProjectPlatformLinuxPage
       ];
 
   @override
-  List<ProjectPlatformItem> buildPlatformItems(BuildContext context) {
-    return [];
+  List<Widget> buildPlatformItems(BuildContext context,
+      PlatformInfoTuple<LinuxPlatformInfoTuple>? platformInfo) {
+    return [
+      _buildLabelItem(context, platformInfo),
+    ];
+  }
+
+  // 构建标签项
+  Widget _buildLabelItem(BuildContext context,
+      PlatformInfoTuple<LinuxPlatformInfoTuple>? platformInfo) {
+    final provider = context.read<ProjectPlatformLinuxPageProvider>();
+    return LabelPlatformItem(
+      project: provider.project,
+      platform: provider.platform,
+      label: platformInfo?.label ?? '',
+    );
   }
 }
 

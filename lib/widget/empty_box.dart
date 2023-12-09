@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 */
 class EmptyBoxView extends StatelessWidget {
   // 子元素
-  final Widget child;
+  final Widget? child;
 
   // 是否为空
   final bool isEmpty;
@@ -32,9 +32,9 @@ class EmptyBoxView extends StatelessWidget {
 
   const EmptyBoxView({
     super.key,
-    required this.child,
     required this.isEmpty,
     this.icon,
+    this.child,
     this.color,
     this.iconData,
     this.hint = '',
@@ -47,9 +47,9 @@ class EmptyBoxView extends StatelessWidget {
     final crossFadeState =
         isEmpty ? CrossFadeState.showSecond : CrossFadeState.showFirst;
     return AnimatedCrossFade(
-      firstChild: child,
       duration: duration,
       crossFadeState: crossFadeState,
+      firstChild: child ?? const SizedBox(),
       secondChild: _buildPlaceholder(context),
       layoutBuilder: (topChild, topChildKey, bottomChild, bottomChildKey) {
         return Stack(

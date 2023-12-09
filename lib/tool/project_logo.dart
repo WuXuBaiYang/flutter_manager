@@ -20,11 +20,15 @@ class ProjectLogoGrid extends StatelessWidget {
   // 内间距
   final EdgeInsetsGeometry padding;
 
+  // 对齐
+  final WrapAlignment alignment;
+
   const ProjectLogoGrid({
     super.key,
     required this.logoList,
     this.onTap,
     this.maxSize = const Size.square(55),
+    this.alignment = WrapAlignment.center,
     this.padding = const EdgeInsets.all(8),
   });
 
@@ -35,18 +39,18 @@ class ProjectLogoGrid extends StatelessWidget {
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
-        alignment: WrapAlignment.center,
+        alignment: alignment,
         crossAxisAlignment: WrapCrossAlignment.end,
         children: List.generate(logoList.length, (i) {
           final item = logoList[i];
-          return _buildLogoItem(item);
+          return _buildLogoItem(context, item);
         }),
       ),
     );
   }
 
   // 构建图标项
-  Widget _buildLogoItem(PlatformLogoTuple item) {
+  Widget _buildLogoItem(BuildContext context, PlatformLogoTuple item) {
     return InkWell(
       borderRadius: BorderRadius.circular(4),
       onTap: onTap != null ? () => onTap?.call(item) : null,
@@ -57,12 +61,15 @@ class ProjectLogoGrid extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints.loose(maxSize),
-              child: Image(
-                image: FileImage(File(item.path))..evict(),
-              ),
+              child: Image(image: FileImage(File(item.path))..evict()),
             ),
             const SizedBox(height: 4),
-            Text(item.name, maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              item.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ],
         ),
       ),

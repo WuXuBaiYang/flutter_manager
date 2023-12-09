@@ -254,12 +254,14 @@ class ImageEditorDialog extends StatelessWidget {
 
   // 另存为其他路径
   void _saveOtherPath(BuildContext context) {
-    final provider = context.read<ImageEditorDialogProvider>();
     Tool.pickDirectory(dialogTitle: '选择保存路径').then((result) async {
-      if (result?.isEmpty ?? true) return null;
-      return Loading.show(context, loadFuture: provider.saveOtherPath(result!));
+      if (result == null) return null;
+      return context
+          .read<ImageEditorDialogProvider>()
+          .saveOtherPath(result)
+          .loading(context);
     }).then((result) {
-      if (result?.isEmpty ?? true) return;
+      if (result == null) return;
       SnackTool.showMessage(context, message: '图片已保存到 $result');
     }).catchError((e) {
       SnackTool.showMessage(context, message: '图片另存为失败：${e.toString()}');
@@ -268,10 +270,12 @@ class ImageEditorDialog extends StatelessWidget {
 
   // 保存裁剪后的图片
   void _saveCrop(BuildContext context) {
-    final provider = context.read<ImageEditorDialogProvider>();
-    Loading.show(context, loadFuture: provider.saveCrop()).then((result) {
-      Navigator.pop(context, result);
-    }).catchError((e) {
+    context
+        .read<ImageEditorDialogProvider>()
+        .saveCrop()
+        .loading(context)
+        .then((result) => Navigator.pop(context, result))
+        .catchError((e) {
       SnackTool.showMessage(context, message: '图片裁剪失败：${e.toString()}');
     });
   }

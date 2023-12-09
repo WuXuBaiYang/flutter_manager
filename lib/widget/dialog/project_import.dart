@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/provider/environment.dart';
@@ -40,7 +41,7 @@ class ProjectImportDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEdit = project != null;
     return ChangeNotifierProvider(
-      create: (_) => ProjectImportDialogProvider(project),
+      create: (_) => ProjectImportDialogProvider(context, project),
       builder: (context, _) {
         return CustomDialog(
           scrollable: true,
@@ -179,11 +180,11 @@ class ProjectImportDialog extends StatelessWidget {
 
   // 提交表单
   void _submitForm(BuildContext context) {
-    final provider = context.read<ProjectImportDialogProvider>();
-    Loading.show(
-      context,
-      loadFuture: provider.submitForm(context),
-    )?.then((result) {
+    context
+        .read<ProjectImportDialogProvider>()
+        .submitForm()
+        .loading(context)
+        .then((result) {
       if (result != null) Navigator.pop(context, result);
     }).catchError((e) {
       SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
@@ -206,7 +207,7 @@ typedef ProjectImportDialogFormTuple = ({
 * @author wuxubaiyang
 * @Time 2023/11/27 14:25
 */
-class ProjectImportDialogProvider extends ChangeNotifier {
+class ProjectImportDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
@@ -228,7 +229,7 @@ class ProjectImportDialogProvider extends ChangeNotifier {
   // 获取表单数据
   ProjectImportDialogFormTuple get formData => _formData;
 
-  ProjectImportDialogProvider(Project? item) {
+  ProjectImportDialogProvider(super.context, Project? item) {
     initialize(item);
   }
 
@@ -248,26 +249,8 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     if (envs.isNotEmpty) envFormFieldKey.currentState?.didChange(envs.first.id);
   }
 
-  // 更新表单数据
-  void updateFormData({
-    String? path,
-    String? label,
-    String? logo,
-    Id? envId,
-    int? color,
-    bool? pinned,
-  }) =>
-      _formData = (
-        path: path ?? _formData.path,
-        label: label ?? _formData.label,
-        logo: logo ?? _formData.logo,
-        envId: envId ?? _formData.envId,
-        color: color ?? _formData.color,
-        pinned: pinned ?? _formData.pinned,
-      );
-
   // 导入项目
-  Future<Project?> submitForm(BuildContext context) async {
+  Future<Project?> submitForm() async {
     final formState = formKey.currentState;
     if (!(formState?.validate() ?? false)) return null;
     formState!.save();
@@ -291,4 +274,22 @@ class ProjectImportDialogProvider extends ChangeNotifier {
     labelFormFieldKey.currentState?.didChange(project.label);
     logoFormFieldKey.currentState?.didChange(project.logo);
   }
+
+  // 更新表单数据
+  void updateFormData({
+    String? path,
+    String? label,
+    String? logo,
+    Id? envId,
+    int? color,
+    bool? pinned,
+  }) =>
+      _formData = (
+        path: path ?? _formData.path,
+        label: label ?? _formData.label,
+        logo: logo ?? _formData.logo,
+        envId: envId ?? _formData.envId,
+        color: color ?? _formData.color,
+        pinned: pinned ?? _formData.pinned,
+      );
 }

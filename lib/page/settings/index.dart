@@ -139,7 +139,7 @@ class SettingsPage extends BasePage {
 
   // 构建主题模式设置项
   Widget _buildThemeMode(BuildContext context) {
-    final provider = context.watch<ThemeProvider>();
+    final provider = context.read<ThemeProvider>();
     return SettingItem(
       label: '配色模式',
       key: context.read<SettingProvider>().themeModeKey,
@@ -159,7 +159,7 @@ class SettingsPage extends BasePage {
 
   // 构建主题色彩设置项
   Widget _buildThemeScheme(BuildContext context) {
-    final provider = context.watch<ThemeProvider>();
+    final provider = context.read<ThemeProvider>();
     final scheme = provider.themeSchemeModel;
     return SettingItem(
       label: '应用配色',
