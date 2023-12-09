@@ -62,9 +62,7 @@ class CacheManage extends BaseManage {
       if (!_check(key)) return null;
       final json = _sp.getString(key);
       if (json != null) return jsonDecode(json) as T;
-    } catch (_) {
-      print('object');
-    }
+    } catch (_) {}
     return null;
   }
 

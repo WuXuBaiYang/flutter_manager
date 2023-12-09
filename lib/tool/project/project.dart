@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/model/database/project.dart';

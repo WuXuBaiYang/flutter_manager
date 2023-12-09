@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/theme_scheme.dart';
 import 'half_circle.dart';
