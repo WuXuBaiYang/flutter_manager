@@ -72,7 +72,8 @@ class ThemeProvider extends BaseProvider {
   ThemeProvider(super.context);
 
   // 切换主题模式
-  Future<void> changeThemeMode(ThemeMode themeMode) async {
+  Future<void> changeThemeMode(ThemeMode? themeMode) async {
+    if (themeMode == null) return;
     _brightness = null;
     _themeMode = themeMode;
     cache.setInt(_themeModeKey, _themeMode!.index);
@@ -80,7 +81,8 @@ class ThemeProvider extends BaseProvider {
   }
 
   // 切换主题配色方案
-  Future<void> changeThemeScheme(ThemeSchemeModel schemeModel) async {
+  Future<void> changeThemeScheme(ThemeSchemeModel? schemeModel) async {
+    if (schemeModel == null) return;
     _scheme = schemeModel.scheme;
     cache.setInt(_themeSchemeKey, _scheme!.index);
     return _updateThemeData();

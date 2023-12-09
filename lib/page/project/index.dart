@@ -144,14 +144,12 @@ class ProjectPage extends BasePage {
   bool _checkEnvironment(BuildContext context) {
     final hasEnvironment = context.read<EnvironmentProvider>().hasEnvironment;
     if (hasEnvironment) return true;
-    SnackTool.showMessage(
-      context,
-      message: '缺少Flutter环境',
-      action: SnackBarAction(
-        label: '去设置',
-        onPressed: context.read<SettingProvider>().goEnvironment,
-      ),
-    );
+    SnackTool.showMessage(context,
+        message: '缺少Flutter环境',
+        action: SnackBarAction(
+          label: '去设置',
+          onPressed: context.read<SettingProvider>().goEnvironment,
+        ));
     return hasEnvironment;
   }
 }
@@ -167,14 +165,12 @@ class ProjectPageProvider extends BaseProvider {
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.read<ProjectProvider>()..remove(item);
-    SnackTool.showMessage(
-      context,
-      message: '${item.label} 项目已移除',
-      action: SnackBarAction(
-        label: '撤销',
-        onPressed: () => provider.update(item),
-      ),
-    );
+    SnackTool.showMessage(context,
+        message: '${item.label} 项目已移除',
+        action: SnackBarAction(
+          label: '撤销',
+          onPressed: () => provider.update(item),
+        ));
   }
 
   // 文件拖拽完成

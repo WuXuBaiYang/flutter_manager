@@ -152,10 +152,7 @@ class SettingsPage extends BasePage {
                   child: Text(mode.label),
                 ))
             .toList(),
-        onChanged: (value) {
-          if (value == null) return;
-          provider.changeThemeMode(value);
-        },
+        onChanged: provider.changeThemeMode,
       ),
     );
   }
@@ -177,9 +174,7 @@ class SettingsPage extends BasePage {
           context,
           current: scheme,
           schemes: provider.getThemeSchemeList(),
-        ).then((value) {
-          if (value != null) provider.changeThemeScheme(value);
-        }),
+        ).then(provider.changeThemeScheme),
       ),
     );
   }

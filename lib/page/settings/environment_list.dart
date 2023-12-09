@@ -133,33 +133,26 @@ class EnvironmentList extends StatelessWidget {
   // 移除环境
   void _removeEnvironment(BuildContext context, Environment item) {
     final provider = context.read<EnvironmentProvider>()..remove(item);
-    SnackTool.showMessage(
-      context,
-      message: '${item.title} 环境已移除',
-      action: SnackBarAction(
-        label: '撤销',
-        onPressed: () => provider.update(item),
-      ),
-    );
+    SnackTool.showMessage(context,
+        message: '${item.title} 环境已移除',
+        action: SnackBarAction(
+          label: '撤销',
+          onPressed: () => provider.update(item),
+        ));
   }
 
   // 环境移除确认
   Future<bool> _confirmDismiss(BuildContext context, Environment item) =>
-      context.read<EnvironmentProvider>().removeValidator(item).then(
-        (result) {
-          final canRemove = result == null;
-          if (!canRemove) SnackTool.showMessage(context, message: result);
-          return canRemove;
-        },
-      );
+      context.read<EnvironmentProvider>().removeValidator(item).then((result) {
+        final canRemove = result == null;
+        if (!canRemove) SnackTool.showMessage(context, message: result);
+        return canRemove;
+      });
 
   // 刷新环境
   void _refreshEnvironment(BuildContext context, Environment item) {
     final provider = context.read<EnvironmentProvider>();
-    Loading.show(
-      context,
-      loadFuture: provider.refresh(item),
-    )?.then((_) {}).catchError((e) {
+    provider.refresh(item).loading(context).then((_) {}).catchError((e) {
       SnackTool.showMessage(context, message: '刷新失败：$e');
       provider.update(item);
     });

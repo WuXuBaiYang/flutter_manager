@@ -93,12 +93,6 @@ class ProjectGridView extends StatelessWidget {
 
   // 构建项目子项
   Widget _buildProjectItem(BuildContext context, Project item) {
-    var bodyStyle = Theme.of(context).textTheme.bodySmall;
-    final color = bodyStyle?.color?.withOpacity(0.4);
-    bodyStyle = bodyStyle?.copyWith(color: color);
-    final borderRadius = BorderRadius.circular(8);
-    const contentPadding = EdgeInsets.symmetric(horizontal: 14);
-    const imageSize = Size.square(45);
     return CustomContextMenuRegion(
       key: ValueKey(item.id),
       contextMenu: _contextMenu,
@@ -117,48 +111,57 @@ class ProjectGridView extends StatelessWidget {
             padding: const EdgeInsets.only(right: 14),
             child: const Icon(Icons.delete, color: Colors.white),
           ),
-          child: Container(
-            width: double.maxFinite,
-            height: double.maxFinite,
-            color: item.getColor(0.2),
-            child: ListTile(
-              contentPadding: contentPadding,
-              title: Row(children: [
-                ConstrainedBox(
-                  constraints: BoxConstraints.loose(const Size.fromWidth(110)),
-                  child: Text(item.label,
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
+          child: _buildProjectItemContent(context, item),
+        ),
+      ),
+    );
+  }
+
+  // 构建项目子项内容
+  Widget _buildProjectItemContent(BuildContext context, Project item) {
+    var bodyStyle = Theme.of(context).textTheme.bodySmall;
+    final color = bodyStyle?.color?.withOpacity(0.4);
+    bodyStyle = bodyStyle?.copyWith(color: color);
+    const contentPadding = EdgeInsets.symmetric(horizontal: 14);
+    final borderRadius = BorderRadius.circular(8);
+    const imageSize = Size.square(45);
+    return Container(
+      width: double.maxFinite,
+      height: double.maxFinite,
+      color: item.getColor(0.2),
+      child: ListTile(
+        contentPadding: contentPadding,
+        title: Row(children: [
+          ConstrainedBox(
+            constraints: BoxConstraints.loose(const Size.fromWidth(110)),
+            child:
+                Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+          const SizedBox(width: 8),
+          _buildEnvironmentBadge(item),
+        ]),
+        subtitle: Text(item.path,
+            maxLines: 2, style: bodyStyle, overflow: TextOverflow.ellipsis),
+        leading: item.logo.isNotEmpty
+            ? ClipRRect(
+                borderRadius: borderRadius,
+                child: Image.file(
+                  File(item.logo),
+                  fit: BoxFit.cover,
+                  width: imageSize.width,
+                  height: imageSize.height,
                 ),
-                const SizedBox(width: 8),
-                _buildEnvironmentBadge(item),
-              ]),
-              subtitle: Text(item.path,
-                  maxLines: 2,
-                  style: bodyStyle,
-                  overflow: TextOverflow.ellipsis),
-              leading: item.logo.isNotEmpty
-                  ? ClipRRect(
-                      borderRadius: borderRadius,
-                      child: Image.file(
-                        File(item.logo),
-                        fit: BoxFit.cover,
-                        width: imageSize.width,
-                        height: imageSize.height,
-                      ),
-                    )
-                  : SizedBox.fromSize(size: imageSize),
-              trailing: Transform.rotate(
-                angle: item.pinned ? 45 : 0,
-                child: IconButton(
-                  iconSize: 18,
-                  icon: const Icon(Icons.push_pin_outlined),
-                  onPressed: () => onPinned?.call(item),
-                ),
-              ),
-              onTap: () => onDetail?.call(item),
-            ),
+              )
+            : SizedBox.fromSize(size: imageSize),
+        trailing: Transform.rotate(
+          angle: item.pinned ? 45 : 0,
+          child: IconButton(
+            iconSize: 18,
+            icon: const Icon(Icons.push_pin_outlined),
+            onPressed: () => onPinned?.call(item),
           ),
         ),
+        onTap: () => onDetail?.call(item),
       ),
     );
   }

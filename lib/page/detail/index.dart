@@ -239,11 +239,7 @@ class ProjectDetailPage extends BasePage {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Image.file(
-                File(project.logo),
-                width: 35,
-                height: 35,
-              ),
+              Image.file(File(project.logo), width: 35, height: 35),
               const SizedBox(width: 14),
               Text(project.label),
               const SizedBox(width: 8),
@@ -296,8 +292,7 @@ class ProjectDetailPage extends BasePage {
       platformLabelMap: provider.getLabelMap(context),
     ).then((result) {
       if (result == null) return;
-      Loading.show(context,
-          loadFuture: provider.updateLabels(project.path, result));
+      provider.updateLabels(project.path, result).loading(context);
     });
   }
 
@@ -312,16 +307,10 @@ class ProjectDetailPage extends BasePage {
         if (!result.platforms.contains(e.key)) return p;
         return p + e.value.length;
       });
-      Loading.show(context,
-          dismissible: false,
-          progress: controller.stream,
-          loadFuture: provider.updateLogos(
-            project.path,
-            result,
-            progressCallback: (count, _) {
-              controller.add(count / total);
-            },
-          ));
+      provider
+          .updateLogos(project.path, result,
+              progressCallback: (count, _) => controller.add(count / total))
+          .loading(context, progress: controller.stream, dismissible: false);
     });
   }
 }
@@ -332,14 +321,14 @@ class ProjectDetailPage extends BasePage {
 * @Time 2023/11/30 16:35
 */
 class ProjectDetailPageProvider extends BaseProvider {
+  // 头部内容高度
+  final headerHeight = 200.0;
+
   // 缓存项目信息
   Project? _project;
 
   // 项目信息
   Project? get project => _project;
-
-  // 头部内容高度
-  final headerHeight = 200.0;
 
   // 判断当前是否已经滚动到顶部
   bool get isScrollTop => scrollController.offset >= headerHeight;
