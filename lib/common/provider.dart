@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/tool/snack.dart';
 
 /*
 * 代理基类
@@ -10,4 +11,8 @@ abstract class BaseProvider extends ChangeNotifier {
   final BuildContext context;
 
   BaseProvider(this.context);
+
+  // 展示消息
+  void showMessage(String message) =>
+      SnackTool.showMessage(context, message: message);
 }

@@ -4,7 +4,6 @@ import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project_logo.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/image_editor.dart';
 import 'package:provider/provider.dart';
@@ -65,33 +64,25 @@ class LogoPlatformItem extends StatelessWidget {
           child: IconButton(
             padding: EdgeInsets.zero,
             visualDensity: VisualDensity.compact,
-            onPressed: () => _replaceLogo(context),
+            onPressed: () => Tool.pickImageWithEdit(
+              context,
+              dialogTitle: '选择项目图标',
+              absoluteRatio: CropAspectRatio.ratio1_1,
+            ).then((result) {
+              if (result == null) return;
+              if (project == null) return onSubmitted?.call(result);
+              final controller = StreamController<double>();
+              context
+                  .read<PlatformProvider>()
+                  .updateLogo(platform, project!.path, result,
+                      progressCallback: (c, t) => controller.add(c / t))
+                  .loading(context,
+                      progress: controller.stream, dismissible: false);
+            }),
             icon: const Icon(Icons.add_circle_outline_rounded),
           ),
         ),
       ],
     );
-  }
-
-  // 替换logo
-  void _replaceLogo(BuildContext context) {
-    Tool.pickImageWithEdit(
-      context,
-      dialogTitle: '选择项目图标',
-      absoluteRatio: CropAspectRatio.ratio1_1,
-    ).then((result) {
-      if (result == null) return;
-      if (project == null) return onSubmitted?.call(result);
-      final controller = StreamController<double>();
-      context
-          .read<PlatformProvider>()
-          .updateLogo(platform, project!.path, result,
-              progressCallback: (c, t) => controller.add(c / t))
-          .loading(context, progress: controller.stream)
-          .then((_) => null)
-          .catchError((e) {
-        SnackTool.showMessage(context, message: '修改失败：${e.toString()}');
-      });
-    });
   }
 }

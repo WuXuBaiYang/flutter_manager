@@ -18,7 +18,6 @@ import 'package:flutter_manager/page/detail/platform/windows.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
@@ -213,12 +212,18 @@ class ProjectDetailPage extends BasePage {
         IconButton.outlined(
           tooltip: 'Asset管理',
           icon: const Icon(Icons.assessment_outlined),
-          onPressed: () => _assetManager(context, project),
+          onPressed: () {
+            /// TODO: Asset管理
+            ProjectAssetDialog.show(context);
+          },
         ),
         IconButton.outlined(
           tooltip: '字体管理',
           icon: const Icon(Icons.font_download_outlined),
-          onPressed: () => _fontManager(context, project),
+          onPressed: () {
+            /// TODO: 字体管理
+            ProjectFontDialog.show(context);
+          },
         ),
         IconButton.outlined(
           tooltip: '打开项目目录',
@@ -278,42 +283,60 @@ class ProjectDetailPage extends BasePage {
     final provider = context.read<ProjectDetailPageProvider>();
     final project = provider.project;
     if (project == null) return const SizedBox();
+    final platformProvider = context.read<PlatformProvider>();
     final createPlatforms =
         PlatformType.values.where((e) => !platforms.contains(e)).toList();
-    return Row(
-      children: [
-        if (createPlatforms.isNotEmpty)
-          PopupMenuButton(
-            iconSize: 20,
-            tooltip: '创建平台',
-            icon: const Icon(Icons.add_link_rounded),
-            onSelected: (v) => _createPlatform(context, project, v),
-            itemBuilder: (_) => createPlatforms
-                .map((e) => PopupMenuItem(
-                      value: e,
-                      child: Text(e.name),
-                    ))
-                .toList(),
-          ),
-        const Spacer(),
-        Tooltip(
-          message: '替换项目名',
-          child: TextButton.icon(
-            label: const Text('名称'),
-            icon: const Icon(Icons.edit_attributes_rounded, size: 18),
-            onPressed: () => _replaceLabels(context, project),
-          ),
+    return Row(children: [
+      if (createPlatforms.isNotEmpty)
+        PopupMenuButton(
+          iconSize: 20,
+          tooltip: '创建平台',
+          icon: const Icon(Icons.add_link_rounded),
+          onSelected: (v) =>
+              platformProvider.createPlatform(project, v).loading(context),
+          itemBuilder: (_) => createPlatforms
+              .map((e) => PopupMenuItem(
+                    value: e,
+                    child: Text(e.name),
+                  ))
+              .toList(),
         ),
-        Tooltip(
-          message: '替换图标',
-          child: TextButton.icon(
-            label: const Text('图标'),
-            onPressed: () => _replaceLogos(context, project),
-            icon: const Icon(Icons.imagesearch_roller_rounded, size: 18),
-          ),
+      const Spacer(),
+      Tooltip(
+        message: '替换项目名',
+        child: TextButton.icon(
+          label: const Text('名称'),
+          icon: const Icon(Icons.edit_attributes_rounded, size: 18),
+          onPressed: () => ProjectLabelDialog.show(
+            context,
+            platformLabelMap: platformProvider.labelMap,
+          ).then((result) {
+            if (result == null) return;
+            platformProvider
+                .updateLabels(project.path, result)
+                .loading(context, dismissible: false);
+          }),
         ),
-      ],
-    );
+      ),
+      Tooltip(
+        message: '替换图标',
+        child: TextButton.icon(
+          label: const Text('图标'),
+          onPressed: () => ProjectLogoDialog.show(
+            context,
+            platformLogoMap: platformProvider.logoMap,
+          ).then((result) {
+            if (result == null) return;
+            final controller = StreamController<double>();
+            platformProvider
+                .updateLogos(project.path, result, controller: controller)
+                .loading(context,
+                    progress: controller.stream, dismissible: false);
+          }),
+          icon: const Icon(Icons.imagesearch_roller_rounded, size: 18),
+        ),
+      ),
+    ]);
   }
 
   // 构建项目环境标签
@@ -327,59 +350,6 @@ class ProjectDetailPage extends BasePage {
         return EnvironmentBadge(environment: environment);
       },
     );
-  }
-
-  // 创建平台
-  void _createPlatform(
-      BuildContext context, Project project, PlatformType platform) {
-    final provider = context.read<PlatformProvider>();
-    provider
-        .createPlatform(project, platform)
-        .loading(context)
-        .then((_) => null)
-        .catchError((e) {
-      SnackTool.showMessage(context, message: '创建失败：${e.toString()}');
-    });
-  }
-
-  // 替换别名
-  void _replaceLabels(BuildContext context, Project project) {
-    final provider = context.read<PlatformProvider>();
-    ProjectLabelDialog.show(
-      context,
-      platformLabelMap: provider.labelMap,
-    ).then((result) {
-      if (result == null) return;
-      provider.updateLabels(project.path, result).loading(context);
-    });
-  }
-
-  // 替换图标
-  void _replaceLogos(BuildContext context, Project project) {
-    final provider = context.read<PlatformProvider>();
-    final logoMap = provider.logoMap;
-    ProjectLogoDialog.show(context, platformLogoMap: logoMap).then((result) {
-      if (result == null) return;
-      final controller = StreamController<double>();
-      final total = logoMap.entries.fold<int>(0, (p, e) {
-        if (!result.platforms.contains(e.key)) return p;
-        return p + e.value.length;
-      });
-      provider
-          .updateLogos(project.path, result,
-              progressCallback: (count, _) => controller.add(count / total))
-          .loading(context, progress: controller.stream, dismissible: false);
-    });
-  }
-
-  // Asset管理
-  void _assetManager(BuildContext context, Project project) {
-    ProjectAssetDialog.show(context);
-  }
-
-  // 字体管理
-  void _fontManager(BuildContext context, Project project) {
-    ProjectFontDialog.show(context);
   }
 }
 

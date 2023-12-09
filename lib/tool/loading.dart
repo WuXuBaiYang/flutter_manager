@@ -58,7 +58,7 @@ class Loading {
                 children: [
                   CircularProgressIndicator(value: progress),
                   if (progress != null)
-                    Text('${(progress * 100).toStringAsFixed(1)}%',
+                    Text('${(progress * 100).toInt()}%',
                         style: textStyle?.copyWith(fontSize: 10)),
                 ],
               );

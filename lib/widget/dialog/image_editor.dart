@@ -58,6 +58,7 @@ class ImageEditorDialog extends StatelessWidget {
         imageType: ImageType.png,
       )),
       builder: (context, _) {
+        final provider = context.watch<ImageEditorDialogProvider>();
         return CustomDialog(
           title: Row(
             children: [
@@ -70,7 +71,12 @@ class ImageEditorDialog extends StatelessWidget {
           actions: [
             TextButton(
               child: const Text('另存为'),
-              onPressed: () => _saveOtherPath(context),
+              onPressed: () {
+                provider.saveOtherPath().loading(context).then((result) {
+                  if (result == null) return;
+                  SnackTool.showMessage(context, message: '图片已保存到 $result');
+                });
+              },
             ),
             TextButton(
               child: const Text('使用原图'),
@@ -82,7 +88,9 @@ class ImageEditorDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () => _saveCrop(context),
+              onPressed: () => provider.saveCrop().loading(context).then((v) {
+                Navigator.pop(context, v);
+              }),
             ),
           ],
         );
@@ -251,34 +259,6 @@ class ImageEditorDialog extends StatelessWidget {
       },
     );
   }
-
-  // 另存为其他路径
-  void _saveOtherPath(BuildContext context) {
-    Tool.pickDirectory(dialogTitle: '选择保存路径').then((result) async {
-      if (result == null) return null;
-      return context
-          .read<ImageEditorDialogProvider>()
-          .saveOtherPath(result)
-          .loading(context);
-    }).then((result) {
-      if (result == null) return;
-      SnackTool.showMessage(context, message: '图片已保存到 $result');
-    }).catchError((e) {
-      SnackTool.showMessage(context, message: '图片另存为失败：${e.toString()}');
-    });
-  }
-
-  // 保存裁剪后的图片
-  void _saveCrop(BuildContext context) {
-    context
-        .read<ImageEditorDialogProvider>()
-        .saveCrop()
-        .loading(context)
-        .then((result) => Navigator.pop(context, result))
-        .catchError((e) {
-      SnackTool.showMessage(context, message: '图片裁剪失败：${e.toString()}');
-    });
-  }
 }
 
 // 图片编辑操作项元组
@@ -314,17 +294,31 @@ class ImageEditorDialogProvider extends BaseProvider {
       : _actionTuple = _initializeActionTuple;
 
   // 另存为其他路径
-  Future<String?> saveOtherPath(String path) =>
-      saveCrop(savePath: join(path, _imageFileName));
+  Future<String?> saveOtherPath() async {
+    try {
+      final result = await Tool.pickDirectory(dialogTitle: '选择保存路径');
+      if (result != null) {
+        return saveCrop(savePath: join(result, _imageFileName));
+      }
+    } catch (e) {
+      showMessage('图片另存为失败：${e.toString()}');
+    }
+    return null;
+  }
 
   // 保存裁剪后的图片并返回路径
   Future<String?> saveCrop({String? savePath}) async {
-    final baseDir = await Tool.getFileCachePath();
-    final cropImage = await controller.onCropImage();
-    if (baseDir == null || cropImage == null) return null;
-    savePath ??= join(baseDir, _imageFileName);
-    return ImageTool.saveData(
-        cropImage.bytes, savePath, _actionTuple.imageType);
+    try {
+      final baseDir = await Tool.getFileCachePath();
+      final cropImage = await controller.onCropImage();
+      if (baseDir == null || cropImage == null) return null;
+      savePath ??= join(baseDir, _imageFileName);
+      return ImageTool.saveData(
+          cropImage.bytes, savePath, _actionTuple.imageType);
+    } catch (e) {
+      showMessage('图片裁剪失败：${e.toString()}');
+    }
+    return null;
   }
 
   // 修改图片圆角

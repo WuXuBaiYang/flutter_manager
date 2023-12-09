@@ -50,8 +50,12 @@ class PlatformProvider extends BaseProvider {
   // 创建平台
   Future<void> createPlatform(Project? project, PlatformType platform) async {
     if (project == null) return;
-    return ProjectTool.createPlatform(project, platform)
-        .then((result) async => initialize(project.path));
+    try {
+      final result = await ProjectTool.createPlatform(project, platform);
+      if (result) return initialize(project.path);
+    } catch (e) {
+      showMessage('创建失败：${e.toString()}');
+    }
   }
 
   // 移除平台
@@ -88,43 +92,62 @@ class PlatformProvider extends BaseProvider {
 
   // 批量更新label
   Future<void> updateLabels(
-      String projectPath, Map<PlatformType, String> platformLabels) {
-    return Future.wait(platformLabels.entries.map(
-      (e) => ProjectTool.setLabel(e.key, projectPath, e.value),
-    )).then((_) async => initialize(projectPath));
+      String projectPath, Map<PlatformType, String>? labelData) async {
+    if (labelData == null) return;
+    try {
+      await Future.wait(labelData.entries
+          .map((e) => ProjectTool.setLabel(e.key, projectPath, e.value)));
+      return initialize(projectPath);
+    } catch (e) {
+      showMessage('标签修改失败：${e.toString()}');
+    }
   }
 
   // 批量更新图标
   Future<void> updateLogos(
-      String projectPath, ProjectLogoDialogFormTuple result,
-      {ProgressCallback? progressCallback, int total = -1}) {
-    int count = 0;
-    return Future.forEach(result.platforms, (e) {
-      return ProjectTool.replaceLogo(e, projectPath, result.logo,
-          progressCallback: (c, t) {
-        progressCallback?.call(count + c, total);
-        if (c >= t) count += c;
-      });
-    }).then((_) async => initialize(projectPath));
+      String projectPath, ProjectLogoDialogFormTuple? logoData,
+      {StreamController<double>? controller}) async {
+    if (logoData == null) return;
+    try {
+      double progress = 0;
+      final ratio = 1 / logoData.platforms.length;
+      for (var e in logoData.platforms) {
+        await ProjectTool.replaceLogo(e, projectPath, logoData.logo,
+            progressCallback: (c, t) {
+          final part = ratio * (c / t);
+          controller?.add(progress + part);
+        });
+        progress += ratio;
+      }
+      return initialize(projectPath);
+    } catch (e) {
+      showMessage('图标修改失败：${e.toString()}');
+    }
   }
 
   // 更新label
-  Future<bool> updateLabel(
+  Future<void> updateLabel(
       PlatformType platform, String projectPath, String label) async {
-    final result = await ProjectTool.setLabel(platform, projectPath, label);
-    if (result) _updatePlatformInfo(platform, projectPath);
-    return result;
+    try {
+      final result = await ProjectTool.setLabel(platform, projectPath, label);
+      if (result) _updatePlatformInfo(platform, projectPath);
+    } catch (e) {
+      showMessage('标签修改失败：${e.toString()}');
+    }
   }
 
   // 更新图标
-  Future<bool> updateLogo(
+  Future<void> updateLogo(
       PlatformType platform, String projectPath, String logoPath,
       {ProgressCallback? progressCallback}) async {
-    final result = await ProjectTool.replaceLogo(
-        platform, projectPath, logoPath,
-        progressCallback: progressCallback);
-    if (result) _updatePlatformInfo(platform, projectPath);
-    return result;
+    try {
+      final result = await ProjectTool.replaceLogo(
+          platform, projectPath, logoPath,
+          progressCallback: progressCallback);
+      if (result) _updatePlatformInfo(platform, projectPath);
+    } catch (e) {
+      showMessage('图标修改失败：${e.toString()}');
+    }
   }
 
   // 更新平台信息

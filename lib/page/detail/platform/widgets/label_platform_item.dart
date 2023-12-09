@@ -3,7 +3,6 @@ import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:provider/provider.dart';
 import 'platform_item.dart';
 
@@ -39,6 +38,7 @@ class LabelPlatformItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<PlatformProvider>();
     final controller = ProjectPlatformItemController();
     final textController = TextEditingController(text: label);
     return ProjectPlatformItem.extent(
@@ -49,7 +49,12 @@ class LabelPlatformItem extends StatelessWidget {
         controller.edit(false);
         textController.text = label;
       },
-      onSubmitted: () => _submitLabel(context, textController.text),
+      onSubmitted: () {
+        if (project == null) return onSubmitted?.call(label);
+        provider
+            .updateLabel(platform, project!.path, textController.text)
+            .loading(context, dismissible: false);
+      },
       content: _buildLabelItem(context, controller, textController),
     );
   }
@@ -75,18 +80,5 @@ class LabelPlatformItem extends StatelessWidget {
         return validator?.call(value);
       },
     );
-  }
-
-  // 提交label
-  void _submitLabel(BuildContext context, String label) {
-    if (project == null) return onSubmitted?.call(label);
-    context
-        .read<PlatformProvider>()
-        .updateLabel(platform, project!.path, label)
-        .loading(context)
-        .then((_) => null)
-        .catchError((e) {
-      SnackTool.showMessage(context, message: '修改失败：${e.toString()}');
-    });
   }
 }
