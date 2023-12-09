@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'log.dart';
+import 'dart:async';
 
 /*
 * 加载弹窗动画
@@ -8,83 +8,73 @@ import 'log.dart';
 */
 class Loading {
   // 加载弹窗dialog缓存
-  static Future? _loadingDialog;
+  static Future? _loading;
 
   // 展示加载弹窗
-  static Future<T?>? show<T>(
+  static Future<T?> show<T>(
     BuildContext context, {
     required Future<T?> loadFuture,
     bool dismissible = true,
-    BoxConstraints? constraints,
-    Stream<double>? progressStream,
-    Widget? child,
+    Stream<double>? progress,
   }) async {
+    final buildFlag = Completer<bool>();
     final navigator = Navigator.of(context);
-    final start = DateTime.now();
-    const duration = Duration(milliseconds: 300);
     try {
-      if (_loadingDialog != null) navigator.maybePop();
-      _loadingDialog = showDialog<void>(
-        context: context,
-        barrierDismissible: dismissible,
-        builder: (_) => _buildLoadingView(child,
-            constraints: constraints, progressStream: progressStream),
-      )..whenComplete(() => _loadingDialog = null);
-      final result = await loadFuture;
-      return result;
+      if (_loading != null) navigator.maybePop();
+      _loading = showDialog<void>(
+          context: context,
+          barrierDismissible: dismissible,
+          builder: (_) {
+            WidgetsBinding.instance
+                .addPostFrameCallback((_) => buildFlag.complete(false));
+            return _buildLoading(context, progress);
+          })
+        ..whenComplete(() => _loading = null);
+      return await loadFuture;
     } catch (e) {
-      LogTool.e('弹窗请求异常：', error: e);
       rethrow;
     } finally {
-      // 如果传入的future加载时间过短（还不够弹窗动画时间），则进行等待
-      final end = DateTime.now().subtract(duration);
-      if (end.compareTo(start) < 0) await Future.delayed(duration);
-      if (_loadingDialog != null) await navigator.maybePop();
+      await buildFlag.future;
+      if (_loading != null) await navigator.maybePop();
     }
   }
 
   // 构建加载视图
-  static Widget _buildLoadingView(Widget? child,
-      {BoxConstraints? constraints, Stream<double>? progressStream}) {
+  static Widget _buildLoading(
+      BuildContext context, Stream<double>? progressStream) {
+    final textStyle = Theme.of(context).textTheme.bodySmall;
+    final constraints = BoxConstraints.tight(const Size.square(80));
     return Center(
       child: Card(
-        child: ConstrainedBox(
-          constraints: constraints ??
-              BoxConstraints.loose(
-                const Size.fromWidth(80),
-              ),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                StreamBuilder<double>(
-                  stream: progressStream,
-                  builder: (_, snap) {
-                    final progress = snap.data;
-                    return Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        CircularProgressIndicator(value: progress),
-                        if (progress != null)
-                          Text(
-                            '${(progress * 100).toStringAsFixed(1)}%',
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                      ],
-                    );
-                  },
-                ),
-                if (child != null) ...[
-                  const SizedBox(height: 8),
-                  child,
+        child: Container(
+          constraints: constraints,
+          padding: const EdgeInsets.all(8),
+          child: StreamBuilder<double>(
+            stream: progressStream,
+            builder: (_, snap) {
+              final progress = snap.data;
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(value: progress),
+                  if (progress != null)
+                    Text('${(progress * 100).toStringAsFixed(1)}%',
+                        style: textStyle?.copyWith(fontSize: 10)),
                 ],
-              ],
-            ),
+              );
+            },
           ),
         ),
       ),
     );
+  }
+}
+
+// 扩展future方法实现loading
+extension LoadingFuture<T> on Future<T> {
+  Future<T?> loading(BuildContext context,
+      {bool dismissible = true, Stream<double>? progress}) {
+    return Loading.show(context,
+        loadFuture: this, dismissible: dismissible, progress: progress);
   }
 }

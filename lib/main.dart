@@ -10,6 +10,7 @@ import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 import 'package:window_manager/window_manager.dart';
 import 'generated/l10n.dart';
 import 'provider/project.dart';
@@ -36,52 +37,68 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(MultiProvider(
-    providers: [
-      ChangeNotifierProvider<ThemeProvider>(
-        create: (_) => ThemeProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => WindowProvider(),
-      ),
-      ChangeNotifierProvider<EnvironmentProvider>(
-        create: (_) => EnvironmentProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => ProjectProvider(),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => SettingProvider(),
-      ),
-    ],
-    child: const MyApp(),
-  ));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // 加载providers
+  List<SingleChildWidget> _loadProviders(BuildContext context) {
+    return [
+      ChangeNotifierProvider<ThemeProvider>(
+        create: (_) => ThemeProvider(context),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => WindowProvider(context),
+      ),
+      ChangeNotifierProvider<EnvironmentProvider>(
+        create: (_) => EnvironmentProvider(context),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => ProjectProvider(context),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => SettingProvider(context),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<ThemeProvider>();
-    return MaterialApp(
-      title: 'Flutter项目管理',
-      theme: provider.themeData,
-      themeMode: provider.themeMode,
-      darkTheme: provider.darkThemeData,
-      navigatorKey: router.navigateKey,
-      debugShowCheckedModeBanner: false,
-      supportedLocales: S.delegate.supportedLocales,
-      localizationsDelegates: const [
-        S.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        ChineseCupertinoLocalizations.delegate,
-      ],
-      onGenerateRoute: router.onGenerateRoute(
-        routesMap: RoutePath.routes,
-      ),
-      home: const HomePage(),
+    return MultiProvider(
+      providers: _loadProviders(context),
+      builder: (context, _) {
+        return _buildMaterialApp(context);
+      },
+    );
+  }
+
+  // 构建MaterialApp
+  Widget _buildMaterialApp(BuildContext context) {
+    return Consumer<ThemeProvider>(
+      builder: (_, provider, child) {
+        return MaterialApp(
+          title: 'Flutter项目管理',
+          theme: provider.themeData,
+          themeMode: provider.themeMode,
+          darkTheme: provider.darkThemeData,
+          navigatorKey: router.navigateKey,
+          debugShowCheckedModeBanner: false,
+          supportedLocales: S.delegate.supportedLocales,
+          localizationsDelegates: const [
+            S.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            ChineseCupertinoLocalizations.delegate,
+          ],
+          onGenerateRoute: router.onGenerateRoute(
+            routesMap: RoutePath.routes,
+          ),
+          home: child,
+        );
+      },
+      child: const HomePage(),
     );
   }
 }

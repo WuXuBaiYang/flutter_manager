@@ -5,4 +5,9 @@ import 'package:flutter/material.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 11:14
 */
-abstract class BaseProvider extends ChangeNotifier {}
+abstract class BaseProvider extends ChangeNotifier {
+  // context
+  final BuildContext context;
+
+  BaseProvider(this.context);
+}

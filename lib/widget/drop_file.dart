@@ -52,7 +52,7 @@ class DropFileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DropFileViewProvider(),
+      create: (_) => DropFileViewProvider(context),
       builder: (context, _) {
         final provider = context.read<DropFileViewProvider>();
         return DropTarget(
@@ -115,6 +115,8 @@ class DropFileViewProvider extends BaseProvider {
 
   // 获取文件拖拽状态
   FileDropStateTuple? get dropState => _dropState;
+
+  DropFileViewProvider(super.context);
 
   // 更新拖拽状态
   void updateDropState(bool warning, String message) {

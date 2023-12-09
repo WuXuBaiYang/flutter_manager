@@ -37,7 +37,7 @@ class ProjectProvider extends BaseProvider {
   List<PlatformType> get platformSort =>
       _platformSort ??= ProjectTool.getPlatformSort();
 
-  ProjectProvider() {
+  ProjectProvider(super.context) {
     initialize();
   }
 

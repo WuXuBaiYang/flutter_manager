@@ -76,7 +76,7 @@ abstract class ProjectPlatformProvider extends BaseProvider {
   // 是否存在平台信息
   bool get hasPlatform => _hasPlatform;
 
-  ProjectPlatformProvider(BuildContext context, this.platform) {
+  ProjectPlatformProvider(super.context, this.platform) {
     final project = getProjectInfo(context);
     if (project == null) return;
     // 初始化是否存在平台信息

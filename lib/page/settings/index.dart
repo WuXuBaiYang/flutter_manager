@@ -139,11 +139,11 @@ class SettingsPage extends BasePage {
 
   // 构建主题模式设置项
   Widget _buildThemeMode(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
+    final provider = context.watch<ThemeProvider>();
     return SettingItem(
       label: '配色模式',
       key: context.read<SettingProvider>().themeModeKey,
-      content: Text(provider.getBrightness(context).label),
+      content: Text(provider.brightness.label),
       child: DropdownButton<ThemeMode>(
         value: provider.themeMode,
         items: ThemeMode.values
@@ -152,9 +152,9 @@ class SettingsPage extends BasePage {
                   child: Text(mode.label),
                 ))
             .toList(),
-        onChanged: (mode) {
-          if (mode == null) return;
-          provider.changeThemeMode(context, mode);
+        onChanged: (value) {
+          if (value == null) return;
+          provider.changeThemeMode(value);
         },
       ),
     );
@@ -162,8 +162,8 @@ class SettingsPage extends BasePage {
 
   // 构建主题色彩设置项
   Widget _buildThemeScheme(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
-    final scheme = provider.getThemeSchemeModel(context);
+    final provider = context.watch<ThemeProvider>();
+    final scheme = provider.themeSchemeModel;
     return SettingItem(
       label: '应用配色',
       content: Text(scheme.label),
@@ -175,10 +175,10 @@ class SettingsPage extends BasePage {
         tooltip: '更换配色',
         onPressed: () => SchemePickerDialog.show(
           context,
-          schemes: provider.getThemeSchemeList(context),
-          current: provider.getThemeSchemeModel(context),
+          current: scheme,
+          schemes: provider.getThemeSchemeList(),
         ).then((value) {
-          if (value != null) provider.changeThemeScheme(context, value);
+          if (value != null) provider.changeThemeScheme(value);
         }),
       ),
     );
@@ -194,7 +194,7 @@ class SettingsPageProvider extends BaseProvider {
   // 滚动控制器
   final scrollController = ScrollController();
 
-  SettingsPageProvider(BuildContext context) {
+  SettingsPageProvider(super.context) {
     // 注册设置跳转方法
     final provider = context.read<SettingProvider>();
     provider.addListener(() {

@@ -36,7 +36,7 @@ class EnvironmentImportDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final isEdit = environment != null;
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
-      create: (_) => EnvironmentImportDialogProvider(environment),
+      create: (_) => EnvironmentImportDialogProvider(context, environment),
       builder: (context, _) {
         return CustomDialog(
           scrollable: true,
@@ -94,7 +94,7 @@ class EnvironmentImportDialog extends StatelessWidget {
     Loading.show(
       context,
       loadFuture: provider.submitForm(context, environment),
-    )?.then((result) {
+    ).then((result) {
       if (result != null) Navigator.pop(context, result);
     }).catchError((e) {
       SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
@@ -122,7 +122,7 @@ class EnvironmentImportDialogProvider extends BaseProvider {
   // 获取表单数据
   EnvironmentImportDialogFormTuple get formData => _formData;
 
-  EnvironmentImportDialogProvider(Environment? item) {
+  EnvironmentImportDialogProvider(super.context, Environment? item) {
     updateFormData(path: item?.path);
   }
 

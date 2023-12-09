@@ -21,7 +21,7 @@ class EnvironmentProvider extends BaseProvider {
   // 判断是否存在环境信息
   bool get hasEnvironment => environments.isNotEmpty;
 
-  EnvironmentProvider() {
+  EnvironmentProvider(super.context) {
     initialize();
   }
 

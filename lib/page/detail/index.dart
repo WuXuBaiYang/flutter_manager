@@ -59,7 +59,7 @@ class ProjectDetailPage extends BasePage {
             child: project != null
                 ? ChangeNotifierProvider(
                     lazy: false,
-                    create: (_) => PlatformProvider(project),
+                    create: (_) => PlatformProvider(context, project),
                     builder: (context, _) => _buildContent(context),
                   )
                 : const SizedBox(),
@@ -314,7 +314,7 @@ class ProjectDetailPage extends BasePage {
       });
       Loading.show(context,
           dismissible: false,
-          progressStream: controller.stream,
+          progress: controller.stream,
           loadFuture: provider.updateLogos(
             project.path,
             result,
@@ -369,7 +369,7 @@ class ProjectDetailPageProvider extends BaseProvider {
     ),
   };
 
-  ProjectDetailPageProvider(BuildContext context) {
+  ProjectDetailPageProvider(super.context) {
     // 获取项目信息
     final arguments = router.findTuple<ProjectDetailRouteTuple>(context);
     _project = arguments?.project;

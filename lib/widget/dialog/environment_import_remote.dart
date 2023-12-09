@@ -35,7 +35,7 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => EnvironmentRemoteImportDialogProvider(),
+      create: (_) => EnvironmentRemoteImportDialogProvider(context),
       builder: (context, _) {
         final currentStep =
             context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
@@ -156,7 +156,7 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
       Loading.show(
         context,
         loadFuture: provider.submitForm(context, savePath),
-      )?.then((result) {
+      ).then((result) {
         if (result != null) Navigator.pop(context, result);
       }).catchError((e) {
         SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
@@ -213,6 +213,8 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
 
   // 下载进度流
   final downloadProgress = StreamController<double?>.broadcast();
+
+  EnvironmentRemoteImportDialogProvider(super.context);
 
   // 更新表单数据
   void updateFormData({String? path}) =>

@@ -34,8 +34,11 @@ class ThemeProvider extends BaseProvider {
   // 缓存暗色主题数据
   ThemeData? _darkThemeData;
 
+  // 缓存主题亮度
+  Brightness? _brightness;
+
   // 获取主题亮度
-  Brightness getBrightness(BuildContext context) => {
+  Brightness get brightness => _brightness ??= {
         ThemeMode.dark: Brightness.dark,
         ThemeMode.light: Brightness.light,
         ThemeMode.system: MediaQuery.platformBrightnessOf(context),
@@ -56,32 +59,35 @@ class ThemeProvider extends BaseProvider {
   FlexScheme get _themeScheme => _scheme ??= FlexScheme
       .values[cache.getInt(_themeSchemeKey) ?? _defaultThemeScheme.index];
 
-  // 更新主题数据
-  Future<void> _updateThemeData(BuildContext context) async {
-    _themeData = _genThemeData(Brightness.light);
-    _darkThemeData = _genThemeData(Brightness.dark);
-    notifyListeners();
+  // 获取当前的主题配色方案
+  ThemeSchemeModel get themeSchemeModel {
+    const schemesMap = FlexColor.schemesWithCustom;
+    return ThemeSchemeModel.fromScheme(_themeScheme,
+        schemeColor: {
+          Brightness.light: schemesMap[_themeScheme]!.light,
+          Brightness.dark: schemesMap[_themeScheme]!.dark,
+        }[brightness]!);
   }
 
+  ThemeProvider(super.context);
+
   // 切换主题模式
-  Future<void> changeThemeMode(
-      BuildContext context, ThemeMode themeMode) async {
+  Future<void> changeThemeMode(ThemeMode themeMode) async {
+    _brightness = null;
     _themeMode = themeMode;
     cache.setInt(_themeModeKey, _themeMode!.index);
-    _updateThemeData(context);
+    return _updateThemeData();
   }
 
   // 切换主题配色方案
-  Future<void> changeThemeScheme(
-      BuildContext context, ThemeSchemeModel schemeModel) async {
+  Future<void> changeThemeScheme(ThemeSchemeModel schemeModel) async {
     _scheme = schemeModel.scheme;
     cache.setInt(_themeSchemeKey, _scheme!.index);
-    _updateThemeData(context);
+    return _updateThemeData();
   }
 
   // 获取全部支持的配色方案
-  List<ThemeSchemeModel> getThemeSchemeList(BuildContext context,
-      {bool useMaterial3 = true}) {
+  List<ThemeSchemeModel> getThemeSchemeList({bool useMaterial3 = true}) {
     const schemesMap = FlexColor.schemesWithCustom;
     return FlexScheme.values
         .where((e) {
@@ -93,18 +99,15 @@ class ThemeProvider extends BaseProvider {
             schemeColor: {
               Brightness.light: schemesMap[scheme]!.light,
               Brightness.dark: schemesMap[scheme]!.dark,
-            }[getBrightness(context)]!))
+            }[brightness]!))
         .toList();
   }
 
-  // 获取当前的主题配色方案
-  ThemeSchemeModel getThemeSchemeModel(BuildContext context) {
-    const schemesMap = FlexColor.schemesWithCustom;
-    return ThemeSchemeModel.fromScheme(_themeScheme,
-        schemeColor: {
-          Brightness.light: schemesMap[_themeScheme]!.light,
-          Brightness.dark: schemesMap[_themeScheme]!.dark,
-        }[getBrightness(context)]!);
+  // 更新主题数据
+  Future<void> _updateThemeData() async {
+    _themeData = _genThemeData(Brightness.light);
+    _darkThemeData = _genThemeData(Brightness.dark);
+    notifyListeners();
   }
 
   // 根据主题亮色/暗色获取基本themeData

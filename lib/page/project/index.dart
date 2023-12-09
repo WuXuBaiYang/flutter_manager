@@ -30,7 +30,7 @@ class ProjectPage extends BasePage {
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => ProjectPageProvider()),
+        ChangeNotifierProvider(create: (_) => ProjectPageProvider(context)),
       ];
 
   @override
@@ -162,6 +162,8 @@ class ProjectPage extends BasePage {
 * @Time 2023/11/24 14:25
 */
 class ProjectPageProvider extends BaseProvider {
+  ProjectPageProvider(super.context);
+
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.read<ProjectProvider>()..remove(item);

@@ -15,7 +15,7 @@ class PackagePage extends BasePage {
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => PackagePageProvider()),
+        ChangeNotifierProvider(create: (_) => PackagePageProvider(context)),
       ];
 
   @override
@@ -39,4 +39,6 @@ class PackagePage extends BasePage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePageProvider extends BaseProvider {}
+class PackagePageProvider extends BaseProvider {
+  PackagePageProvider(super.context);
+}

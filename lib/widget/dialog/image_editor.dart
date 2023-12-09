@@ -51,7 +51,7 @@ class ImageEditorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ImageEditorDialogProvider((
+      create: (_) => ImageEditorDialogProvider(context, (
         ratio: initializeRatio,
         rotate: 0,
         borderRadius: 0,
@@ -269,7 +269,7 @@ class ImageEditorDialog extends StatelessWidget {
   // 保存裁剪后的图片
   void _saveCrop(BuildContext context) {
     final provider = context.read<ImageEditorDialogProvider>();
-    Loading.show(context, loadFuture: provider.saveCrop())?.then((result) {
+    Loading.show(context, loadFuture: provider.saveCrop()).then((result) {
       Navigator.pop(context, result);
     }).catchError((e) {
       SnackTool.showMessage(context, message: '图片裁剪失败：${e.toString()}');
@@ -303,11 +303,11 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 获取图片编辑操作参数元组
   ImageEditorActionTuple get actionTuple => _actionTuple;
 
-  ImageEditorDialogProvider(this._initializeActionTuple)
-      : _actionTuple = _initializeActionTuple;
-
   // 生成图片文件名称
   String get _imageFileName => '${Tool.genID()}.${_actionTuple.imageType.name}';
+
+  ImageEditorDialogProvider(super.context, this._initializeActionTuple)
+      : _actionTuple = _initializeActionTuple;
 
   // 另存为其他路径
   Future<String?> saveOtherPath(String path) =>

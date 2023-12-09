@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_manager/common/provider.dart';
@@ -49,7 +48,7 @@ class PlatformProvider extends BaseProvider {
   LinuxPlatformInfoTuple? get linuxInfo =>
       _platformInfoMap[PlatformType.linux] as LinuxPlatformInfoTuple?;
 
-  PlatformProvider(Project project) {
+  PlatformProvider(super.context, Project project) {
     initialize(project.path);
   }
 

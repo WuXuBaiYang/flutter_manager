@@ -32,7 +32,7 @@ class ProjectLabelDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<ProjectLabelDialogProvider>(
-      create: (_) => ProjectLabelDialogProvider(platformLabelMap),
+      create: (_) => ProjectLabelDialogProvider(context, platformLabelMap),
       builder: (context, _) {
         return CustomDialog(
           title: const Text('别名'),
@@ -205,7 +205,8 @@ class ProjectLabelDialogProvider extends BaseProvider {
     PlatformType.linux: null,
   };
 
-  ProjectLabelDialogProvider(Map<PlatformType, String> platformLabels) {
+  ProjectLabelDialogProvider(
+      super.context, Map<PlatformType, String> platformLabels) {
     _linkPlatformList = platformLabels.keys.toList();
     _formData = platformLabels;
   }

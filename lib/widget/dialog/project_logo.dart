@@ -35,7 +35,7 @@ class ProjectLogoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ProjectLogoDialogProvider(platformLogoMap),
+      create: (_) => ProjectLogoDialogProvider(context, platformLogoMap),
       builder: (context, _) {
         return CustomDialog(
           title: const Text('图标'),
@@ -128,7 +128,7 @@ class ProjectLogoDialogProvider extends BaseProvider {
   // 获取表单数据
   ProjectLogoDialogFormTuple get formData => _formData;
 
-  ProjectLogoDialogProvider(
+  ProjectLogoDialogProvider(super.context,
       Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap) {
     updateFormData(platforms: platformLogoMap.keys.toList());
   }
