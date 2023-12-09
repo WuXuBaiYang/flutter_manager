@@ -4,7 +4,6 @@ import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
@@ -38,6 +37,7 @@ class EnvironmentImportDialog extends StatelessWidget {
     return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
       create: (_) => EnvironmentImportDialogProvider(context, environment),
       builder: (context, _) {
+        final provider = context.watch<EnvironmentImportDialogProvider>();
         return CustomDialog(
           scrollable: true,
           content: _buildContent(context),
@@ -49,7 +49,12 @@ class EnvironmentImportDialog extends StatelessWidget {
             ),
             TextButton(
               child: Text(isEdit ? '修改' : '添加'),
-              onPressed: () => _submitForm(context),
+              onPressed: () => provider
+                  .submitForm(context, environment)
+                  .loading(context)
+                  .then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }),
             ),
           ],
         );
@@ -87,19 +92,6 @@ class EnvironmentImportDialog extends StatelessWidget {
       },
     );
   }
-
-  // 提交表单
-  void _submitForm(BuildContext context) {
-    context
-        .read<EnvironmentImportDialogProvider>()
-        .submitForm(context, environment)
-        .loading(context)
-        .then((result) {
-      if (result != null) Navigator.pop(context, result);
-    }).catchError((e) {
-      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-    });
-  }
 }
 
 // 环境导入弹窗表单数据元组
@@ -133,12 +125,17 @@ class EnvironmentImportDialogProvider extends BaseProvider {
   // 导入环境
   Future<Environment?> submitForm(
       BuildContext context, Environment? environment) async {
-    final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return null;
-    formState!.save();
-    final provider = context.read<EnvironmentProvider>();
-    return environment != null
-        ? provider.refresh(environment..path = _formData.path)
-        : provider.import(_formData.path);
+    try {
+      final formState = formKey.currentState;
+      if (!(formState?.validate() ?? false)) return null;
+      formState!.save();
+      final provider = context.read<EnvironmentProvider>();
+      return environment != null
+          ? provider.refresh(environment..path = _formData.path)
+          : provider.import(_formData.path);
+    } catch (e) {
+      showMessage('操作失败：${e.toString()}');
+    }
+    return null;
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter_manager/model/database/environment.dart';
 import 'package:flutter_manager/model/environment_package.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/file.dart';
+import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
@@ -150,14 +151,10 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
   VoidCallback? _importPressed(
       BuildContext context, int currentStep, String? savePath) {
     if (currentStep >= 2 || savePath == null) return null;
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
     return () {
-      context
-          .read<EnvironmentRemoteImportDialogProvider>()
-          .submitForm(context, savePath)
-          .then((result) {
+      provider.submitForm(context, savePath).loading(context).then((result) {
         if (result != null) Navigator.pop(context, result);
-      }).catchError((e) {
-        SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
       });
     };
   }
@@ -221,11 +218,17 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   // 导入环境
   Future<Environment?> submitForm(
       BuildContext context, String archiveFile) async {
-    final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return null;
-    formState!.save();
-    final provider = context.read<EnvironmentProvider>();
-    return provider.importArchive(archiveFile, _formData.path);
+    try {
+      final formState = formKey.currentState;
+      if (!(formState?.validate() ?? false)) return null;
+      formState!.save();
+      return context
+          .read<EnvironmentProvider>()
+          .importArchive(archiveFile, _formData.path);
+    } catch (e) {
+      showMessage('操作失败：${e.toString()}');
+    }
+    return null;
   }
 
   // 启动下载

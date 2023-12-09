@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
@@ -37,6 +36,7 @@ class ProjectLogoDialog extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ProjectLogoDialogProvider(context, platformLogoMap),
       builder: (context, _) {
+        final provider = context.watch<ProjectLogoDialogProvider>();
         return CustomDialog(
           title: const Text('图标'),
           content: _buildContent(context),
@@ -49,7 +49,9 @@ class ProjectLogoDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () => _submitForm(context),
+              onPressed: () => provider.submitForm(context).then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }),
             ),
           ],
         );
@@ -95,18 +97,6 @@ class ProjectLogoDialog extends StatelessWidget {
       initialValue: (expanded: null, platforms: provider.formData.platforms),
     );
   }
-
-  // 提交表单
-  void _submitForm(BuildContext context) {
-    context
-        .read<ProjectLogoDialogProvider>()
-        .submitForm(context)
-        .then((result) {
-      if (result != null) Navigator.pop(context, result);
-    }).catchError((e) {
-      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-    });
-  }
 }
 
 // 项目修改图标弹窗表单数据元组
@@ -135,6 +125,19 @@ class ProjectLogoDialogProvider extends BaseProvider {
     updateFormData(platforms: platformLogoMap.keys.toList());
   }
 
+  // 验证表单并返回
+  Future<ProjectLogoDialogFormTuple?> submitForm(BuildContext context) async {
+    try {
+      final formState = formKey.currentState;
+      if (!(formState?.validate() ?? false)) return null;
+      formState!.save();
+      return _formData;
+    } catch (e) {
+      showMessage('操作失败：${e.toString()}');
+    }
+    return null;
+  }
+
   // 更新表单数据
   void updateFormData({
     String? logo,
@@ -144,12 +147,4 @@ class ProjectLogoDialogProvider extends BaseProvider {
         logo: logo ?? _formData.logo,
         platforms: platforms ?? _formData.platforms,
       );
-
-  // 验证表单并返回
-  Future<ProjectLogoDialogFormTuple?> submitForm(BuildContext context) async {
-    final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return null;
-    formState!.save();
-    return _formData;
-  }
 }

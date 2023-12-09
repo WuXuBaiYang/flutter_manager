@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +33,7 @@ class ProjectLabelDialog extends StatelessWidget {
     return ChangeNotifierProvider<ProjectLabelDialogProvider>(
       create: (_) => ProjectLabelDialogProvider(context, platformLabelMap),
       builder: (context, _) {
+        final provider = context.watch<ProjectLabelDialogProvider>();
         return CustomDialog(
           title: const Text('别名'),
           content: _buildContent(context),
@@ -46,7 +46,9 @@ class ProjectLabelDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () => _submitForm(context),
+              onPressed: () =>  provider.submitForm().then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }),
             ),
           ],
         );
@@ -148,15 +150,6 @@ class ProjectLabelDialog extends StatelessWidget {
           )),
     );
   }
-
-  // 提交表单
-  void _submitForm(BuildContext context) {
-    context.read<ProjectLabelDialogProvider>().submitForm().then((result) {
-      if (result != null) Navigator.pop(context, result);
-    }).catchError((e) {
-      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-    });
-  }
 }
 
 /*
@@ -212,10 +205,15 @@ class ProjectLabelDialogProvider extends BaseProvider {
 
   // 提交表单数据
   Future<Map<PlatformType, String>?> submitForm() async {
-    final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return null;
-    formState!.save();
-    return _formData;
+    try {
+      final formState = formKey.currentState;
+      if (!(formState?.validate() ?? false)) return null;
+      formState!.save();
+      return _formData;
+    } catch (e) {
+      showMessage('操作失败：${e.toString()}');
+    }
+    return null;
   }
 
   // 根据平台校验label

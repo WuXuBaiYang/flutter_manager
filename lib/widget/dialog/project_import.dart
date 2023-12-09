@@ -6,7 +6,6 @@ import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/color_picker.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
@@ -43,6 +42,7 @@ class ProjectImportDialog extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ProjectImportDialogProvider(context, project),
       builder: (context, _) {
+        final provider = context.watch<ProjectImportDialogProvider>();
         return CustomDialog(
           scrollable: true,
           title: Text('${isEdit ? '编辑' : '添加'}项目'),
@@ -54,7 +54,10 @@ class ProjectImportDialog extends StatelessWidget {
             ),
             TextButton(
               child: Text(isEdit ? '修改' : '添加'),
-              onPressed: () => _submitForm(context),
+              onPressed: () =>
+                  provider.submitForm().loading(context).then((result) {
+                if (result != null) Navigator.pop(context, result);
+              }),
             ),
           ],
         );
@@ -177,19 +180,6 @@ class ProjectImportDialog extends StatelessWidget {
       onSaved: (v) => provider.updateFormData(pinned: v),
     );
   }
-
-  // 提交表单
-  void _submitForm(BuildContext context) {
-    context
-        .read<ProjectImportDialogProvider>()
-        .submitForm()
-        .loading(context)
-        .then((result) {
-      if (result != null) Navigator.pop(context, result);
-    }).catchError((e) {
-      SnackTool.showMessage(context, message: '操作失败：${e.toString()}');
-    });
-  }
 }
 
 // 项目导入弹窗表单数据元组
@@ -251,19 +241,24 @@ class ProjectImportDialogProvider extends BaseProvider {
 
   // 导入项目
   Future<Project?> submitForm() async {
-    final formState = formKey.currentState;
-    if (!(formState?.validate() ?? false)) return null;
-    formState!.save();
-    if (_formData.envId < 0) throw Exception('缺少环境信息');
-    return context.read<ProjectProvider>().update(
-          Project()
-            ..path = _formData.path
-            ..label = _formData.label
-            ..logo = _formData.logo
-            ..envId = _formData.envId
-            ..color = _formData.color
-            ..pinned = _formData.pinned,
-        );
+    try {
+      final formState = formKey.currentState;
+      if (!(formState?.validate() ?? false)) return null;
+      formState!.save();
+      if (_formData.envId < 0) throw Exception('缺少环境信息');
+      return context.read<ProjectProvider>().update(
+            Project()
+              ..path = _formData.path
+              ..label = _formData.label
+              ..logo = _formData.logo
+              ..envId = _formData.envId
+              ..color = _formData.color
+              ..pinned = _formData.pinned,
+          );
+    } catch (e) {
+      showMessage('操作失败：${e.toString()}');
+    }
+    return null;
   }
 
   // 当项目路径更新时调用
