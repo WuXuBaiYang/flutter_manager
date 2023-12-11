@@ -126,7 +126,10 @@ class ProjectLogoPanelFormField extends StatelessWidget {
     final temp = field.value?.platforms ?? [];
     field.didChange((
       expanded: field.value?.expanded,
-      platforms: checked ? (temp..add(platform)) : (temp..remove(platform)),
+      platforms: [
+        if (!temp.contains(platform)) platform,
+        ...temp.where((e) => e != platform),
+      ],
     ));
     field.validate();
   }

@@ -61,15 +61,13 @@ class SettingsPage extends BasePage {
   Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
       controller: context.read<SettingsPageProvider>().scrollController,
-      child: Column(
-        children: [
-          _buildFlutterEnvironment(context),
-          _buildFlutterEnvironmentCache(context),
-          _buildProjectPlatformSort(context),
-          _buildThemeMode(context),
-          _buildThemeScheme(context),
-        ],
-      ),
+      child: Column(children: [
+        _buildFlutterEnvironment(context),
+        _buildFlutterEnvironmentCache(context),
+        _buildProjectPlatformSort(context),
+        _buildThemeMode(context),
+        _buildThemeScheme(context),
+      ]),
     );
   }
 

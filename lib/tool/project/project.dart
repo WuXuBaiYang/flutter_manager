@@ -157,4 +157,19 @@ class ProjectTool {
   static Future<bool> setLabel(
           PlatformType platform, String projectPath, String label) =>
       getPlatformTool(platform).setLabel(projectPath, label);
+
+  // 获取完整权限列表
+  static Future<List<PlatformPermissionTuple>?> getFullPermissionList(
+          PlatformType platform) =>
+      getPlatformTool(platform).getFullPermissionList();
+
+  // 获取平台权限列表
+  static Future<List<PlatformPermissionTuple>?> getPermissionList(
+          PlatformType platform, String projectPath) =>
+      getPlatformTool(platform).getPermissionList(projectPath);
+
+  // 设置平台权限列表
+  static Future<bool> setPermissionList(PlatformType platform,
+          String projectPath, List<PlatformPermissionTuple> permissions) =>
+      getPlatformTool(platform).setPermissionList(projectPath, permissions);
 }

@@ -139,10 +139,7 @@ class ProjectLogoDialogProvider extends BaseProvider {
   }
 
   // 更新表单数据
-  void updateFormData({
-    String? logo,
-    List<PlatformType>? platforms,
-  }) =>
+  void updateFormData({String? logo, List<PlatformType>? platforms}) =>
       _formData = (
         logo: logo ?? _formData.logo,
         platforms: platforms ?? _formData.platforms,

@@ -23,16 +23,14 @@ class EnvironmentBadge extends StatelessWidget {
         color: Colors.blueAccent.withOpacity(0.3),
         borderRadius: BorderRadius.circular(100),
       ),
-      child: Row(
-        children: [
-          const FlutterLogo(size: 12),
-          const SizedBox(width: 6),
-          Text(
-            environment.version,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ],
-      ),
+      child: Row(children: [
+        const FlutterLogo(size: 12),
+        const SizedBox(width: 6),
+        Text(
+          environment.version,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ]),
     );
   }
 }

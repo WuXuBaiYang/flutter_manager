@@ -1070,10 +1070,6 @@
     "value": "PACKAGE_USAGE_STATS"
   },
   {
-    "desc": "Declaring the permission implies intention to use the API and the user of the device can grant permission through the Settings application.",
-    "value": null
-  },
-  {
     "name": "PERSISTENT_ACTIVITY",
     "desc": "This constant was deprecated in API level 15. This functionality will be removed in the future; please do not use. Allow an application to make its activities persistent.",
     "value": "PERSISTENT_ACTIVITY"

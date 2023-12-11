@@ -58,11 +58,11 @@ class LabelPlatformItem extends StatelessWidget {
             .updateLabel(platform, project!.path, controller.text)
             .loading(context, dismissible: false);
       },
-      child: StatefulBuilder(builder: (_, state) {
+      child: StatefulBuilder(builder: (_, setState) {
         final isEditing = controller.text != label;
         return TextFormField(
           controller: controller,
-          onChanged: (_) => state(() {}),
+          onChanged: (_) => setState(() {}),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
             hintText: '请输入项目名',

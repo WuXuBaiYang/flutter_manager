@@ -177,25 +177,23 @@ class ProjectDetailPage extends BasePage {
     bodyStyle = bodyStyle?.copyWith(color: color);
     return ListTile(
       isThreeLine: true,
-      title: Row(
-        children: [
-          ConstrainedBox(
-            constraints: BoxConstraints.loose(const Size.fromWidth(220)),
-            child: Text(project.label,
-                maxLines: 1, overflow: TextOverflow.ellipsis),
-          ),
-          const SizedBox(width: 8),
-          _buildEnvironmentBadge(project),
-          const SizedBox(width: 4),
-          IconButton(
-            iconSize: 16,
-            icon: const Icon(Icons.edit),
-            visualDensity: VisualDensity.compact,
-            onPressed: () => ProjectImportDialog.show(context, project: project)
-                .then(provider.updateProject),
-          ),
-        ],
-      ),
+      title: Row(children: [
+        ConstrainedBox(
+          constraints: BoxConstraints.loose(const Size.fromWidth(220)),
+          child:
+              Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+        const SizedBox(width: 8),
+        _buildEnvironmentBadge(project),
+        const SizedBox(width: 4),
+        IconButton(
+          iconSize: 16,
+          icon: const Icon(Icons.edit),
+          visualDensity: VisualDensity.compact,
+          onPressed: () => ProjectImportDialog.show(context, project: project)
+              .then(provider.updateProject),
+        ),
+      ]),
       leading: Image.file(File(project.logo), width: 55, height: 55),
       subtitle: Text(project.path,
           maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),

@@ -27,6 +27,14 @@ typedef PlatformPermissionTuple = ({
   String input,
 });
 
+// 扩展平台权限信息元组，实现搜索
+extension PlatformPermissionTupleExtension on PlatformPermissionTuple {
+  bool search(String keyword) =>
+      name.contains(keyword) ||
+      desc.contains(keyword) ||
+      value.contains(keyword);
+}
+
 /*
 * 平台工具抽象类
 * @author wuxubaiyang
@@ -183,9 +191,9 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
       final content = await rootBundle.loadString(path);
       return jsonDecode(content)
           .map<PlatformPermissionTuple>((e) => (
-                name: e['name'],
-                desc: e['desc'],
-                value: e['value'],
+                name: '${e['name']}',
+                desc: '${e['desc']}',
+                value: '${e['value']}',
                 input: '',
               ))
           .toList();
@@ -202,7 +210,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   @override
   Future<bool> setPermissionList(String projectPath,
-          List<PlatformPermissionTuple> permissionList) async =>
+          List<PlatformPermissionTuple> permissions) async =>
       true;
 }
 
@@ -236,7 +244,7 @@ abstract mixin class PlatformToolMixin<T extends Record> {
 
   // 设置权限列表
   Future<bool> setPermissionList(
-      String projectPath, List<PlatformPermissionTuple> permissionList);
+      String projectPath, List<PlatformPermissionTuple> permissions);
 }
 
 // 支持平台枚举

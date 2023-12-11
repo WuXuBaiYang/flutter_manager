@@ -59,24 +59,22 @@ class EnvironmentRemoteList extends StatelessWidget {
     return DefaultTabController(
       length: package.length,
       initialIndex: stableIndex,
-      child: Column(
-        children: [
-          TabBar(
-            tabs: List.generate(package.length, (i) {
-              return Tab(text: package.keys.elementAt(i));
+      child: Column(children: [
+        TabBar(
+          tabs: List.generate(package.length, (i) {
+            return Tab(text: package.keys.elementAt(i));
+          }),
+        ),
+        Expanded(
+          child: TabBarView(
+            children: List.generate(package.length, (i) {
+              final packages = package.values.elementAt(i);
+              return _buildPackageChannelTabView(
+                  context, package.keys.elementAt(i), packages, downloadFile);
             }),
           ),
-          Expanded(
-            child: TabBarView(
-              children: List.generate(package.length, (i) {
-                final packages = package.values.elementAt(i);
-                return _buildPackageChannelTabView(
-                    context, package.keys.elementAt(i), packages, downloadFile);
-              }),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
@@ -129,7 +127,11 @@ class EnvironmentRemoteList extends StatelessWidget {
                 : Icons.download_rounded);
         return ListTile(
           title: Text(item.title),
-          subtitle: Text('Dart · ${item.dartVersion} · ${item.dartArch}'),
+          subtitle: Text('Dart · ${item.dartVersion} · ${item.dartArch}',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Colors.grey)),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

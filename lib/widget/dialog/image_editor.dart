@@ -60,12 +60,10 @@ class ImageEditorDialog extends StatelessWidget {
       builder: (context, _) {
         final provider = context.watch<ImageEditorDialogProvider>();
         return CustomDialog(
-          title: Row(
-            children: [
-              const Expanded(child: Text('图片裁剪')),
-              _buildImageTypeSelector(context),
-            ],
-          ),
+          title: Row(children: [
+            const Expanded(child: Text('图片裁剪')),
+            _buildImageTypeSelector(context),
+          ]),
           content: _buildContent(context),
           constraints: const BoxConstraints.tightFor(width: 480, height: 350),
           actions: [

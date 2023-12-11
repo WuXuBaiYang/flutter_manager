@@ -27,47 +27,43 @@ class HomePage extends BasePage {
   Widget buildWidget(BuildContext context) {
     final provider = context.watch<HomePageProvider>();
     return Scaffold(
-      body: Row(
-        children: [
-          NavigationRail(
-            selectedIndex: provider.navigationIndex,
-            trailing: _buildNavigationRailTrailing(),
-            destinations: provider.navigationRailList,
-            onDestinationSelected: provider.setNavigationIndex,
+      body: Row(children: [
+        NavigationRail(
+          selectedIndex: provider.navigationIndex,
+          trailing: _buildNavigationRailTrailing(),
+          destinations: provider.navigationRailList,
+          onDestinationSelected: provider.setNavigationIndex,
+        ),
+        const VerticalDivider(),
+        Expanded(
+          child: IndexedStack(
+            index: provider.navigationIndex,
+            children: provider.navigationRailPageList,
           ),
-          const VerticalDivider(),
-          Expanded(
-            child: IndexedStack(
-              index: provider.navigationIndex,
-              children: provider.navigationRailPageList,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 
   // 构建导航侧栏尾部
   Widget _buildNavigationRailTrailing() {
     return Expanded(
-      child: Column(
-        children: [
-          const Spacer(),
-          FutureProvider<String>(
-            initialData: '',
-            create: (_) => Tool.version,
-            builder: (context, _) {
-              return TextButton(
-                child: Text('v${context.watch<String>()}'),
-                onPressed: () async {
-                  /// TODO: 2021/8/31 14:25 版本更新检查
-                },
-              );
-            },
-          ),
-          const SizedBox(height: 14),
-        ],
-      ),
+      child: Column(children: [
+        const Spacer(),
+        FutureProvider<String>(
+          initialData: '',
+          create: (_) => Tool.version,
+          builder: (context, _) {
+            return TextButton(
+              child: Text('v${context.watch<String>()}'),
+              onPressed: () async {
+                /// TODO: 2021/8/31 14:25 版本更新检查
+              },
+            );
+          },
+        ),
+        const SizedBox(height: 14),
+      ]),
     );
   }
 }

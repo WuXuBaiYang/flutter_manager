@@ -9,5 +9,5 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 class Assets {
   // 根据平台获取权限列表
   static String getPermission(PlatformType platform) =>
-      'assets/permission/${platform.name}_${Platform.localeName}.json';
+      'assets/permission/${platform.name}.json';
 }
