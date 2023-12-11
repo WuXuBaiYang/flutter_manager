@@ -25,9 +25,6 @@ class LogoPlatformItem extends StatelessWidget {
   // 图标列表
   final List<PlatformLogoTuple> logos;
 
-  // 提交回调
-  final ValueChanged<String>? onSubmitted;
-
   // 水平风向占用格子数
   final int crossAxisCellCount;
 
@@ -39,51 +36,43 @@ class LogoPlatformItem extends StatelessWidget {
     required this.platform,
     required this.logos,
     this.project,
-    this.onSubmitted,
     this.crossAxisCellCount = 5,
-    this.mainAxisExtent = 140,
+    this.mainAxisExtent = 150,
   });
 
   @override
   Widget build(BuildContext context) {
     return ProjectPlatformItem.extent(
+      title: '项目图标',
+      actions: [
+        _buildEditLogoButton(context),
+      ],
       crossAxisCellCount: crossAxisCellCount,
       mainAxisExtent: mainAxisExtent,
-      content: _buildContent(context),
+      content: ProjectLogoGrid(logoList: logos),
     );
   }
 
-  // 构建内容
-  Widget _buildContent(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
-      children: [
-        ProjectLogoGrid(logoList: logos),
-        Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            iconSize: 20,
-            padding: EdgeInsets.zero,
-            visualDensity: VisualDensity.compact,
-            onPressed: () => Tool.pickImageWithEdit(
-              context,
-              dialogTitle: '选择项目图标',
-              absoluteRatio: CropAspectRatio.ratio1_1,
-            ).then((result) {
-              if (result == null) return;
-              if (project == null) return onSubmitted?.call(result);
-              final controller = StreamController<double>();
-              context
-                  .read<PlatformProvider>()
-                  .updateLogo(platform, project!.path, result,
-                      progressCallback: (c, t) => controller.add(c / t))
-                  .loading(context,
-                      progress: controller.stream, dismissible: false);
-            }),
-            icon: const Icon(Icons.add_circle_outline_rounded),
-          ),
-        ),
-      ],
+  // 构建编辑图标按钮
+  Widget _buildEditLogoButton(BuildContext context) {
+    return IconButton(
+      iconSize: 18,
+      padding: EdgeInsets.zero,
+      visualDensity: VisualDensity.compact,
+      icon: const Icon(Icons.edit_outlined),
+      onPressed: () => Tool.pickImageWithEdit(
+        context,
+        dialogTitle: '选择项目图标',
+        absoluteRatio: CropAspectRatio.ratio1_1,
+      ).then((result) {
+        if (result == null) return;
+        final controller = StreamController<double>();
+        context
+            .read<PlatformProvider>()
+            .updateLogo(platform, project?.path, result,
+                progressCallback: (c, t) => controller.add(c / t))
+            .loading(context, progress: controller.stream, dismissible: false);
+      }),
     );
   }
 }

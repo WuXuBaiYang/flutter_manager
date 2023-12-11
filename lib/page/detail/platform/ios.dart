@@ -49,7 +49,7 @@ class ProjectPlatformIosPage extends ProjectPlatformPage<
       PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformIosPageProvider>();
     return LogoPlatformItem(
-      mainAxisExtent: 590,
+      mainAxisExtent: 610,
       project: provider.project,
       platform: provider.platform,
       logos: platformInfo?.logos ?? [],

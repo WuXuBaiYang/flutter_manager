@@ -138,8 +138,9 @@ class PlatformProvider extends BaseProvider {
 
   // 更新图标
   Future<void> updateLogo(
-      PlatformType platform, String projectPath, String logoPath,
+      PlatformType platform, String? projectPath, String logoPath,
       {ProgressCallback? progressCallback}) async {
+    if (projectPath == null) return;
     try {
       final result = await ProjectTool.replaceLogo(
           platform, projectPath, logoPath,

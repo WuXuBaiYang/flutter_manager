@@ -49,7 +49,7 @@ class ProjectPlatformWebPage extends ProjectPlatformPage<
       PlatformInfoTuple<WebPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformWebPageProvider>();
     return LogoPlatformItem(
-      mainAxisExtent: 230,
+      mainAxisExtent: 250,
       project: provider.project,
       platform: provider.platform,
       logos: platformInfo?.logos ?? [],

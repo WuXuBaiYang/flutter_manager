@@ -25,6 +25,9 @@ class ProjectPlatformItem extends StatelessWidget {
   // 标题
   final String? title;
 
+  // 动作按钮集合
+  final List<Widget>? actions;
+
   // 表单key
   final GlobalKey<FormState> formKey;
 
@@ -45,6 +48,7 @@ class ProjectPlatformItem extends StatelessWidget {
     this.title,
     this.onTap,
     this.onReset,
+    this.actions,
     this.controller,
     this.onSubmitted,
   })  : mainAxisExtent = null,
@@ -58,6 +62,7 @@ class ProjectPlatformItem extends StatelessWidget {
     this.title,
     this.onTap,
     this.onReset,
+    this.actions,
     this.controller,
     this.onSubmitted,
   })  : mainAxisCellCount = null,
@@ -70,6 +75,7 @@ class ProjectPlatformItem extends StatelessWidget {
     this.title,
     this.onTap,
     this.onReset,
+    this.actions,
     this.controller,
     this.onSubmitted,
   })  : mainAxisCellCount = null,
@@ -113,11 +119,17 @@ class ProjectPlatformItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (title?.isNotEmpty ?? false)
-                    Text(title!,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyMedium),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      if (title?.isNotEmpty ?? false)
+                        Text(title!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.bodyMedium),
+                      ...actions ?? []
+                    ],
+                  ),
                   Expanded(child: content),
                   _buildPlatformItemActions(context),
                 ],
