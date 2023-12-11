@@ -158,20 +158,20 @@ class SettingsPage extends BasePage {
   // 构建主题色彩设置项
   Widget _buildThemeScheme(BuildContext context) {
     final provider = context.read<ThemeProvider>();
-    final scheme = provider.themeSchemeModel;
+    final themeScheme = provider.themeScheme;
     return SettingItem(
       label: '应用配色',
-      content: Text(scheme.label),
+      content: Text(themeScheme.label),
       key: context.read<SettingProvider>().themeSchemeKey,
       child: ThemeSchemeItem(
         size: 40,
-        scheme: scheme,
+        themeScheme: themeScheme,
         isSelected: true,
         tooltip: '更换配色',
         onPressed: () => SchemePickerDialog.show(
           context,
-          current: scheme,
-          schemes: provider.getThemeSchemeList(),
+          current: themeScheme,
+          themeSchemes: provider.getThemeSchemeList(),
         ).then(provider.changeThemeScheme),
       ),
     );

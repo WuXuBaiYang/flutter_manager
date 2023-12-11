@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_manager/common/localization/chinese_cupertino_localizations.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/manage/cache.dart';

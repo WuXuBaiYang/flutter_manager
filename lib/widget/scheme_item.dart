@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/theme_scheme.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'half_circle.dart';
 
 /*
@@ -9,7 +9,7 @@ import 'half_circle.dart';
 */
 class ThemeSchemeItem extends StatelessWidget {
   // 主题配色项
-  final ThemeSchemeModel scheme;
+  final ThemeSchemeTuple themeScheme;
 
   // 旋转角度(0-12)
   final double angle;
@@ -31,7 +31,7 @@ class ThemeSchemeItem extends StatelessWidget {
 
   const ThemeSchemeItem({
     super.key,
-    required this.scheme,
+    required this.themeScheme,
     this.tooltip,
     this.size = 45,
     this.onPressed,
@@ -46,13 +46,13 @@ class ThemeSchemeItem extends StatelessWidget {
       angle: angle,
       child: SizedBox.fromSize(
         size: Size.square(size),
-        child: _buildItem(scheme),
+        child: _buildItem(themeScheme),
       ),
     );
   }
 
   // 构建子项
-  Widget _buildItem(ThemeSchemeModel item) {
+  Widget _buildItem(ThemeSchemeTuple item) {
     if (isSelected) {
       return IconButton.outlined(
         padding: padding,
@@ -70,7 +70,7 @@ class ThemeSchemeItem extends StatelessWidget {
   }
 
   // 构建子项sub
-  Widget _buildItemSub(ThemeSchemeModel item) {
+  Widget _buildItemSub(ThemeSchemeTuple item) {
     return CustomPaint(
       size: Size.infinite,
       painter: HalfCirclePainter((

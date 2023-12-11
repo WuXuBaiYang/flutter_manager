@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/theme_scheme.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 
@@ -10,27 +10,27 @@ import 'package:flutter_manager/widget/scheme_item.dart';
 */
 class SchemePickerDialog extends StatelessWidget {
   // 主题配色方案列表
-  final List<ThemeSchemeModel> schemes;
+  final List<ThemeSchemeTuple> themeSchemes;
 
   // 当前主题配色方案
-  final ThemeSchemeModel? current;
+  final ThemeSchemeTuple? current;
 
   const SchemePickerDialog({
     super.key,
-    required this.schemes,
+    required this.themeSchemes,
     this.current,
   });
 
   // 展示弹窗
-  static Future<ThemeSchemeModel?> show(
+  static Future<ThemeSchemeTuple?> show(
     BuildContext context, {
-    required List<ThemeSchemeModel> schemes,
-    ThemeSchemeModel? current,
+    required List<ThemeSchemeTuple> themeSchemes,
+    ThemeSchemeTuple? current,
   }) {
-    return showDialog<ThemeSchemeModel>(
+    return showDialog<ThemeSchemeTuple>(
       context: context,
       builder: (context) => SchemePickerDialog(
-        schemes: schemes,
+        themeSchemes: themeSchemes,
         current: current,
       ),
     );
@@ -51,13 +51,13 @@ class SchemePickerDialog extends StatelessWidget {
     return Wrap(
       spacing: 14,
       runSpacing: 14,
-      children: schemes.map((item) {
-        return ThemeSchemeItem(
-          scheme: item,
-          isSelected: item == current,
-          onPressed: () => Navigator.pop(context, item),
-        );
-      }).toList(),
+      children: themeSchemes
+          .map((item) => ThemeSchemeItem(
+                themeScheme: item,
+                isSelected: item.scheme == current?.scheme,
+                onPressed: () => Navigator.pop(context, item),
+              ))
+          .toList(),
     );
   }
 }

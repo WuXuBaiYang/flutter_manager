@@ -2,7 +2,14 @@ import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/model/theme_scheme.dart';
+
+// 主题配色方案元组
+typedef ThemeSchemeTuple = ({
+  FlexScheme scheme,
+  Color primary,
+  Color secondary,
+  String label,
+});
 
 /*
 * 主题提供者
@@ -59,14 +66,24 @@ class ThemeProvider extends BaseProvider {
   FlexScheme get _themeScheme => _scheme ??= FlexScheme
       .values[cache.getInt(_themeSchemeKey) ?? _defaultThemeScheme.index];
 
-  // 获取当前的主题配色方案
-  ThemeSchemeModel get themeSchemeModel {
+  // 根据scheme获取配色
+  FlexSchemeColor getSchemeColor(FlexScheme scheme) {
     const schemesMap = FlexColor.schemesWithCustom;
-    return ThemeSchemeModel.fromScheme(_themeScheme,
-        schemeColor: {
-          Brightness.light: schemesMap[_themeScheme]!.light,
-          Brightness.dark: schemesMap[_themeScheme]!.dark,
-        }[brightness]!);
+    return {
+      Brightness.light: schemesMap[scheme]!.light,
+      Brightness.dark: schemesMap[scheme]!.dark,
+    }[brightness]!;
+  }
+
+  // 获取当前的主题配色方案
+  ThemeSchemeTuple get themeScheme {
+    final schemeColor = getSchemeColor(_themeScheme);
+    return (
+      scheme: _themeScheme,
+      primary: schemeColor.primary,
+      secondary: schemeColor.secondary,
+      label: _themeScheme.label
+    );
   }
 
   ThemeProvider(super.context);
@@ -81,28 +98,29 @@ class ThemeProvider extends BaseProvider {
   }
 
   // 切换主题配色方案
-  Future<void> changeThemeScheme(ThemeSchemeModel? schemeModel) async {
-    if (schemeModel == null) return;
-    _scheme = schemeModel.scheme;
+  Future<void> changeThemeScheme(ThemeSchemeTuple? themeScheme) async {
+    if (themeScheme == null) return;
+    _scheme = themeScheme.scheme;
     cache.setInt(_themeSchemeKey, _scheme!.index);
     return _updateThemeData();
   }
 
   // 获取全部支持的配色方案
-  List<ThemeSchemeModel> getThemeSchemeList({bool useMaterial3 = true}) {
+  List<ThemeSchemeTuple> getThemeSchemeList({bool useMaterial3 = true}) {
     const schemesMap = FlexColor.schemesWithCustom;
-    return FlexScheme.values
-        .where((e) {
-          if (e == FlexScheme.custom) return false;
-          if (useMaterial3) return e.name.contains('M3');
-          return !e.name.contains('M3');
-        })
-        .map((scheme) => ThemeSchemeModel.fromScheme(scheme,
-            schemeColor: {
-              Brightness.light: schemesMap[scheme]!.light,
-              Brightness.dark: schemesMap[scheme]!.dark,
-            }[brightness]!))
-        .toList();
+    return FlexScheme.values.where((e) {
+      if (e == FlexScheme.custom) return false;
+      if (useMaterial3) return e.name.contains('M3');
+      return !e.name.contains('M3');
+    }).map((scheme) {
+      final schemeColor = getSchemeColor(scheme);
+      return (
+        scheme: scheme,
+        primary: schemeColor.primary,
+        secondary: schemeColor.secondary,
+        label: scheme.label
+      );
+    }).toList();
   }
 
   // 更新主题数据
