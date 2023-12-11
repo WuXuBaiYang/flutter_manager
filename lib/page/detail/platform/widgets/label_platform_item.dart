@@ -35,7 +35,7 @@ class LabelPlatformItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProjectPlatformItem.extent(
+    return ProjectPlatformItem(
       title: '项目名',
       mainAxisExtent: 110,
       crossAxisCellCount: 3,

@@ -42,7 +42,7 @@ class LogoPlatformItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProjectPlatformItem.extent(
+    return ProjectPlatformItem(
       title: '项目图标',
       actions: [
         _buildEditLogoButton(context),
