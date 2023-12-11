@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_manager/common/assets.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:path/path.dart';
@@ -17,6 +18,14 @@ typedef PlatformInfoTuple<T extends Record> = ({
 
 // 平台图标信息元组
 typedef PlatformLogoTuple = ({String name, String path, Size size});
+
+// 平台权限信息元组
+typedef PlatformPermissionTuple = ({
+  String name,
+  String desc,
+  String value,
+  String input,
+});
 
 /*
 * 平台工具抽象类
@@ -166,6 +175,35 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   @override
   Future<bool> setLabel(String projectPath, String label) async => true;
+
+  @override
+  Future<List<PlatformPermissionTuple>?> getFullPermissionList() async {
+    try {
+      final path = Assets.getPermission(platform);
+      final content = await rootBundle.loadString(path);
+      return jsonDecode(content)
+          .map<PlatformPermissionTuple>((e) => (
+                name: e['name'],
+                desc: e['desc'],
+                value: e['value'],
+                input: '',
+              ))
+          .toList();
+    } catch (_) {}
+    return null;
+  }
+
+  @override
+  Future<List<PlatformPermissionTuple>?> getPermissionList(
+      String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return <PlatformPermissionTuple>[];
+  }
+
+  @override
+  Future<bool> setPermissionList(String projectPath,
+          List<PlatformPermissionTuple> permissionList) async =>
+      true;
 }
 
 /*
@@ -189,6 +227,16 @@ abstract mixin class PlatformToolMixin<T extends Record> {
 
   // 设置项目名
   Future<bool> setLabel(String projectPath, String label);
+
+  // 获取该平台完整权限列表
+  Future<List<PlatformPermissionTuple>?> getFullPermissionList();
+
+  // 获取权限列表
+  Future<List<PlatformPermissionTuple>?> getPermissionList(String projectPath);
+
+  // 设置权限列表
+  Future<bool> setPermissionList(
+      String projectPath, List<PlatformPermissionTuple> permissionList);
 }
 
 // 支持平台枚举

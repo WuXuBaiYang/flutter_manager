@@ -1,0 +1,102 @@
+[
+  {
+    "name": "NSAppleMusicUsageDescription",
+    "desc": "Access your music and media library",
+    "value": "NSAppleMusicUsageDescription"
+  },
+  {
+    "name": "NSBluetoothPeripheralUsageDescription",
+    "desc": "Access your bluetooth",
+    "value": "NSBluetoothPeripheralUsageDescription"
+  },
+  {
+    "name": "NSCalendarsUsageDescription",
+    "desc": "Access your calendar",
+    "value": "NSCalendarsUsageDescription"
+  },
+  {
+    "name": "NSCameraUsageDescription",
+    "desc": "Access your camera",
+    "value": "NSCameraUsageDescription"
+  },
+  {
+    "name": "NSContactsUsageDescription",
+    "desc": "Access your contacts",
+    "value": "NSContactsUsageDescription"
+  },
+  {
+    "name": "NSHealthShareUsageDescription",
+    "desc": "Access your health data",
+    "value": "NSHealthShareUsageDescription"
+  },
+  {
+    "name": "NSHealthUpdateUsageDescription",
+    "desc": "Access your health data",
+    "value": "NSHealthUpdateUsageDescription"
+  },
+  {
+    "name": "NSHomeKitUsageDescription",
+    "desc": "Access your home data",
+    "value": "NSHomeKitUsageDescription"
+  },
+  {
+    "name": "NSLocationAlwaysAndWhenInUseUsageDescription",
+    "desc": "Access your location",
+    "value": "NSLocationAlwaysAndWhenInUseUsageDescription"
+  },
+  {
+    "name": "NSLocationAlwaysUsageDescription",
+    "desc": "Access your location",
+    "value": "NSLocationAlwaysUsageDescription"
+  },
+  {
+    "name": "NSLocationUsageDescription",
+    "desc": "Access your location",
+    "value": "NSLocationUsageDescription"
+  },
+  {
+    "name": "NSLocationWhenInUseUsageDescription",
+    "desc": "Access your location",
+    "value": "NSLocationWhenInUseUsageDescription"
+  },
+  {
+    "name": "NSMicrophoneUsageDescription",
+    "desc": "Access your microphone",
+    "value": "NSMicrophoneUsageDescription"
+  },
+  {
+    "name": "NSMotionUsageDescription",
+    "desc": "Access your motion data",
+    "value": "NSMotionUsageDescription"
+  },
+  {
+    "name": "NSPhotoLibraryAddUsageDescription",
+    "desc": "Access your photos",
+    "value": "NSPhotoLibraryAddUsageDescription"
+  },
+  {
+    "name": "NSPhotoLibraryUsageDescription",
+    "desc": "Access your photos",
+    "value": "NSPhotoLibraryUsageDescription"
+  },
+  {
+    "name": "NSRemindersUsageDescription",
+    "desc": "Access your reminders",
+    "value": "NSRemindersUsageDescription"
+  },
+  {
+    "name": "NSSiriUsageDescription",
+    "desc": "Access Siri",
+    "value": "NSSiriUsageDescription"
+  },
+  {
+    "name": "NSSpeechRecognitionUsageDescription",
+    "desc": "Access your speech recognition",
+    "value": "NSSpeechRecognitionUsageDescription"
+  },
+  {
+    "name": "NSVideoSubscriberAccountUsageDescription",
+    "desc": "Access your video subscriber account",
+    "value": "NSVideoSubscriberAccountUsageDescription"
+  }
+]
