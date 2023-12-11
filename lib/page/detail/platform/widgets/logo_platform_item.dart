@@ -41,7 +41,7 @@ class LogoPlatformItem extends StatelessWidget {
     this.project,
     this.onSubmitted,
     this.crossAxisCellCount = 5,
-    this.mainAxisExtent = 160,
+    this.mainAxisExtent = 140,
   });
 
   @override
@@ -56,7 +56,7 @@ class LogoPlatformItem extends StatelessWidget {
   // 构建内容
   Widget _buildContent(BuildContext context) {
     return Stack(
-      alignment: AlignmentDirectional.center,
+      alignment: AlignmentDirectional.bottomCenter,
       children: [
         ProjectLogoGrid(logoList: logos),
         Align(

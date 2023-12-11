@@ -49,7 +49,7 @@ class ProjectPlatformMacosPage extends ProjectPlatformPage<
       PlatformInfoTuple<MacosPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformMacosPageProvider>();
     return LogoPlatformItem(
-      mainAxisExtent: 340,
+      mainAxisExtent: 320,
       project: provider.project,
       platform: provider.platform,
       logos: platformInfo?.logos ?? [],
