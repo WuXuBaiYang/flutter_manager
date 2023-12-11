@@ -88,9 +88,10 @@ class ImageEditorDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () => provider.saveCrop().loading(context).then((v) {
-                Navigator.pop(context, v);
-              }),
+              onPressed: () => provider
+                  .saveCrop()
+                  .loading(context)
+                  .then((v) => Navigator.pop(context, v)),
             ),
           ],
         );
