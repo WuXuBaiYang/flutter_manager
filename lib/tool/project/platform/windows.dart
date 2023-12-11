@@ -25,6 +25,9 @@ class WindowsPlatformTool extends PlatformTool {
   // label字段匹配
   final _labelRegExp = RegExp(r'window.Create\(L"(.*)", origin, size\)');
 
+  // label输入限制
+  static final labelValidatorRegExp = RegExp(r'^[a-zA-Z1-9_]+$');
+
   @override
   Future<PlatformInfoTuple<WindowsPlatformInfoTuple>?> getPlatformInfo(
       String projectPath) async {
@@ -63,7 +66,7 @@ class WindowsPlatformTool extends PlatformTool {
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
     // 如果输入的label不合法，直接返回false
-    if (!RegExp(r'^[a-zA-Z_]+$').hasMatch(label)) return false;
+    if (!labelValidatorRegExp.hasMatch(label)) return false;
     var content = await readPlatformFile(projectPath, keyFilePath);
     final temp = _labelRegExp.pattern.replaceFirst('(.*)', label);
     content = content.replaceFirst(_labelRegExp, temp.replaceAll('\\', ''));

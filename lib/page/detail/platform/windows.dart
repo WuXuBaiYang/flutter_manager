@@ -38,10 +38,16 @@ class ProjectPlatformWindowsPage extends ProjectPlatformPage<
       PlatformInfoTuple<WindowsPlatformInfoTuple>? platformInfo) {
     final provider = context.read<ProjectPlatformWindowsPageProvider>();
     return LabelPlatformItem(
-      project: provider.project,
-      platform: provider.platform,
-      label: platformInfo?.label ?? '',
-    );
+        project: provider.project,
+        platform: provider.platform,
+        label: platformInfo?.label ?? '',
+        validator: (value) {
+          // 验证输入内容是否为纯英文
+          if (!WindowsPlatformTool.labelValidatorRegExp.hasMatch(value ?? '')) {
+            return '仅支持英文、数字、下划线';
+          }
+          return null;
+        });
   }
 
   // 构建logo项

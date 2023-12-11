@@ -62,6 +62,7 @@ class LogoPlatformItem extends StatelessWidget {
         Align(
           alignment: Alignment.topRight,
           child: IconButton(
+            iconSize: 20,
             padding: EdgeInsets.zero,
             visualDensity: VisualDensity.compact,
             onPressed: () => Tool.pickImageWithEdit(

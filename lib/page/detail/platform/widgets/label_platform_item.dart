@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_manager/model/database/project.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -21,9 +22,6 @@ class LabelPlatformItem extends StatelessWidget {
   // label
   final String label;
 
-  // 提交回调
-  final ValueChanged<String>? onSubmitted;
-
   // 选择器
   final FormFieldValidator<String>? validator;
 
@@ -32,53 +30,63 @@ class LabelPlatformItem extends StatelessWidget {
     required this.platform,
     required this.label,
     this.project,
-    this.onSubmitted,
     this.validator,
   });
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<PlatformProvider>();
-    final controller = ProjectPlatformItemController();
-    final textController = TextEditingController(text: label);
     return ProjectPlatformItem.extent(
-      mainAxisExtent: 140,
+      title: '项目名',
+      mainAxisExtent: 110,
       crossAxisCellCount: 3,
-      controller: controller,
-      onReset: () {
-        controller.edit(false);
-        textController.text = label;
-      },
-      onSubmitted: () {
-        if (project == null) return onSubmitted?.call(label);
-        provider
-            .updateLabel(platform, project!.path, textController.text)
-            .loading(context, dismissible: false);
-      },
-      content: _buildLabelItem(context, controller, textController),
+      content: _buildLabelItem(context),
     );
   }
 
   // 构建标签项
-  Widget _buildLabelItem(
-    BuildContext context,
-    ProjectPlatformItemController controller,
-    TextEditingController textController,
-  ) {
-    return TextFormField(
-      controller: textController,
-      onChanged: (v) => controller.edit(v != label),
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: const InputDecoration(
-        labelText: '项目名',
-        hintText: '请输入项目名',
-      ),
-      validator: (value) {
-        if (value?.isEmpty ?? true) {
-          return '请输入项目名';
-        }
-        return validator?.call(value);
+  Widget _buildLabelItem(BuildContext context) {
+    final provider = context.watch<PlatformProvider>();
+    final controller = TextEditingController(text: label);
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (event) {
+        if (event.runtimeType != RawKeyDownEvent) return;
+        if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
+        if (project == null) return;
+        context
+            .read<PlatformProvider>()
+            .updateLabel(platform, project!.path, controller.text)
+            .loading(context, dismissible: false);
       },
+      child: StatefulBuilder(builder: (_, state) {
+        final isEditing = controller.text != label;
+        return TextFormField(
+          controller: controller,
+          onChanged: (_) => state(() {}),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          decoration: InputDecoration(
+            hintText: '请输入项目名',
+            suffixIcon: IconButton(
+              iconSize: 18,
+              padding: EdgeInsets.zero,
+              icon: const Icon(Icons.done),
+              visualDensity: VisualDensity.compact,
+              onPressed: () {
+                if (!isEditing || project == null) return null;
+                return () => provider
+                    .updateLabel(platform, project!.path, controller.text)
+                    .loading(context, dismissible: false);
+              }(),
+            ),
+          ),
+          validator: (value) {
+            if (value?.isEmpty ?? true) {
+              return '请输入项目名';
+            }
+            return validator?.call(value);
+          },
+        );
+      }),
     );
   }
 }
