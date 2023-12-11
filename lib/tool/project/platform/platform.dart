@@ -27,12 +27,15 @@ typedef PlatformPermissionTuple = ({
   String input,
 });
 
-// 扩展平台权限信息元组，实现搜索
+// 扩展平台权限信息元组
 extension PlatformPermissionTupleExtension on PlatformPermissionTuple {
-  bool search(String keyword) =>
-      name.contains(keyword) ||
-      desc.contains(keyword) ||
-      value.contains(keyword);
+  // 根据条件搜索判断是否符合要求
+  bool search(String keyword) {
+    if (keyword.isEmpty) return true;
+    return name.contains(keyword) ||
+        desc.contains(keyword) ||
+        value.contains(keyword);
+  }
 }
 
 /*

@@ -35,24 +35,13 @@ extension EnvironmentPackageTupleExtension on EnvironmentPackageTuple {
   String get title => 'Flutter · $version · $channel';
 
   // 根据条件搜索判断是否符合要求
-  bool search(String search) {
-    if (search.isEmpty) return true;
-    return title.contains(search) ||
-        platform.contains(search) ||
-        dartVersion.contains(search) ||
-        dartArch.contains(search);
+  bool search(String keyword) {
+    if (keyword.isEmpty) return true;
+    return title.contains(keyword) ||
+        platform.contains(keyword) ||
+        dartVersion.contains(keyword) ||
+        dartArch.contains(keyword);
   }
-
-  // 转换为环境安装包对象
-  Map<String, dynamic> to() => {
-        'platform': platform,
-        'url': url,
-        'fileName': fileName,
-        'channel': channel,
-        'version': version,
-        'dartVersion': dartVersion,
-        'dartArch': dartArch,
-      };
 }
 
 /*
@@ -118,32 +107,20 @@ class EnvironmentTool {
 
   // 获取当前平台的环境安装包列表
   static Future<EnvironmentPackageResult> getEnvironmentPackageList() async {
-    EnvironmentPackageTuple fromJson(obj) => (
-          platform: obj['platform'] ?? '',
-          url: obj['url'] ?? '',
-          fileName: obj['fileName'] ?? '',
-          channel: obj['channel'] ?? '',
-          version: obj['version'] ?? '',
-          dartVersion: obj['dartVersion'] ?? '',
-          dartArch: obj['dartArch'] ?? '',
-        );
-    final json = cache.getJson(_environmentPackageCacheKey);
-    if (json != null) {
-      return json.map<String, List<EnvironmentPackageTuple>>((key, value) =>
-          MapEntry<String, List<EnvironmentPackageTuple>>(
-              key, value.map<EnvironmentPackageTuple>(fromJson).toList()));
-    }
     final platform = Platform.operatingSystem;
-    final url = _environmentPackageInfoUrl.replaceAll('{platform}', platform);
-    final resp = await Dio().get(url);
-    if (resp.statusCode != 200) throw Exception('获取环境安装包列表失败');
-    final baseUrl = resp.data['base_url'];
+    var json = cache.getJson(_environmentPackageCacheKey);
+    if (json == null) {
+      final url = _environmentPackageInfoUrl.replaceAll('{platform}', platform);
+      json = (await Dio().get(url)).data;
+      await cache.setJson(_environmentPackageCacheKey, json,
+          expiration: const Duration(days: 1));
+    }
     final result = <String, List<EnvironmentPackageTuple>>{};
-    for (final e in resp.data['releases'] ?? []) {
+    for (final e in json['releases'] ?? []) {
       final archive = e['archive'] ?? '';
       final package = (
         platform: platform,
-        url: '$baseUrl/$archive',
+        url: '${json['base_url']}/$archive',
         fileName: basename(archive),
         channel: '${e['channel']}',
         version: '${e['version']}',
@@ -153,10 +130,6 @@ class EnvironmentTool {
       final temp = result[package.channel] ?? [];
       result[package.channel] = temp..add(package);
     }
-    await cache.setJson(_environmentPackageCacheKey, result.map((key, value) {
-      final temp = value.map((e) => e.to()).toList();
-      return MapEntry(key, temp);
-    }), expiration: const Duration(days: 1));
     return result;
   }
 

@@ -119,14 +119,13 @@ class CacheManage extends BaseManage {
   // 检查有效期
   bool _check(String key) {
     final expirationKey = _genExpirationKey(key);
-    if (_sp.containsKey(expirationKey)) {
-      final expirationTime =
-          DateTime.fromMillisecondsSinceEpoch(_sp.getInt(expirationKey) ?? 0);
-      if (expirationTime.isBefore(DateTime.now())) {
-        remove(expirationKey);
-        remove(key);
-        return false;
-      }
+    if (!_sp.containsKey(expirationKey)) return false;
+    final expirationTime =
+        DateTime.fromMillisecondsSinceEpoch(_sp.getInt(expirationKey) ?? 0);
+    if (expirationTime.isBefore(DateTime.now())) {
+      remove(expirationKey);
+      remove(key);
+      return false;
     }
     return true;
   }
