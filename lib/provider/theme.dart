@@ -107,7 +107,6 @@ class ThemeProvider extends BaseProvider {
 
   // 获取全部支持的配色方案
   List<ThemeSchemeTuple> getThemeSchemeList({bool useMaterial3 = true}) {
-    const schemesMap = FlexColor.schemesWithCustom;
     return FlexScheme.values.where((e) {
       if (e == FlexScheme.custom) return false;
       if (useMaterial3) return e.name.contains('M3');
