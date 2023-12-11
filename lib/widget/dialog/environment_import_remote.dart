@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/database/environment.dart';
-import 'package:flutter_manager/model/environment_package.dart';
+import 'package:flutter_manager/model/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -137,7 +136,8 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
   }
 
   // 构建表单项-信息
-  Widget _buildFormFieldInfo(BuildContext context, EnvironmentPackage package) {
+  Widget _buildFormFieldInfo(
+      BuildContext context, EnvironmentPackageTuple package) {
     return Card(
       child: ListTile(
         title: Text(package.title),
@@ -161,7 +161,7 @@ class EnvironmentImportRemoteDialog extends StatelessWidget {
 
 // 下载信息元组类型
 typedef DownloadInfoTuple = ({
-  EnvironmentPackage? package,
+  EnvironmentPackageTuple? package,
   String path,
   int totalSize,
   int speed
@@ -231,7 +231,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   }
 
   // 启动下载
-  Future<void> startDownload(EnvironmentPackage package) async {
+  Future<void> startDownload(EnvironmentPackageTuple package) async {
     _currentStep = 1;
     _cancelToken = CancelToken();
     int tempSpeed = 0, totalSize = 0;
@@ -254,15 +254,20 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   }
 
   // 开始导入
-  Future<void> startImport(EnvironmentPackage package, String filePath) async {
+  Future<void> startImport(
+      EnvironmentPackageTuple package, String filePath) async {
     _currentStep = 2;
     updateFormData(path: await EnvironmentTool.getDefaultInstallPath(package));
     _updateDownloadInfo(package: package, path: filePath);
   }
 
   // 更新下载信息
-  void _updateDownloadInfo(
-      {EnvironmentPackage? package, String? path, int? totalSize, int? speed}) {
+  void _updateDownloadInfo({
+    EnvironmentPackageTuple? package,
+    String? path,
+    int? totalSize,
+    int? speed,
+  }) {
     _downloadInfo = (
       package: package ?? _downloadInfo?.package,
       path: path ?? _downloadInfo?.path ?? '',

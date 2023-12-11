@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 

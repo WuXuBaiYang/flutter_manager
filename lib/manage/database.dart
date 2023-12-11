@@ -1,7 +1,7 @@
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/common/manage.dart';
-import 'package:flutter_manager/model/database/environment.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/environment.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:isar/isar.dart';
 

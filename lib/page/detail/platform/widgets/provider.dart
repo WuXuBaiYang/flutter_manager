@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';

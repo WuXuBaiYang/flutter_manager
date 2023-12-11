@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';

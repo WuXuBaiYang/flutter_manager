@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';

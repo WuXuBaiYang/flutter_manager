@@ -3,21 +3,57 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/model/database/environment.dart';
-import 'package:flutter_manager/model/environment_package.dart';
+import 'package:flutter_manager/model/environment.dart';
 import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:path/path.dart';
 
 // 环境安装包结果类型
-typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
+typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackageTuple>>;
 
 // 已下载文件元组
 typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
 
 // 已下载文件信息元组
 typedef DownloadFileInfoTuple = ({int count, int totalSize});
+
+// 环境安装包信息元组
+typedef EnvironmentPackageTuple = ({
+  String platform,
+  String url,
+  String fileName,
+  String channel,
+  String version,
+  String dartVersion,
+  String dartArch,
+});
+
+// 扩展环境安装包信息元组
+extension EnvironmentPackageTupleExtension on EnvironmentPackageTuple {
+  // 获取标题
+  String get title => 'Flutter · $version · $channel';
+
+  // 根据条件搜索判断是否符合要求
+  bool search(String search) {
+    if (search.isEmpty) return true;
+    return title.contains(search) ||
+        platform.contains(search) ||
+        dartVersion.contains(search) ||
+        dartArch.contains(search);
+  }
+
+  // 转换为环境安装包对象
+  Map<String, dynamic> to() => {
+        'platform': platform,
+        'url': url,
+        'fileName': fileName,
+        'channel': channel,
+        'version': version,
+        'dartVersion': dartVersion,
+        'dartArch': dartArch,
+      };
+}
 
 /*
 * 环境管理工具
@@ -82,32 +118,38 @@ class EnvironmentTool {
 
   // 获取当前平台的环境安装包列表
   static Future<EnvironmentPackageResult> getEnvironmentPackageList() async {
+    EnvironmentPackageTuple fromJson(obj) => (
+          platform: obj['platform'] ?? '',
+          url: obj['url'] ?? '',
+          fileName: obj['fileName'] ?? '',
+          channel: obj['channel'] ?? '',
+          version: obj['version'] ?? '',
+          dartVersion: obj['dartVersion'] ?? '',
+          dartArch: obj['dartArch'] ?? '',
+        );
     final json = cache.getJson(_environmentPackageCacheKey);
     if (json != null) {
-      return json.map<String, List<EnvironmentPackage>>((key, value) {
-        return MapEntry<String, List<EnvironmentPackage>>(key,
-            value.map<EnvironmentPackage>(EnvironmentPackage.from).toList());
-      });
+      return json.map<String, List<EnvironmentPackageTuple>>((key, value) =>
+          MapEntry<String, List<EnvironmentPackageTuple>>(
+              key, value.map<EnvironmentPackageTuple>(fromJson).toList()));
     }
     final platform = Platform.operatingSystem;
     final url = _environmentPackageInfoUrl.replaceAll('{platform}', platform);
     final resp = await Dio().get(url);
     if (resp.statusCode != 200) throw Exception('获取环境安装包列表失败');
     final baseUrl = resp.data['base_url'];
-    final result = <String, List<EnvironmentPackage>>{};
+    final result = <String, List<EnvironmentPackageTuple>>{};
     for (final e in resp.data['releases'] ?? []) {
       final archive = e['archive'] ?? '';
-      final package = EnvironmentPackage()
-        ..platform = platform
-        ..url = '$baseUrl/$archive'
-        ..fileName = basename(archive)
-        ..hash = e['hash'] ?? ''
-        ..sha256 = e['sha256'] ?? ''
-        ..channel = e['channel'] ?? ''
-        ..version = e['version'] ?? ''
-        ..dartVersion = e['dart_sdk_version'] ?? ''
-        ..dartArch = e['dart_sdk_arch'] ?? ''
-        ..releaseDate = e['release_date'] ?? '';
+      final package = (
+        platform: platform,
+        url: '$baseUrl/$archive',
+        fileName: basename(archive),
+        channel: '${e['channel']}',
+        version: '${e['version']}',
+        dartVersion: '${e['dart_sdk_version']}',
+        dartArch: '${e['dart_sdk_arch']}',
+      );
       final temp = result[package.channel] ?? [];
       result[package.channel] = temp..add(package);
     }
@@ -179,7 +221,7 @@ class EnvironmentTool {
 
   // 获取默认的安装包目录
   static Future<String?> getDefaultInstallPath(
-      EnvironmentPackage package) async {
+      EnvironmentPackageTuple package) async {
     final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
     return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
   }

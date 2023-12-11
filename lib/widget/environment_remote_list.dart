@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/model/environment_package.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/loading.dart';
@@ -8,7 +7,7 @@ import 'package:provider/provider.dart';
 
 // 开始下载回调
 typedef StartDownloadCallback = void Function(
-    EnvironmentPackage package, String savePath);
+    EnvironmentPackageTuple package, String savePath);
 
 /*
 * 远程环境安装包列表组件
@@ -83,8 +82,12 @@ class EnvironmentRemoteList extends StatelessWidget {
       _searchControllerMap[key] ??= TextEditingController();
 
   // 构建安装包渠道列表
-  Widget _buildPackageChannelTabView(BuildContext context, String channel,
-      List<EnvironmentPackage> packages, DownloadedFileTuple downloadFile) {
+  Widget _buildPackageChannelTabView(
+    BuildContext context,
+    String channel,
+    List<EnvironmentPackageTuple> packages,
+    DownloadedFileTuple downloadFile,
+  ) {
     final controller = _getSearchController(channel);
     return StatefulBuilder(
       builder: (_, setState) {
@@ -110,8 +113,11 @@ class EnvironmentRemoteList extends StatelessWidget {
   }
 
   // 构建安装包渠道列表
-  Widget _buildPackageChannelList(BuildContext context,
-      List<EnvironmentPackage> packages, DownloadedFileTuple downloadFile) {
+  Widget _buildPackageChannelList(
+    BuildContext context,
+    List<EnvironmentPackageTuple> packages,
+    DownloadedFileTuple downloadFile,
+  ) {
     return ListView.separated(
       shrinkWrap: true,
       itemCount: packages.length,

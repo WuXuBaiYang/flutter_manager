@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/database/environment.dart';
+import 'package:flutter_manager/model/environment.dart';
 
 /*
 * 环境标签组件

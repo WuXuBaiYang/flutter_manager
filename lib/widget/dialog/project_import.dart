@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/model/database/project.dart';
+import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
