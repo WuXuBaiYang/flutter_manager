@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
@@ -329,7 +328,7 @@ class ProjectDetailPage extends BasePage {
             platformProvider
                 .updateLogos(project.path, result, controller: controller)
                 .loading(context,
-                    progress: controller.stream, dismissible: false);
+                    inputStream: controller.stream, dismissible: false);
           }),
           icon: const Icon(Icons.imagesearch_roller_rounded, size: 18),
         ),

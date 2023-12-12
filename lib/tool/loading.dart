@@ -15,7 +15,7 @@ class Loading {
     BuildContext context, {
     required Future<T?> loadFuture,
     bool dismissible = true,
-    Stream<double>? progress,
+    Stream<double>? inputStream,
   }) async {
     final buildFlag = Completer<bool>();
     final navigator = Navigator.of(context);
@@ -27,7 +27,7 @@ class Loading {
           builder: (_) {
             WidgetsBinding.instance
                 .addPostFrameCallback((_) => buildFlag.complete(false));
-            return _buildLoading(context, progress);
+            return _buildLoading(context, inputStream);
           })
         ..whenComplete(() => _loading = null);
       return await loadFuture;
@@ -41,7 +41,7 @@ class Loading {
 
   // 构建加载视图
   static Widget _buildLoading(
-      BuildContext context, Stream<double>? progressStream) {
+      BuildContext context, Stream<double>? inputStream) {
     final textStyle = Theme.of(context).textTheme.bodySmall;
     final constraints = BoxConstraints.tight(const Size.square(80));
     return Center(
@@ -50,7 +50,7 @@ class Loading {
           constraints: constraints,
           padding: const EdgeInsets.all(8),
           child: StreamBuilder<double>(
-            stream: progressStream,
+            stream: inputStream,
             builder: (_, snap) {
               final progress = snap.data;
               return Stack(
@@ -73,8 +73,7 @@ class Loading {
 // 扩展future方法实现loading
 extension LoadingFuture<T> on Future<T> {
   Future<T?> loading(BuildContext context,
-      {bool dismissible = true, Stream<double>? progress}) {
-    return Loading.show(context,
-        loadFuture: this, dismissible: dismissible, progress: progress);
-  }
+          {bool dismissible = true, Stream<double>? inputStream}) =>
+      Loading.show(context,
+          loadFuture: this, dismissible: dismissible, inputStream: inputStream);
 }

@@ -71,7 +71,8 @@ class LogoPlatformItem extends StatelessWidget {
             .read<PlatformProvider>()
             .updateLogo(platform, project?.path, result,
                 progressCallback: (c, t) => controller.add(c / t))
-            .loading(context, progress: controller.stream, dismissible: false);
+            .loading(context,
+                inputStream: controller.stream, dismissible: false);
       }),
     );
   }
