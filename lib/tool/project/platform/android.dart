@@ -108,6 +108,24 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   @override
   Future<bool> setPermissionList(
       String projectPath, List<PlatformPermissionTuple> permissions) async {
+    if (!isPathAvailable(projectPath)) return false;
+    final fragment =
+        await readPlatformFileXmlFragment(projectPath, _manifestPath);
+    final children = fragment.getElement('manifest')?.children;
+    if (children == null) return false;
+    final values = children
+        .map((e) => e.getAttribute('android:name')?.split('.').lastOrNull);
+    final newPermissions = permissions
+        .where((e) => !values.contains(e.value))
+        .map((e) => XmlElement(XmlName('uses-permission'), [
+              XmlAttribute(
+                  XmlName('android:name'), 'android.permission.${e.value}')
+            ]))
+        .toList(growable: false);
+    if (newPermissions.isNotEmpty) {
+      children.insertAll(0, newPermissions);
+      await writePlatformFileXml(projectPath, _manifestPath, fragment);
+    }
     return true;
   }
 }
