@@ -1,102 +1,257 @@
 [
   {
-    "name": "NSAppleMusicUsageDescription",
-    "desc": "Access your music and media library",
-    "value": "NSAppleMusicUsageDescription"
+    "value": "NSBluetoothAlwaysUsageDescription",
+    "desc": "A message that tells the user why the app needs access to Bluetooth.",
+    "name": "Bluetooth Always Usage Description"
   },
   {
-    "name": "NSBluetoothPeripheralUsageDescription",
-    "desc": "Access your bluetooth",
-    "value": "NSBluetoothPeripheralUsageDescription"
+    "value": "NSCalendarsFullAccessUsageDescription",
+    "desc": "A message that tells people why the app is requesting access to read and write their calendar data.",
+    "name": "Calendars Full Access Usage Description"
   },
   {
-    "name": "NSCalendarsUsageDescription",
-    "desc": "Access your calendar",
-    "value": "NSCalendarsUsageDescription"
+    "value": "NSCalendarsWriteOnlyAccessUsageDescription",
+    "desc": "A message that tells people why the app is requesting access to create calendar events.",
+    "name": "Calendars Write Only Usage Description"
   },
   {
-    "name": "NSCameraUsageDescription",
-    "desc": "Access your camera",
-    "value": "NSCameraUsageDescription"
+    "value": "NSRemindersFullAccessUsageDescription",
+    "desc": "A message that tells people why the app is requesting access to read and write their reminders data.",
+    "name": "Reminders Full Access Usage Description"
   },
   {
-    "name": "NSContactsUsageDescription",
-    "desc": "Access your contacts",
-    "value": "NSContactsUsageDescription"
+    "value": "NSCameraUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the device’s camera.",
+    "name": "Camera Usage Description"
   },
   {
-    "name": "NSHealthShareUsageDescription",
-    "desc": "Access your health data",
-    "value": "NSHealthShareUsageDescription"
+    "value": "NSMicrophoneUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the device’s microphone.",
+    "name": "Microphone Usage Description"
   },
   {
-    "name": "NSHealthUpdateUsageDescription",
-    "desc": "Access your health data",
-    "value": "NSHealthUpdateUsageDescription"
+    "value": "NSContactsUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s contacts.",
+    "name": "Contacts Usage Description"
   },
   {
-    "name": "NSHomeKitUsageDescription",
-    "desc": "Access your home data",
-    "value": "NSHomeKitUsageDescription"
+    "value": "NSFaceIDUsageDescription",
+    "desc": "A message that tells the user why the app is requesting the ability to authenticate with Face ID.",
+    "name": "Face ID Usage Description"
   },
   {
-    "name": "NSLocationAlwaysAndWhenInUseUsageDescription",
-    "desc": "Access your location",
-    "value": "NSLocationAlwaysAndWhenInUseUsageDescription"
+    "value": "NSDesktopFolderUsageDescription",
+    "desc": "A message that tells the user why the app needs access to the user’s Desktop folder.",
+    "name": "Desktop Folder Usage Description"
   },
   {
-    "name": "NSLocationAlwaysUsageDescription",
-    "desc": "Access your location",
-    "value": "NSLocationAlwaysUsageDescription"
+    "value": "NSDocumentsFolderUsageDescription",
+    "desc": "A message that tells the user why the app needs access to the user’s Documents folder.",
+    "name": "Documents Folder Usage Description"
   },
   {
-    "name": "NSLocationUsageDescription",
-    "desc": "Access your location",
-    "value": "NSLocationUsageDescription"
+    "value": "NSDownloadsFolderUsageDescription",
+    "desc": "A message that tells the user why the app needs access to the user’s Downloads folder.",
+    "name": "Downloads Folder Usage Description"
   },
   {
-    "name": "NSLocationWhenInUseUsageDescription",
-    "desc": "Access your location",
-    "value": "NSLocationWhenInUseUsageDescription"
+    "value": "NSNetworkVolumesUsageDescription",
+    "desc": "A message that tells the user why the app needs access to files on a network volume.",
+    "name": "Network Volumes Usage Description"
   },
   {
-    "name": "NSMicrophoneUsageDescription",
-    "desc": "Access your microphone",
-    "value": "NSMicrophoneUsageDescription"
+    "value": "NSRemovableVolumesUsageDescription",
+    "desc": "A message that tells the user why the app needs access to files on a removable volume.",
+    "name": "Removable Volumes Usage Description"
   },
   {
-    "name": "NSMotionUsageDescription",
-    "desc": "Access your motion data",
-    "value": "NSMotionUsageDescription"
+    "value": "NSFileProviderDomainUsageDescription",
+    "desc": "A message that tells the user why the app needs access to files managed by a file provider.",
+    "name": "Access to a File Provider Domain Usage Description"
   },
   {
-    "name": "NSPhotoLibraryAddUsageDescription",
-    "desc": "Access your photos",
-    "value": "NSPhotoLibraryAddUsageDescription"
+    "value": "NSGKFriendListUsageDescription",
+    "desc": "A message that tells the user why the app needs access to their Game Center friends list.",
+    "name": "NSGKFriendListUsageDescription"
   },
   {
-    "name": "NSPhotoLibraryUsageDescription",
-    "desc": "Access your photos",
-    "value": "NSPhotoLibraryUsageDescription"
+    "value": "NSHealthClinicalHealthRecordsShareUsageDescription",
+    "desc": "A message to the user that explains why the app requested permission to read clinical records.",
+    "name": "Health Records Usage Description"
   },
   {
-    "name": "NSRemindersUsageDescription",
-    "desc": "Access your reminders",
-    "value": "NSRemindersUsageDescription"
+    "value": "NSHealthShareUsageDescription",
+    "desc": "A message to the user that explains why the app requested permission to read samples from the HealthKit store.",
+    "name": "Health Share Usage Description"
   },
   {
-    "name": "NSSiriUsageDescription",
-    "desc": "Access Siri",
-    "value": "NSSiriUsageDescription"
+    "value": "NSHealthUpdateUsageDescription",
+    "desc": "A message to the user that explains why the app requested permission to save samples to the HealthKit store.",
+    "name": "Health Update Usage Description"
   },
   {
-    "name": "NSSpeechRecognitionUsageDescription",
-    "desc": "Access your speech recognition",
-    "value": "NSSpeechRecognitionUsageDescription"
+    "value": "NSHealthRequiredReadAuthorizationTypeIdentifiers",
+    "desc": "The clinical record data types that your app must get permission to read.",
+    "name": "NSHealthRequiredReadAuthorizationTypeIdentifiers"
   },
   {
-    "name": "NSVideoSubscriberAccountUsageDescription",
-    "desc": "Access your video subscriber account",
-    "value": "NSVideoSubscriberAccountUsageDescription"
+    "value": "NSHomeKitUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s HomeKit configuration data.",
+    "name": "HomeKit Usage Description"
+  },
+  {
+    "value": "NSLocationAlwaysAndWhenInUseUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s location information at all times.",
+    "name": "Location Always and When In Use Usage Description"
+  },
+  {
+    "value": "NSLocationUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s location information.",
+    "name": "Location Usage Description"
+  },
+  {
+    "value": "NSLocationWhenInUseUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s location information while the app is running in the foreground.",
+    "name": "Location When In Use Usage Description"
+  },
+  {
+    "value": "NSLocationTemporaryUsageDescriptionDictionary",
+    "desc": "A collection of messages that explain why the app is requesting temporary access to the user’s location.",
+    "name": "Location Temporary Usage Description Dictionary"
+  },
+  {
+    "value": "NSWidgetWantsLocation",
+    "desc": "A Boolean value that indicates a widget uses the user’s location information.",
+    "name": "Widget wants location"
+  },
+  {
+    "value": "NSLocationDefaultAccuracyReduced",
+    "desc": "A Boolean value that indicates whether the app requests reduced location accuracy by default.",
+    "name": "Location Default Accuracy Reduced"
+  },
+  {
+    "value": "NSAppleMusicUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s media library.",
+    "name": "Media Library Usage Description"
+  },
+  {
+    "value": "NSMotionUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the device’s motion data.",
+    "name": "Motion Usage Description"
+  },
+  {
+    "value": "NSFallDetectionUsageDescription",
+    "desc": "A message to the user that explains the app’s request for permission to access fall detection event data.",
+    "name": "Fall Detection Usage Description"
+  },
+  {
+    "value": "NSLocalNetworkUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the local network.",
+    "name": "Local Network Usage Description"
+  },
+  {
+    "value": "NSNearbyInteractionUsageDescription",
+    "desc": "A request for user permission to begin an interaction session with nearby devices.",
+    "name": "Nearby Interaction Usage Description"
+  },
+  {
+    "value": "NFCReaderUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the device’s NFC hardware.",
+    "name": "NFC Scan Usage Description"
+  },
+  {
+    "value": "NSPhotoLibraryAddUsageDescription",
+    "desc": "A message that tells the user why the app is requesting add-only access to the user’s photo library.",
+    "name": "Photo Library Additions Usage Description"
+  },
+  {
+    "value": "NSPhotoLibraryUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s photo library.",
+    "name": "Photo Library Usage Description"
+  },
+  {
+    "value": "NSAppleScriptEnabled",
+    "desc": "A Boolean value indicating whether AppleScript is enabled.",
+    "name": "Scriptable"
+  },
+  {
+    "value": "NSUpdateSecurityPolicy",
+    "desc": "A dictionary that identifies which apps or installer packages the operating system allows to write to the app’s bundle.",
+    "name": "NSUpdateSecurityPolicy"
+  },
+  {
+    "value": "NSAppDataUsageDescription",
+    "desc": "A message that tells the user why the app needs to access files in other apps’ sandbox containers.",
+    "name": "Other Application Data Usage Description"
+  },
+  {
+    "value": "NSUserTrackingUsageDescription",
+    "desc": "A message that informs the user why an app is requesting permission to use data for tracking the user or the device.",
+    "name": "Tracking Usage Description"
+  },
+  {
+    "value": "NSAppleEventsUsageDescription",
+    "desc": "A message that tells the user why the app is requesting the ability to send Apple events.",
+    "name": "AppleEvents Sending Usage Description"
+  },
+  {
+    "value": "NSSystemAdministrationUsageDescription",
+    "desc": "A message in macOS that tells the user why the app is requesting to manipulate the system configuration.",
+    "name": "System Administration Usage Description"
+  },
+  {
+    "value": "ITSAppUsesNonExemptEncryption",
+    "desc": "A Boolean value indicating whether the app uses encryption.",
+    "name": "App Uses Non-Exempt Encryption"
+  },
+  {
+    "value": "ITSEncryptionExportComplianceCode",
+    "desc": "The export compliance code provided by App Store Connect for apps that require it.",
+    "name": "App Encryption Export Compliance Code"
+  },
+  {
+    "value": "NSSensorKitUsageDescription",
+    "desc": "A short description of the purpose of your app’s research study.",
+    "name": "NSSensorKitUsageDescription"
+  },
+  {
+    "value": "NSSensorKitUsageDetail",
+    "desc": "A dictionary that includes keys for the specific information your app collects.",
+    "name": "NSSensorKitUsageDetail"
+  },
+  {
+    "value": "NSSensorKitPrivacyPolicyURL",
+    "desc": "A hyperlink to a webpage that displays the privacy policy for your app’s research study.",
+    "name": "NSSensorKitPrivacyPolicyURL"
+  },
+  {
+    "value": "NSSiriUsageDescription",
+    "desc": "A message that tells the user why the app is requesting to send user data to Siri.",
+    "name": "Siri Usage Description"
+  },
+  {
+    "value": "NSSpeechRecognitionUsageDescription",
+    "desc": "A message that tells the user why the app is requesting to send user data to Apple’s speech recognition servers.",
+    "name": "Speech Recognition Usage Description"
+  },
+  {
+    "value": "NSVideoSubscriberAccountUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to the user’s TV provider account.",
+    "name": "Video Subscriber Account Usage Description"
+  },
+  {
+    "value": "NSWorldSensingUsageDescription",
+    "desc": "A message that tells the user why the app is requesting access to image tracking, plane detection, or scene reconstruction.",
+    "name": "NSWorldSensingUsageDescription"
+  },
+  {
+    "value": "NSIdentityUsageDescription",
+    "desc": "A message that tells the user why the app is requesting identity information.",
+    "name": "Identity Usage Description"
+  },
+  {
+    "value": "UIRequiresPersistentWiFi",
+    "desc": "A Boolean value that indicates whether the app requires a Wi-Fi connection.",
+    "name": "Application uses Wi-Fi"
   }
 ]
