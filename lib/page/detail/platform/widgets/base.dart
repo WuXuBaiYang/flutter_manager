@@ -4,7 +4,6 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -28,12 +27,6 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider,
         return EmptyBoxView(
           hint: '无平台信息',
           isEmpty: platformTuple == null,
-          icon: IconButton.outlined(
-            iconSize: 45,
-            icon: const Icon(Icons.add),
-            onPressed: () =>
-                context.read<T>().createPlatform().loading(context),
-          ),
           child: _buildPlatformWidget(context, platformTuple),
         );
       },
@@ -73,12 +66,8 @@ abstract class ProjectPlatformProvider extends BaseProvider {
   // 平台类型
   final PlatformType platform;
 
-  ProjectPlatformProvider(super.context, this.platform);
-
-  // 创建平台信息
-  Future<void> createPlatform() =>
-      context.read<PlatformProvider>().createPlatform(project, platform);
-
   // 获取项目信息
   Project? get project => context.read<ProjectDetailPageProvider>().project;
+
+  ProjectPlatformProvider(super.context, this.platform);
 }
