@@ -186,7 +186,7 @@ class ProjectDetailPage extends BasePage {
         _buildEnvironmentBadge(project),
         const SizedBox(width: 4),
         IconButton(
-          iconSize: 16,
+          iconSize: 14,
           icon: const Icon(Icons.edit),
           visualDensity: VisualDensity.compact,
           onPressed: () => ProjectImportDialog.show(context, project: project)
@@ -207,6 +207,7 @@ class ProjectDetailPage extends BasePage {
     return Row(
       children: [
         IconButton.outlined(
+          iconSize: 20,
           tooltip: 'Asset管理',
           icon: const Icon(Icons.assessment_outlined),
           onPressed: () {
@@ -215,6 +216,7 @@ class ProjectDetailPage extends BasePage {
           },
         ),
         IconButton.outlined(
+          iconSize: 20,
           tooltip: '字体管理',
           icon: const Icon(Icons.font_download_outlined),
           onPressed: () {
@@ -223,6 +225,7 @@ class ProjectDetailPage extends BasePage {
           },
         ),
         IconButton.outlined(
+          iconSize: 20,
           tooltip: '打开项目目录',
           icon: const Icon(Icons.file_open_outlined),
           onPressed: () => Tool.openLocalPath(project.path),

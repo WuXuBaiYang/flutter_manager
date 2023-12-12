@@ -56,10 +56,9 @@ class LogoPlatformItem extends StatelessWidget {
   // 构建编辑图标按钮
   Widget _buildEditLogoButton(BuildContext context) {
     return IconButton(
-      iconSize: 18,
-      padding: EdgeInsets.zero,
+      iconSize: 14,
+      icon: const Icon(Icons.edit),
       visualDensity: VisualDensity.compact,
-      icon: const Icon(Icons.edit_outlined),
       onPressed: () => Tool.pickImageWithEdit(
         context,
         dialogTitle: '选择项目图标',
