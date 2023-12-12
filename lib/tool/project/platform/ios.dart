@@ -127,6 +127,7 @@ class IosPlatformTool extends PlatformTool {
     final fragment = await _getPlistFragment(projectPath);
     final children = fragment.getElement('plist')?.getElement('dict')?.children;
     if (children == null) return false;
+    // 查出key字段对应的element
     final valueMap = children
         .whereType<XmlElement>()
         .where((e) => e.localName == 'key')
@@ -134,12 +135,14 @@ class IosPlatformTool extends PlatformTool {
         .asMap()
         .map((_, v) => MapEntry(v.innerText, v));
     final childrenList = children.toList();
+    // 过滤出需要新增的权限，已存在权限则更新权限描述
     final newPermissions = permissions
         .where((e) {
           if (!valueMap.containsKey(e.value)) return true;
           final element = valueMap[e.value];
           if (element != null) {
             final nextElement = element.nextElementSibling;
+            // 如果存在权限描述字段则修改，不存在则添加
             if (nextElement?.localName == 'string') {
               nextElement?.innerText = e.input;
             } else {
@@ -154,6 +157,7 @@ class IosPlatformTool extends PlatformTool {
               XmlElement(XmlName('string'), [], [XmlText(e.input)])
             ])
         .toList();
+    // 写入最新权限
     if (newPermissions.isNotEmpty) {
       children.addAll(newPermissions);
       return writePlatformFileXml(projectPath, keyFilePath, fragment);
