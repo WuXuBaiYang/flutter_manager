@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
+import 'widgets/permission_platform_item.dart';
 
 /*
 * 项目详情-ios平台信息页
@@ -30,6 +31,7 @@ class ProjectPlatformIosPage extends ProjectPlatformPage<
     return [
       _buildLabelItem(context, platformInfo),
       _buildLogoItem(context, platformInfo),
+      _buildPermissionItem(context, platformInfo),
     ];
   }
 
@@ -53,6 +55,17 @@ class ProjectPlatformIosPage extends ProjectPlatformPage<
       project: provider.project,
       platform: provider.platform,
       logos: platformInfo?.logos ?? [],
+    );
+  }
+
+  // 构建权限项
+  Widget _buildPermissionItem(BuildContext context,
+      PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) {
+    final provider = context.read<ProjectPlatformIosPageProvider>();
+    return PermissionPlatformItem(
+      project: provider.project,
+      platform: provider.platform,
+      permissions: platformInfo?.permissions ?? [],
     );
   }
 }

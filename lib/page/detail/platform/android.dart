@@ -6,6 +6,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'widgets/logo_platform_item.dart';
+import 'widgets/permission_platform_item.dart';
 
 /*
 * 项目详情-android平台信息页
@@ -30,6 +31,7 @@ class ProjectPlatformAndroidPage extends ProjectPlatformPage<
     return [
       _buildLabelItem(context, platformInfo),
       _buildLogoItem(context, platformInfo),
+      _buildPermissionItem(context, platformInfo),
     ];
   }
 
@@ -55,11 +57,16 @@ class ProjectPlatformAndroidPage extends ProjectPlatformPage<
     );
   }
 
-  // // 构建权限项
-  // Widget _buildPermissionItem(BuildContext context,
-  //     PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
-  //   final provider = context.read<ProjectPlatformAndroidPageProvider>();
-  // }
+  // 构建权限项
+  Widget _buildPermissionItem(BuildContext context,
+      PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
+    final provider = context.read<ProjectPlatformAndroidPageProvider>();
+    return PermissionPlatformItem(
+      project: provider.project,
+      platform: provider.platform,
+      permissions: platformInfo?.permissions ?? [],
+    );
+  }
 }
 
 /*
