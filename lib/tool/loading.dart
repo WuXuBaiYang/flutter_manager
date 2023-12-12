@@ -53,15 +53,12 @@ class Loading {
             stream: inputStream,
             builder: (_, snap) {
               final progress = snap.data;
-              return Stack(
-                alignment: Alignment.center,
-                children: [
-                  CircularProgressIndicator(value: progress),
-                  if (progress != null)
-                    Text('${(progress * 100).toInt()}%',
-                        style: textStyle?.copyWith(fontSize: 10)),
-                ],
-              );
+              return Stack(alignment: Alignment.center, children: [
+                CircularProgressIndicator(value: progress),
+                if (progress != null)
+                  Text('${(progress * 100).toInt()}%',
+                      style: textStyle?.copyWith(fontSize: 10)),
+              ]);
             },
           ),
         ),

@@ -56,22 +56,16 @@ class ProjectLogoGrid extends StatelessWidget {
       onTap: onTap != null ? () => onTap?.call(item) : null,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          ConstrainedBox(
               constraints: BoxConstraints.loose(maxSize),
-              child: Image(image: FileImage(File(item.path))..evict()),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.name,
+              child: Image(image: FileImage(File(item.path))..evict())),
+          const SizedBox(height: 4),
+          Text(item.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
+              style: Theme.of(context).textTheme.bodySmall),
+        ]),
       ),
     );
   }
