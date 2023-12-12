@@ -114,7 +114,7 @@ class ProjectTool {
   static Future<String?> getProjectLogo(String projectPath,
       {double minSize = 50}) async {
     for (final tool in _platformTools.values) {
-      final result = await tool.getLogoInfo(projectPath);
+      final result = await tool.getLogos(projectPath);
       if (result == null) continue;
       // 遍历结果找到合适尺寸的图片返回
       for (final item in result) {
@@ -138,9 +138,9 @@ class ProjectTool {
       _platformTools[platform]! as T;
 
   // 根据平台获取图标
-  static Future<List<PlatformLogoTuple>?> getLogoInfo(
+  static Future<List<PlatformLogoTuple>?> getLogos(
           PlatformType platform, String projectPath) =>
-      getPlatformTool(platform).getLogoInfo(projectPath);
+      getPlatformTool(platform).getLogos(projectPath);
 
   // 根据平台替换图标
   static Future<bool> replaceLogo(
@@ -159,17 +159,17 @@ class ProjectTool {
       getPlatformTool(platform).setLabel(projectPath, label);
 
   // 获取完整权限列表
-  static Future<List<PlatformPermissionTuple>?> getFullPermissionList(
+  static Future<List<PlatformPermissionTuple>?> getFullPermissions(
           PlatformType platform) =>
-      getPlatformTool(platform).getFullPermissionList();
+      getPlatformTool(platform).getFullPermissions();
 
   // 获取平台权限列表
-  static Future<List<PlatformPermissionTuple>?> getPermissionList(
+  static Future<List<PlatformPermissionTuple>?> getPermissions(
           PlatformType platform, String projectPath) =>
-      getPlatformTool(platform).getPermissionList(projectPath);
+      getPlatformTool(platform).getPermissions(projectPath);
 
   // 设置平台权限列表
-  static Future<bool> setPermissionList(PlatformType platform,
+  static Future<bool> setPermissions(PlatformType platform,
           String projectPath, List<PlatformPermissionTuple> permissions) =>
-      getPlatformTool(platform).setPermissionList(projectPath, permissions);
+      getPlatformTool(platform).setPermissions(projectPath, permissions);
 }

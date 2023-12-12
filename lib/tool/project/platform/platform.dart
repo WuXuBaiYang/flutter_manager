@@ -13,6 +13,7 @@ typedef PlatformInfoTuple<T extends Record> = ({
   String path,
   String label,
   List<PlatformLogoTuple> logos,
+  List<PlatformPermissionTuple> permissions,
   T info,
 });
 
@@ -161,7 +162,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return <PlatformLogoTuple>[];
   }
@@ -174,12 +175,12 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
           '.jpg': ImageType.jpg,
           '.ico': ImageType.ico,
         }[suffixes];
-    final logoInfoList = await getLogoInfo(projectPath);
-    if (logoInfoList == null) return false;
+    final logos = await getLogos(projectPath);
+    if (logos == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
     int index = 0;
-    progressCallback?.call(index, logoInfoList.length);
-    for (final item in logoInfoList) {
+    progressCallback?.call(index, logos.length);
+    for (final item in logos) {
       final imageType = convertImageType(File(item.path).suffixes);
       if (imageType != null) {
         final width = item.size.width.toInt(),
@@ -187,7 +188,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
         await ImageTool.resizeFile(logoPath, item.path,
             width: width, height: height, imageType: imageType);
       }
-      progressCallback?.call(++index, logoInfoList.length);
+      progressCallback?.call(++index, logos.length);
     }
     return true;
   }
@@ -202,7 +203,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   Future<bool> setLabel(String projectPath, String label) async => true;
 
   @override
-  Future<List<PlatformPermissionTuple>?> getFullPermissionList() async {
+  Future<List<PlatformPermissionTuple>?> getFullPermissions() async {
     try {
       final path = Assets.getPermission(platform);
       final content = await rootBundle.loadString(path);
@@ -219,14 +220,14 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissionList(
+  Future<List<PlatformPermissionTuple>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return <PlatformPermissionTuple>[];
   }
 
   @override
-  Future<bool> setPermissionList(String projectPath,
+  Future<bool> setPermissions(String projectPath,
           List<PlatformPermissionTuple> permissions) async =>
       true;
 }
@@ -241,7 +242,7 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<PlatformInfoTuple<T>?> getPlatformInfo(String projectPath);
 
   // 获取logo
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath);
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath);
 
   // 替换logo
   Future<bool> replaceLogo(String projectPath, String logoPath,
@@ -254,13 +255,13 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<bool> setLabel(String projectPath, String label);
 
   // 获取该平台完整权限列表
-  Future<List<PlatformPermissionTuple>?> getFullPermissionList();
+  Future<List<PlatformPermissionTuple>?> getFullPermissions();
 
   // 获取权限列表
-  Future<List<PlatformPermissionTuple>?> getPermissionList(String projectPath);
+  Future<List<PlatformPermissionTuple>?> getPermissions(String projectPath);
 
   // 设置权限列表
-  Future<bool> setPermissionList(
+  Future<bool> setPermissions(
       String projectPath, List<PlatformPermissionTuple> permissions);
 }
 

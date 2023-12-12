@@ -32,7 +32,8 @@ class LinuxPlatformTool extends PlatformTool {
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logos: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogos(projectPath) ?? [],
+      permissions: <PlatformPermissionTuple>[],
       info: (),
     );
   }

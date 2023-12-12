@@ -71,7 +71,7 @@ class PermissionPickerDialog extends StatelessWidget {
     final controller = TextEditingController();
     return FutureProvider<List<PlatformPermissionTuple>?>(
       initialData: null,
-      create: (_) => ProjectTool.getFullPermissionList(platform),
+      create: (_) => ProjectTool.getFullPermissions(platform),
       builder: (context, __) {
         final permissions =
             context.watch<List<PlatformPermissionTuple>?>() ?? [];

@@ -43,13 +43,14 @@ class IosPlatformTool extends PlatformTool {
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logos: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogos(projectPath) ?? [],
+      permissions: await getPermissions(projectPath) ?? [],
       info: (),
     );
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getIconInfoJson(projectPath);
     final resPath = getPlatformFilePath(projectPath, _iconPath);
@@ -97,7 +98,7 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissionList(
+  Future<List<PlatformPermissionTuple>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getPlistDocument(projectPath))
@@ -106,7 +107,7 @@ class IosPlatformTool extends PlatformTool {
         ?.findElements('key');
     if (permissions == null) return null;
     final result = <PlatformPermissionTuple>[];
-    for (PlatformPermissionTuple e in await getFullPermissionList() ?? []) {
+    for (PlatformPermissionTuple e in await getFullPermissions() ?? []) {
       final element = permissions.where((it) {
         return it.innerText == e.value;
       }).firstOrNull;
@@ -121,7 +122,7 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<bool> setPermissionList(
+  Future<bool> setPermissions(
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);

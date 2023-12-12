@@ -151,6 +151,18 @@ class PlatformProvider extends BaseProvider {
     }
   }
 
+  // 更新权限
+  Future<void> updatePermission(PlatformType platform, String projectPath,
+      List<PlatformPermissionTuple> permissions) async {
+    try {
+      final result =
+          await ProjectTool.setPermissions(platform, projectPath, permissions);
+      if (result) _updatePlatformInfo(platform, projectPath);
+    } catch (e) {
+      showMessage('权限修改失败：${e.toString()}');
+    }
+  }
+
   // 更新平台信息
   Future<void> _updatePlatformInfo(PlatformType platform, String projectPath,
       [bool notify = true]) async {

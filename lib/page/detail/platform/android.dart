@@ -54,6 +54,12 @@ class ProjectPlatformAndroidPage extends ProjectPlatformPage<
       logos: platformInfo?.logos ?? [],
     );
   }
+
+  // // 构建权限项
+  // Widget _buildPermissionItem(BuildContext context,
+  //     PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
+  //   final provider = context.read<ProjectPlatformAndroidPageProvider>();
+  // }
 }
 
 /*

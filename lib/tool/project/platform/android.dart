@@ -39,13 +39,14 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logos: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogos(projectPath) ?? [],
+      permissions: await getPermissions(projectPath) ?? [],
       info: (),
     );
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息
     final iconPath = (await _getManifestDocument(projectPath))
@@ -94,7 +95,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissionList(
+  Future<List<PlatformPermissionTuple>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getManifestDocument(projectPath))
@@ -102,13 +103,13 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
         ?.findElements('uses-permission')
         .map((e) => e.getAttribute('android:name')?.split('.').lastOrNull);
     if (permissions?.isEmpty ?? true) return null;
-    return (await getFullPermissionList())
+    return (await getFullPermissions())
         ?.where((e) => permissions!.contains(e.value))
         .toList(growable: false);
   }
 
   @override
-  Future<bool> setPermissionList(
+  Future<bool> setPermissions(
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getManifestFragment(projectPath);

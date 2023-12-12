@@ -33,13 +33,14 @@ class WebPlatformTool extends PlatformTool {
     return (
       path: getPlatformType(projectPath),
       label: await getLabel(projectPath) ?? '',
-      logos: await getLogoInfo(projectPath) ?? [],
+      logos: await getLogos(projectPath) ?? [],
+      permissions: <PlatformPermissionTuple>[],
       info: (),
     );
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getManifestJson(projectPath);
     final faviconSize =
