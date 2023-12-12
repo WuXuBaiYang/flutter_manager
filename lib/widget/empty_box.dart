@@ -15,6 +15,9 @@ class EmptyBoxView extends StatelessWidget {
   // 提示
   final String hint;
 
+  // 提示字体大小
+  final TextStyle? hintStyle;
+
   // 自定义颜色
   final Color? color;
 
@@ -38,6 +41,7 @@ class EmptyBoxView extends StatelessWidget {
     this.color,
     this.iconData,
     this.hint = '',
+    this.hintStyle,
     this.placeholderSize = 100,
     this.duration = const Duration(milliseconds: 150),
   });
@@ -81,7 +85,7 @@ class EmptyBoxView extends StatelessWidget {
           const SizedBox(height: 14),
           Text(hint,
               textAlign: TextAlign.center,
-              style: titleStyle?.copyWith(color: color)),
+              style: (hintStyle ?? titleStyle)?.copyWith(color: color)),
         ],
       ),
     );

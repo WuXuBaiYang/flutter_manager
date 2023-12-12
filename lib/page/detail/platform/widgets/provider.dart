@@ -152,8 +152,9 @@ class PlatformProvider extends BaseProvider {
   }
 
   // 更新权限
-  Future<void> updatePermission(PlatformType platform, String projectPath,
-      List<PlatformPermissionTuple> permissions) async {
+  Future<void> updatePermission(PlatformType platform, String? projectPath,
+      List<PlatformPermissionTuple>? permissions) async {
+    if (projectPath == null || permissions == null) return;
     try {
       final result =
           await ProjectTool.setPermissions(platform, projectPath, permissions);
