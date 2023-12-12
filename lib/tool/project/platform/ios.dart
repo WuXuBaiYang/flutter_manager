@@ -124,6 +124,40 @@ class IosPlatformTool extends PlatformTool {
   Future<bool> setPermissionList(
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
+    final fragment = await _getPlistFragment(projectPath);
+    final children = fragment.getElement('plist')?.getElement('dict')?.children;
+    if (children == null) return false;
+    final valueMap = children
+        .whereType<XmlElement>()
+        .where((e) => e.localName == 'key')
+        .toList()
+        .asMap()
+        .map((_, v) => MapEntry(v.innerText, v));
+    final childrenList = children.toList();
+    final newPermissions = permissions
+        .where((e) {
+          if (!valueMap.containsKey(e.value)) return true;
+          final element = valueMap[e.value];
+          if (element != null) {
+            final nextElement = element.nextElementSibling;
+            if (nextElement?.localName == 'string') {
+              nextElement?.innerText = e.input;
+            } else {
+              children.insert(childrenList.indexOf(element) + 1,
+                  XmlElement(XmlName('string'), [], [XmlText(e.input)]));
+            }
+          }
+          return false;
+        })
+        .expand((e) => [
+              XmlElement(XmlName('key'), [], [XmlText(e.value)]),
+              XmlElement(XmlName('string'), [], [XmlText(e.input)])
+            ])
+        .toList();
+    if (newPermissions.isNotEmpty) {
+      children.addAll(newPermissions);
+      return writePlatformFileXml(projectPath, keyFilePath, fragment);
+    }
     return true;
   }
 }

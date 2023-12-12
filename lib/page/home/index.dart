@@ -64,11 +64,26 @@ class HomePage extends BasePage {
                     'C:/Users/wuxubaiyang/Documents/Workspace/jtech_demo';
                 final tmp =
                     await ProjectTool.getPermissionList(platform, projectPath);
-                // ProjectTool.setPermissionList(platform, projectPath, [
-                //   ...tmp!,
-                //   ...(await ProjectTool.getFullPermissionList(platform))!
-                //       .sublist(0, 5),
-                // ]);
+                ProjectTool.setPermissionList(platform, projectPath, [
+                  (
+                    name: 'NSCameraUsageDescription',
+                    value: 'NSCameraUsageDescription',
+                    desc: '',
+                    input: 'aaaa'
+                  ),
+                  (
+                    name: 'NSPhotoLibraryUsageDescription',
+                    value: 'NSPhotoLibraryUsageDescription',
+                    desc: '',
+                    input: 'bbb'
+                  ),
+                  (
+                    name: 'NSMicrophoneUsageDescription',
+                    value: 'NSMicrophoneUsageDescription',
+                    desc: '',
+                    input: 'ccc'
+                  )
+                ]);
                 print('object');
 
                 /// TODO: 2021/8/31 14:25 版本更新检查

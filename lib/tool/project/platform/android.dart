@@ -120,7 +120,9 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
         .where((e) => !values.contains(e.value))
         .map((e) => XmlElement(XmlName('uses-permission'), [
               XmlAttribute(
-                  XmlName('android:name'), 'android.permission.${e.value}')
+                XmlName('android:name'),
+                'android.permission.${e.value}',
+              )
             ]))
         .toList(growable: false);
     if (newPermissions.isNotEmpty) {
