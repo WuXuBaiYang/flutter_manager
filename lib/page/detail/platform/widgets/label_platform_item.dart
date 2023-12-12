@@ -46,7 +46,10 @@ class LabelPlatformItem extends StatelessWidget {
   // 构建标签项
   Widget _buildLabelItem(BuildContext context) {
     final provider = context.watch<PlatformProvider>();
-    final controller = TextEditingController(text: label);
+    final controller = TextEditingController(text: label)
+      ..selection = TextSelection.fromPosition(
+        TextPosition(offset: label.length),
+      );
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (event) {
@@ -59,24 +62,25 @@ class LabelPlatformItem extends StatelessWidget {
             .loading(context, dismissible: false);
       },
       child: StatefulBuilder(builder: (_, setState) {
-        final isEditing = controller.text != label;
+        final isEditing = project != null && controller.text != label;
         return TextFormField(
           controller: controller,
           onChanged: (_) => setState(() {}),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(
             hintText: '请输入项目名',
-            suffixIcon: IconButton(
-              iconSize: 18,
-              padding: EdgeInsets.zero,
-              icon: const Icon(Icons.done),
-              visualDensity: VisualDensity.compact,
-              onPressed: () {
-                if (!isEditing || project == null) return null;
-                return () => provider
+            suffixIcon: AnimatedOpacity(
+              opacity: isEditing ? 1 : 0,
+              duration: const Duration(milliseconds: 80),
+              child: IconButton(
+                iconSize: 18,
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.done),
+                visualDensity: VisualDensity.compact,
+                onPressed: () => provider
                     .updateLabel(platform, project!.path, controller.text)
-                    .loading(context, dismissible: false);
-              }(),
+                    .loading(context, dismissible: false),
+              ),
             ),
           ),
           validator: (value) {
