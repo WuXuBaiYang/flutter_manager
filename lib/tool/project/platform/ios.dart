@@ -24,6 +24,14 @@ class IosPlatformTool extends PlatformTool {
   // 图标信息文件相对路径
   late final String _iconInfoPath = '$_iconPath/Contents.json';
 
+  // 读取plist文件信息
+  Future<XmlDocument> _getPlistDocument(String projectPath) =>
+      readPlatformFileXml(projectPath, keyFilePath);
+
+  // 获取plist文件fragment
+  Future<XmlDocumentFragment> _getPlistFragment(String projectPath) =>
+      readPlatformFileXmlFragment(projectPath, keyFilePath);
+
   // 读取图标信息文件信息
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
@@ -62,8 +70,7 @@ class IosPlatformTool extends PlatformTool {
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final document = await readPlatformFileXml(projectPath, keyFilePath);
-    final items = document
+    final items = (await _getPlistDocument(projectPath))
         .getElement('plist')
         ?.getElement('dict')
         ?.childElements
@@ -74,16 +81,49 @@ class IosPlatformTool extends PlatformTool {
   @override
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
-    final fragment =
-        await readPlatformFileXmlFragment(projectPath, keyFilePath);
-    final items = fragment
+    return writePlatformFileXml(
+      projectPath,
+      keyFilePath,
+      (await _getPlistFragment(projectPath))
+        ..getElement('plist')
+            ?.getElement('dict')
+            ?.childElements
+            .where((e) => e.innerText == 'CFBundleDisplayName')
+            .firstOrNull
+            ?.nextElementSibling
+            ?.innerText = label,
+      indentAttribute: false,
+    );
+  }
+
+  @override
+  Future<List<PlatformPermissionTuple>?> getPermissionList(
+      String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final permissions = (await _getPlistDocument(projectPath))
         .getElement('plist')
         ?.getElement('dict')
-        ?.childElements
-        .where((e) => e.innerText == 'CFBundleDisplayName');
-    items?.firstOrNull?.nextElementSibling?.innerText = label;
-    await writePlatformFileXml(projectPath, keyFilePath, fragment,
-        indentAttribute: false);
+        ?.findElements('key');
+    if (permissions == null) return null;
+    final result = <PlatformPermissionTuple>[];
+    for (PlatformPermissionTuple e in await getFullPermissionList() ?? []) {
+      final element = permissions.where((it) {
+        return it.innerText == e.value;
+      }).firstOrNull;
+      if (element == null) continue;
+      final nextElement = element.nextElementSibling;
+      if (nextElement?.localName == 'string') {
+        e = e.copyWith(input: nextElement?.innerText);
+      }
+      result.add(e);
+    }
+    return result;
+  }
+
+  @override
+  Future<bool> setPermissionList(
+      String projectPath, List<PlatformPermissionTuple> permissions) async {
+    if (!isPathAvailable(projectPath)) return false;
     return true;
   }
 }

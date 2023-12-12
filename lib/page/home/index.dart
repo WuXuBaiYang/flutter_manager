@@ -59,16 +59,16 @@ class HomePage extends BasePage {
             return TextButton(
               child: Text('v${context.watch<String>()}'),
               onPressed: () async {
-                const platform = PlatformType.android;
+                const platform = PlatformType.ios;
                 const projectPath =
                     'C:/Users/wuxubaiyang/Documents/Workspace/jtech_demo';
-                final tmp = await ProjectTool.getPermissionList(
-                    PlatformType.android, projectPath);
-                ProjectTool.setPermissionList(platform, projectPath, [
-                  ...tmp!,
-                  ...(await ProjectTool.getFullPermissionList(platform))!
-                      .sublist(0, 5),
-                ]);
+                final tmp =
+                    await ProjectTool.getPermissionList(platform, projectPath);
+                // ProjectTool.setPermissionList(platform, projectPath, [
+                //   ...tmp!,
+                //   ...(await ProjectTool.getFullPermissionList(platform))!
+                //       .sublist(0, 5),
+                // ]);
                 print('object');
 
                 /// TODO: 2021/8/31 14:25 版本更新检查

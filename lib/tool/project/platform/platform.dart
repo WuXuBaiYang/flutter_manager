@@ -36,6 +36,16 @@ extension PlatformPermissionTupleExtension on PlatformPermissionTuple {
         desc.contains(keyword) ||
         value.contains(keyword);
   }
+
+  // 实现copyWith
+  PlatformPermissionTuple copyWith(
+          {String? name, String? desc, String? value, String? input}) =>
+      (
+        name: name ?? this.name,
+        desc: desc ?? this.desc,
+        value: value ?? this.value,
+        input: input ?? this.input,
+      );
 }
 
 /*
@@ -110,29 +120,33 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   // 写入平台文件内容（字符串）
-  Future<File> writePlatformFile(
+  Future<bool> writePlatformFile(
       String projectPath, String filePath, String content) async {
-    final file = File(getPlatformFilePath(projectPath, filePath));
-    await autoBackup(projectPath, filePath);
-    return file.writeAsString(content);
+    try {
+      final file = File(getPlatformFilePath(projectPath, filePath));
+      await autoBackup(projectPath, filePath);
+      await file.writeAsString(content);
+      return true;
+    } catch (_) {}
+    return false;
   }
 
   // 写入平台文件内容（json）
-  Future<File> writePlatformFileJson(
+  Future<bool> writePlatformFileJson(
       String projectPath, String filePath, Map content) {
     final json = const JsonEncoder.withIndent('  ').convert(content);
     return writePlatformFile(projectPath, filePath, json);
   }
 
   // 写入平台文件内容（xml）
-  Future<File?> writePlatformFileXml(
+  Future<bool> writePlatformFileXml(
     String projectPath,
     String filePath,
     XmlDocumentFragment fragment, {
     bool indentAttribute = true,
     String indent = '    ',
   }) async {
-    if (fragment.children.isEmpty) return null;
+    if (fragment.children.isEmpty) return false;
     return writePlatformFile(
       projectPath,
       filePath,

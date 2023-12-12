@@ -24,6 +24,14 @@ class MacosPlatformTool extends PlatformTool {
   // 图标信息文件相对路径
   late final String _iconInfoPath = '$_iconPath/Contents.json';
 
+  // 读取plist文件信息
+  Future<XmlDocument> _getPlistDocument(String projectPath) =>
+      readPlatformFileXml(projectPath, keyFilePath);
+
+  // 获取plist文件fragment
+  Future<XmlDocumentFragment> _getPlistFragment(String projectPath) =>
+      readPlatformFileXmlFragment(projectPath, keyFilePath);
+
   // 读取图标信息文件信息
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
@@ -62,28 +70,31 @@ class MacosPlatformTool extends PlatformTool {
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final document = await readPlatformFileXml(projectPath, keyFilePath);
-    final items = document
+    return (await _getPlistDocument(projectPath))
         .getElement('plist')
         ?.getElement('dict')
         ?.childElements
-        .where((e) => e.innerText == 'CFBundleName');
-    return items?.firstOrNull?.nextElementSibling?.innerText;
+        .where((e) => e.innerText == 'CFBundleName')
+        .firstOrNull
+        ?.nextElementSibling
+        ?.innerText;
   }
 
   @override
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
-    final fragment =
-        await readPlatformFileXmlFragment(projectPath, keyFilePath);
-    final items = fragment
-        .getElement('plist')
-        ?.getElement('dict')
-        ?.childElements
-        .where((e) => e.innerText == 'CFBundleName');
-    items?.firstOrNull?.nextElementSibling?.innerText = label;
-    await writePlatformFileXml(projectPath, keyFilePath, fragment,
-        indentAttribute: false);
-    return true;
+    return writePlatformFileXml(
+      projectPath,
+      keyFilePath,
+      (await _getPlistFragment(projectPath))
+        ..getElement('plist')
+            ?.getElement('dict')
+            ?.childElements
+            .where((e) => e.innerText == 'CFBundleName')
+            .firstOrNull
+            ?.nextElementSibling
+            ?.innerText = label,
+      indentAttribute: false,
+    );
   }
 }

@@ -28,6 +28,10 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
       readPlatformFileXml(projectPath, _manifestPath);
 
+  // 获取manifest文件fragment
+  Future<XmlDocumentFragment> _getManifestFragment(String projectPath) =>
+      readPlatformFileXmlFragment(projectPath, _manifestPath);
+
   @override
   Future<PlatformInfoTuple<AndroidPlatformInfoTuple>?> getPlatformInfo(
       String projectPath) async {
@@ -44,8 +48,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   Future<List<PlatformLogoTuple>?> getLogoInfo(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息
-    final document = await _getManifestDocument(projectPath);
-    final iconPath = document
+    final iconPath = (await _getManifestDocument(projectPath))
         .getElement('manifest')
         ?.getElement('application')
         ?.getAttribute('android:icon')
@@ -71,7 +74,6 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    // 从manifest中获取app名称
     return (await _getManifestDocument(projectPath))
         .getElement('manifest')
         ?.getElement('application')
@@ -81,14 +83,14 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   @override
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
-    final fragment =
-        await readPlatformFileXmlFragment(projectPath, _manifestPath);
-    fragment
-        .getElement('manifest')
-        ?.getElement('application')
-        ?.setAttribute('android:label', label);
-    await writePlatformFileXml(projectPath, _manifestPath, fragment);
-    return true;
+    return writePlatformFileXml(
+      projectPath,
+      _manifestPath,
+      (await _getManifestFragment(projectPath))
+        ..getElement('manifest')
+            ?.getElement('application')
+            ?.setAttribute('android:label', label),
+    );
   }
 
   @override
@@ -109,8 +111,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   Future<bool> setPermissionList(
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
-    final fragment =
-        await readPlatformFileXmlFragment(projectPath, _manifestPath);
+    final fragment = await _getManifestFragment(projectPath);
     final children = fragment.getElement('manifest')?.children;
     if (children == null) return false;
     final values = children
@@ -124,7 +125,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
         .toList(growable: false);
     if (newPermissions.isNotEmpty) {
       children.insertAll(0, newPermissions);
-      await writePlatformFileXml(projectPath, _manifestPath, fragment);
+      return writePlatformFileXml(projectPath, _manifestPath, fragment);
     }
     return true;
   }
