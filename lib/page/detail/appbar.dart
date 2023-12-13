@@ -52,6 +52,7 @@ class ProjectDetailAppBar extends StatelessWidget {
       bottom: bottom,
       titleSpacing: 6,
       expandedHeight: expandedHeight,
+      automaticallyImplyLeading: false,
       scrolledUnderElevation: hasColor ? 8 : 1,
       surfaceTintColor: hasColor ? color : null,
       title: StatusBar(brightness: brightness, actions: [
