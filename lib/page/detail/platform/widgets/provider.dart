@@ -26,6 +26,9 @@ class PlatformProvider extends BaseProvider {
   // 获取当前支持的平台列表（排序后）
   List<PlatformType> get platformList => _platformList;
 
+  // 缓存机制，缓存临时输入内容(当触发initialize的时候清空)
+  final _cacheMap = <String, dynamic>{};
+
   // 获取全平台（存在）标签对照表(按照设置排序)
   Map<PlatformType, String> get labelMap {
     var result = {..._platformInfoMap}..removeWhere((_, v) => v?.label == null);
@@ -68,8 +71,15 @@ class PlatformProvider extends BaseProvider {
     await Future.wait(PlatformType.values.map(
       (e) => _updatePlatformInfo(e, false),
     ));
+    _cacheMap.clear();
     notifyListeners();
   }
+
+  // 写入缓存
+  T cache<T>(String cacheKey, T item) => _cacheMap[cacheKey] = item;
+
+  // 读取缓存
+  T? restoreCache<T>(String cacheKey) => _cacheMap[cacheKey] as T?;
 
   // 获取平台信息元组
   PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(

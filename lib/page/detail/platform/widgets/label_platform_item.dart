@@ -38,13 +38,22 @@ class LabelPlatformItem extends StatelessWidget {
     );
   }
 
+  // 恢复label控制器
+  TextEditingController _restoreLabelController(BuildContext context) {
+    final cacheKey = 'label-$platform';
+    final provider = context.read<PlatformProvider>();
+    final controller = provider.restoreCache<TextEditingController>(cacheKey) ??
+        TextEditingController(text: label);
+    controller.selection = TextSelection.fromPosition(
+      TextPosition(offset: label.length),
+    );
+    return provider.cache(cacheKey, controller);
+  }
+
   // 构建标签项
   Widget _buildLabelItem(BuildContext context) {
     final provider = context.watch<PlatformProvider>();
-    final controller = TextEditingController(text: label)
-      ..selection = TextSelection.fromPosition(
-        TextPosition(offset: label.length),
-      );
+    final controller = _restoreLabelController(context);
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (event) {
