@@ -36,7 +36,7 @@ class PermissionPlatformItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ProjectPlatformItem(
-      title: '权限管理',
+      title: '权限管理（${permissions.length}）',
       actions: [
         _buildAddPermissionButton(context),
       ],
@@ -45,7 +45,7 @@ class PermissionPlatformItem extends StatelessWidget {
       content: EmptyBoxView(
         hint: '暂无权限信息',
         isEmpty: permissions.isEmpty,
-        child: _buildPermissionList(),
+        child: _buildPermissionList(context),
       ),
     );
   }
@@ -65,8 +65,60 @@ class PermissionPlatformItem extends StatelessWidget {
     );
   }
 
+  // 恢复滚动控制器
+  ScrollController _restoreScrollController(BuildContext context) {
+    final cacheKey = 'permission_offset_$platform';
+    final provider = context.read<PlatformProvider>();
+    final offset = provider.restoreCache<double>(cacheKey) ?? 0.0;
+    final controller = ScrollController(initialScrollOffset: offset);
+    controller.addListener(
+        () => provider.cache<dynamic>(cacheKey, controller.offset));
+    return controller;
+  }
+
   // 构建权限列表
-  Widget _buildPermissionList() {
-    return const SizedBox();
+  Widget _buildPermissionList(BuildContext context) {
+    final provider = context.read<PlatformProvider>();
+    return DefaultTextStyle(
+      style: const TextStyle(
+        overflow: TextOverflow.ellipsis,
+      ),
+      child: ListView.separated(
+        itemCount: permissions.length,
+        separatorBuilder: (_, i) => const Divider(),
+        controller: _restoreScrollController(context),
+        itemBuilder: (_, i) {
+          final item = permissions[i];
+          return Dismissible(
+            key: ObjectKey(item),
+            direction: DismissDirection.endToStart,
+            onDismissed: (_) => provider
+                .updatePermission(
+                  platform,
+                  permissions.where((e) => e != item).toList(),
+                )
+                .loading(context),
+            background: Container(
+              color: Colors.redAccent,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 14),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            child: _buildItem(context, item),
+          );
+        },
+      ),
+    );
+  }
+
+  // 构建默认权限列表项
+  Widget _buildItem(BuildContext context, PlatformPermissionTuple item) {
+    final textStyle =
+        Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey);
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(item.name, maxLines: 1),
+      subtitle: Text(item.desc, style: textStyle),
+    );
   }
 }
