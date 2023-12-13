@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/permission_picker.dart';
@@ -17,9 +16,6 @@ class PermissionPlatformItem extends StatelessWidget {
   // 平台
   final PlatformType platform;
 
-  // 项目信息
-  final Project? project;
-
   // 权限列表
   final List<PlatformPermissionTuple> permissions;
 
@@ -33,7 +29,6 @@ class PermissionPlatformItem extends StatelessWidget {
     super.key,
     required this.platform,
     required this.permissions,
-    this.project,
     this.crossAxisCellCount = 3,
     this.mainAxisExtent = 280,
   });
@@ -65,9 +60,8 @@ class PermissionPlatformItem extends StatelessWidget {
         context,
         platform: platform,
         permissions: permissions,
-      ).then((result) => provider
-          .updatePermission(platform, project?.path, result)
-          .loading(context)),
+      ).then((result) =>
+          provider.updatePermission(platform, result).loading(context)),
     );
   }
 

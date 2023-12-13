@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
@@ -16,9 +15,6 @@ class LabelPlatformItem extends StatelessWidget {
   // 当前平台
   final PlatformType platform;
 
-  // 项目信息
-  final Project? project;
-
   // label
   final String label;
 
@@ -29,7 +25,6 @@ class LabelPlatformItem extends StatelessWidget {
     super.key,
     required this.platform,
     required this.label,
-    this.project,
     this.validator,
   });
 
@@ -55,14 +50,13 @@ class LabelPlatformItem extends StatelessWidget {
       onKey: (event) {
         if (event.runtimeType != RawKeyDownEvent) return;
         if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
-        if (project == null) return;
         context
             .read<PlatformProvider>()
-            .updateLabel(platform, project!.path, controller.text)
+            .updateLabel(platform, controller.text)
             .loading(context, dismissible: false);
       },
       child: StatefulBuilder(builder: (_, setState) {
-        final isEditing = project != null && controller.text != label;
+        final isEditing = controller.text != label;
         return TextFormField(
           controller: controller,
           onChanged: (_) => setState(() {}),
@@ -78,7 +72,7 @@ class LabelPlatformItem extends StatelessWidget {
                 icon: const Icon(Icons.done),
                 visualDensity: VisualDensity.compact,
                 onPressed: () => provider
-                    .updateLabel(platform, project!.path, controller.text)
+                    .updateLabel(platform, controller.text)
                     .loading(context, dismissible: false),
               ),
             ),

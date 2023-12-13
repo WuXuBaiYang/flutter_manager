@@ -41,7 +41,32 @@ class Project {
     return Color(color).withOpacity(opacity);
   }
 
-  // 项目对比
+  // 实现copyWith
+  Project copyWith({
+    Id? id,
+    String? label,
+    String? logo,
+    String? path,
+    int? envId,
+    int? color,
+    bool? pinned,
+    int? order,
+    DateTime? createAt,
+    DateTime? updateAt,
+  }) {
+    return Project()
+      ..id = id ?? this.id
+      ..label = label ?? this.label
+      ..logo = logo ?? this.logo
+      ..path = path ?? this.path
+      ..envId = envId ?? this.envId
+      ..color = color ?? this.color
+      ..pinned = pinned ?? this.pinned
+      ..order = order ?? this.order
+      ..createAt = createAt ?? this.createAt
+      ..updateAt = updateAt ?? this.updateAt;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -58,8 +83,6 @@ class Project {
           createAt == other.createAt &&
           updateAt == other.updateAt;
 
-  // 项目hash
-  @ignore
   @override
   int get hashCode =>
       id.hashCode ^

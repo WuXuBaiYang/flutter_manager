@@ -64,16 +64,16 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   // 获取平台文件夹路径
   String get platformPath => platform.name;
 
-  // 判断当前路径是否可用
+  // 判断当前平台路径是否可用
   bool isPathAvailable(String projectPath) =>
-      File(join(getPlatformType(projectPath), keyFilePath)).existsSync();
+      File(join(getPlatformPath(projectPath), keyFilePath)).existsSync();
 
   // 获取平台路径
-  String getPlatformType(String projectPath) => join(projectPath, platformPath);
+  String getPlatformPath(String projectPath) => join(projectPath, platformPath);
 
   // 获取平台文件路径
   String getPlatformFilePath(String projectPath, String filePath) =>
-      join(getPlatformType(projectPath), filePath);
+      join(getPlatformPath(projectPath), filePath);
 
   // 读取平台文件内容（字符串）
   Future<String> readPlatformFile(String projectPath, String filePath) {

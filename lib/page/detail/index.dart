@@ -48,26 +48,26 @@ class ProjectDetailPage extends BasePage {
         ChangeNotifierProvider(
           create: (_) => ProjectDetailPageProvider(context),
         ),
+        ChangeNotifierProxyProvider<ProjectDetailPageProvider,
+            PlatformProvider>(
+          create: (_) => PlatformProvider(context, null),
+          update: (_, provider, platformProvider) {
+            if (provider.project != platformProvider?.project) {
+              return PlatformProvider(context, provider.project?.copyWith());
+            }
+            return platformProvider!;
+          },
+        ),
       ];
 
   @override
   Widget buildWidget(BuildContext context) {
+    final project = context.watch<ProjectDetailPageProvider>().project;
     return Scaffold(
-      body: Selector<ProjectDetailPageProvider, Project?>(
-        selector: (_, provider) => provider.project,
-        builder: (_, project, __) {
-          return EmptyBoxView(
-            hint: '项目不存在',
-            isEmpty: project == null,
-            child: project != null
-                ? ChangeNotifierProvider(
-                    lazy: false,
-                    create: (_) => PlatformProvider(context, project),
-                    builder: (context, _) => _buildContent(context),
-                  )
-                : const SizedBox(),
-          );
-        },
+      body: EmptyBoxView(
+        hint: '项目不存在',
+        isEmpty: project == null,
+        child: _buildContent(context),
       ),
     );
   }
@@ -280,9 +280,6 @@ class ProjectDetailPage extends BasePage {
   // 构建平台聚合操作项
   Widget _buildPlatformActions(
       BuildContext context, List<PlatformType> platforms) {
-    final provider = context.read<ProjectDetailPageProvider>();
-    final project = provider.project;
-    if (project == null) return const SizedBox();
     final platformProvider = context.read<PlatformProvider>();
     final createPlatforms =
         PlatformType.values.where((e) => !platforms.contains(e)).toList();
@@ -293,7 +290,7 @@ class ProjectDetailPage extends BasePage {
           tooltip: '创建平台',
           icon: const Icon(Icons.add),
           onSelected: (v) =>
-              platformProvider.createPlatform(project, v).loading(context),
+              platformProvider.createPlatform(v).loading(context),
           itemBuilder: (_) => createPlatforms
               .map((e) => PopupMenuItem(
                     value: e,
@@ -313,7 +310,7 @@ class ProjectDetailPage extends BasePage {
           ).then((result) {
             if (result == null) return;
             platformProvider
-                .updateLabels(project.path, result)
+                .updateLabels(result)
                 .loading(context, dismissible: false);
           }),
         ),
@@ -329,7 +326,7 @@ class ProjectDetailPage extends BasePage {
             if (result == null) return;
             final controller = StreamController<double>();
             platformProvider
-                .updateLogos(project.path, result, controller: controller)
+                .updateLogos(result, controller: controller)
                 .loading(context,
                     inputStream: controller.stream, dismissible: false);
           }),
@@ -376,12 +373,12 @@ class ProjectDetailPageProvider extends BaseProvider {
 
   // 平台对照表
   final _platformMap = const {
-    PlatformType.android: ProjectPlatformAndroidPage(),
-    PlatformType.ios: ProjectPlatformIosPage(),
-    PlatformType.web: ProjectPlatformWebPage(),
-    PlatformType.macos: ProjectPlatformMacosPage(),
-    PlatformType.windows: ProjectPlatformWindowsPage(),
-    PlatformType.linux: ProjectPlatformLinuxPage(),
+    PlatformType.android: ProjectPlatformAndroidView(),
+    PlatformType.ios: ProjectPlatformIosView(),
+    PlatformType.web: ProjectPlatformWebView(),
+    PlatformType.macos: ProjectPlatformMacosView(),
+    PlatformType.windows: ProjectPlatformWindowsView(),
+    PlatformType.linux: ProjectPlatformLinuxView(),
   };
 
   // 根据平台类型获取对应的页面

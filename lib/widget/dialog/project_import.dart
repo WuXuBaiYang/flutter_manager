@@ -126,6 +126,7 @@ class ProjectImportDialog extends StatelessWidget {
       hint: '请选择项目路径',
       onPathSelected: provider.pathUpdate,
       initialValue: provider.formData.path,
+      onSaved: (v) => provider.updateFormData(path: v),
       validator: (v) {
         if (!ProjectTool.isPathAvailable(v!)) {
           return '路径不可用';
@@ -151,9 +152,7 @@ class ProjectImportDialog extends StatelessWidget {
         }
         return null;
       },
-      onSaved: (v) {
-        provider.updateFormData(envId: v);
-      },
+      onSaved: (v) => provider.updateFormData(envId: v),
       items: environments
           .map((e) => DropdownMenuItem(
                 value: e.id,
@@ -198,6 +197,9 @@ typedef ProjectImportDialogFormTuple = ({
 * @Time 2023/11/27 14:25
 */
 class ProjectImportDialogProvider extends BaseProvider {
+  // 已有项目
+  final Project? project;
+
   // 表单key
   final formKey = GlobalKey<FormState>();
 
@@ -207,34 +209,25 @@ class ProjectImportDialogProvider extends BaseProvider {
       envFormFieldKey = GlobalKey<FormFieldState<Id>>();
 
   // 表单数据
-  ProjectImportDialogFormTuple _formData = (
-    path: '',
-    label: '',
-    logo: '',
-    envId: -1,
-    color: Colors.transparent.value,
-    pinned: false,
-  );
+  ProjectImportDialogFormTuple _formData;
 
   // 获取表单数据
   ProjectImportDialogFormTuple get formData => _formData;
 
-  ProjectImportDialogProvider(super.context, Project? item) {
-    initialize(item);
+  ProjectImportDialogProvider(super.context, this.project)
+      : _formData = (
+          path: project?.path ?? '',
+          label: project?.label ?? '',
+          logo: project?.logo ?? '',
+          envId: project?.envId ?? -1,
+          color: project?.color ?? Colors.transparent.value,
+          pinned: project?.pinned ?? false,
+        ) {
+    initialize();
   }
 
   // 初始化数据
-  Future<void> initialize(Project? item) async {
-    if (item != null && item.envId >= 0) {
-      return updateFormData(
-        path: item.path,
-        label: item.label,
-        logo: item.logo,
-        envId: item.envId,
-        color: item.color,
-        pinned: item.pinned,
-      );
-    }
+  Future<void> initialize() async {
     final envs = await database.getEnvironmentList(orderDesc: true);
     if (envs.isNotEmpty) envFormFieldKey.currentState?.didChange(envs.first.id);
   }
@@ -247,7 +240,7 @@ class ProjectImportDialogProvider extends BaseProvider {
       formState!.save();
       if (_formData.envId < 0) throw Exception('缺少环境信息');
       return context.read<ProjectProvider>().update(
-            Project()
+            (project ?? Project())
               ..path = _formData.path
               ..label = _formData.label
               ..logo = _formData.logo

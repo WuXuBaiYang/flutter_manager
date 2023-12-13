@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/project.dart';
-import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
@@ -14,15 +10,16 @@ import 'package:provider/provider.dart';
 * @author wuxubaiyang
 * @Time 2023/12/1 9:41
 */
-abstract class ProjectPlatformPage<T extends ProjectPlatformProvider,
-    S extends Record> extends BasePage {
-  const ProjectPlatformPage({super.key, super.primary = false});
+abstract class ProjectPlatformView<T extends Record> extends StatelessWidget {
+  // 当前平台
+  final PlatformType platform;
+
+  const ProjectPlatformView({super.key, required this.platform});
 
   @override
-  Widget buildWidget(BuildContext context) {
-    final platform = context.read<T>().platform;
-    return Selector<PlatformProvider, PlatformInfoTuple<S>?>(
-      selector: (_, provider) => provider.getPlatformTuple<S>(platform),
+  Widget build(BuildContext context) {
+    return Selector<PlatformProvider, PlatformInfoTuple<T>?>(
+      selector: (_, provider) => provider.getPlatformTuple<T>(platform),
       builder: (_, platformTuple, __) {
         return EmptyBoxView(
           hint: '无平台信息',
@@ -35,7 +32,7 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider,
 
   // 构建平台信息
   Widget _buildPlatformWidget(
-      BuildContext context, PlatformInfoTuple<S>? platformInfo) {
+      BuildContext context, PlatformInfoTuple<T>? platformInfo) {
     final children = buildPlatformItems(context, platformInfo);
     return EmptyBoxView(
       hint: '暂无方法',
@@ -54,20 +51,5 @@ abstract class ProjectPlatformPage<T extends ProjectPlatformProvider,
 
   // 获取平台构造项
   List<Widget> buildPlatformItems(
-      BuildContext context, PlatformInfoTuple<S>? platformInfo);
-}
-
-/*
-* 项目平台信息provider
-* @author wuxubaiyang
-* @Time 2023/11/30 18:48
-*/
-abstract class ProjectPlatformProvider extends BaseProvider {
-  // 平台类型
-  final PlatformType platform;
-
-  // 获取项目信息
-  Project? get project => context.read<ProjectDetailPageProvider>().project;
-
-  ProjectPlatformProvider(super.context, this.platform);
+      BuildContext context, PlatformInfoTuple<T>? platformInfo);
 }

@@ -44,9 +44,11 @@ class ProjectProvider extends BaseProvider {
   // 获取项目集合
   Future<void> initialize() async {
     final result = await database.getProjectList(orderDesc: true);
-    _projectTuple = (projects: <Project>[], pinnedProjects: <Project>[]);
-    forEachFun(Project e) => (e.pinned ? pinnedProjects : projects).add(e);
-    result.forEach(forEachFun);
+    _projectTuple = (projects: <Project>[
+      ...result.where((e) => !e.pinned),
+    ], pinnedProjects: <Project>[
+      ...result.where((e) => e.pinned),
+    ]);
     notifyListeners();
   }
 

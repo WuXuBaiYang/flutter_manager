@@ -3,8 +3,6 @@ import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/label_platform_item.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 import 'widgets/logo_platform_item.dart';
 import 'widgets/permission_platform_item.dart';
 
@@ -13,67 +11,28 @@ import 'widgets/permission_platform_item.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:02
 */
-class ProjectPlatformAndroidPage extends ProjectPlatformPage<
-    ProjectPlatformAndroidPageProvider, AndroidPlatformInfoTuple> {
-  const ProjectPlatformAndroidPage({super.key});
-
-  @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(
-          create: (_) =>
-              ProjectPlatformAndroidPageProvider(context, PlatformType.android),
-        ),
-      ];
+class ProjectPlatformAndroidView
+    extends ProjectPlatformView<AndroidPlatformInfoTuple> {
+  const ProjectPlatformAndroidView({
+    super.key,
+    super.platform = PlatformType.android,
+  });
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-      PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
-    return [
-      _buildLabelItem(context, platformInfo),
-      _buildLogoItem(context, platformInfo),
-      _buildPermissionItem(context, platformInfo),
-    ];
-  }
-
-  // 构建标签项
-  Widget _buildLabelItem(BuildContext context,
-      PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
-    final provider = context.read<ProjectPlatformAndroidPageProvider>();
-    return LabelPlatformItem(
-      project: provider.project,
-      platform: provider.platform,
-      label: platformInfo?.label ?? '',
-    );
-  }
-
-  // 构建logo项
-  Widget _buildLogoItem(BuildContext context,
-      PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
-    final provider = context.read<ProjectPlatformAndroidPageProvider>();
-    return LogoPlatformItem(
-      project: provider.project,
-      platform: provider.platform,
-      logos: platformInfo?.logos ?? [],
-    );
-  }
-
-  // 构建权限项
-  Widget _buildPermissionItem(BuildContext context,
-      PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) {
-    final provider = context.read<ProjectPlatformAndroidPageProvider>();
-    return PermissionPlatformItem(
-      project: provider.project,
-      platform: provider.platform,
-      permissions: platformInfo?.permissions ?? [],
-    );
-  }
-}
-
-/*
-* 项目详情-android平台信息页状态管理
-* @author wuxubaiyang
-* @Time 2023/11/30 17:02
-*/
-class ProjectPlatformAndroidPageProvider extends ProjectPlatformProvider {
-  ProjectPlatformAndroidPageProvider(super.context, super.platform);
+          PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) =>
+      [
+        LabelPlatformItem(
+          platform: platform,
+          label: platformInfo?.label ?? '',
+        ),
+        LogoPlatformItem(
+          platform: platform,
+          logos: platformInfo?.logos ?? [],
+        ),
+        PermissionPlatformItem(
+          platform: platform,
+          permissions: platformInfo?.permissions ?? [],
+        ),
+      ];
 }

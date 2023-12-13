@@ -6,7 +6,6 @@ import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
 import 'package:flutter_manager/provider/setting.dart';
-import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -58,7 +57,6 @@ class HomePage extends BasePage {
             return TextButton(
               child: Text('v${context.watch<String>()}'),
               onPressed: () async {
-                // NoticeTool.success(context, 'title', message: 'message');
                 /// TODO: 2021/8/31 14:25 版本更新检查
               },
             );

@@ -9,6 +9,9 @@ class EmptyBoxView extends StatelessWidget {
   // 子元素
   final Widget? child;
 
+  // 构造器
+  final TransitionBuilder? builder;
+
   // 是否为空
   final bool isEmpty;
 
@@ -39,6 +42,7 @@ class EmptyBoxView extends StatelessWidget {
     this.icon,
     this.child,
     this.color,
+    this.builder,
     this.iconData,
     this.hint = '',
     this.hintStyle,
@@ -53,8 +57,8 @@ class EmptyBoxView extends StatelessWidget {
     return AnimatedCrossFade(
       duration: duration,
       crossFadeState: crossFadeState,
-      firstChild: child ?? const SizedBox(),
       secondChild: _buildPlaceholder(context),
+      firstChild: builder?.call(context, child) ?? child ?? const SizedBox(),
       layoutBuilder: (topChild, topChildKey, bottomChild, bottomChildKey) {
         return Stack(
           fit: StackFit.expand,

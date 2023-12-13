@@ -33,7 +33,7 @@ class WindowsPlatformTool extends PlatformTool {
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
-      path: getPlatformType(projectPath),
+      path: getPlatformPath(projectPath),
       label: await getLabel(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
       permissions: <PlatformPermissionTuple>[],

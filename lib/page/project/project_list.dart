@@ -133,7 +133,7 @@ class ProjectGridView extends StatelessWidget {
         contentPadding: contentPadding,
         title: Row(children: [
           ConstrainedBox(
-            constraints: BoxConstraints.loose(const Size.fromWidth(110)),
+            constraints: BoxConstraints.loose(const Size.fromWidth(105)),
             child:
                 Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),

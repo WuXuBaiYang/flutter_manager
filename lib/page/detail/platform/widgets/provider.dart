@@ -14,6 +14,9 @@ import 'package:provider/provider.dart';
 * @Time 2023/12/4 9:45
 */
 class PlatformProvider extends BaseProvider {
+  // 项目信息
+  final Project? project;
+
   // 平台信息表
   final _platformInfoMap = <PlatformType, PlatformInfoTuple?>{};
 
@@ -22,48 +25,6 @@ class PlatformProvider extends BaseProvider {
 
   // 获取当前支持的平台列表（排序后）
   List<PlatformType> get platformList => _platformList;
-
-  PlatformProvider(super.context, Project project) {
-    initialize(project.path);
-  }
-
-  // 获取平台信息元组
-  PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(
-          PlatformType platform) =>
-      _platformInfoMap[platform] as PlatformInfoTuple<T>?;
-
-  // 初始化平台信息
-  Future<void> initialize(String projectPath) async {
-    _platformList = ProjectTool.getPlatforms(projectPath);
-    final platformSort = context.read<ProjectProvider>().platformSort;
-    for (var e in platformSort) {
-      if (!_platformList.contains(e)) continue;
-      _platformList.remove(e);
-      _platformList.add(e);
-    }
-    await Future.wait(PlatformType.values.map(
-      (e) => _updatePlatformInfo(e, projectPath, false),
-    ));
-    notifyListeners();
-  }
-
-  // 创建平台
-  Future<void> createPlatform(Project? project, PlatformType platform) async {
-    if (project == null) return;
-    try {
-      final result = await ProjectTool.createPlatform(project, platform);
-      if (result) return initialize(project.path);
-    } catch (e) {
-      showMessage('创建失败：${e.toString()}');
-    }
-  }
-
-  // 移除平台
-  Future<void> removePlatform(Project? project, PlatformType platform) async {
-    if (project == null) return;
-    return ProjectTool.removePlatform(project, platform)
-        .then((result) async => initialize(project.path));
-  }
 
   // 获取全平台（存在）标签对照表(按照设置排序)
   Map<PlatformType, String> get labelMap {
@@ -90,85 +51,130 @@ class PlatformProvider extends BaseProvider {
     );
   }
 
+  PlatformProvider(super.context, this.project) {
+    if (project != null) initialize();
+  }
+
+  // 初始化平台信息
+  Future<void> initialize() async {
+    if (project == null) return;
+    _platformList = ProjectTool.getPlatforms(project!.path);
+    final platformSort = context.read<ProjectProvider>().platformSort;
+    for (var e in platformSort) {
+      if (!_platformList.contains(e)) continue;
+      _platformList.remove(e);
+      _platformList.add(e);
+    }
+    await Future.wait(PlatformType.values.map(
+      (e) => _updatePlatformInfo(e, false),
+    ));
+    notifyListeners();
+  }
+
+  // 获取平台信息元组
+  PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(
+          PlatformType platform) =>
+      _platformInfoMap[platform] as PlatformInfoTuple<T>?;
+
+  // 创建平台
+  Future<void> createPlatform(PlatformType platform) async {
+    if (project == null) return;
+    try {
+      final result = await ProjectTool.createPlatform(project!, platform);
+      if (result) return _updatePlatformInfo(platform);
+    } catch (e) {
+      showMessage('创建失败：${e.toString()}');
+    }
+  }
+
+  // 移除平台
+  Future<void> removePlatform(PlatformType platform) async {
+    if (project == null) return;
+    try {
+      final result = await ProjectTool.removePlatform(project!, platform);
+      if (result) _updatePlatformInfo(platform);
+    } catch (e) {
+      showMessage('移除失败：${e.toString()}');
+    }
+  }
+
   // 批量更新label
-  Future<void> updateLabels(
-      String projectPath, Map<PlatformType, String>? labelData) async {
-    if (labelData == null) return;
+  Future<void> updateLabels(Map<PlatformType, String>? labelData) async {
+    if (project == null || labelData == null) return;
     try {
       await Future.wait(labelData.entries
-          .map((e) => ProjectTool.setLabel(e.key, projectPath, e.value)));
-      return initialize(projectPath);
+          .map((e) => ProjectTool.setLabel(project!.path, e.key, e.value)));
+      return initialize();
     } catch (e) {
       showMessage('标签修改失败：${e.toString()}');
     }
   }
 
   // 批量更新图标
-  Future<void> updateLogos(
-      String projectPath, ProjectLogoDialogFormTuple? logoData,
+  Future<void> updateLogos(ProjectLogoDialogFormTuple? logoData,
       {StreamController<double>? controller}) async {
-    if (logoData == null) return;
+    if (project == null || logoData == null) return;
     try {
       double progress = 0;
       final ratio = 1 / logoData.platforms.length;
       for (var e in logoData.platforms) {
-        await ProjectTool.replaceLogo(e, projectPath, logoData.logo,
+        await ProjectTool.replaceLogo(project!.path, e, logoData.logo,
             progressCallback: (c, t) {
           final part = ratio * (c / t);
           controller?.add(progress + part);
         });
         progress += ratio;
       }
-      return initialize(projectPath);
+      return initialize();
     } catch (e) {
       showMessage('图标修改失败：${e.toString()}');
     }
   }
 
   // 更新label
-  Future<void> updateLabel(
-      PlatformType platform, String projectPath, String label) async {
+  Future<void> updateLabel(PlatformType platform, String label) async {
+    if (project == null) return;
     try {
-      final result = await ProjectTool.setLabel(platform, projectPath, label);
-      if (result) _updatePlatformInfo(platform, projectPath);
+      final result = await ProjectTool.setLabel(project!.path, platform, label);
+      if (result) _updatePlatformInfo(platform);
     } catch (e) {
       showMessage('标签修改失败：${e.toString()}');
     }
   }
 
   // 更新图标
-  Future<void> updateLogo(
-      PlatformType platform, String? projectPath, String logoPath,
+  Future<void> updateLogo(PlatformType platform, String logoPath,
       {ProgressCallback? progressCallback}) async {
-    if (projectPath == null) return;
+    if (project == null) return;
     try {
       final result = await ProjectTool.replaceLogo(
-          platform, projectPath, logoPath,
+          project!.path, platform, logoPath,
           progressCallback: progressCallback);
-      if (result) _updatePlatformInfo(platform, projectPath);
+      if (result) _updatePlatformInfo(platform);
     } catch (e) {
       showMessage('图标修改失败：${e.toString()}');
     }
   }
 
   // 更新权限
-  Future<void> updatePermission(PlatformType platform, String? projectPath,
-      List<PlatformPermissionTuple>? permissions) async {
-    if (projectPath == null || permissions == null) return;
+  Future<void> updatePermission(
+      PlatformType platform, List<PlatformPermissionTuple>? permissions) async {
+    if (project == null || permissions == null) return;
     try {
-      final result =
-          await ProjectTool.setPermissions(platform, projectPath, permissions);
-      if (result) _updatePlatformInfo(platform, projectPath);
+      final result = await ProjectTool.setPermissions(
+          project!.path, platform, permissions);
+      if (result) _updatePlatformInfo(platform);
     } catch (e) {
       showMessage('权限修改失败：${e.toString()}');
     }
   }
 
   // 更新平台信息
-  Future<void> _updatePlatformInfo(PlatformType platform, String projectPath,
+  Future<void> _updatePlatformInfo(PlatformType platform,
       [bool notify = true]) async {
+    if (project == null) return;
     _platformInfoMap[platform] =
-        await ProjectTool.getPlatformInfo(platform, projectPath);
+        await ProjectTool.getPlatformInfo(project!.path, platform);
     if (notify) notifyListeners();
   }
 }

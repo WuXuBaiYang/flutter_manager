@@ -86,6 +86,7 @@ class ProjectPage extends BasePage {
   Widget _buildPinnedProjects(BuildContext context) {
     final provider = context.read<ProjectProvider>();
     return Selector<ProjectProvider, List<Project>>(
+      shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.pinnedProjects,
       builder: (_, pinnedProjects, __) {
         if (pinnedProjects.isEmpty) return const SizedBox();
@@ -118,6 +119,7 @@ class ProjectPage extends BasePage {
   Widget _buildProjects(BuildContext context) {
     final provider = context.read<ProjectProvider>();
     return Selector<ProjectProvider, List<Project>>(
+      shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.projects,
       builder: (_, projects, __) {
         if (projects.isEmpty) return const SizedBox();
@@ -134,7 +136,7 @@ class ProjectPage extends BasePage {
           onDetail: (item) => router.pushNamed(
             RoutePath.projectDetail,
             arguments: (project: item),
-          )?.then((_) => provider.initialize()),
+          ),
         );
       },
     );

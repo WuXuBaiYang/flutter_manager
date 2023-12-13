@@ -50,14 +50,14 @@ class ProjectTool {
         environment.path, ['create', '--platforms', platform.name, '.'],
         workingDirectory: project.path);
     if (output == null) return false;
-    return hasPlatform(platform, project.path);
+    return hasPlatform(project.path, platform);
   }
 
   // 移除项目平台
   static Future<bool> removePlatform(
       Project project, PlatformType platform) async {
     await FileTool.clearDir(join(project.path, platform.name));
-    return !hasPlatform(platform, project.path);
+    return !hasPlatform(project.path, platform);
   }
 
   // 获取项目详情页平台排序
@@ -76,7 +76,7 @@ class ProjectTool {
   }
 
   // 判断是否存在该平台
-  static bool hasPlatform(PlatformType platform, String projectPath) =>
+  static bool hasPlatform(String projectPath, PlatformType platform) =>
       _platformTools[platform]!.isPathAvailable(projectPath);
 
   // 获取当前项目支持的平台数量
@@ -87,15 +87,15 @@ class ProjectTool {
   }
 
   // 获取项目信息
-  static Future<Project?> getProjectInfo(String path) async {
-    if (!isPathAvailable(path)) return null;
+  static Future<Project?> getProjectInfo(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
     return Project()
-      ..path = path
-      ..label = await ProjectTool.getProjectName(path) ?? ''
-      ..logo = await ProjectTool.getProjectLogo(path) ?? '';
+      ..path = projectPath
+      ..label = await ProjectTool.getProjectName(projectPath) ?? ''
+      ..logo = await ProjectTool.getProjectLogo(projectPath) ?? '';
   }
 
-  // 判断当前路径是否可用
+  // 判断当前项目路径是否可用
   static bool isPathAvailable(String projectPath) {
     final file = File(join(projectPath, _keyFilePath));
     return file.existsSync();
@@ -128,7 +128,7 @@ class ProjectTool {
 
   // 获取平台信息
   static Future<T?> getPlatformInfo<T extends Record>(
-      PlatformType platform, String projectPath) async {
+      String projectPath, PlatformType platform) async {
     final tool = getPlatformTool(platform);
     return await tool.getPlatformInfo(projectPath) as T?;
   }
@@ -139,23 +139,23 @@ class ProjectTool {
 
   // 根据平台获取图标
   static Future<List<PlatformLogoTuple>?> getLogos(
-          PlatformType platform, String projectPath) =>
+          String projectPath, PlatformType platform) =>
       getPlatformTool(platform).getLogos(projectPath);
 
   // 根据平台替换图标
   static Future<bool> replaceLogo(
-          PlatformType platform, String projectPath, String logoPath,
+          String projectPath, PlatformType platform, String logoPath,
           {ProgressCallback? progressCallback}) =>
       getPlatformTool(platform).replaceLogo(projectPath, logoPath,
           progressCallback: progressCallback);
 
   // 根据平台获取项目名
-  static Future<String?> getLabel(PlatformType platform, String projectPath) =>
+  static Future<String?> getLabel(String projectPath, PlatformType platform) =>
       getPlatformTool(platform).getLabel(projectPath);
 
   // 根据平台设置项目名
   static Future<bool> setLabel(
-          PlatformType platform, String projectPath, String label) =>
+          String projectPath, PlatformType platform, String label) =>
       getPlatformTool(platform).setLabel(projectPath, label);
 
   // 获取完整权限列表
@@ -165,11 +165,11 @@ class ProjectTool {
 
   // 获取平台权限列表
   static Future<List<PlatformPermissionTuple>?> getPermissions(
-          PlatformType platform, String projectPath) =>
+          String projectPath, PlatformType platform) =>
       getPlatformTool(platform).getPermissions(projectPath);
 
   // 设置平台权限列表
-  static Future<bool> setPermissions(PlatformType platform,
-          String projectPath, List<PlatformPermissionTuple> permissions) =>
+  static Future<bool> setPermissions(String projectPath, PlatformType platform,
+          List<PlatformPermissionTuple> permissions) =>
       getPlatformTool(platform).setPermissions(projectPath, permissions);
 }

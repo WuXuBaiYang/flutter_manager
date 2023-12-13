@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project_logo.dart';
@@ -19,9 +18,6 @@ class LogoPlatformItem extends StatelessWidget {
   // 平台
   final PlatformType platform;
 
-  // 项目信息
-  final Project? project;
-
   // 图标列表
   final List<PlatformLogoTuple> logos;
 
@@ -35,7 +31,6 @@ class LogoPlatformItem extends StatelessWidget {
     super.key,
     required this.platform,
     required this.logos,
-    this.project,
     this.crossAxisCellCount = 5,
     this.mainAxisExtent = 150,
   });
@@ -68,7 +63,7 @@ class LogoPlatformItem extends StatelessWidget {
         final controller = StreamController<double>();
         context
             .read<PlatformProvider>()
-            .updateLogo(platform, project?.path, result,
+            .updateLogo(platform, result,
                 progressCallback: (c, t) => controller.add(c / t))
             .loading(context,
                 inputStream: controller.stream, dismissible: false);
