@@ -1,12 +1,9 @@
-import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/manage/router.dart';
-import 'package:flutter_manager/model/environment.dart';
 import 'package:flutter_manager/model/project.dart';
+import 'package:flutter_manager/page/detail/appbar.dart';
 import 'package:flutter_manager/page/detail/platform/android.dart';
 import 'package:flutter_manager/page/detail/platform/ios.dart';
 import 'package:flutter_manager/page/detail/platform/linux.dart';
@@ -14,18 +11,11 @@ import 'package:flutter_manager/page/detail/platform/macos.dart';
 import 'package:flutter_manager/page/detail/platform/web.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/page/detail/platform/windows.dart';
-import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/page/detail/tabbar.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:flutter_manager/widget/dialog/project_asset.dart';
-import 'package:flutter_manager/widget/dialog/project_build.dart';
-import 'package:flutter_manager/widget/dialog/project_font.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
-import 'package:flutter_manager/widget/dialog/project_label.dart';
-import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -62,21 +52,22 @@ class ProjectDetailPage extends BasePage {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final project = context.watch<ProjectDetailPageProvider>().project;
+    final project = context.read<ProjectDetailPageProvider>().project;
     return Scaffold(
       body: EmptyBoxView(
         hint: '项目不存在',
         isEmpty: project == null,
-        child: _buildContent(context),
+        builder: (_, __) {
+          if (project == null) return const SizedBox();
+          return _buildContent(context, project);
+        },
       ),
     );
   }
 
   // 构建内容
-  Widget _buildContent(BuildContext context) {
-    final brightness = context.read<ThemeProvider>().brightness;
+  Widget _buildContent(BuildContext context, Project project) {
     final provider = context.read<ProjectDetailPageProvider>();
-    final color = provider.project?.getColor();
     return Selector<PlatformProvider, List<PlatformType>>(
       selector: (_, provider) => provider.platformList,
       builder: (_, platforms, __) {
@@ -85,11 +76,42 @@ class ProjectDetailPage extends BasePage {
           child: NestedScrollView(
             controller: provider.scrollController,
             headerSliverBuilder: (_, __) =>
-                [_buildAppBar(context, platforms, brightness, color)],
+                [_buildAppBar(context, platforms, project)],
             body: _buildTabBarView(context, platforms),
           ),
         );
       },
+    );
+  }
+
+  // 构建AppBar
+  Widget _buildAppBar(
+      BuildContext context, List<PlatformType> platforms, Project project) {
+    final provider = context.read<ProjectDetailPageProvider>();
+    return Selector<ProjectDetailPageProvider, bool>(
+      selector: (_, provider) => provider.isScrollTop,
+      builder: (_, isScrollTop, __) {
+        return ProjectDetailAppBar(
+          project: project,
+          isCollapsed: isScrollTop,
+          bottom: _buildTabBar(context, platforms),
+          onProjectEdit: () => ProjectImportDialog.show(
+            context,
+            project: project,
+          ).then(provider.updateProject),
+        );
+      },
+    );
+  }
+
+  // 构建TabBar
+  PreferredSize _buildTabBar(
+      BuildContext context, List<PlatformType> platforms) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(kToolbarHeight),
+      child: ProjectDetailTabBar(
+        platforms: platforms,
+      ),
     );
   }
 
@@ -105,248 +127,6 @@ class ProjectDetailPage extends BasePage {
           hint: '暂无平台',
         ),
     ]);
-  }
-
-  // 构建AppBar
-  Widget _buildAppBar(BuildContext context, List<PlatformType> platforms,
-      Brightness brightness, Color? color) {
-    final provider = context.read<ProjectDetailPageProvider>();
-    final hasColor = color != Colors.transparent;
-    return SliverAppBar(
-      pinned: true,
-      titleSpacing: 6,
-      automaticallyImplyLeading: false,
-      expandedHeight: provider.headerHeight,
-      scrolledUnderElevation: hasColor ? 8 : 1,
-      surfaceTintColor: hasColor ? color : null,
-      title: buildStatusBar(context, brightness, actions: [
-        const BackButton(),
-        Expanded(child: _buildAppBarTitle(context)),
-      ]),
-      flexibleSpace: _buildFlexibleSpace(
-          context, hasColor ? color?.withOpacity(0.2) : null),
-      bottom: _buildTabBar(context, platforms),
-    );
-  }
-
-  // 构建FlexibleSpace
-  Widget _buildFlexibleSpace(BuildContext context, Color? color) {
-    return FlexibleSpaceBar(
-      background: Card(
-        child: Container(
-          color: color,
-          child: Row(children: [
-            Expanded(child: _buildAppBarProjectInfo(context)),
-            _buildAppBarActions(context),
-          ]),
-        ),
-      ),
-    );
-  }
-
-  // 构建TabBar
-  PreferredSize _buildTabBar(
-      BuildContext context, List<PlatformType> platforms) {
-    final tabs = platforms.map((e) => Tab(text: e.name)).toList();
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight),
-      child: Row(children: [
-        TabBar(
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          splashBorderRadius: BorderRadius.circular(4),
-          tabs: [
-            ...tabs,
-            if (tabs.isEmpty) const Tab(text: '暂无平台'),
-          ],
-        ),
-        Expanded(child: _buildPlatformActions(context, platforms)),
-        const SizedBox(width: 8),
-      ]),
-    );
-  }
-
-  // 构建标题栏项目信息
-  Widget _buildAppBarProjectInfo(BuildContext context) {
-    final provider = context.read<ProjectDetailPageProvider>();
-    final project = provider.project;
-    if (project == null) return const SizedBox();
-    var bodyStyle = Theme.of(context).textTheme.bodySmall;
-    final color = bodyStyle?.color?.withOpacity(0.4);
-    bodyStyle = bodyStyle?.copyWith(color: color);
-    return ListTile(
-      isThreeLine: true,
-      title: Row(children: [
-        ConstrainedBox(
-          constraints: BoxConstraints.loose(const Size.fromWidth(220)),
-          child:
-              Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-        const SizedBox(width: 8),
-        _buildEnvironmentBadge(project),
-        const SizedBox(width: 4),
-        IconButton(
-          iconSize: 14,
-          icon: const Icon(Icons.edit),
-          visualDensity: VisualDensity.compact,
-          onPressed: () => ProjectImportDialog.show(context, project: project)
-              .then(provider.updateProject),
-        ),
-      ]),
-      leading: Image.file(File(project.logo), width: 55, height: 55),
-      subtitle: Text(project.path,
-          maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),
-    );
-  }
-
-  // 构建标题栏操作按钮
-  Widget _buildAppBarActions(BuildContext context) {
-    final provider = context.read<ProjectDetailPageProvider>();
-    final project = provider.project;
-    if (project == null) return const SizedBox();
-    return Row(
-      children: [
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: 'Asset管理',
-          icon: const Icon(Icons.assessment_outlined),
-          onPressed: () {
-            /// TODO: Asset管理
-            ProjectAssetDialog.show(context);
-          },
-        ),
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: '字体管理',
-          icon: const Icon(Icons.font_download_outlined),
-          onPressed: () {
-            /// TODO: 字体管理
-            ProjectFontDialog.show(context);
-          },
-        ),
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: '打开项目目录',
-          icon: const Icon(Icons.file_open_outlined),
-          onPressed: () => Tool.openLocalPath(project.path),
-        ),
-        FilledButton.icon(
-          label: const Text('打包'),
-          icon: const Icon(Icons.build),
-          style: ButtonStyle(
-            fixedSize: MaterialStateProperty.all(const Size.fromHeight(55)),
-            shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            textStyle: MaterialStateProperty.all(
-                Theme.of(context).textTheme.bodyLarge),
-          ),
-          onPressed: () => ProjectBuildDialog.show(context, project: project),
-        ),
-      ].expand((e) => [e, const SizedBox(width: 14)]).toList(),
-    );
-  }
-
-  // 构建标题栏标题
-  Widget _buildAppBarTitle(BuildContext context) {
-    final borderRadius = BorderRadius.circular(8);
-    final provider = context.read<ProjectDetailPageProvider>();
-    final project = provider.project;
-    if (project == null) return const SizedBox();
-    return Selector<ProjectDetailPageProvider, bool>(
-      selector: (_, provider) => provider.isScrollTop,
-      builder: (_, isScrollTop, __) {
-        return AnimatedOpacity(
-          opacity: isScrollTop ? 1 : 0,
-          duration: const Duration(milliseconds: 200),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              ClipRRect(
-                borderRadius: borderRadius,
-                child: Image.file(File(project.logo),
-                    fit: BoxFit.cover, width: 30, height: 30),
-              ),
-              const SizedBox(width: 14),
-              Text(project.label),
-              const SizedBox(width: 8),
-              _buildEnvironmentBadge(project),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // 构建平台聚合操作项
-  Widget _buildPlatformActions(
-      BuildContext context, List<PlatformType> platforms) {
-    final platformProvider = context.read<PlatformProvider>();
-    final createPlatforms =
-        PlatformType.values.where((e) => !platforms.contains(e)).toList();
-    return Row(children: [
-      if (createPlatforms.isNotEmpty)
-        PopupMenuButton(
-          iconSize: 20,
-          tooltip: '创建平台',
-          icon: const Icon(Icons.add),
-          onSelected: (v) =>
-              platformProvider.createPlatform(v).loading(context),
-          itemBuilder: (_) => createPlatforms
-              .map((e) => PopupMenuItem(
-                    value: e,
-                    child: Text(e.name),
-                  ))
-              .toList(),
-        ),
-      const Spacer(),
-      Tooltip(
-        message: '替换项目名',
-        child: TextButton.icon(
-          label: const Text('名称'),
-          icon: const Icon(Icons.edit_attributes_rounded, size: 18),
-          onPressed: () => ProjectLabelDialog.show(
-            context,
-            platformLabelMap: platformProvider.labelMap,
-          ).then((result) {
-            if (result == null) return;
-            platformProvider
-                .updateLabels(result)
-                .loading(context, dismissible: false);
-          }),
-        ),
-      ),
-      Tooltip(
-        message: '替换图标',
-        child: TextButton.icon(
-          label: const Text('图标'),
-          onPressed: () => ProjectLogoDialog.show(
-            context,
-            platformLogoMap: platformProvider.logoMap,
-          ).then((result) {
-            if (result == null) return;
-            final controller = StreamController<double>();
-            platformProvider
-                .updateLogos(result, controller: controller)
-                .loading(context,
-                    inputStream: controller.stream, dismissible: false);
-          }),
-          icon: const Icon(Icons.imagesearch_roller_rounded, size: 18),
-        ),
-      ),
-    ]);
-  }
-
-  // 构建项目环境标签
-  Widget _buildEnvironmentBadge(Project item) {
-    return FutureProvider<Environment?>(
-      initialData: null,
-      create: (_) => database.getEnvironmentById(item.envId),
-      builder: (context, _) {
-        final environment = context.watch<Environment?>();
-        if (environment == null) return const SizedBox();
-        return EnvironmentBadge(environment: environment);
-      },
-    );
   }
 }
 
