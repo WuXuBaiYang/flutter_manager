@@ -62,7 +62,7 @@ class ProjectLogoFormField extends StatelessWidget {
         : InputBorder.none;
     return ClipRRect(
       borderRadius: borderRadius,
-      child: GestureDetector(
+      child: InkWell(
         onTap: () => _changeLogoFile(context, field),
         child: ConstrainedBox(
           constraints: BoxConstraints.tightFor(width: logoSize.width),

@@ -68,6 +68,10 @@ class ImageEditorDialog extends StatelessWidget {
           constraints: const BoxConstraints.tightFor(width: 480, height: 350),
           actions: [
             TextButton(
+              child: const Text('使用原图'),
+              onPressed: () => Navigator.pop(context, path),
+            ),
+            TextButton(
               child: const Text('另存为'),
               onPressed: () {
                 provider.saveOtherPath().loading(context).then((result) {
@@ -75,10 +79,6 @@ class ImageEditorDialog extends StatelessWidget {
                   SnackTool.showMessage(context, message: '图片已保存到 $result');
                 });
               },
-            ),
-            TextButton(
-              child: const Text('使用原图'),
-              onPressed: () => Navigator.pop(context, path),
             ),
             TextButton(
               child: const Text('取消'),
