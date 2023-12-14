@@ -40,13 +40,13 @@ class LabelPlatformItem extends StatelessWidget {
 
   // 恢复label控制器
   TextEditingController _restoreLabelController(BuildContext context) {
-    final cacheKey = 'label-$platform';
+    final cacheKey = 'label_$platform';
     final provider = context.read<PlatformProvider>();
     final controller = provider.restoreCache<TextEditingController>(cacheKey) ??
-        TextEditingController(text: label);
-    controller.selection = TextSelection.fromPosition(
-      TextPosition(offset: label.length),
-    );
+        TextEditingController(text: label)
+      ..selection = TextSelection.fromPosition(
+        TextPosition(offset: label.length),
+      );
     return provider.cache(cacheKey, controller);
   }
 
@@ -54,15 +54,16 @@ class LabelPlatformItem extends StatelessWidget {
   Widget _buildLabelItem(BuildContext context) {
     final provider = context.watch<PlatformProvider>();
     final controller = _restoreLabelController(context);
+    updateLabel() => provider
+        .updateLabel(platform, controller.text)
+        .loading(context, dismissible: false);
+
     return RawKeyboardListener(
       focusNode: FocusNode(),
       onKey: (event) {
         if (event.runtimeType != RawKeyDownEvent) return;
         if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
-        context
-            .read<PlatformProvider>()
-            .updateLabel(platform, controller.text)
-            .loading(context, dismissible: false);
+        updateLabel();
       },
       child: StatefulBuilder(builder: (_, setState) {
         final isEditing = controller.text != label;
@@ -77,12 +78,10 @@ class LabelPlatformItem extends StatelessWidget {
               duration: const Duration(milliseconds: 80),
               child: IconButton(
                 iconSize: 18,
+                onPressed: updateLabel,
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.done),
                 visualDensity: VisualDensity.compact,
-                onPressed: () => provider
-                    .updateLabel(platform, controller.text)
-                    .loading(context, dismissible: false),
               ),
             ),
           ),

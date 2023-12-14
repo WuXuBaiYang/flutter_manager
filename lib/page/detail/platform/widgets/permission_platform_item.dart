@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/permission_picker.dart';
@@ -79,35 +80,30 @@ class PermissionPlatformItem extends StatelessWidget {
   // 构建权限列表
   Widget _buildPermissionList(BuildContext context) {
     final provider = context.read<PlatformProvider>();
-    return DefaultTextStyle(
-      style: const TextStyle(
-        overflow: TextOverflow.ellipsis,
-      ),
-      child: ListView.separated(
-        itemCount: permissions.length,
-        separatorBuilder: (_, i) => const Divider(),
-        controller: _restoreScrollController(context),
-        itemBuilder: (_, i) {
-          final item = permissions[i];
-          return Dismissible(
-            key: ObjectKey(item),
-            direction: DismissDirection.endToStart,
-            onDismissed: (_) => provider
-                .updatePermission(
-                  platform,
-                  permissions.where((e) => e != item).toList(),
-                )
-                .loading(context),
-            background: Container(
-              color: Colors.redAccent,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.only(right: 14),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            child: _buildItem(context, item),
-          );
-        },
-      ),
+    return ListView.separated(
+      itemCount: permissions.length,
+      separatorBuilder: (_, i) => const Divider(),
+      controller: _restoreScrollController(context),
+      itemBuilder: (_, i) {
+        final item = permissions[i];
+        return Dismissible(
+          key: ObjectKey(item),
+          direction: DismissDirection.endToStart,
+          onDismissed: (_) => provider
+              .updatePermission(
+                platform,
+                permissions.where((e) => e != item).toList(),
+              )
+              .loading(context),
+          background: Container(
+            color: Colors.redAccent,
+            alignment: Alignment.centerRight,
+            padding: const EdgeInsets.only(right: 14),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          child: _buildItem(context, item),
+        );
+      },
     );
   }
 
@@ -115,10 +111,76 @@ class PermissionPlatformItem extends StatelessWidget {
   Widget _buildItem(BuildContext context, PlatformPermissionTuple item) {
     final textStyle =
         Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey);
+    final isThreeLine = [PlatformType.ios].contains(platform);
     return ListTile(
+      isThreeLine: isThreeLine,
       contentPadding: EdgeInsets.zero,
       title: Text(item.name, maxLines: 1),
-      subtitle: Text(item.desc, style: textStyle),
+      subtitle: Column(
+        children: [
+          Text(item.desc, style: textStyle),
+          if (isThreeLine) _buildItemInput(context, item),
+        ],
+      ),
+    );
+  }
+
+  // 恢复input控制器
+  TextEditingController _restoreInputController(
+      BuildContext context, PlatformPermissionTuple item) {
+    final cacheKey = 'permission_input_${platform}_${item.value}';
+    final provider = context.read<PlatformProvider>();
+    final controller = provider.restoreCache<TextEditingController>(cacheKey) ??
+        TextEditingController(text: item.input)
+      ..selection = TextSelection.fromPosition(
+        TextPosition(offset: item.input.length),
+      );
+    return provider.cache(cacheKey, controller);
+  }
+
+  // 构建权限输入
+  Widget _buildItemInput(BuildContext context, PlatformPermissionTuple item) {
+    final controller = _restoreInputController(context, item);
+    final provider = context.read<PlatformProvider>();
+    updateInput() {
+      if (controller.text == item.input) return;
+      if (!permissions.remove(item)) return;
+      permissions.add(item.copyWith(
+        input: controller.text,
+      ));
+      provider
+          .updatePermission(platform, permissions)
+          .loading(context, dismissible: false);
+    }
+
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      onKey: (event) {
+        if (event.runtimeType != RawKeyDownEvent) return;
+        if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
+        updateInput();
+      },
+      child: StatefulBuilder(builder: (_, setState) {
+        final isEditing = controller.text != item.input;
+        return TextFormField(
+          controller: controller,
+          onChanged: (_) => setState(() {}),
+          decoration: InputDecoration(
+            hintText: '权限用途描述',
+            suffixIcon: AnimatedOpacity(
+              opacity: isEditing ? 1 : 0,
+              duration: const Duration(milliseconds: 80),
+              child: IconButton(
+                iconSize: 18,
+                onPressed: updateInput,
+                padding: EdgeInsets.zero,
+                icon: const Icon(Icons.done),
+                visualDensity: VisualDensity.compact,
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }
