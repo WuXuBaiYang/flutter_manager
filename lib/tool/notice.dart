@@ -1,5 +1,6 @@
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/widget/notice.dart';
 
 /*
 * 消息通知工具
@@ -14,21 +15,22 @@ class NoticeTool {
     EdgeInsetsGeometry? padding,
     BoxConstraints? constraints,
     Duration? duration,
-    IconData? icon,
     Widget? action,
     String? title,
     Color? color,
   }) {
-    return show(
+    return _show(
       context,
-      color: color,
-      action: action,
-      padding: padding,
       duration: duration,
-      content: Text(message),
-      constraints: constraints,
-      title: title != null ? Text(title) : null,
-      icon: Icon(icon ?? Icons.check_circle, color: Colors.greenAccent),
+      builder: (_) => CustomNoticeView.success(
+        context,
+        color: color,
+        title: title,
+        action: action,
+        message: message,
+        padding: padding,
+        constraints: constraints,
+      ),
     );
   }
 
@@ -39,51 +41,53 @@ class NoticeTool {
     EdgeInsetsGeometry? padding,
     BoxConstraints? constraints,
     Duration? duration,
-    IconData? icon,
     Widget? action,
     String? title,
     Color? color,
   }) {
-    return show(
+    return _show(
       context,
-      color: color,
-      action: action,
-      padding: padding,
       duration: duration,
-      content: Text(message),
-      constraints: constraints,
-      title: title != null ? Text(title) : null,
-      icon: Icon(icon ?? Icons.error, color: Colors.redAccent),
+      builder: (_) => CustomNoticeView.error(
+        context,
+        color: color,
+        title: title,
+        action: action,
+        message: message,
+        padding: padding,
+        constraints: constraints,
+      ),
     );
   }
 
-  // 展示消息提醒
+  // 帮助消息样式
   static void help(
     BuildContext context, {
     required String message,
     EdgeInsetsGeometry? padding,
     BoxConstraints? constraints,
     Duration? duration,
-    IconData? icon,
     Widget? action,
     String? title,
     Color? color,
   }) {
-    return show(
+    return _show(
       context,
-      color: color,
-      action: action,
-      padding: padding,
       duration: duration,
-      content: Text(message),
-      constraints: constraints,
-      title: title != null ? Text(title) : null,
-      icon: Icon(icon ?? Icons.help, color: Colors.blueAccent),
+      builder: (_) => CustomNoticeView.help(
+        context,
+        color: color,
+        title: title,
+        action: action,
+        message: message,
+        padding: padding,
+        constraints: constraints,
+      ),
     );
   }
 
-  // 展示消息
-  static void show(
+  // 展示自定义消息
+  static void custom(
     BuildContext context, {
     required Widget content,
     EdgeInsetsGeometry? padding,
@@ -94,11 +98,9 @@ class NoticeTool {
     Widget? icon,
     Color? color,
   }) {
-    return AnimatedSnackBar(
-      animationDuration: const Duration(milliseconds: 200),
-      snackBarStrategy: const ColumnSnackBarStrategy(gap: 4),
-      duration: duration ?? const Duration(milliseconds: 2000),
-      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
+    return _show(
+      context,
+      duration: duration,
       builder: (_) => CustomNoticeView(
         icon: icon,
         color: color,
@@ -108,96 +110,21 @@ class NoticeTool {
         content: content,
         constraints: constraints,
       ),
+    );
+  }
+
+  // 展示消息
+  static void _show(
+    BuildContext context, {
+    required WidgetBuilder builder,
+    Duration? duration,
+  }) {
+    return AnimatedSnackBar(
+      builder: builder,
+      animationDuration: const Duration(milliseconds: 200),
+      snackBarStrategy: const ColumnSnackBarStrategy(gap: 4),
+      duration: duration ?? const Duration(milliseconds: 2000),
+      desktopSnackBarPosition: DesktopSnackBarPosition.topCenter,
     ).show(context);
-  }
-}
-
-/*
-* 自定义消息模板
-* @author wuxubaiyang
-* @Time 2023/12/14 14:34
-*/
-class CustomNoticeView extends StatelessWidget {
-  // 消息图标
-  final Widget? icon;
-
-  // 主题色
-  final Color? color;
-
-  // 标题
-  final Widget? title;
-
-  // 消息
-  final Widget content;
-
-  // 尺寸约束
-  final BoxConstraints constraints;
-
-  // 内间距
-  final EdgeInsetsGeometry padding;
-
-  // 动作按钮（只允许一个）
-  final Widget? action;
-
-  const CustomNoticeView({
-    super.key,
-    required this.content,
-    this.icon,
-    this.color,
-    this.title,
-    this.action,
-    BoxConstraints? constraints,
-    EdgeInsetsGeometry? padding,
-  })  : padding = const EdgeInsets.all(14),
-        constraints = const BoxConstraints(
-            minHeight: 65, minWidth: 180, maxHeight: 120, maxWidth: 340);
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: color,
-      elevation: 6,
-      child: Container(
-        padding: padding,
-        constraints: constraints,
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          if (icon != null) ...[
-            icon ?? const SizedBox(),
-            const SizedBox(width: 14),
-          ],
-          Expanded(child: _buildContent(context)),
-          if (action != null) ...[
-            const SizedBox(width: 8),
-            action ?? const SizedBox(),
-          ],
-        ]),
-      ),
-    );
-  }
-
-  // 构建消息内容
-  Widget _buildContent(BuildContext context) {
-    final hasTitle = title != null;
-    final theme = Theme.of(context);
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        DefaultTextStyle(
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: theme.textTheme.titleMedium ?? const TextStyle(),
-          child: title ?? const SizedBox(),
-        ),
-        if (hasTitle) const SizedBox(height: 4),
-        DefaultTextStyle(
-          maxLines: 3,
-          overflow: TextOverflow.ellipsis,
-          style: (theme.textTheme.bodyMedium ?? const TextStyle())
-              .copyWith(color: hasTitle ? Colors.grey : null),
-          child: content,
-        ),
-      ],
-    );
   }
 }
