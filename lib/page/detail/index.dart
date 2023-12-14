@@ -52,7 +52,7 @@ class ProjectDetailPage extends BasePage {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final project = context.read<ProjectDetailPageProvider>().project;
+    final project = context.watch<ProjectDetailPageProvider>().project;
     return Scaffold(
       body: EmptyBoxView(
         hint: '项目不存在',
