@@ -126,43 +126,21 @@ class IosPlatformTool extends PlatformTool {
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);
-    final children = fragment.getElement('plist')?.getElement('dict')?.children;
-    if (children == null) return false;
-    // 查出key字段对应的element
-    final valueMap = children
-        .whereType<XmlElement>()
-        .where((e) => e.localName == 'key')
-        .toList()
-        .asMap()
-        .map((_, v) => MapEntry(v.innerText, v));
-    final childrenList = children.toList();
-    // 过滤出需要新增的权限，已存在权限则更新权限描述
-    final newPermissions = permissions
-        .where((e) {
-          if (!valueMap.containsKey(e.value)) return true;
-          final element = valueMap[e.value];
-          if (element != null) {
-            final nextElement = element.nextElementSibling;
-            // 如果存在权限描述字段则修改，不存在则添加
-            if (nextElement?.localName == 'string') {
-              nextElement?.innerText = e.input;
-            } else {
-              children.insert(childrenList.indexOf(element) + 1,
-                  XmlElement(XmlName('string'), [], [XmlText(e.input)]));
-            }
-          }
-          return false;
-        })
-        .expand((e) => [
-              XmlElement(XmlName('key'), [], [XmlText(e.value)]),
-              XmlElement(XmlName('string'), [], [XmlText(e.input)])
-            ])
-        .toList();
-    // 写入最新权限
-    if (newPermissions.isNotEmpty) {
-      children.addAll(newPermissions);
-      return writePlatformFileXml(projectPath, keyFilePath, fragment);
-    }
-    return true;
+    final fullPermissions = (await getFullPermissions())?.map((e) => e.value);
+    if (fullPermissions == null) return false;
+    bool flag = false;
+    fragment.getElement('plist')?.getElement('dict')?.children
+      ?..removeWhere((e) {
+        if (e is! XmlElement) return false;
+        final key = e.localName;
+        if (flag && key == 'string') return true;
+        if (key == 'key') return flag = fullPermissions.contains(e.innerText);
+        return flag = false;
+      })
+      ..addAll(permissions.expand((e) => [
+            XmlElement(XmlName('key'), [], [XmlText(e.value)]),
+            XmlElement(XmlName('string'), [], [XmlText(e.input)])
+          ]));
+    return writePlatformFileXml(projectPath, keyFilePath, fragment);
   }
 }

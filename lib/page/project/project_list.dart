@@ -86,13 +86,13 @@ class ProjectGridView extends StatelessWidget {
       ),
       itemBuilder: (_, i) {
         final item = projects[i];
-        return _buildProjectItem(context, item);
+        return _buildItem(context, item);
       },
     );
   }
 
   // 构建项目子项
-  Widget _buildProjectItem(BuildContext context, Project item) {
+  Widget _buildItem(BuildContext context, Project item) {
     return CustomContextMenuRegion(
       key: ValueKey(item.id),
       contextMenu: _contextMenu,
@@ -111,14 +111,14 @@ class ProjectGridView extends StatelessWidget {
             padding: const EdgeInsets.only(right: 14),
             child: const Icon(Icons.delete, color: Colors.white),
           ),
-          child: _buildProjectItemContent(context, item),
+          child: _buildItemContent(context, item),
         ),
       ),
     );
   }
 
   // 构建项目子项内容
-  Widget _buildProjectItemContent(BuildContext context, Project item) {
+  Widget _buildItemContent(BuildContext context, Project item) {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);

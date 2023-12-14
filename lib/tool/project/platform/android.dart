@@ -113,23 +113,20 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       String projectPath, List<PlatformPermissionTuple> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getManifestFragment(projectPath);
-    final children = fragment.getElement('manifest')?.children;
-    if (children == null) return false;
-    final values = children
-        .map((e) => e.getAttribute('android:name')?.split('.').lastOrNull);
-    final newPermissions = permissions
-        .where((e) => !values.contains(e.value))
-        .map((e) => XmlElement(XmlName('uses-permission'), [
-              XmlAttribute(
-                XmlName('android:name'),
-                'android.permission.${e.value}',
-              )
-            ]))
-        .toList(growable: false);
-    if (newPermissions.isNotEmpty) {
-      children.insertAll(0, newPermissions);
-      return writePlatformFileXml(projectPath, _manifestPath, fragment);
-    }
-    return true;
+    final fullPermissions = (await getFullPermissions())?.map((e) => e.value);
+    if (fullPermissions == null) return false;
+    fragment.getElement('manifest')?.children
+      ?..removeWhere((e) =>
+          e is XmlElement &&
+          e.localName.contains('uses-permission') &&
+          fullPermissions.contains(
+            e.getAttribute('android:name')?.split('.').lastOrNull,
+          ))
+      ..insertAll(0, permissions.map((e) {
+        return XmlElement(XmlName('uses-permission'), [
+          XmlAttribute(XmlName('android:name'), 'android.permission.${e.value}')
+        ]);
+      }));
+    return writePlatformFileXml(projectPath, _manifestPath, fragment);
   }
 }
