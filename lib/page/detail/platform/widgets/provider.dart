@@ -7,13 +7,14 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:provider/provider.dart';
+import 'package:window_manager/window_manager.dart';
 
 /*
 * 平台组件数据提供者
 * @author wuxubaiyang
 * @Time 2023/12/4 9:45
 */
-class PlatformProvider extends BaseProvider {
+class PlatformProvider extends BaseProvider with WindowListener {
   // 项目信息
   final Project? project;
 
@@ -56,6 +57,13 @@ class PlatformProvider extends BaseProvider {
 
   PlatformProvider(super.context, this.project) {
     if (project != null) initialize();
+    windowManager.addListener(this);
+  }
+
+  @override
+  void onWindowFocus() {
+    // 当窗口重新获取焦点的时候刷新数据
+    if (project != null) initialize();
   }
 
   // 初始化平台信息
@@ -71,7 +79,6 @@ class PlatformProvider extends BaseProvider {
     await Future.wait(PlatformType.values.map(
       (e) => _updatePlatformInfo(e, false),
     ));
-    _cacheMap.clear();
     notifyListeners();
   }
 
@@ -186,5 +193,11 @@ class PlatformProvider extends BaseProvider {
     _platformInfoMap[platform] =
         await ProjectTool.getPlatformInfo(project!.path, platform);
     if (notify) notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    windowManager.removeListener(this);
+    super.dispose();
   }
 }
