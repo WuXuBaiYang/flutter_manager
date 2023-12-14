@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/loading.dart';
 import 'package:provider/provider.dart';
 
@@ -146,7 +146,7 @@ class EnvironmentRemoteList extends StatelessWidget {
                 icon: const Icon(Icons.copy_rounded),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: item.url));
-                  SnackTool.showMessage(context, message: '已复制下载链接');
+                  NoticeTool.success(context, message: '已复制下载链接');
                 },
               ),
               IconButton(

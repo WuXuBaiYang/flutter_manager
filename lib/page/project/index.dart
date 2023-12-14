@@ -10,9 +10,9 @@ import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
@@ -146,10 +146,10 @@ class ProjectPage extends BasePage {
   bool _checkEnvironment(BuildContext context) {
     final hasEnvironment = context.read<EnvironmentProvider>().hasEnvironment;
     if (hasEnvironment) return true;
-    SnackTool.showMessage(context,
+    NoticeTool.error(context,
         message: '缺少Flutter环境',
         action: SnackBarAction(
-          label: '去设置',
+          label: '设置',
           onPressed: context.read<SettingProvider>().goEnvironment,
         ));
     return hasEnvironment;
@@ -167,7 +167,7 @@ class ProjectPageProvider extends BaseProvider {
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.read<ProjectProvider>()..remove(item);
-    SnackTool.showMessage(context,
+    NoticeTool.success(context,
         message: '${item.label} 项目已移除',
         action: SnackBarAction(
           label: '撤销',

@@ -46,7 +46,7 @@ class ProjectLabelDialog extends StatelessWidget {
             ),
             TextButton(
               child: const Text('确定'),
-              onPressed: () =>  provider.submitForm().then((result) {
+              onPressed: () => provider.submitForm().then((result) {
                 if (result != null) Navigator.pop(context, result);
               }),
             ),
@@ -211,7 +211,7 @@ class ProjectLabelDialogProvider extends BaseProvider {
       formState!.save();
       return _formData;
     } catch (e) {
-      showMessage('操作失败：${e.toString()}');
+      showError(e.toString(), title: '操作失败');
     }
     return null;
   }

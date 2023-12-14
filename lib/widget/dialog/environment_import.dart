@@ -84,6 +84,7 @@ class EnvironmentImportDialog extends StatelessWidget {
       label: 'flutter路径',
       hint: '请选择flutter路径',
       initialValue: provider.formData.path,
+      onSaved: (v) => provider.updateFormData(path: v),
       validator: (v) {
         if (!EnvironmentTool.isPathAvailable(v!)) {
           return '路径不可用';
@@ -134,7 +135,7 @@ class EnvironmentImportDialogProvider extends BaseProvider {
           ? provider.refresh(environment..path = _formData.path)
           : provider.import(_formData.path);
     } catch (e) {
-      showMessage('操作失败：${e.toString()}');
+      showError(e.toString(), title: '操作失败');
     }
     return null;
   }

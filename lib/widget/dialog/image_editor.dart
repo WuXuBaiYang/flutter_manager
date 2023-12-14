@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/loading.dart';
-import 'package:flutter_manager/tool/snack.dart';
+import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
@@ -76,7 +76,7 @@ class ImageEditorDialog extends StatelessWidget {
               onPressed: () {
                 provider.saveOtherPath().loading(context).then((result) {
                   if (result == null) return;
-                  SnackTool.showMessage(context, message: '图片已保存到 $result');
+                  NoticeTool.success(context, title: '图片保存成功', message: result);
                 });
               },
             ),
@@ -300,7 +300,7 @@ class ImageEditorDialogProvider extends BaseProvider {
         return saveCrop(savePath: join(result, _imageFileName));
       }
     } catch (e) {
-      showMessage('图片另存为失败：${e.toString()}');
+      showError(e.toString(), title: '图片另存为失败');
     }
     return null;
   }
@@ -315,7 +315,7 @@ class ImageEditorDialogProvider extends BaseProvider {
       return ImageTool.saveData(
           cropImage.bytes, savePath, _actionTuple.imageType);
     } catch (e) {
-      showMessage('图片裁剪失败：${e.toString()}');
+      showError(e.toString(), title: '图片裁剪失败');
     }
     return null;
   }

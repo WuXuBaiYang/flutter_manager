@@ -14,78 +14,84 @@ class LogTool {
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.trace,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.trace,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出debug日志
   static void d(
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.debug,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.debug,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出info日志
   static void i(
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.info,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.info,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出warning日志
   static void w(
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.warning,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.warning,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出error日志
   static void e(
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.error,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.error,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出wtf日志
   static void wtf(
     String? message, {
     dynamic error,
     StackTrace? stackTrace,
-  }) =>
-      _output(
-        level: Level.fatal,
-        message: message,
-        error: error,
-        stackTrace: stackTrace,
-      );
+  }) {
+    return _output(
+      level: Level.fatal,
+      message: message,
+      error: error,
+      stackTrace: stackTrace,
+    );
+  }
 
   // 输出日志
   static void _output({
@@ -94,8 +100,7 @@ class LogTool {
     dynamic error,
     StackTrace? stackTrace,
   }) {
-    _logger ??= Logger();
-    return _logger?.log(
+    return (_logger ??= Logger()).log(
       level,
       message,
       error: error,

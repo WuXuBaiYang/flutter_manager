@@ -249,7 +249,7 @@ class ProjectImportDialogProvider extends BaseProvider {
               ..pinned = _formData.pinned,
           );
     } catch (e) {
-      showMessage('操作失败：${e.toString()}');
+      showError(e.toString(), title: '操作失败');
     }
     return null;
   }

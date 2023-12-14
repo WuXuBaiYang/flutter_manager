@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/snack.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:provider/provider.dart';
 
@@ -133,7 +133,7 @@ class EnvironmentList extends StatelessWidget {
   // 移除环境
   void _removeEnvironment(BuildContext context, Environment item) {
     final provider = context.read<EnvironmentProvider>()..remove(item);
-    SnackTool.showMessage(context,
+    NoticeTool.success(context,
         message: '${item.title} 环境已移除',
         action: SnackBarAction(
           label: '撤销',
@@ -145,7 +145,7 @@ class EnvironmentList extends StatelessWidget {
   Future<bool> _confirmDismiss(BuildContext context, Environment item) =>
       context.read<EnvironmentProvider>().removeValidator(item).then((result) {
         final canRemove = result == null;
-        if (!canRemove) SnackTool.showMessage(context, message: result);
+        if (!canRemove) NoticeTool.error(context, message: result,title: '环境移除失败');
         return canRemove;
       });
 
@@ -153,7 +153,7 @@ class EnvironmentList extends StatelessWidget {
   void _refreshEnvironment(BuildContext context, Environment item) {
     final provider = context.read<EnvironmentProvider>();
     provider.refresh(item).loading(context).then((_) {}).catchError((e) {
-      SnackTool.showMessage(context, message: '刷新失败：$e');
+      NoticeTool.error(context, message: '$e', title: '刷新失败');
       provider.update(item);
     });
   }

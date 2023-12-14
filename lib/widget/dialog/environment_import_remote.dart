@@ -225,7 +225,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
           .read<EnvironmentProvider>()
           .importArchive(archiveFile, _formData.path);
     } catch (e) {
-      showMessage('操作失败：${e.toString()}');
+      showError(e.toString(), title: '操作失败');
     }
     return null;
   }

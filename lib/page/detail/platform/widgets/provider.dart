@@ -93,7 +93,7 @@ class PlatformProvider extends BaseProvider {
       final result = await ProjectTool.createPlatform(project!, platform);
       if (result) return _updatePlatformInfo(platform);
     } catch (e) {
-      showMessage('创建失败：${e.toString()}');
+      showError(e.toString(), title: '创建失败');
     }
   }
 
@@ -104,7 +104,7 @@ class PlatformProvider extends BaseProvider {
       final result = await ProjectTool.removePlatform(project!, platform);
       if (result) _updatePlatformInfo(platform);
     } catch (e) {
-      showMessage('移除失败：${e.toString()}');
+      showError(e.toString(), title: '移除失败');
     }
   }
 
@@ -116,7 +116,7 @@ class PlatformProvider extends BaseProvider {
           .map((e) => ProjectTool.setLabel(project!.path, e.key, e.value)));
       return initialize();
     } catch (e) {
-      showMessage('标签修改失败：${e.toString()}');
+      showError(e.toString(), title: '标签修改失败');
     }
   }
 
@@ -137,7 +137,7 @@ class PlatformProvider extends BaseProvider {
       }
       return initialize();
     } catch (e) {
-      showMessage('图标修改失败：${e.toString()}');
+      showError(e.toString(), title: '图标修改失败');
     }
   }
 
@@ -148,7 +148,7 @@ class PlatformProvider extends BaseProvider {
       final result = await ProjectTool.setLabel(project!.path, platform, label);
       if (result) _updatePlatformInfo(platform);
     } catch (e) {
-      showMessage('标签修改失败：${e.toString()}');
+      showError(e.toString(), title: '标签修改失败');
     }
   }
 
@@ -162,7 +162,7 @@ class PlatformProvider extends BaseProvider {
           progressCallback: progressCallback);
       if (result) _updatePlatformInfo(platform);
     } catch (e) {
-      showMessage('图标修改失败：${e.toString()}');
+      showError(e.toString(), title: '图标修改失败');
     }
   }
 
@@ -175,7 +175,7 @@ class PlatformProvider extends BaseProvider {
           project!.path, platform, permissions);
       if (result) _updatePlatformInfo(platform);
     } catch (e) {
-      showMessage('权限修改失败：${e.toString()}');
+      showError(e.toString(), title: '权限修改失败');
     }
   }
 

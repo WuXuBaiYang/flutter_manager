@@ -79,7 +79,7 @@ class EnvironmentProvider extends BaseProvider {
     if (result.isEmpty) return null;
     final length = result.length;
     final label = result.first.label;
-    return '${length > 1 ? '$label 等 ${length - 1} 个' : label}项目正在依赖该环境，无法移除';
+    return '${length > 1 ? '$label 等 ${length - 1} 个' : label} 项目正在依赖该环境';
   }
 
   // 环境重排序
