@@ -100,8 +100,7 @@ class EnvironmentList extends StatelessWidget {
           iconSize: 18,
           tooltip: '编辑环境',
           icon: const Icon(Icons.edit),
-          onPressed: () =>
-              EnvironmentImportDialog.show(context, environment: item),
+          onPressed: () => showEnvironmentImport(context, environment: item),
         ),
         IconButton(
           iconSize: 18,
@@ -145,7 +144,9 @@ class EnvironmentList extends StatelessWidget {
   Future<bool> _confirmDismiss(BuildContext context, Environment item) =>
       context.read<EnvironmentProvider>().removeValidator(item).then((result) {
         final canRemove = result == null;
-        if (!canRemove) NoticeTool.error(context, message: result,title: '环境移除失败');
+        if (!canRemove) {
+          NoticeTool.error(context, message: result, title: '环境移除失败');
+        }
         return canRemove;
       });
 

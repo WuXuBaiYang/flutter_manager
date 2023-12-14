@@ -83,7 +83,7 @@ class SettingsPage extends BasePage {
         itemBuilder: (_) => [
           PopupMenuItem(
             child: const Text('本地导入'),
-            onTap: () => EnvironmentImportDialog.show(context),
+            onTap: () => showEnvironmentImport(context),
           ),
           PopupMenuItem(
             child: const Text('远程导入'),
@@ -208,7 +208,7 @@ class SettingsPageProvider extends BaseProvider {
     // 如果没有有效内容，直接返回
     if (environments.isEmpty) return '无效内容！';
     await Future.forEach(environments.map((e) {
-      return EnvironmentImportDialog.show(context, environment: e);
+      return showEnvironmentImport(context, environment: e);
     }), (e) => e);
     return null;
   }

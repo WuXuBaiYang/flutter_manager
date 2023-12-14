@@ -191,7 +191,7 @@ class ProjectPageProvider extends BaseProvider {
     // 如果没有有效内容，直接返回
     if (temp.projects.isEmpty && temp.environments.isEmpty) return '无效内容！';
     await Future.forEach(temp.environments.map((e) {
-      return EnvironmentImportDialog.show(context, environment: e);
+      return showEnvironmentImport(context, environment: e);
     }), (e) => e);
     if (!provider.hasEnvironment && temp.projects.isNotEmpty) {
       return '请先添加环境信息';

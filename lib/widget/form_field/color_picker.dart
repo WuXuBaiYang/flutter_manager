@@ -67,7 +67,7 @@ class ColorPickerFormField extends StatelessWidget {
   // 展示颜色选择器
   Future<void> _showColorPicker(
       BuildContext context, FormFieldState<Color> field) async {
-    final result = await ColorPickerDialog.show(
+    final result = await showColorPicker(
       context,
       current: field.value,
       useTransparent: true,

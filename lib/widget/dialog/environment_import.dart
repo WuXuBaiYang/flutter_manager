@@ -8,6 +8,18 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
 
+// 展示环境导入弹窗
+Future<Environment?> showEnvironmentImport(BuildContext context,
+    {Environment? environment}) {
+  return showDialog<Environment>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => EnvironmentImportDialog(
+      environment: environment,
+    ),
+  );
+}
+
 /*
 * 环境导入弹窗
 * @author wuxubaiyang
@@ -18,18 +30,6 @@ class EnvironmentImportDialog extends StatelessWidget {
   final Environment? environment;
 
   const EnvironmentImportDialog({super.key, this.environment});
-
-  // 展示弹窗
-  static Future<Environment?> show(BuildContext context,
-      {Environment? environment}) {
-    return showDialog<Environment>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => EnvironmentImportDialog(
-        environment: environment,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

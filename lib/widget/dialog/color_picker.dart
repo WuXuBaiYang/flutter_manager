@@ -2,6 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/widget/color_item.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 
+// 展示颜色选择弹窗
+Future<Color?> showColorPicker(
+  BuildContext context, {
+  required List<Color> colors,
+  bool useTransparent = false,
+  Color? current,
+}) {
+  return showDialog<Color>(
+    context: context,
+    builder: (context) => ColorPickerDialog(
+      colors: colors,
+      current: current,
+      useTransparent: useTransparent,
+    ),
+  );
+}
+
 /*
 * 颜色选择对话框
 * @author wuxubaiyang
@@ -23,23 +40,6 @@ class ColorPickerDialog extends StatelessWidget {
     this.current,
     this.useTransparent = false,
   });
-
-  // 展示弹窗
-  static Future<Color?> show(
-    BuildContext context, {
-    required List<Color> colors,
-    bool useTransparent = false,
-    Color? current,
-  }) {
-    return showDialog<Color>(
-      context: context,
-      builder: (context) => ColorPickerDialog(
-        colors: colors,
-        current: current,
-        useTransparent: useTransparent,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
