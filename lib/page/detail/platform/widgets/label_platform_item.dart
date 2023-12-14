@@ -30,11 +30,15 @@ class LabelPlatformItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProjectPlatformItem(
-      title: '项目名',
-      mainAxisExtent: 110,
-      crossAxisCellCount: 3,
-      content: _buildLabelItem(context),
+    final formKey = GlobalKey<FormState>();
+    return Form(
+      key: formKey,
+      child: ProjectPlatformItem(
+        title: '项目名',
+        mainAxisExtent: 110,
+        crossAxisCellCount: 3,
+        content: _buildLabelItem(context, formKey),
+      ),
     );
   }
 
@@ -51,12 +55,16 @@ class LabelPlatformItem extends StatelessWidget {
   }
 
   // 构建标签项
-  Widget _buildLabelItem(BuildContext context) {
+  Widget _buildLabelItem(BuildContext context, GlobalKey<FormState> formKey) {
     final provider = context.watch<PlatformProvider>();
     final controller = _restoreLabelController(context);
-    updateLabel() => provider
-        .updateLabel(platform, controller.text)
-        .loading(context, dismissible: false);
+    updateLabel() {
+      final currentState = formKey.currentState;
+      if (currentState == null || !currentState.validate()) return;
+      provider
+          .updateLabel(platform, controller.text)
+          .loading(context, dismissible: false);
+    }
 
     return RawKeyboardListener(
       focusNode: FocusNode(),

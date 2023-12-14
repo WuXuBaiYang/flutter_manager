@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/label_platform_item.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/options_platform_item.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'widgets/logo_platform_item.dart';
@@ -34,5 +35,6 @@ class ProjectPlatformAndroidView
           platform: platform,
           permissions: platformInfo?.permissions ?? [],
         ),
+        OptionsPlatformItem(platform: platform),
       ];
 }
