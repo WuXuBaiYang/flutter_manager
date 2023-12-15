@@ -137,6 +137,15 @@ class ProjectTool {
   static T getPlatformTool<T extends PlatformTool>(PlatformType platform) =>
       _platformTools[platform]! as T;
 
+  // 根据平台获取项目名
+  static Future<String?> getLabel(String projectPath, PlatformType platform) =>
+      getPlatformTool(platform).getLabel(projectPath);
+
+  // 根据平台设置项目名
+  static Future<bool> setLabel(
+          String projectPath, PlatformType platform, String label) =>
+      getPlatformTool(platform).setLabel(projectPath, label);
+
   // 根据平台获取图标
   static Future<List<PlatformLogoTuple>?> getLogos(
           String projectPath, PlatformType platform) =>
@@ -149,14 +158,15 @@ class ProjectTool {
       getPlatformTool(platform).replaceLogo(projectPath, logoPath,
           progressCallback: progressCallback);
 
-  // 根据平台获取项目名
-  static Future<String?> getLabel(String projectPath, PlatformType platform) =>
-      getPlatformTool(platform).getLabel(projectPath);
+  // 根据平台获取项目包名
+  static Future<String?> getPackage(
+          String projectPath, PlatformType platform) =>
+      getPlatformTool(platform).getPackage(projectPath);
 
-  // 根据平台设置项目名
-  static Future<bool> setLabel(
-          String projectPath, PlatformType platform, String label) =>
-      getPlatformTool(platform).setLabel(projectPath, label);
+  // 根据平台设置项目包名
+  static Future<bool> setPackage(
+          String projectPath, PlatformType platform, String package) =>
+      getPlatformTool(platform).setPackage(projectPath, package);
 
   // 获取完整权限列表
   static Future<List<PlatformPermissionTuple>?> getFullPermissions(

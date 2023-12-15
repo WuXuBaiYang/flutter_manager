@@ -113,8 +113,10 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   @override
   Future<bool> setPackage(String projectPath, String package) async {
     if (!isPathAvailable(projectPath)) return false;
-    // TODO:
-    return super.setPackage(projectPath, package);
+    var content = await _getBuildGradleContent(projectPath);
+    final temp = _packageRegExp.pattern.replaceFirst('(.*)', package);
+    content = content.replaceFirst(_packageRegExp, temp.replaceAll('\\', ''));
+    return writePlatformFile(projectPath, keyFilePath, content);
   }
 
   @override
