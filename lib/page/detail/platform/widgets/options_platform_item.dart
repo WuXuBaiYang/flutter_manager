@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/widget/dialog/alert_message.dart';
 import 'package:provider/provider.dart';
 import 'platform_item.dart';
 
@@ -39,11 +40,28 @@ class OptionsPlatformItem extends StatelessWidget {
   // 构建操作项
   Widget _buildOptions(BuildContext context) {
     final provider = context.read<PlatformProvider>();
-    return Row(children: [
-      IconButton.filledTonal(
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      IconButton.filled(
+        isSelected: false,
+        tooltip: '刷新平台信息',
+        icon: const Icon(Icons.refresh_rounded),
+        onPressed: () => provider
+            .updatePlatformInfo(platform)
+            .loading(context)
+            .then((_) => provider.clearCacheByPlatform(platform)),
+      ),
+      IconButton.filled(
         tooltip: '删除平台',
+        isSelected: false,
         icon: const Icon(Icons.delete_outline_rounded),
-        onPressed: () => provider.removePlatform(platform).loading(context),
+        onPressed: () => showAlertMessage(
+          context: context,
+          title: '删除平台',
+          content: '是否删除当前平台？',
+        ).then((result) {
+          if (result != true) return;
+          provider.removePlatform(platform).loading(context);
+        }),
       ),
     ]);
   }

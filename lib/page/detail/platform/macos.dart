@@ -4,6 +4,7 @@ import 'package:flutter_manager/tool/project/platform/macos.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
+import 'widgets/options_platform_item.dart';
 
 /*
 * 项目详情-macos平台信息页
@@ -30,6 +31,7 @@ class ProjectPlatformMacosView
         mainAxisExtent: 340,
         logos: platformInfo?.logos ?? [],
       ),
+      OptionsPlatformItem(platform: platform),
     ];
   }
 }

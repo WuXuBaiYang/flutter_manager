@@ -4,6 +4,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
+import 'widgets/options_platform_item.dart';
 
 /*
 * 项目详情-windows平台信息页
@@ -37,6 +38,7 @@ class ProjectPlatformWindowsView
         crossAxisCellCount: 2,
         logos: platformInfo?.logos ?? [],
       ),
+      OptionsPlatformItem(platform: platform),
     ];
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/tool/project/platform/linux.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'widgets/label_platform_item.dart';
+import 'widgets/options_platform_item.dart';
 
 /*
 * 项目详情-linux平台信息页
@@ -24,6 +25,7 @@ class ProjectPlatformLinuxView
         platform: platform,
         label: platformInfo?.label ?? '',
       ),
+      OptionsPlatformItem(platform: platform),
     ];
   }
 }

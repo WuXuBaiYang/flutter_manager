@@ -4,6 +4,7 @@ import 'package:flutter_manager/tool/project/platform/ios.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
+import 'widgets/options_platform_item.dart';
 import 'widgets/permission_platform_item.dart';
 
 /*
@@ -34,5 +35,6 @@ class ProjectPlatformIosView extends ProjectPlatformView<IosPlatformInfoTuple> {
           platform: platform,
           permissions: platformInfo?.permissions ?? [],
         ),
+        OptionsPlatformItem(platform: platform),
       ];
 }

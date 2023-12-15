@@ -77,7 +77,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
       _platformList.add(e);
     }
     await Future.wait(PlatformType.values.map(
-      (e) => _updatePlatformInfo(e, false),
+      (e) => updatePlatformInfo(e, false),
     ));
     notifyListeners();
   }
@@ -87,6 +87,13 @@ class PlatformProvider extends BaseProvider with WindowListener {
 
   // 读取缓存
   T? restoreCache<T>(String cacheKey) => _cacheMap[cacheKey] as T?;
+
+  // 清除全部缓存（不触发刷新）
+  void clearCache() => _cacheMap.clear();
+
+  // 根据平台清除缓存（不触发刷新）
+  void clearCacheByPlatform(PlatformType platform) =>
+      _cacheMap.removeWhere((k, _) => k.contains('$platform'));
 
   // 获取平台信息元组
   PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(
@@ -98,7 +105,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
     if (project == null) return;
     try {
       final result = await ProjectTool.createPlatform(project!, platform);
-      if (result) return _updatePlatformInfo(platform);
+      if (result) return updatePlatformInfo(platform);
     } catch (e) {
       showError(e.toString(), title: '创建失败');
     }
@@ -109,7 +116,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
     if (project == null) return;
     try {
       final result = await ProjectTool.removePlatform(project!, platform);
-      if (result) _updatePlatformInfo(platform);
+      if (result) updatePlatformInfo(platform);
     } catch (e) {
       showError(e.toString(), title: '移除失败');
     }
@@ -153,7 +160,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
     if (project == null) return;
     try {
       final result = await ProjectTool.setLabel(project!.path, platform, label);
-      if (result) _updatePlatformInfo(platform);
+      if (result) updatePlatformInfo(platform);
     } catch (e) {
       showError(e.toString(), title: '标签修改失败');
     }
@@ -167,7 +174,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
       final result = await ProjectTool.replaceLogo(
           project!.path, platform, logoPath,
           progressCallback: progressCallback);
-      if (result) _updatePlatformInfo(platform);
+      if (result) updatePlatformInfo(platform);
     } catch (e) {
       showError(e.toString(), title: '图标修改失败');
     }
@@ -180,14 +187,14 @@ class PlatformProvider extends BaseProvider with WindowListener {
     try {
       final result = await ProjectTool.setPermissions(
           project!.path, platform, permissions);
-      if (result) _updatePlatformInfo(platform);
+      if (result) updatePlatformInfo(platform);
     } catch (e) {
       showError(e.toString(), title: '权限修改失败');
     }
   }
 
   // 更新平台信息
-  Future<void> _updatePlatformInfo(PlatformType platform,
+  Future<void> updatePlatformInfo(PlatformType platform,
       [bool notify = true]) async {
     if (project == null) return;
     _platformInfoMap[platform] =
