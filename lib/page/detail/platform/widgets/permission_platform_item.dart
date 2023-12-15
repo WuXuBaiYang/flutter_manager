@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/permission_picker.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
@@ -41,8 +42,8 @@ class PermissionPlatformItem extends StatelessWidget {
       actions: [
         _buildAddPermissionButton(context),
       ],
-      mainAxisExtent: mainAxisExtent,
       crossAxisCellCount: crossAxisCellCount,
+      mainAxisExtent: range(80 * permissions.length + 40, 140, 300),
       content: EmptyBoxView(
         hint: '暂无权限信息',
         isEmpty: permissions.isEmpty,
