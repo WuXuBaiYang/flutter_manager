@@ -105,18 +105,21 @@ class PlatformProvider extends BaseProvider with WindowListener {
     if (project == null) return;
     try {
       final result = await ProjectTool.createPlatform(project!, platform);
-      if (result) return updatePlatformInfo(platform);
+      if (result) return initialize();
     } catch (e) {
       showError(e.toString(), title: '创建失败');
     }
   }
 
   // 移除平台
-  Future<void> removePlatform(PlatformType platform) async {
+  Future<void> removePlatform(PlatformType platform,
+      [bool clearCache = true]) async {
     if (project == null) return;
     try {
       final result = await ProjectTool.removePlatform(project!, platform);
-      if (result) updatePlatformInfo(platform);
+      if (!result) return;
+      if (clearCache) clearCacheByPlatform(platform);
+      initialize();
     } catch (e) {
       showError(e.toString(), title: '移除失败');
     }
