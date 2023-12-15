@@ -6,8 +6,6 @@ import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
 import 'package:flutter_manager/provider/setting.dart';
-import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -59,12 +57,6 @@ class HomePage extends BasePage {
             return TextButton(
               child: Text('v${context.watch<String>()}'),
               onPressed: () async {
-                const projectPath =
-                    'C:/Users/wuxubaiyang/Documents/Workspace/jtech_demo';
-                const platform = PlatformType.ios;
-                const package = 'com.jtech.b';
-                ProjectTool.setPackage(projectPath, platform, package);
-
                 /// TODO: 2021/8/31 14:25 版本更新检查
               },
             );

@@ -53,30 +53,32 @@ class IosPlatformTool extends PlatformTool {
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final items = (await _getPlistDocument(projectPath))
+    final element = (await _getPlistDocument(projectPath))
         .getElement('plist')
         ?.getElement('dict')
         ?.childElements
-        .where((e) => e.innerText == 'CFBundleDisplayName');
-    return items?.firstOrNull?.nextElementSibling?.innerText;
+        .where((e) => e.innerText == 'CFBundleDisplayName')
+        .firstOrNull
+        ?.nextElementSibling;
+    if (element?.localName != 'string') return null;
+    return element?.innerText;
   }
 
   @override
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
-    return writePlatformFileXml(
-      projectPath,
-      keyFilePath,
-      (await _getPlistFragment(projectPath))
-        ..getElement('plist')
-            ?.getElement('dict')
-            ?.childElements
-            .where((e) => e.innerText == 'CFBundleDisplayName')
-            .firstOrNull
-            ?.nextElementSibling
-            ?.innerText = label,
-      indentAttribute: false,
-    );
+    final fragment = await _getPlistFragment(projectPath);
+    final element = fragment
+        .getElement('plist')
+        ?.getElement('dict')
+        ?.childElements
+        .where((e) => e.innerText == 'CFBundleDisplayName')
+        .firstOrNull
+        ?.nextElementSibling
+      ?..innerText = label;
+    if (element?.localName != 'string') return false;
+    return writePlatformFileXml(projectPath, keyFilePath, fragment,
+        indentAttribute: false);
   }
 
   @override
@@ -99,15 +101,34 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<String?> getPackage(String projectPath) {
-    // TODO:
-    return super.getPackage(projectPath);
+  Future<String?> getPackage(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final element = (await _getPlistDocument(projectPath))
+        .getElement('plist')
+        ?.getElement('dict')
+        ?.childElements
+        .where((e) => e.innerText == 'CFBundleIdentifier')
+        .firstOrNull
+        ?.nextElementSibling;
+    if (element?.localName != 'string') return null;
+    return element?.innerText;
   }
 
   @override
-  Future<bool> setPackage(String projectPath, String package) {
-    // TODO:
-    return super.setPackage(projectPath, package);
+  Future<bool> setPackage(String projectPath, String package) async {
+    if (!isPathAvailable(projectPath)) return false;
+    final fragment = await _getPlistFragment(projectPath);
+    final element = fragment
+        .getElement('plist')
+        ?.getElement('dict')
+        ?.childElements
+        .where((e) => e.innerText == 'CFBundleIdentifier')
+        .firstOrNull
+        ?.nextElementSibling
+      ?..innerText = package;
+    if (element?.localName != 'string') return false;
+    return writePlatformFileXml(projectPath, keyFilePath, fragment,
+        indentAttribute: false);
   }
 
   @override
