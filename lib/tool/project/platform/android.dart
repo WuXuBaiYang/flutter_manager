@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_manager/tool/image.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 
@@ -16,13 +17,16 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   PlatformType get platform => PlatformType.android;
 
   @override
-  String keyFilePath = 'build.gradle';
+  String keyFilePath = 'app/build.gradle';
 
   // AndroidManifest.xml相对路径
   final String _manifestPath = 'app/src/main/AndroidManifest.xml';
 
   // 资源目录
   final String _resPath = 'app/src/main/res';
+
+  // package匹配真正则
+  final _packageRegExp = RegExp(r'applicationId "(.*)"');
 
   // 读取manifest文件信息
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
@@ -31,6 +35,10 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   // 获取manifest文件fragment
   Future<XmlDocumentFragment> _getManifestFragment(String projectPath) =>
       readPlatformFileXmlFragment(projectPath, _manifestPath);
+
+  // 获取build.gradle文件内容
+  Future<String> _getBuildGradleContent(String projectPath) =>
+      readPlatformFile(projectPath, keyFilePath);
 
   @override
   Future<PlatformInfoTuple<AndroidPlatformInfoTuple>?> getPlatformInfo(
@@ -93,6 +101,20 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       result.add((name: name, path: path, size: size));
     }
     return result;
+  }
+
+  @override
+  Future<String?> getPackage(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final content = await _getBuildGradleContent(projectPath);
+    return content.regFirstGroup(_packageRegExp.pattern, 1);
+  }
+
+  @override
+  Future<bool> setPackage(String projectPath, String package) async {
+    if (!isPathAvailable(projectPath)) return false;
+    // TODO:
+    return super.setPackage(projectPath, package);
   }
 
   @override

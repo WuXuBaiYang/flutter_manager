@@ -99,6 +99,18 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
+  Future<String?> getPackage(String projectPath) {
+    // TODO:
+    return super.getPackage(projectPath);
+  }
+
+  @override
+  Future<bool> setPackage(String projectPath, String package) {
+    // TODO:
+    return super.setPackage(projectPath, package);
+  }
+
+  @override
   Future<List<PlatformPermissionTuple>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
