@@ -4,6 +4,7 @@ import 'package:flutter_manager/page/detail/platform/widgets/label_platform_item
 import 'package:flutter_manager/page/detail/platform/widgets/options_platform_item.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
 import 'widgets/logo_platform_item.dart';
 import 'widgets/permission_platform_item.dart';
 
@@ -35,6 +36,16 @@ class ProjectPlatformAndroidView
           platform: platform,
           permissions: platformInfo?.permissions ?? [],
         ),
-        OptionsPlatformItem(platform: platform),
+        OptionsPlatformItem(
+          platform: platform,
+          actions: [
+            IconButton.filled(
+              tooltip: '创建签名',
+              isSelected: false,
+              icon: const Icon(Icons.key_rounded),
+              onPressed: () => showAndroidSignKey(context),
+            ),
+          ],
+        ),
       ];
 }

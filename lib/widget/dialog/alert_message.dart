@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/widget/custom_dialog.dart';
 
 // 展示消息确认弹窗
-Future<bool?> showAlertMessage({
-  required BuildContext context,
+Future<bool?> showAlertMessage(
+  BuildContext context, {
   String? title,
   required String content,
   String? confirmText,
@@ -13,14 +14,12 @@ Future<bool?> showAlertMessage({
   return showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (BuildContext context) {
-      return AlertMessageDialog(
-        title: title,
-        content: content,
-        confirm: confirm,
-        cancel: cancel,
-      );
-    },
+    builder: (_) => AlertMessageDialog(
+      title: title,
+      content: content,
+      confirm: confirm,
+      cancel: cancel,
+    ),
   );
 }
 
@@ -52,7 +51,7 @@ class AlertMessageDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
+    return CustomDialog(
       title: title == null ? null : Text(title!),
       content: Text(content),
       actions: <Widget>[

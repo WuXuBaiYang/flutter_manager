@@ -43,7 +43,7 @@ class PermissionPlatformItem extends StatelessWidget {
         _buildAddPermissionButton(context),
       ],
       crossAxisCellCount: crossAxisCellCount,
-      mainAxisExtent: range(80 * permissions.length + 40, 140, 300),
+      mainAxisExtent: range(80 * permissions.length + 40, 140, 500),
       content: EmptyBoxView(
         hint: '暂无权限信息',
         isEmpty: permissions.isEmpty,
@@ -118,6 +118,7 @@ class PermissionPlatformItem extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       title: Text(item.name, maxLines: 1),
       subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(item.desc, style: textStyle),
           if (isThreeLine) _buildItemInput(context, item),

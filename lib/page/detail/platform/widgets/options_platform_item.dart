@@ -21,11 +21,15 @@ class OptionsPlatformItem extends StatelessWidget {
   // 垂直方向高度
   final double mainAxisExtent;
 
+  // 添加操作集合
+  final List<Widget>? actions;
+
   const OptionsPlatformItem({
     super.key,
     required this.platform,
     this.crossAxisCellCount = 2,
     this.mainAxisExtent = 100,
+    this.actions,
   });
 
   @override
@@ -41,6 +45,7 @@ class OptionsPlatformItem extends StatelessWidget {
   Widget _buildOptions(BuildContext context) {
     final provider = context.read<PlatformProvider>();
     return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+      ...actions ?? [],
       IconButton.filled(
         isSelected: false,
         tooltip: '刷新平台信息',
@@ -53,9 +58,10 @@ class OptionsPlatformItem extends StatelessWidget {
       IconButton.filled(
         tooltip: '删除平台',
         isSelected: false,
+        color: Colors.redAccent.withOpacity(0.6),
         icon: const Icon(Icons.delete_outline_rounded),
         onPressed: () => showAlertMessage(
-          context: context,
+          context,
           title: '删除平台',
           content: '是否删除当前平台？',
         ).then((result) {
