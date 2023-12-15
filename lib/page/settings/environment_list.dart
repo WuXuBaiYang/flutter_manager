@@ -59,11 +59,26 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项
   Widget _buildEnvironmentListItem(
       BuildContext context, Environment item, int index) {
+    final provider = context.read<EnvironmentProvider>();
     return Dismissible(
       key: ValueKey(item.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => _removeEnvironment(context, item),
-      confirmDismiss: (_) => _confirmDismiss(context, item),
+      onDismissed: (_) {
+        provider.remove(item);
+        NoticeTool.success(context,
+            message: '${item.title} 环境已移除',
+            action: SnackBarAction(
+              label: '撤销',
+              onPressed: () => provider.update(item),
+            ));
+      },
+      confirmDismiss: (_) => provider.removeValidator(item).then((result) {
+        final canRemove = result == null;
+        if (!canRemove) {
+          NoticeTool.error(context, message: result, title: '环境移除失败');
+        }
+        return canRemove;
+      }),
       background: Container(
         color: Colors.redAccent,
         alignment: Alignment.centerRight,
@@ -81,6 +96,7 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项选项
   Widget _buildEnvironmentListItemOptions(
       BuildContext context, Environment item, int index) {
+    final provider = context.read<EnvironmentProvider>();
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -106,7 +122,14 @@ class EnvironmentList extends StatelessWidget {
           iconSize: 18,
           tooltip: '刷新环境',
           icon: const Icon(Icons.refresh),
-          onPressed: () => _refreshEnvironment(context, item),
+          onPressed: () => provider
+              .refresh(item)
+              .loading(context)
+              .then((_) {})
+              .catchError((e) {
+            NoticeTool.error(context, message: '$e', title: '刷新失败');
+            provider.update(item);
+          }),
         ),
         const SizedBox(width: 8),
         ReorderableDragStartListener(
@@ -127,35 +150,5 @@ class EnvironmentList extends StatelessWidget {
         trailing: const Icon(Icons.drag_handle),
       ),
     );
-  }
-
-  // 移除环境
-  void _removeEnvironment(BuildContext context, Environment item) {
-    final provider = context.read<EnvironmentProvider>()..remove(item);
-    NoticeTool.success(context,
-        message: '${item.title} 环境已移除',
-        action: SnackBarAction(
-          label: '撤销',
-          onPressed: () => provider.update(item),
-        ));
-  }
-
-  // 环境移除确认
-  Future<bool> _confirmDismiss(BuildContext context, Environment item) =>
-      context.read<EnvironmentProvider>().removeValidator(item).then((result) {
-        final canRemove = result == null;
-        if (!canRemove) {
-          NoticeTool.error(context, message: result, title: '环境移除失败');
-        }
-        return canRemove;
-      });
-
-  // 刷新环境
-  void _refreshEnvironment(BuildContext context, Environment item) {
-    final provider = context.read<EnvironmentProvider>();
-    provider.refresh(item).loading(context).then((_) {}).catchError((e) {
-      NoticeTool.error(context, message: '$e', title: '刷新失败');
-      provider.update(item);
-    });
   }
 }

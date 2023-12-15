@@ -95,7 +95,7 @@ class ProjectDetailPage extends BasePage {
           project: project,
           isCollapsed: isScrollTop,
           bottom: _buildTabBar(context, platforms),
-          onProjectEdit: () => ProjectImportDialog.show(
+          onProjectEdit: () => showProjectImport(
             context,
             project: project,
           ).then(provider.updateProject),

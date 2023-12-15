@@ -57,7 +57,7 @@ class PermissionPlatformItem extends StatelessWidget {
     return IconButton(
       iconSize: 20,
       icon: const Icon(Icons.add),
-      onPressed: () => PermissionPickerDialog.show(
+      onPressed: () => showPermissionPicker(
         context,
         platform: platform,
         permissions: permissions,

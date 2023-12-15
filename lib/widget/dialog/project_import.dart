@@ -14,6 +14,17 @@ import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 
+// 展示项目导入弹窗
+Future<Project?> showProjectImport(BuildContext context, {Project? project}) {
+  return showDialog<Project>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => ProjectImportDialog(
+      project: project,
+    ),
+  );
+}
+
 /*
 * 项目导入弹窗
 * @author wuxubaiyang
@@ -24,17 +35,6 @@ class ProjectImportDialog extends StatelessWidget {
   final Project? project;
 
   const ProjectImportDialog({super.key, this.project});
-
-  // 展示弹窗
-  static Future<Project?> show(BuildContext context, {Project? project}) {
-    return showDialog<Project>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ProjectImportDialog(
-        project: project,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

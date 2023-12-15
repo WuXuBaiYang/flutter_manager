@@ -158,7 +158,7 @@ class Tool {
   // 图片编辑
   static Future<String?> editImage(BuildContext context, String imagePath,
       {CropAspectRatio? absoluteRatio}) {
-    return ImageEditorDialog.show(context,
+    return showImageEditor(context,
         path: imagePath, absoluteRatio: absoluteRatio);
   }
 

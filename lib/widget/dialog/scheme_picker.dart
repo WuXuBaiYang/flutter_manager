@@ -3,6 +3,21 @@ import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/scheme_item.dart';
 
+// 展示主题配色弹窗
+Future<ThemeSchemeTuple?> showSchemePicker(
+  BuildContext context, {
+  required List<ThemeSchemeTuple> themeSchemes,
+  ThemeSchemeTuple? current,
+}) {
+  return showDialog<ThemeSchemeTuple>(
+    context: context,
+    builder: (context) => SchemePickerDialog(
+      themeSchemes: themeSchemes,
+      current: current,
+    ),
+  );
+}
+
 /*
 * 主题配色对话框
 * @author wuxubaiyang
@@ -20,21 +35,6 @@ class SchemePickerDialog extends StatelessWidget {
     required this.themeSchemes,
     this.current,
   });
-
-  // 展示弹窗
-  static Future<ThemeSchemeTuple?> show(
-    BuildContext context, {
-    required List<ThemeSchemeTuple> themeSchemes,
-    ThemeSchemeTuple? current,
-  }) {
-    return showDialog<ThemeSchemeTuple>(
-      context: context,
-      builder: (context) => SchemePickerDialog(
-        themeSchemes: themeSchemes,
-        current: current,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

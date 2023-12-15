@@ -87,7 +87,7 @@ class SettingsPage extends BasePage {
           ),
           PopupMenuItem(
             child: const Text('远程导入'),
-            onTap: () => EnvironmentImportRemoteDialog.show(context),
+            onTap: () => showEnvironmentImportRemote(context),
           ),
         ],
       ),
@@ -168,7 +168,7 @@ class SettingsPage extends BasePage {
         themeScheme: themeScheme,
         isSelected: true,
         tooltip: '更换配色',
-        onPressed: () => SchemePickerDialog.show(
+        onPressed: () => showSchemePicker(
           context,
           current: themeScheme,
           themeSchemes: provider.getThemeSchemeList(),

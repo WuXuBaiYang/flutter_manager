@@ -61,7 +61,7 @@ class ProjectDetailTabBar extends StatelessWidget {
         child: TextButton.icon(
           label: const Text('名称'),
           icon: const Icon(Icons.edit_attributes_rounded, size: 18),
-          onPressed: () => ProjectLabelDialog.show(
+          onPressed: () => showProjectLabel(
             context,
             platformLabelMap: provider.labelMap,
           ).then((result) {
@@ -74,7 +74,7 @@ class ProjectDetailTabBar extends StatelessWidget {
         message: '替换图标',
         child: TextButton.icon(
           label: const Text('图标'),
-          onPressed: () => ProjectLogoDialog.show(
+          onPressed: () => showProjectLogo(
             context,
             platformLogoMap: provider.logoMap,
           ).then((result) {

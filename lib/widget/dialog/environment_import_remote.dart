@@ -12,6 +12,16 @@ import 'package:flutter_manager/widget/environment_remote_list.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
 
+// 展示远程导入环境弹窗
+Future<Environment?> showEnvironmentImportRemote(BuildContext context,
+    {Environment? environment}) {
+  return showDialog<Environment>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const EnvironmentImportRemoteDialog(),
+  );
+}
+
 /*
 * 环境导入弹窗-远程
 * @author wuxubaiyang
@@ -19,16 +29,6 @@ import 'package:provider/provider.dart';
 */
 class EnvironmentImportRemoteDialog extends StatelessWidget {
   const EnvironmentImportRemoteDialog({super.key});
-
-  // 展示弹窗
-  static Future<Environment?> show(BuildContext context,
-      {Environment? environment}) {
-    return showDialog<Environment>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const EnvironmentImportRemoteDialog(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -13,6 +13,19 @@ import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
+// 展示图片编辑弹窗
+Future<String?> showImageEditor(BuildContext context,
+    {required String path, CropAspectRatio? absoluteRatio}) {
+  return showDialog<String>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => ImageEditorDialog(
+      path: path,
+      absoluteRatio: absoluteRatio,
+    ),
+  );
+}
+
 /*
 * 图片编辑弹窗
 * @author wuxubaiyang
@@ -34,19 +47,6 @@ class ImageEditorDialog extends StatelessWidget {
     this.absoluteRatio,
     this.initializeRatio = CropAspectRatio.ratio1_1,
   });
-
-  // 展示弹窗
-  static Future<String?> show(BuildContext context,
-      {required String path, CropAspectRatio? absoluteRatio}) {
-    return showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ImageEditorDialog(
-        path: path,
-        absoluteRatio: absoluteRatio,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -6,6 +6,21 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/loading.dart';
 import 'package:provider/provider.dart';
 
+// 展示权限选择弹窗
+Future<List<PlatformPermissionTuple>?> showPermissionPicker(
+  BuildContext context, {
+  required PlatformType platform,
+  List<PlatformPermissionTuple>? permissions,
+}) {
+  return showDialog<List<PlatformPermissionTuple>>(
+    context: context,
+    builder: (context) => PermissionPickerDialog(
+      platform: platform,
+      permissions: permissions,
+    ),
+  );
+}
+
 /*
 * 权限选择列表弹窗
 * @author wuxubaiyang
@@ -23,21 +38,6 @@ class PermissionPickerDialog extends StatelessWidget {
     required this.platform,
     this.permissions,
   });
-
-  // 展示弹窗
-  static Future<List<PlatformPermissionTuple>?> show(
-    BuildContext context, {
-    required PlatformType platform,
-    List<PlatformPermissionTuple>? permissions,
-  }) {
-    return showDialog<List<PlatformPermissionTuple>>(
-      context: context,
-      builder: (context) => PermissionPickerDialog(
-        platform: platform,
-        permissions: permissions,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

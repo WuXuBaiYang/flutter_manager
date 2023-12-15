@@ -7,6 +7,19 @@ import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
 import 'package:provider/provider.dart';
 
+// 展示修改图标弹窗
+Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
+    {required Map<PlatformType, List<PlatformLogoTuple>>
+        platformLogoMap}) async {
+  return showDialog<ProjectLogoDialogFormTuple>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => ProjectLogoDialog(
+      platformLogoMap: platformLogoMap,
+    ),
+  );
+}
+
 /*
 * 项目修改图标弹窗
 * @author wuxubaiyang
@@ -17,19 +30,6 @@ class ProjectLogoDialog extends StatelessWidget {
   final Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap;
 
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
-
-  // 展示弹窗
-  static Future<ProjectLogoDialogFormTuple?> show(BuildContext context,
-      {required Map<PlatformType, List<PlatformLogoTuple>>
-          platformLogoMap}) async {
-    return showDialog<ProjectLogoDialogFormTuple>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ProjectLogoDialog(
-        platformLogoMap: platformLogoMap,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

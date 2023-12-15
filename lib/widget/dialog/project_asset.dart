@@ -4,6 +4,15 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 
+// 展示asset资源管理弹窗
+Future<dynamic> showProjectAsset(BuildContext context) async {
+  return showDialog<dynamic>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const ProjectAssetDialog(),
+  );
+}
+
 /*
 * 项目asset资源管理
 * @author wuxubaiyang
@@ -11,15 +20,6 @@ import 'package:provider/provider.dart';
 */
 class ProjectAssetDialog extends StatelessWidget {
   const ProjectAssetDialog({super.key});
-
-  // 展示弹窗
-  static Future<dynamic> show(BuildContext context) async {
-    return showDialog<dynamic>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const ProjectAssetDialog(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -4,6 +4,15 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 
+// 展示字体资源管理弹窗
+Future<dynamic> showProjectFont(BuildContext context) async {
+  return showDialog<dynamic>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => const ProjectFontDialog(),
+  );
+}
+
 /*
 * 项目字体资源管理
 * @author wuxubaiyang
@@ -11,15 +20,6 @@ import 'package:provider/provider.dart';
 */
 class ProjectFontDialog extends StatelessWidget {
   const ProjectFontDialog({super.key});
-
-  // 展示弹窗
-  static Future<dynamic> show(BuildContext context) async {
-    return showDialog<dynamic>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const ProjectFontDialog(),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class ProjectFontDialog extends StatelessWidget {
     );
   }
 
-  // 构建内容
+// 构建内容
   Widget _buildContent(BuildContext context) {
     return const EmptyBoxView(
       hint: '无可用平台',

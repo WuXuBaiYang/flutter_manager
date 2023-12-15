@@ -139,19 +139,13 @@ class ProjectDetailAppBar extends StatelessWidget {
           iconSize: 20,
           tooltip: 'Asset管理',
           icon: const Icon(Icons.assessment_outlined),
-          onPressed: () {
-            /// TODO: Asset管理
-            ProjectAssetDialog.show(context);
-          },
+          onPressed: () => showProjectAsset(context),
         ),
         IconButton.outlined(
           iconSize: 20,
           tooltip: '字体管理',
           icon: const Icon(Icons.font_download_outlined),
-          onPressed: () {
-            /// TODO: 字体管理
-            ProjectFontDialog.show(context);
-          },
+          onPressed: () => showProjectFont(context),
         ),
         IconButton.outlined(
           iconSize: 20,
@@ -169,7 +163,7 @@ class ProjectDetailAppBar extends StatelessWidget {
             textStyle: MaterialStateProperty.all(
                 Theme.of(context).textTheme.bodyLarge),
           ),
-          onPressed: () => ProjectBuildDialog.show(context, project: project),
+          onPressed: () => showProjectBuild(context, project: project),
         ),
       ].expand((e) => [e, const SizedBox(width: 14)]).toList(),
     );

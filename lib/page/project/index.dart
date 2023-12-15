@@ -43,7 +43,7 @@ class ProjectPage extends BasePage {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           if (!_checkEnvironment(context)) return;
-          ProjectImportDialog.show(context);
+          showProjectImport(context);
         },
         child: const Icon(Icons.add),
       ),
@@ -102,8 +102,7 @@ class ProjectPage extends BasePage {
               onDelete: (item) => context
                   .read<ProjectPageProvider>()
                   .removeProject(context, item),
-              onEdit: (item) =>
-                  ProjectImportDialog.show(context, project: item),
+              onEdit: (item) => showProjectImport(context, project: item),
               onDetail: (item) => router.pushNamed(
                 RoutePath.projectDetail,
                 arguments: (project: item),
@@ -132,7 +131,7 @@ class ProjectPage extends BasePage {
           ),
           onDelete: (item) =>
               context.read<ProjectPageProvider>().removeProject(context, item),
-          onEdit: (item) => ProjectImportDialog.show(context, project: item),
+          onEdit: (item) => showProjectImport(context, project: item),
           onDetail: (item) => router.pushNamed(
             RoutePath.projectDetail,
             arguments: (project: item),
@@ -197,7 +196,7 @@ class ProjectPageProvider extends BaseProvider {
       return '请先添加环境信息';
     }
     await Future.forEach(temp.projects.map((e) {
-      return ProjectImportDialog.show(context, project: e);
+      return showProjectImport(context, project: e);
     }), (e) => e);
     return null;
   }

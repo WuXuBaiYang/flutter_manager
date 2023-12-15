@@ -5,6 +5,18 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
 
+// 展示修改别名弹窗
+Future<Map<PlatformType, String>?> showProjectLabel(BuildContext context,
+    {required Map<PlatformType, String> platformLabelMap}) async {
+  return showDialog<Map<PlatformType, String>>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => ProjectLabelDialog(
+      platformLabelMap: platformLabelMap,
+    ),
+  );
+}
+
 /*
 * 项目修改别名弹窗
 * @author wuxubaiyang
@@ -15,18 +27,6 @@ class ProjectLabelDialog extends StatelessWidget {
   final Map<PlatformType, String> platformLabelMap;
 
   const ProjectLabelDialog({super.key, required this.platformLabelMap});
-
-  // 展示弹窗
-  static Future<Map<PlatformType, String>?> show(BuildContext context,
-      {required Map<PlatformType, String> platformLabelMap}) async {
-    return showDialog<Map<PlatformType, String>>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ProjectLabelDialog(
-        platformLabelMap: platformLabelMap,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {

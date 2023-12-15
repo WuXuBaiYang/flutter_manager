@@ -3,6 +3,17 @@ import 'package:flutter_manager/model/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
+// 展示项目构建弹窗
+Future<void> showProjectBuild(BuildContext context, {required Project project}) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => ProjectBuildDialog(
+      project: project,
+    ),
+  );
+}
+
 /*
 * 项目构建弹窗
 * @author wuxubaiyang
@@ -13,18 +24,6 @@ class ProjectBuildDialog extends StatelessWidget {
   final Project project;
 
   const ProjectBuildDialog({super.key, required this.project});
-
-  // 展示弹窗
-  static Future<void> show(BuildContext context,
-      {required Project project}) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => ProjectBuildDialog(
-        project: project,
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
