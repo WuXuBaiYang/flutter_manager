@@ -39,9 +39,32 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
     return (
       path: getPlatformPath(projectPath),
       label: await getLabel(projectPath) ?? '',
+      package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
       permissions: await getPermissions(projectPath) ?? [],
       info: (),
+    );
+  }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    return (await _getManifestDocument(projectPath))
+        .getElement('manifest')
+        ?.getElement('application')
+        ?.getAttribute('android:label');
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async {
+    if (!isPathAvailable(projectPath)) return false;
+    return writePlatformFileXml(
+      projectPath,
+      _manifestPath,
+      (await _getManifestFragment(projectPath))
+        ..getElement('manifest')
+            ?.getElement('application')
+            ?.setAttribute('android:label', label),
     );
   }
 
@@ -70,28 +93,6 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       result.add((name: name, path: path, size: size));
     }
     return result;
-  }
-
-  @override
-  Future<String?> getLabel(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    return (await _getManifestDocument(projectPath))
-        .getElement('manifest')
-        ?.getElement('application')
-        ?.getAttribute('android:label');
-  }
-
-  @override
-  Future<bool> setLabel(String projectPath, String label) async {
-    if (!isPathAvailable(projectPath)) return false;
-    return writePlatformFileXml(
-      projectPath,
-      _manifestPath,
-      (await _getManifestFragment(projectPath))
-        ..getElement('manifest')
-            ?.getElement('application')
-            ?.setAttribute('android:label', label),
-    );
   }
 
   @override

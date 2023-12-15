@@ -12,6 +12,7 @@ import 'package:xml/xml.dart';
 typedef PlatformInfoTuple<T extends Record> = ({
   String path,
   String label,
+  String package,
   List<PlatformLogoTuple> logos,
   List<PlatformPermissionTuple> permissions,
   T info,
@@ -162,10 +163,13 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    return <PlatformLogoTuple>[];
-  }
+  Future<String?> getLabel(String projectPath) async => null;
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async => true;
+
+  @override
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async => null;
 
   @override
   Future<bool> replaceLogo(String projectPath, String logoPath,
@@ -194,13 +198,10 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<String?> getLabel(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    return '';
-  }
+  Future<String?> getPackage(String projectPath) async => null;
 
   @override
-  Future<bool> setLabel(String projectPath, String label) async => true;
+  Future<bool> setPackage(String projectPath, String package) async => true;
 
   @override
   Future<List<PlatformPermissionTuple>?> getFullPermissions() async {
@@ -221,10 +222,8 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   @override
   Future<List<PlatformPermissionTuple>?> getPermissions(
-      String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    return <PlatformPermissionTuple>[];
-  }
+          String projectPath) async =>
+      null;
 
   @override
   Future<bool> setPermissions(String projectPath,
@@ -241,6 +240,12 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   // 获取平台信息
   Future<PlatformInfoTuple<T>?> getPlatformInfo(String projectPath);
 
+  // 获取项目名
+  Future<String?> getLabel(String projectPath);
+
+  // 设置项目名
+  Future<bool> setLabel(String projectPath, String label);
+
   // 获取logo
   Future<List<PlatformLogoTuple>?> getLogos(String projectPath);
 
@@ -248,11 +253,11 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<bool> replaceLogo(String projectPath, String logoPath,
       {ProgressCallback? progressCallback});
 
-  // 获取项目名
-  Future<String?> getLabel(String projectPath);
+  // 获取包名
+  Future<String?> getPackage(String projectPath);
 
-  // 设置项目名
-  Future<bool> setLabel(String projectPath, String label);
+  // 设置包名
+  Future<bool> setPackage(String projectPath, String package);
 
   // 获取该平台完整权限列表
   Future<List<PlatformPermissionTuple>?> getFullPermissions();

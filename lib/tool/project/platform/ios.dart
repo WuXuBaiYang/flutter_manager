@@ -43,29 +43,11 @@ class IosPlatformTool extends PlatformTool {
     return (
       path: getPlatformPath(projectPath),
       label: await getLabel(projectPath) ?? '',
+      package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
       permissions: await getPermissions(projectPath) ?? [],
       info: (),
     );
-  }
-
-  @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    final json = await _getIconInfoJson(projectPath);
-    final resPath = getPlatformFilePath(projectPath, _iconPath);
-    final result = <PlatformLogoTuple>[];
-    for (final item in json['images'] ?? []) {
-      final filename = item['filename'];
-      final entries = (item as Map)
-        ..removeWhere((_, value) => value == filename);
-      final name = entries.values.join('_');
-      final path = join(resPath, filename);
-      final size = await ImageTool.getSize(path);
-      if (size == null) continue;
-      result.add((name: name, path: path, size: size));
-    }
-    return result;
   }
 
   @override
@@ -95,6 +77,25 @@ class IosPlatformTool extends PlatformTool {
             ?.innerText = label,
       indentAttribute: false,
     );
+  }
+
+  @override
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final json = await _getIconInfoJson(projectPath);
+    final resPath = getPlatformFilePath(projectPath, _iconPath);
+    final result = <PlatformLogoTuple>[];
+    for (final item in json['images'] ?? []) {
+      final filename = item['filename'];
+      final entries = (item as Map)
+        ..removeWhere((_, value) => value == filename);
+      final name = entries.values.join('_');
+      final path = join(resPath, filename);
+      final size = await ImageTool.getSize(path);
+      if (size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 
   @override

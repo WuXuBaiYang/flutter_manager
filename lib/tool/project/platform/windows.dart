@@ -35,25 +35,11 @@ class WindowsPlatformTool extends PlatformTool {
     return (
       path: getPlatformPath(projectPath),
       label: await getLabel(projectPath) ?? '',
+      package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
       permissions: <PlatformPermissionTuple>[],
       info: (),
     );
-  }
-
-  @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
-    final result = <PlatformLogoTuple>[];
-    for (final file in dir.listSync()) {
-      final path = file.path;
-      final name = File(path).name;
-      final size = await ImageTool.getSize(path);
-      if (name == null || size == null) continue;
-      result.add((name: name, path: path, size: size));
-    }
-    return result;
   }
 
   @override
@@ -73,5 +59,20 @@ class WindowsPlatformTool extends PlatformTool {
     content = content.replaceFirst(_labelRegExp, temp.replaceAll('\\', ''));
     await writePlatformFile(projectPath, keyFilePath, content);
     return true;
+  }
+
+  @override
+  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final dir = Directory(getPlatformFilePath(projectPath, _resPath));
+    final result = <PlatformLogoTuple>[];
+    for (final file in dir.listSync()) {
+      final path = file.path;
+      final name = File(path).name;
+      final size = await ImageTool.getSize(path);
+      if (name == null || size == null) continue;
+      result.add((name: name, path: path, size: size));
+    }
+    return result;
   }
 }

@@ -33,10 +33,27 @@ class WebPlatformTool extends PlatformTool {
     return (
       path: getPlatformPath(projectPath),
       label: await getLabel(projectPath) ?? '',
+      package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
       permissions: <PlatformPermissionTuple>[],
       info: (),
     );
+  }
+
+  @override
+  Future<String?> getLabel(String projectPath) async {
+    if (!isPathAvailable(projectPath)) return null;
+    final json = await _getManifestJson(projectPath);
+    return json['name'];
+  }
+
+  @override
+  Future<bool> setLabel(String projectPath, String label) async {
+    if (!isPathAvailable(projectPath)) return false;
+    final json = await _getManifestJson(projectPath);
+    json['name'] = label;
+    await writePlatformFileJson(projectPath, _manifestPath, json);
+    return true;
   }
 
   @override
@@ -63,21 +80,5 @@ class WebPlatformTool extends PlatformTool {
       result.add((name: name, path: path, size: size));
     }
     return result;
-  }
-
-  @override
-  Future<String?> getLabel(String projectPath) async {
-    if (!isPathAvailable(projectPath)) return null;
-    final json = await _getManifestJson(projectPath);
-    return json['name'];
-  }
-
-  @override
-  Future<bool> setLabel(String projectPath, String label) async {
-    if (!isPathAvailable(projectPath)) return false;
-    final json = await _getManifestJson(projectPath);
-    json['name'] = label;
-    await writePlatformFileJson(projectPath, _manifestPath, json);
-    return true;
   }
 }
