@@ -33,17 +33,14 @@ class ProjectPlatformAndroidView
           platform: platform,
           package: platformInfo?.package ?? '',
         ),
-        OptionsPlatformItem(
-          platform: platform,
-          actions: [
-            IconButton.filled(
-              tooltip: '创建签名',
-              isSelected: false,
-              icon: const Icon(Icons.key_rounded),
-              onPressed: () => showAndroidSignKey(context),
-            ),
-          ],
-        ),
+        OptionsPlatformItem(platform: platform, actions: [
+          IconButton.filled(
+            tooltip: '创建签名',
+            isSelected: false,
+            icon: const Icon(Icons.key_rounded),
+            onPressed: () => showAndroidSignKey(context),
+          ),
+        ]),
         PermissionPlatformItem(
           platform: platform,
           permissions: platformInfo?.permissions ?? [],
