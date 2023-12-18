@@ -4,6 +4,7 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/notice.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示图片编辑弹窗
 Future<String?> showImageEditor(BuildContext context,
@@ -31,7 +33,7 @@ Future<String?> showImageEditor(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/6 8:48
 */
-class ImageEditorDialog extends StatelessWidget {
+class ImageEditorDialog extends ProviderView {
   // 图片路径
   final String path;
 
@@ -49,51 +51,53 @@ class ImageEditorDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ImageEditorDialogProvider(context, (
-        ratio: initializeRatio,
-        rotate: 0,
-        borderRadius: 0,
-        imageType: ImageType.png,
-      )),
-      builder: (context, _) {
-        final provider = context.watch<ImageEditorDialogProvider>();
-        return CustomDialog(
-          title: Row(children: [
-            const Expanded(child: Text('图片裁剪')),
-            _buildImageTypeSelector(context),
-          ]),
-          content: _buildContent(context),
-          constraints: const BoxConstraints.tightFor(width: 480, height: 350),
-          actions: [
-            TextButton(
-              child: const Text('使用原图'),
-              onPressed: () => Navigator.pop(context, path),
-            ),
-            TextButton(
-              child: const Text('另存为'),
-              onPressed: () {
-                provider.saveOtherPath().loading(context).then((result) {
-                  if (result == null) return;
-                  NoticeTool.success(context, title: '图片保存成功', message: result);
-                });
-              },
-            ),
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () => provider
-                  .saveCrop()
-                  .loading(context)
-                  .then((v) => Navigator.pop(context, v)),
-            ),
-          ],
-        );
-      },
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider<ImageEditorDialogProvider>(
+          create: (_) => ImageEditorDialogProvider(context, (
+            ratio: initializeRatio,
+            rotate: 0,
+            borderRadius: 0,
+            imageType: ImageType.png,
+          )),
+        ),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    final provider = context.watch<ImageEditorDialogProvider>();
+    return CustomDialog(
+      title: Row(children: [
+        const Expanded(child: Text('图片裁剪')),
+        _buildImageTypeSelector(context),
+      ]),
+      content: _buildContent(context),
+      constraints: const BoxConstraints.tightFor(width: 480, height: 350),
+      actions: [
+        TextButton(
+          child: const Text('使用原图'),
+          onPressed: () => Navigator.pop(context, path),
+        ),
+        TextButton(
+          child: const Text('另存为'),
+          onPressed: () {
+            provider.saveOtherPath().loading(context).then((result) {
+              if (result == null) return;
+              NoticeTool.success(context, title: '图片保存成功', message: result);
+            });
+          },
+        ),
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: const Text('确定'),
+          onPressed: () => provider
+              .saveCrop()
+              .loading(context)
+              .then((v) => Navigator.pop(context, v)),
+        ),
+      ],
     );
   }
 

@@ -3,8 +3,8 @@ import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/manage/router.dart';
-import 'package:flutter_manager/model/environment.dart';
-import 'package:flutter_manager/model/project.dart';
+import 'package:flutter_manager/database/environment.dart';
+import 'package:flutter_manager/database/project.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
@@ -25,7 +25,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPage extends BasePage {
+class ProjectPage extends ProviderPage {
   const ProjectPage({super.key, super.primary = false});
 
   @override
@@ -34,7 +34,7 @@ class ProjectPage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('项目'),

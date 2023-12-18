@@ -10,7 +10,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgePage extends BasePage {
+class KnowledgePage extends ProviderPage {
   const KnowledgePage({super.key, super.primary = false});
 
   @override
@@ -19,7 +19,7 @@ class KnowledgePage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('知识库'),

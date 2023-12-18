@@ -10,7 +10,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePage extends BasePage {
+class PackagePage extends ProviderPage {
   const PackagePage({super.key, super.primary = false});
 
   @override
@@ -19,7 +19,7 @@ class PackagePage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('打包'),

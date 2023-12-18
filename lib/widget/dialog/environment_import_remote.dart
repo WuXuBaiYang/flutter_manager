@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/environment.dart';
+import 'package:flutter_manager/common/view.dart';
+import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/environment_remote_list.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示远程导入环境弹窗
 Future<Environment?> showEnvironmentImportRemote(BuildContext context,
@@ -27,38 +29,40 @@ Future<Environment?> showEnvironmentImportRemote(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentImportRemoteDialog extends StatelessWidget {
+class EnvironmentImportRemoteDialog extends ProviderView {
   const EnvironmentImportRemoteDialog({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => EnvironmentRemoteImportDialogProvider(context),
-      builder: (context, _) {
-        final currentStep =
-            context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
-        final provider = context.read<EnvironmentRemoteImportDialogProvider>();
-        final savePath = provider.downloadInfo?.path;
-        return CustomDialog(
-          title: Text(['选择', '下载', '导入'][currentStep]),
-          constraints: const BoxConstraints.tightFor(width: 340),
-          content: [
-            _buildPackageList(context),
-            _buildPackageDownload(context),
-            _buildPackageImport(context),
-          ][currentStep],
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              onPressed: _importPressed(context, currentStep, savePath),
-              child: const Text('导入'),
-            ),
-          ],
-        );
-      },
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider<EnvironmentRemoteImportDialogProvider>(
+          create: (_) => EnvironmentRemoteImportDialogProvider(context),
+        ),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    final currentStep =
+        context.watch<EnvironmentRemoteImportDialogProvider>().currentStep;
+    final provider = context.read<EnvironmentRemoteImportDialogProvider>();
+    final savePath = provider.downloadInfo?.path;
+    return CustomDialog(
+      title: Text(['选择', '下载', '导入'][currentStep]),
+      constraints: const BoxConstraints.tightFor(width: 340),
+      content: [
+        _buildPackageList(context),
+        _buildPackageDownload(context),
+        _buildPackageImport(context),
+      ][currentStep],
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          onPressed: _importPressed(context, currentStep, savePath),
+          child: const Text('导入'),
+        ),
+      ],
     );
   }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示修改别名弹窗
 Future<Map<PlatformType, String>?> showProjectLabel(BuildContext context,
@@ -22,37 +24,39 @@ Future<Map<PlatformType, String>?> showProjectLabel(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectLabelDialog extends StatelessWidget {
+class ProjectLabelDialog extends ProviderView {
   // 平台与label对照表
   final Map<PlatformType, String> platformLabelMap;
 
   const ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ProjectLabelDialogProvider>(
+  List<SingleChildWidget> loadProviders(BuildContext context)=>[
+    ChangeNotifierProvider(
       create: (_) => ProjectLabelDialogProvider(context, platformLabelMap),
-      builder: (context, _) {
-        final provider = context.watch<ProjectLabelDialogProvider>();
-        return CustomDialog(
-          title: const Text('别名'),
-          content: _buildContent(context),
-          constraints: BoxConstraints.tightFor(
-              width: 280, height: platformLabelMap.isEmpty ? 280 : null),
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () => provider.submitForm().then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }),
-            ),
-          ],
-        );
-      },
+    ),
+  ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    final provider = context.watch<ProjectLabelDialogProvider>();
+    return CustomDialog(
+      title: const Text('别名'),
+      content: _buildContent(context),
+      constraints: BoxConstraints.tightFor(
+          width: 280, height: platformLabelMap.isEmpty ? 280 : null),
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: const Text('确定'),
+          onPressed: () => provider.submitForm().then((result) {
+            if (result != null) Navigator.pop(context, result);
+          }),
+        ),
+      ],
     );
   }
 

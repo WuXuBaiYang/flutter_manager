@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/loading.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示权限选择弹窗
 Future<List<PlatformPermissionTuple>?> showPermissionPicker(
@@ -26,7 +28,7 @@ Future<List<PlatformPermissionTuple>?> showPermissionPicker(
 * @author wuxubaiyang
 * @Time 2023/11/25 19:38
 */
-class PermissionPickerDialog extends StatelessWidget {
+class PermissionPickerDialog extends ProviderView {
   // 所选平台
   final PlatformType platform;
 
@@ -40,34 +42,35 @@ class PermissionPickerDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => PermissionPickerDialogProvider(context,
-          permissions: permissions ?? []),
-      builder: (context, __) {
-        final provider = context.read<PermissionPickerDialogProvider>();
-        return CustomDialog(
-          content: _buildContent(context),
-          title: Selector<PermissionPickerDialogProvider, int>(
-            selector: (_, provider) => provider.selectPermissions.length,
-            builder: (_, count, __) {
-              return Text('${platform.name}权限（$count）');
-            },
-          ),
-          constraints: const BoxConstraints.tightFor(width: 340),
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () =>
-                  Navigator.pop(context, provider.selectPermissions),
-            ),
-          ],
-        );
-      },
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider<PermissionPickerDialogProvider>(
+          create: (_) => PermissionPickerDialogProvider(context,
+              permissions: permissions ?? []),
+        ),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    final provider = context.read<PermissionPickerDialogProvider>();
+    return CustomDialog(
+      content: _buildContent(context),
+      title: Selector<PermissionPickerDialogProvider, int>(
+        selector: (_, provider) => provider.selectPermissions.length,
+        builder: (_, count, __) {
+          return Text('${platform.name}权限（$count）');
+        },
+      ),
+      constraints: const BoxConstraints.tightFor(width: 340),
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: const Text('确定'),
+          onPressed: () => Navigator.pop(context, provider.selectPermissions),
+        ),
+      ],
     );
   }
 

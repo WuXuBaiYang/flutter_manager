@@ -15,7 +15,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/21 13:57
 */
-class HomePage extends BasePage {
+class HomePage extends ProviderPage {
   const HomePage({super.key});
 
   @override
@@ -24,7 +24,7 @@ class HomePage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     final provider = context.watch<HomePageProvider>();
     return Scaffold(
       body: Row(children: [

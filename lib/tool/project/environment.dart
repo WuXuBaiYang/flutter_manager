@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/model/environment.dart';
+import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';

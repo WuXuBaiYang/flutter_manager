@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/environment.dart';
+import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
 import 'package:flutter_manager/page/settings/platform_sort_list.dart';
@@ -25,7 +25,7 @@ import 'package:provider/single_child_widget.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPage extends BasePage {
+class SettingsPage extends ProviderPage {
   const SettingsPage({super.key, super.primary = false});
 
   @override
@@ -34,7 +34,7 @@ class SettingsPage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),

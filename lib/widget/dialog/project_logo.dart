@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示修改图标弹窗
 Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
@@ -25,37 +27,39 @@ Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectLogoDialog extends StatelessWidget {
+class ProjectLogoDialog extends ProviderView {
   // 平台与图标表
   final Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap;
 
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ProjectLogoDialogProvider(context, platformLogoMap),
-      builder: (context, _) {
-        final provider = context.watch<ProjectLogoDialogProvider>();
-        return CustomDialog(
-          title: const Text('图标'),
-          content: _buildContent(context),
-          constraints: BoxConstraints.tightFor(
-              width: 380, height: platformLogoMap.isEmpty ? 280 : null),
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text('确定'),
-              onPressed: () => provider.submitForm(context).then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }),
-            ),
-          ],
-        );
-      },
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider(
+          create: (_) => ProjectLogoDialogProvider(context, platformLogoMap),
+        ),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
+    final provider = context.watch<ProjectLogoDialogProvider>();
+    return CustomDialog(
+      title: const Text('图标'),
+      content: _buildContent(context),
+      constraints: BoxConstraints.tightFor(
+          width: 380, height: platformLogoMap.isEmpty ? 280 : null),
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: const Text('确定'),
+          onPressed: () => provider.submitForm(context).then((result) {
+            if (result != null) Navigator.pop(context, result);
+          }),
+        ),
+      ],
     );
   }
 

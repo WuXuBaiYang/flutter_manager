@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/model/project.dart';
+import 'package:flutter_manager/database/project.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/loading.dart';
@@ -13,6 +14,7 @@ import 'package:flutter_manager/widget/form_field/project_pinned.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示项目导入弹窗
 Future<Project?> showProjectImport(BuildContext context, {Project? project}) {
@@ -30,38 +32,39 @@ Future<Project?> showProjectImport(BuildContext context, {Project? project}) {
 * @author wuxubaiyang
 * @Time 2023/11/27 14:19
 */
-class ProjectImportDialog extends StatelessWidget {
+class ProjectImportDialog extends ProviderView {
   // 项目对象
   final Project? project;
 
   const ProjectImportDialog({super.key, this.project});
 
   @override
-  Widget build(BuildContext context) {
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider(
+            create: (_) => ProjectImportDialogProvider(context, project)),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final isEdit = project != null;
-    return ChangeNotifierProvider(
-      create: (_) => ProjectImportDialogProvider(context, project),
-      builder: (context, _) {
-        final provider = context.watch<ProjectImportDialogProvider>();
-        return CustomDialog(
-          scrollable: true,
-          title: Text('${isEdit ? '编辑' : '添加'}项目'),
-          content: _buildContent(context),
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: Text(isEdit ? '修改' : '添加'),
-              onPressed: () =>
-                  provider.submitForm().loading(context).then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }),
-            ),
-          ],
-        );
-      },
+    final provider = context.watch<ProjectImportDialogProvider>();
+    return CustomDialog(
+      scrollable: true,
+      title: Text('${isEdit ? '编辑' : '添加'}项目'),
+      content: _buildContent(context),
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: Text(isEdit ? '修改' : '添加'),
+          onPressed: () =>
+              provider.submitForm().loading(context).then((result) {
+            if (result != null) Navigator.pop(context, result);
+          }),
+        ),
+      ],
     );
   }
 

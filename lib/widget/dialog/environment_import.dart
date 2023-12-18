@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/model/environment.dart';
+import 'package:flutter_manager/common/view.dart';
+import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 
 // 展示导入环境弹窗
 Future<Environment?> showEnvironmentImport(BuildContext context,
@@ -25,40 +27,42 @@ Future<Environment?> showEnvironmentImport(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class EnvironmentImportDialog extends StatelessWidget {
+class EnvironmentImportDialog extends ProviderView {
   // 环境对象
   final Environment? environment;
 
   const EnvironmentImportDialog({super.key, this.environment});
 
   @override
-  Widget build(BuildContext context) {
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider<EnvironmentImportDialogProvider>(
+          create: (_) => EnvironmentImportDialogProvider(context, environment),
+        ),
+      ];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final isEdit = environment != null;
-    return ChangeNotifierProvider<EnvironmentImportDialogProvider>(
-      create: (_) => EnvironmentImportDialogProvider(context, environment),
-      builder: (context, _) {
-        final provider = context.watch<EnvironmentImportDialogProvider>();
-        return CustomDialog(
-          scrollable: true,
-          content: _buildContent(context),
-          title: Text('${isEdit ? '编辑' : '添加'}环境'),
-          actions: [
-            TextButton(
-              child: const Text('取消'),
-              onPressed: () => Navigator.pop(context),
-            ),
-            TextButton(
-              child: Text(isEdit ? '修改' : '添加'),
-              onPressed: () => provider
-                  .submitForm(context, environment)
-                  .loading(context)
-                  .then((result) {
-                if (result != null) Navigator.pop(context, result);
-              }),
-            ),
-          ],
-        );
-      },
+    final provider = context.watch<EnvironmentImportDialogProvider>();
+    return CustomDialog(
+      scrollable: true,
+      content: _buildContent(context),
+      title: Text('${isEdit ? '编辑' : '添加'}环境'),
+      actions: [
+        TextButton(
+          child: const Text('取消'),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: Text(isEdit ? '修改' : '添加'),
+          onPressed: () => provider
+              .submitForm(context, environment)
+              .loading(context)
+              .then((result) {
+            if (result != null) Navigator.pop(context, result);
+          }),
+        ),
+      ],
     );
   }
 

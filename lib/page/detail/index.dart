@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/manage/router.dart';
-import 'package:flutter_manager/model/project.dart';
+import 'package:flutter_manager/database/project.dart';
 import 'package:flutter_manager/page/detail/appbar.dart';
 import 'package:flutter_manager/page/detail/platform/android.dart';
 import 'package:flutter_manager/page/detail/platform/ios.dart';
@@ -27,7 +27,7 @@ typedef ProjectDetailRouteTuple = ({Project project});
 * @author wuxubaiyang
 * @Time 2023/11/30 16:35
 */
-class ProjectDetailPage extends BasePage {
+class ProjectDetailPage extends ProviderPage {
   const ProjectDetailPage({super.key});
 
   @override
@@ -51,7 +51,7 @@ class ProjectDetailPage extends BasePage {
       ];
 
   @override
-  Widget buildWidget(BuildContext context) {
+  Widget buildPage(BuildContext context) {
     final project = context.watch<ProjectDetailPageProvider>().project;
     return Scaffold(
       body: EmptyBoxView(
