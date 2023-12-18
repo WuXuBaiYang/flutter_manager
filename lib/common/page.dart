@@ -24,7 +24,7 @@ abstract class ProviderPage extends ProviderView {
     return Material(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (primary) StatusBar(brightness: brightness),
-        Expanded(child: buildWidget(context)),
+        Expanded(child: buildPage(context)),
       ]),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter_manager/common/localization/chinese_cupertino_localizations.dart';
 import 'package:flutter_manager/common/route.dart';
+import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/manage/cache.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/manage/router.dart';
@@ -40,42 +41,30 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ProviderView {
   const MyApp({super.key});
 
-  // 加载providers
-  List<SingleChildWidget> _loadProviders(BuildContext context) {
-    return [
-      ChangeNotifierProvider<ThemeProvider>(
-        create: (_) => ThemeProvider(context),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => WindowProvider(context),
-      ),
-      ChangeNotifierProvider<EnvironmentProvider>(
-        create: (_) => EnvironmentProvider(context),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => ProjectProvider(context),
-      ),
-      ChangeNotifierProvider(
-        create: (_) => SettingProvider(context),
-      ),
-    ];
-  }
+  @override
+  List<SingleChildWidget> loadProviders(BuildContext context) => [
+        ChangeNotifierProvider<ThemeProvider>(
+          create: (_) => ThemeProvider(context),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => WindowProvider(context),
+        ),
+        ChangeNotifierProvider<EnvironmentProvider>(
+          create: (_) => EnvironmentProvider(context),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProjectProvider(context),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SettingProvider(context),
+        ),
+      ];
 
   @override
-  Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: _loadProviders(context),
-      builder: (context, _) {
-        return _buildMaterialApp(context);
-      },
-    );
-  }
-
-  // 构建MaterialApp
-  Widget _buildMaterialApp(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (_, provider, child) {
         return MaterialApp(
