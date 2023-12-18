@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/label_platform_item.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/options_platform_item.dart';
+import 'package:flutter_manager/page/detail/platform/widgets/package_platform_item.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
@@ -28,13 +29,9 @@ class ProjectPlatformAndroidView
           platform: platform,
           label: platformInfo?.label ?? '',
         ),
-        LogoPlatformItem(
+        PackagePlatformItem(
           platform: platform,
-          logos: platformInfo?.logos ?? [],
-        ),
-        PermissionPlatformItem(
-          platform: platform,
-          permissions: platformInfo?.permissions ?? [],
+          package: platformInfo?.package ?? '',
         ),
         OptionsPlatformItem(
           platform: platform,
@@ -46,6 +43,14 @@ class ProjectPlatformAndroidView
               onPressed: () => showAndroidSignKey(context),
             ),
           ],
+        ),
+        PermissionPlatformItem(
+          platform: platform,
+          permissions: platformInfo?.permissions ?? [],
+        ),
+        LogoPlatformItem(
+          platform: platform,
+          logos: platformInfo?.logos ?? [],
         ),
       ];
 }

@@ -28,7 +28,7 @@ class OptionsPlatformItem extends StatelessWidget {
     super.key,
     required this.platform,
     this.crossAxisCellCount = 2,
-    this.mainAxisExtent = 100,
+    this.mainAxisExtent = 110,
     this.actions,
   });
 

@@ -183,6 +183,18 @@ class PlatformProvider extends BaseProvider with WindowListener {
     }
   }
 
+  // 更新package
+  Future<void> updatePackage(PlatformType platform, String package) async {
+    if (project == null) return;
+    try {
+      final result =
+          await ProjectTool.setPackage(project!.path, platform, package);
+      if (result) updatePlatformInfo(platform);
+    } catch (e) {
+      showError(e.toString(), title: '包名修改失败');
+    }
+  }
+
   // 更新权限
   Future<void> updatePermission(
       PlatformType platform, List<PlatformPermissionTuple>? permissions) async {

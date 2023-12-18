@@ -7,16 +7,16 @@ import 'package:provider/provider.dart';
 import 'platform_item.dart';
 
 /*
-* 项目平台label组件项
+* 项目平台package组件项
 * @author wuxubaiyang
 * @Time 2023/12/8 9:24
 */
-class LabelPlatformItem extends StatelessWidget {
+class PackagePlatformItem extends StatelessWidget {
   // 当前平台
   final PlatformType platform;
 
-  // label
-  final String label;
+  // package
+  final String package;
 
   // 水平风向占用格子数
   final int crossAxisCellCount;
@@ -27,10 +27,10 @@ class LabelPlatformItem extends StatelessWidget {
   // 选择器
   final FormFieldValidator<String>? validator;
 
-  const LabelPlatformItem({
+  const PackagePlatformItem({
     super.key,
     required this.platform,
-    required this.label,
+    required this.package,
     this.crossAxisCellCount = 3,
     this.mainAxisExtent = 110,
     this.validator,
@@ -42,35 +42,35 @@ class LabelPlatformItem extends StatelessWidget {
     return Form(
       key: formKey,
       child: ProjectPlatformItem(
-        title: '项目名',
+        title: '包名',
         mainAxisExtent: mainAxisExtent,
         crossAxisCellCount: crossAxisCellCount,
-        content: _buildLabelItem(context, formKey),
+        content: _buildPackageItem(context, formKey),
       ),
     );
   }
 
-  // 恢复label控制器
-  TextEditingController _restoreLabelController(BuildContext context) {
-    final cacheKey = 'label_$platform';
+  // 恢复package控制器
+  TextEditingController _restorePackageController(BuildContext context) {
+    final cacheKey = 'package_$platform';
     final provider = context.read<PlatformProvider>();
     final controller = provider.restoreCache<TextEditingController>(cacheKey) ??
-        TextEditingController(text: label)
+        TextEditingController(text: package)
       ..selection = TextSelection.fromPosition(
-        TextPosition(offset: label.length),
+        TextPosition(offset: package.length),
       );
     return provider.cache(cacheKey, controller);
   }
 
-  // 构建标签项
-  Widget _buildLabelItem(BuildContext context, GlobalKey<FormState> formKey) {
+  // 构建包名项
+  Widget _buildPackageItem(BuildContext context, GlobalKey<FormState> formKey) {
     final provider = context.watch<PlatformProvider>();
-    final controller = _restoreLabelController(context);
-    updateLabel() {
+    final controller = _restorePackageController(context);
+    updatePackage() {
       final currentState = formKey.currentState;
       if (currentState == null || !currentState.validate()) return;
       provider
-          .updateLabel(platform, controller.text)
+          .updatePackage(platform, controller.text)
           .loading(context, dismissible: false);
     }
 
@@ -79,10 +79,10 @@ class LabelPlatformItem extends StatelessWidget {
       onKey: (event) {
         if (event.runtimeType != RawKeyDownEvent) return;
         if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
-        updateLabel();
+        updatePackage();
       },
       child: StatefulBuilder(builder: (_, setState) {
-        final isEditing = controller.text != label;
+        final isEditing = controller.text != package;
         return TextFormField(
           controller: controller,
           onChanged: (_) => setState(() {}),
@@ -94,7 +94,7 @@ class LabelPlatformItem extends StatelessWidget {
               duration: const Duration(milliseconds: 80),
               child: IconButton(
                 iconSize: 18,
-                onPressed: updateLabel,
+                onPressed: updatePackage,
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.done),
                 visualDensity: VisualDensity.compact,
@@ -103,7 +103,13 @@ class LabelPlatformItem extends StatelessWidget {
           ),
           validator: (value) {
             if (value?.isEmpty ?? true) {
-              return '请输入项目名';
+              return '请输入包名';
+            }
+            final regExp = RegExp(
+              r'^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z][a-zA-Z0-9_]*)*$',
+            );
+            if (!regExp.hasMatch(value!)) {
+              return '包名格式不正确';
             }
             return validator?.call(value);
           },
