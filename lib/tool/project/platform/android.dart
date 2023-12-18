@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -6,6 +7,24 @@ import 'platform.dart';
 
 // android平台信息元组
 typedef AndroidPlatformInfoTuple = ();
+
+// android签名生成工具表单数据
+typedef AndroidSignKeyForm = ({
+  String keytool,
+  String path,
+  String alias,
+  String storepass,
+  int keysize,
+  String keypass,
+  String keyalg,
+  String validity,
+  String dnameCN,
+  String dnameOU,
+  String dnameO,
+  String dnameL,
+  String dnameT,
+  String dnameC,
+});
 
 /*
 * Android平台工具类
@@ -153,5 +172,25 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
         ]);
       }));
     return writePlatformFileXml(projectPath, _manifestPath, fragment);
+  }
+
+  // 生成android端签名
+  Future<bool> genSignKey(AndroidSignKeyForm form) async {
+    final arguments = [
+      '-genkey',
+      '-v',
+      '-keystore ${form.path}',
+      '-alias ${form.alias}',
+      '-keyalg ${form.keyalg}',
+      '-keysize ${form.keysize}',
+      '-validity ${form.validity}',
+      '-storepass ${form.storepass}',
+      '-keypass ${form.keypass}',
+      '-dname "CN=${form.dnameCN}, OU=${form.dnameOU}, O=${form.dnameO}, '
+          'L=${form.dnameL}, T=${form.dnameT}, C=${form.dnameC}"',
+    ];
+    final result = await Process.run(form.keytool, arguments,
+        runInShell: true, stdoutEncoding: utf8, stderrEncoding: utf8);
+    return result.exitCode == 0;
   }
 }
