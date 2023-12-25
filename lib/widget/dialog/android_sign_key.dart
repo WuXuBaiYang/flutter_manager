@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -60,6 +61,10 @@ class AndroidSignKeyDialog extends ProviderView {
           mainAxisSize: MainAxisSize.min,
           children: [
             _buildKeytoolPath(context),
+            _buildOutputPath(context),
+            _buildAlias(context),
+            _buildStorepass(context),
+            _buildKeypass(context),
           ].expand((e) => [e, const SizedBox(height: 8)]).toList()
             ..removeLast(),
         ),
@@ -75,6 +80,77 @@ class AndroidSignKeyDialog extends ProviderView {
       hint: '请选择keytool路径',
       controller: provider.keytoolPathController,
       onSaved: (v) => provider.updateSignKeyInfo(keytool: v),
+    );
+  }
+
+  // 构建输出路径输入框
+  Widget _buildOutputPath(BuildContext context) {
+    final provider = context.read<AndroidSignKeyDialogProvider>();
+    return LocalPathFormField(
+      label: '输出路径',
+      hint: '请选择输出路径',
+      initialValue: provider.signKeyInfo?.path,
+      onSaved: (v) => provider.updateSignKeyInfo(path: v),
+    );
+  }
+
+  // 构建签名别名输入框
+  Widget _buildAlias(BuildContext context) {
+    final provider = context.read<AndroidSignKeyDialogProvider>();
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: '签名别名',
+        hintText: '请输入签名别名',
+      ),
+      initialValue: provider.signKeyInfo?.alias,
+      onSaved: (v) => provider.updateSignKeyInfo(alias: v),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9_-]')),
+      ],
+      validator: (v) {
+        if (v == null || v.isEmpty) return '请输入签名别名';
+        return null;
+      },
+    );
+  }
+
+  // 构建storepass输入框
+  Widget _buildStorepass(BuildContext context) {
+    final provider = context.read<AndroidSignKeyDialogProvider>();
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: '存储库密码',
+        hintText: '请输入存储库密码',
+      ),
+      initialValue: provider.signKeyInfo?.storepass,
+      onSaved: (v) => provider.updateSignKeyInfo(storepass: v),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9_-]')),
+      ],
+      validator: (v) {
+        if (v == null || v.isEmpty) return '请输入存储库密码';
+        return null;
+      },
+    );
+  }
+
+  // 构建keypass输入框
+  Widget _buildKeypass(BuildContext context) {
+    final provider = context.read<AndroidSignKeyDialogProvider>();
+    return TextFormField(
+      decoration: const InputDecoration(
+        labelText: '密钥密码',
+        hintText: '请输入密钥密码',
+      ),
+      initialValue: provider.signKeyInfo?.keypass,
+      onSaved: (v) => provider.updateSignKeyInfo(keypass: v),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9_-]')),
+      ],
+      validator: (v) {
+        if (v == null || v.isEmpty) return '请输入密钥密码';
+        return null;
+      },
     );
   }
 }
