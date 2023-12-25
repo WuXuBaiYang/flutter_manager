@@ -183,6 +183,11 @@ class ProjectTool {
           List<PlatformPermissionTuple> permissions) =>
       getPlatformTool(platform).setPermissions(projectPath, permissions);
 
+  // 获取android签名工具路径
+  static Future<String?> getJavaKeyToolPath() =>
+      getPlatformTool<AndroidPlatformTool>(PlatformType.android)
+          .getJavaKeyToolPath();
+
   // 生成android端签名
   static Future<bool> genAndroidSignKey(AndroidSignKeyForm form) =>
       getPlatformTool<AndroidPlatformTool>(PlatformType.android)

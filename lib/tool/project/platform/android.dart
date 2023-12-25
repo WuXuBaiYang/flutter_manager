@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:path/path.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 
@@ -14,16 +15,16 @@ typedef AndroidSignKeyForm = ({
   String path,
   String alias,
   String storepass,
-  int keysize,
+  int keySize,
   String keypass,
-  String keyalg,
+  String keyAlg,
   String validity,
-  String dnameCN,
-  String dnameOU,
-  String dnameO,
-  String dnameL,
-  String dnameT,
-  String dnameC,
+  String dNameCN,
+  String dNameOU,
+  String dNameO,
+  String dNameL,
+  String dNameT,
+  String dNameC,
 });
 
 /*
@@ -46,6 +47,9 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
 
   // package匹配真正则
   final _packageRegExp = RegExp(r'applicationId "(.*)"');
+
+  // 匹配java路径
+  final _jdkRegExp = RegExp(r'.*jdk(.*)bin');
 
   // 读取manifest文件信息
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
@@ -174,6 +178,16 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
     return writePlatformFileXml(projectPath, _manifestPath, fragment);
   }
 
+  // 获取签名工具路径
+  Future<String?> getJavaKeyToolPath() async {
+    final java = Platform.environment['JAVA_HOME'] ??
+        Platform.environment['PATH']
+            ?.split(';')
+            .firstWhere(_jdkRegExp.hasMatch);
+    if (java == null || java.isEmpty) return null;
+    return join(java, java.contains('bin') ? '' : 'bin', 'keytool');
+  }
+
   // 生成android端签名
   Future<bool> genSignKey(AndroidSignKeyForm form) async {
     final arguments = [
@@ -181,13 +195,13 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       '-v',
       '-keystore ${form.path}',
       '-alias ${form.alias}',
-      '-keyalg ${form.keyalg}',
-      '-keysize ${form.keysize}',
+      '-keyalg ${form.keyAlg}',
+      '-keysize ${form.keySize}',
       '-validity ${form.validity}',
       '-storepass ${form.storepass}',
       '-keypass ${form.keypass}',
-      '-dname "CN=${form.dnameCN}, OU=${form.dnameOU}, O=${form.dnameO}, '
-          'L=${form.dnameL}, T=${form.dnameT}, C=${form.dnameC}"',
+      '-dname "CN=${form.dNameCN}, OU=${form.dNameOU}, O=${form.dNameO}, '
+          'L=${form.dNameL}, T=${form.dNameT}, C=${form.dNameC}"',
     ];
     final result = await Process.run(form.keytool, arguments,
         runInShell: true, stdoutEncoding: utf8, stderrEncoding: utf8);
