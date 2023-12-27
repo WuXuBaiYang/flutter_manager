@@ -10,7 +10,7 @@ import 'platform.dart';
 typedef AndroidPlatformInfoTuple = ();
 
 // android签名生成工具表单数据
-typedef AndroidSignKeyForm = ({
+typedef AndroidSignKeyFormTuple = ({
   String keytool,
   String path,
   String alias,
@@ -189,7 +189,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   }
 
   // 生成android端签名
-  Future<bool> genSignKey(AndroidSignKeyForm form) async {
+  Future<bool> genSignKey(AndroidSignKeyFormTuple form) async {
     final arguments = [
       '-genkey',
       '-v',

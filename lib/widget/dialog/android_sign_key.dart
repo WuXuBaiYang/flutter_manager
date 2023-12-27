@@ -165,10 +165,10 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
   final formKey = GlobalKey<FormState>();
 
   // 表单数据
-  AndroidSignKeyForm? _signKeyInfo;
+  AndroidSignKeyFormTuple? _signKeyInfo;
 
   // 表单数据
-  AndroidSignKeyForm? get signKeyInfo => _signKeyInfo;
+  AndroidSignKeyFormTuple? get signKeyInfo => _signKeyInfo;
 
   // keytool路径输入控制器
   final keytoolPathController = TextEditingController();

@@ -189,7 +189,7 @@ class ProjectTool {
           .getJavaKeyToolPath();
 
   // 生成android端签名
-  static Future<bool> genAndroidSignKey(AndroidSignKeyForm form) =>
+  static Future<bool> genAndroidSignKey(AndroidSignKeyFormTuple form) =>
       getPlatformTool<AndroidPlatformTool>(PlatformType.android)
           .genSignKey(form);
 }
