@@ -77,6 +77,7 @@ class AndroidSignKeyDialog extends ProviderView {
     final provider = context.read<AndroidSignKeyDialogProvider>();
     return LocalPathFormField(
       label: 'keytool路径',
+      pickDirectory: false,
       hint: '请选择keytool路径',
       controller: provider.keytoolPathController,
       onSaved: (v) => provider.updateSignKeyInfo(keytool: v),

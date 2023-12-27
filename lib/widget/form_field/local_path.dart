@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/tool.dart';
 
@@ -31,6 +33,12 @@ class LocalPathFormField extends StatelessWidget {
   // 初始值
   final String? initialValue;
 
+  // 是否只读
+  final bool readOnly;
+
+  // 是否选择路径
+  final bool pickDirectory;
+
   LocalPathFormField({
     super.key,
     GlobalKey<FormFieldState<String>>? fieldKey,
@@ -41,6 +49,8 @@ class LocalPathFormField extends StatelessWidget {
     this.onPathSelected,
     this.initialValue,
     this.controller,
+    this.readOnly = false,
+    this.pickDirectory = true,
   }) : fieldKey = fieldKey ?? GlobalKey<FormFieldState<String>>();
 
   @override
@@ -48,6 +58,7 @@ class LocalPathFormField extends StatelessWidget {
     return TextFormField(
       key: fieldKey,
       onSaved: onSaved,
+      readOnly: readOnly,
       controller: controller,
       initialValue: initialValue,
       validator: (v) {
@@ -70,16 +81,16 @@ class LocalPathFormField extends StatelessWidget {
   // 选择本地路径
   Future<void> _pickLocalPath() async {
     final initDir = controller?.text ?? fieldKey.currentState?.value;
-    final dir = await Tool.pickDirectory(
-      dialogTitle: label,
-      initialDirectory: initDir,
-    );
-    if (dir == null) return;
+    final initFileDir = initDir != null ? File(initDir).parent.path : '';
+    final result = await (pickDirectory
+        ? Tool.pickDirectory(dialogTitle: label, initialDirectory: initDir)
+        : Tool.pickFile(dialogTitle: label, initialDirectory: initFileDir));
+    if (result == null) return;
     if (controller != null) {
-      controller!.text = dir;
+      controller!.text = result;
     } else {
-      fieldKey.currentState?.didChange(dir);
+      fieldKey.currentState?.didChange(result);
     }
-    onPathSelected?.call(dir);
+    onPathSelected?.call(result);
   }
 }

@@ -118,25 +118,53 @@ class Tool {
       FileTool.getDirPath(Common.cacheFilePath,
           root: FileDir.applicationDocuments);
 
-  // 选择文件
-  static Future<List<String>> pickImages(
-      {String? dialogTitle, String? initialDirectory}) async {
+  // 选择文件集合
+  static Future<List<String>> pickFiles(
+      {String? dialogTitle,
+      String? initialDirectory,
+      FileType type = FileType.any}) async {
     if (kIsWeb) return [];
     final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
+      type: type,
       lockParentWindow: true,
       dialogTitle: dialogTitle,
+      initialDirectory: initialDirectory,
     );
     if (result == null || result.files.isEmpty) return [];
     return result.files.map((e) => e.path!).toList();
   }
 
   // 选择单文件
-  static Future<String?> pickImage(
-      {String? dialogTitle, String? initialDirectory}) async {
-    final result = await pickImages(
-        dialogTitle: dialogTitle, initialDirectory: initialDirectory);
+  static Future<String?> pickFile(
+      {String? dialogTitle,
+      String? initialDirectory,
+      FileType type = FileType.any}) async {
+    final result = await pickFiles(
+      dialogTitle: dialogTitle,
+      initialDirectory: initialDirectory,
+      type: type,
+    );
     return result.firstOrNull;
+  }
+
+  // 选择图片集合
+  static Future<List<String>> pickImages(
+      {String? dialogTitle, String? initialDirectory}) {
+    return pickFiles(
+      dialogTitle: dialogTitle,
+      initialDirectory: initialDirectory,
+      type: FileType.image,
+    );
+  }
+
+  // 选择单文件
+  static Future<String?> pickImage(
+      {String? dialogTitle, String? initialDirectory}) {
+    return pickFile(
+      dialogTitle: dialogTitle,
+      initialDirectory: initialDirectory,
+      type: FileType.image,
+    );
   }
 
   // 选择图片并编辑
