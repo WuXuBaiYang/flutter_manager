@@ -63,6 +63,7 @@ class AndroidSignKeyDialog extends ProviderView {
     return SingleChildScrollView(
       child: Form(
         key: provider.formKey,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Selector<AndroidSignKeyDialogProvider, bool>(
           selector: (_, provider) => provider.samePass,
           builder: (_, samePass, __) {
@@ -221,8 +222,12 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
 
   // 提交表单
   Future<bool> submitForm() async {
+    final currentState = formKey.currentState;
+    if (currentState == null || !currentState.validate()) return false;
+    currentState.save();
+
     /// 实现表单校验
-    return true;
+    return false;
   }
 
   // 更新是否使用同一个密码
