@@ -45,11 +45,11 @@ class ThemeProvider extends BaseProvider {
   Brightness? _brightness;
 
   // 获取主题亮度
-  Brightness get brightness => _brightness ??= {
-        ThemeMode.dark: Brightness.dark,
-        ThemeMode.light: Brightness.light,
-        ThemeMode.system: MediaQuery.platformBrightnessOf(context),
-      }[themeMode]!;
+  Brightness get brightness => _brightness ??= switch (themeMode) {
+        ThemeMode.dark => Brightness.dark,
+        ThemeMode.light => Brightness.light,
+        ThemeMode.system => MediaQuery.platformBrightnessOf(context),
+      };
 
   // 获取当前主题模式
   ThemeMode get themeMode => _themeMode ??=
@@ -69,10 +69,10 @@ class ThemeProvider extends BaseProvider {
   // 根据scheme获取配色
   FlexSchemeColor getSchemeColor(FlexScheme scheme) {
     const schemesMap = FlexColor.schemesWithCustom;
-    return {
-      Brightness.light: schemesMap[scheme]!.light,
-      Brightness.dark: schemesMap[scheme]!.dark,
-    }[brightness]!;
+    return switch (brightness) {
+      Brightness.light => schemesMap[scheme]!.light,
+      Brightness.dark => schemesMap[scheme]!.dark,
+    };
   }
 
   // 获取当前的主题配色方案
@@ -131,12 +131,12 @@ class ThemeProvider extends BaseProvider {
 
   // 根据主题亮色/暗色获取基本themeData
   ThemeData _getThemeData(Brightness brightness, [bool useMaterial3 = true]) =>
-      {
-        Brightness.light: FlexThemeData.light(
-            useMaterial3: useMaterial3, scheme: _themeScheme),
-        Brightness.dark: FlexThemeData.dark(
-            useMaterial3: useMaterial3, scheme: _themeScheme),
-      }[brightness]!;
+      switch (brightness) {
+        Brightness.light =>
+          FlexThemeData.light(useMaterial3: useMaterial3, scheme: _themeScheme),
+        Brightness.dark =>
+          FlexThemeData.dark(useMaterial3: useMaterial3, scheme: _themeScheme),
+      };
 
   // 根据主题亮度生成不同的主题数据
   ThemeData _genThemeData(Brightness brightness, [bool useMaterial3 = true]) =>
@@ -181,11 +181,11 @@ class ThemeProvider extends BaseProvider {
 */
 extension ThemeModeExtension on ThemeMode {
   // 获取主题模式名称
-  String get label => {
-        ThemeMode.light: '浅色模式',
-        ThemeMode.dark: '深色模式',
-        ThemeMode.system: '跟随系统',
-      }[this]!;
+  String get label => switch (this) {
+        ThemeMode.light => '浅色模式',
+        ThemeMode.dark => '深色模式',
+        ThemeMode.system => '跟随系统',
+      };
 }
 
 /*
@@ -195,20 +195,21 @@ extension ThemeModeExtension on ThemeMode {
 */
 extension FlexSchemeExtension on FlexScheme {
   // 获取主题配色方案名称
-  String get label => {
-        FlexScheme.redM3: '骚气红',
-        FlexScheme.pinkM3: '温柔粉',
-        FlexScheme.purpleM3: '高贵紫',
-        FlexScheme.indigoM3: '宁静靛',
-        FlexScheme.blueM3: '沉稳蓝',
-        FlexScheme.cyanM3: '清新青',
-        FlexScheme.tealM3: '苍翠绿',
-        FlexScheme.greenM3: '清新绿',
-        FlexScheme.limeM3: '活力黄绿',
-        FlexScheme.yellowM3: '明亮黄',
-        FlexScheme.orangeM3: '暖心橙',
-        FlexScheme.deepOrangeM3: '深邃橙',
-      }[this]!;
+  String get label => switch (this) {
+        FlexScheme.redM3 => '骚气红',
+        FlexScheme.pinkM3 => '温柔粉',
+        FlexScheme.purpleM3 => '高贵紫',
+        FlexScheme.indigoM3 => '宁静靛',
+        FlexScheme.blueM3 => '沉稳蓝',
+        FlexScheme.cyanM3 => '清新青',
+        FlexScheme.tealM3 => '苍翠绿',
+        FlexScheme.greenM3 => '清新绿',
+        FlexScheme.limeM3 => '活力黄绿',
+        FlexScheme.yellowM3 => '明亮黄',
+        FlexScheme.orangeM3 => '暖心橙',
+        FlexScheme.deepOrangeM3 => '深邃橙',
+        FlexScheme _ => '',
+      };
 }
 
 /*
@@ -218,8 +219,8 @@ extension FlexSchemeExtension on FlexScheme {
 */
 extension BrightnessExtension on Brightness {
   // 获取亮度名称
-  String get label => {
-        Brightness.light: '浅色',
-        Brightness.dark: '深色',
-      }[this]!;
+  String get label => switch (this) {
+        Brightness.light => '浅色',
+        Brightness.dark => '深色',
+      };
 }

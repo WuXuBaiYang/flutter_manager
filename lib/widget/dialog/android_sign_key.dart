@@ -63,7 +63,6 @@ class AndroidSignKeyDialog extends ProviderView {
     return SingleChildScrollView(
       child: Form(
         key: provider.formKey,
-        autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Selector<AndroidSignKeyDialogProvider, bool>(
           selector: (_, provider) => provider.samePass,
           builder: (_, samePass, __) {

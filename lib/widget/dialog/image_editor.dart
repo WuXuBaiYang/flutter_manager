@@ -386,19 +386,19 @@ enum CropAspectRatio {
 
 // 扩展裁剪比例枚举获取ratio字段
 extension CropAspectRatioExtension on CropAspectRatio {
-  Ratio get ratio => {
-        CropAspectRatio.ratio1_1: Ratio(width: 1, height: 1),
-        CropAspectRatio.ratio4_3: Ratio(width: 4, height: 3),
-        CropAspectRatio.ratio3_4: Ratio(width: 3, height: 4),
-        CropAspectRatio.ratio16_9: Ratio(width: 16, height: 9),
-        CropAspectRatio.ratio9_16: Ratio(width: 9, height: 16),
-      }[this]!;
+  Ratio get ratio => switch (this) {
+        CropAspectRatio.ratio1_1 => Ratio(width: 1, height: 1),
+        CropAspectRatio.ratio4_3 => Ratio(width: 4, height: 3),
+        CropAspectRatio.ratio3_4 => Ratio(width: 3, height: 4),
+        CropAspectRatio.ratio16_9 => Ratio(width: 16, height: 9),
+        CropAspectRatio.ratio9_16 => Ratio(width: 9, height: 16),
+      };
 
-  String get label => {
-        CropAspectRatio.ratio1_1: '1:1',
-        CropAspectRatio.ratio4_3: '4:3',
-        CropAspectRatio.ratio3_4: '3:4',
-        CropAspectRatio.ratio16_9: '16:9',
-        CropAspectRatio.ratio9_16: '9:16',
-      }[this]!;
+  String get label => switch (this) {
+        CropAspectRatio.ratio1_1 => '1:1',
+        CropAspectRatio.ratio4_3 => '4:3',
+        CropAspectRatio.ratio3_4 => '3:4',
+        CropAspectRatio.ratio16_9 => '16:9',
+        CropAspectRatio.ratio9_16 => '9:16',
+      };
 }

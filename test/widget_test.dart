@@ -8,8 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   test('description', () async {
-    final path = await ProjectTool.getJavaKeyToolPath();
-    print(path);
+    // final path = await ProjectTool.getJavaKeyToolPath();
     // final form = (
     //   keytool: 'keytool',
     //   path: 'C:/Users/wuxubaiyang/Downloads/jtech.keystore',
