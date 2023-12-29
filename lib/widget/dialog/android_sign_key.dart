@@ -88,11 +88,10 @@ class AndroidSignKeyDialog extends ProviderView {
   Widget _buildKeytoolField(BuildContext context) {
     final provider = context.read<AndroidSignKeyDialogProvider>();
     return LocalPathFormField(
-      label: 'keytool路径',
-      pickDirectory: false,
-      hint: '请选择keytool路径',
+      label: 'keytool所在目录',
+      hint: '请选择keytool所在目录',
       controller: provider.keytoolPathController,
-      onSaved: (v) => provider.updateSignKeyInfo(keytool: v),
+      onSaved: (v) => provider.updateSignKeyInfo(keytoolPath: v),
     );
   }
 
@@ -216,17 +215,17 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
     final path = await ProjectTool.getJavaKeyToolPath();
     if (path == null) return;
     keytoolPathController.text = path;
-    updateSignKeyInfo(keytool: path);
+    updateSignKeyInfo(keytoolPath: path);
   }
 
   // 提交表单
   Future<bool> submitForm() async {
+    final form = signKeyInfo;
     final currentState = formKey.currentState;
-    if (currentState == null || !currentState.validate()) return false;
+    if (form == null || currentState == null) return false;
+    if (!currentState.validate()) return false;
     currentState.save();
-
-    /// 实现表单校验
-    return false;
+    return ProjectTool.genAndroidSignKey(form);
   }
 
   // 更新是否使用同一个密码
@@ -237,7 +236,7 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
 
   // 更新表单数据(copyWith)
   void updateSignKeyInfo({
-    String? keytool,
+    String? keytoolPath,
     String? path,
     String? alias,
     String? storepass,
@@ -253,7 +252,7 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
     String? dNameC,
   }) {
     _signKeyInfo = (
-      keytool: keytool ?? _signKeyInfo?.keytool ?? '',
+      keytoolPath: keytoolPath ?? _signKeyInfo?.keytoolPath ?? '',
       path: path ?? _signKeyInfo?.path ?? '',
       alias: alias ?? _signKeyInfo?.alias ?? '',
       storepass: storepass ?? _signKeyInfo?.storepass ?? '',
