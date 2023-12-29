@@ -199,10 +199,11 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       '-validity ${form.validity}',
       '-storepass ${form.storepass}',
       '-keypass ${form.keypass}',
-      '-dname "CN=${form.dNameCN}, OU=${form.dNameOU}, O=${form.dNameO}, '
-          'L=${form.dNameL}, T=${form.dNameT}, C=${form.dNameC}"',
+      '-dname "CN=${form.dNameCN},OU=${form.dNameOU},O=${form.dNameO}, '
+          'L=${form.dNameL},T=${form.dNameT},C=${form.dNameC}"',
     ];
-    final result = await Process.run('keytool ${arguments.join(' ')}', [],
+    final command = 'keytool ${arguments.join(' ')}';
+    final result = await Process.run(command, [],
         runInShell: true, workingDirectory: form.keytoolPath);
     return result.exitCode == 0;
   }

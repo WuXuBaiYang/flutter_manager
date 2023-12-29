@@ -132,7 +132,7 @@ class AndroidSignKeyDialog extends ProviderView {
     final label = '存储库${samePass ? '/密钥' : ''}密码';
     return TextFormField(
       initialValue: provider.signKeyInfo?.storepass,
-      onSaved: (v) => provider.updateSignKeyInfo(storepass: v),
+      onSaved: (v) => provider.updateSignKeyInfo(storepass: v, keypass: v),
       decoration: InputDecoration(
         labelText: label,
         hintText: '请输入$label',
@@ -160,7 +160,10 @@ class AndroidSignKeyDialog extends ProviderView {
         hintText: '请输入密钥密码',
       ),
       initialValue: provider.signKeyInfo?.keypass,
-      onSaved: (v) => provider.updateSignKeyInfo(keypass: v),
+      onSaved: (v) {
+        if (provider.samePass) return;
+        provider.updateSignKeyInfo(keypass: v);
+      },
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp('[a-zA-Z0-9_-]')),
       ],
@@ -220,12 +223,18 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
 
   // 提交表单
   Future<bool> submitForm() async {
-    final form = signKeyInfo;
-    final currentState = formKey.currentState;
-    if (form == null || currentState == null) return false;
-    if (!currentState.validate()) return false;
-    currentState.save();
-    return ProjectTool.genAndroidSignKey(form);
+    try {
+      final currentState = formKey.currentState;
+      if (currentState == null) return false;
+      if (!currentState.validate()) return false;
+      currentState.save();
+      final form = signKeyInfo;
+      if (form == null) return false;
+      return ProjectTool.genAndroidSignKey(form);
+    } catch (e) {
+      showError(e.toString(), title: '签名生成失败');
+    }
+    return false;
   }
 
   // 更新是否使用同一个密码
@@ -260,12 +269,12 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
       keyAlg: keyAlg ?? _signKeyInfo?.keyAlg ?? 'RSA',
       keySize: keySize ?? _signKeyInfo?.keySize ?? 2048,
       validity: validity ?? _signKeyInfo?.validity ?? 99 * 365,
-      dNameCN: dNameCN ?? _signKeyInfo?.dNameCN ?? '-',
-      dNameOU: dNameOU ?? _signKeyInfo?.dNameOU ?? '-',
-      dNameO: dNameO ?? _signKeyInfo?.dNameO ?? '-',
-      dNameL: dNameL ?? _signKeyInfo?.dNameL ?? '-',
-      dNameT: dNameT ?? _signKeyInfo?.dNameT ?? '-',
-      dNameC: dNameC ?? _signKeyInfo?.dNameC ?? '-',
+      dNameCN: dNameCN ?? _signKeyInfo?.dNameCN ?? '',
+      dNameOU: dNameOU ?? _signKeyInfo?.dNameOU ?? '',
+      dNameO: dNameO ?? _signKeyInfo?.dNameO ?? '',
+      dNameL: dNameL ?? _signKeyInfo?.dNameL ?? '',
+      dNameT: dNameT ?? _signKeyInfo?.dNameT ?? '',
+      dNameC: dNameC ?? _signKeyInfo?.dNameC ?? '',
     );
     notifyListeners();
   }
