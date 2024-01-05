@@ -182,7 +182,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
     final java = Platform.environment['JAVA_HOME'] ??
         Platform.environment['PATH']
             ?.split(';')
-            .firstWhere(_jdkRegExp.hasMatch);
+            .firstWhere(_jdkRegExp.hasMatch, orElse: () => '');
     if (java == null || java.isEmpty) return null;
     return join(java, java.contains('bin') ? '' : 'bin');
   }
