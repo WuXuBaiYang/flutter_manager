@@ -193,14 +193,17 @@ class ChineseCupertinoLocalizations implements CupertinoLocalizations {
   String datePickerStandaloneMonth(int monthIndex) => '-';
 
   @override
-  String get lookUpButtonLabel => '-';
+  String get lookUpButtonLabel => '锁定';
 
   @override
-  String get menuDismissLabel => '-';
+  String get menuDismissLabel => '菜单取消';
 
   @override
-  String get searchWebButtonLabel => '-';
+  String get searchWebButtonLabel => '网络搜索';
 
   @override
-  String get shareButtonLabel => '-';
+  String get shareButtonLabel => '分享';
+
+  @override
+  String get clearButtonLabel => '清除';
 }
