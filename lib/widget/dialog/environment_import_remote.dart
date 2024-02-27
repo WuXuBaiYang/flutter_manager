@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/database/environment.dart';
-import 'package:flutter_manager/provider/environment.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
@@ -225,9 +225,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
       final formState = formKey.currentState;
       if (!(formState?.validate() ?? false)) return null;
       formState!.save();
-      return context
-          .read<EnvironmentProvider>()
-          .importArchive(archiveFile, _formData.path);
+      return context.environment.importArchive(archiveFile, _formData.path);
     } catch (e) {
       showError(e.toString(), title: '操作失败');
     }

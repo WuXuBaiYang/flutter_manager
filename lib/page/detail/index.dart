@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/database/project.dart';
 import 'package:flutter_manager/page/detail/appbar.dart';
 import 'package:flutter_manager/page/detail/platform/android.dart';
@@ -16,11 +15,9 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
-
-// 项目详情页路由传参元组
-typedef ProjectDetailRouteTuple = ({Project project});
 
 /*
 * 项目详情页
@@ -166,8 +163,7 @@ class ProjectDetailPageProvider extends BaseProvider {
 
   ProjectDetailPageProvider(super.context) {
     // 获取项目信息
-    final arguments = router.findTuple<ProjectDetailRouteTuple>(context);
-    _project = arguments?.project;
+    _project = GoRouterState.of(context).extra as Project?;
     // 监听滚动状态
     bool scrollTop = false;
     scrollController.addListener(() {

@@ -71,7 +71,7 @@ class _SettingItem extends State<SettingItem> {
     _timer = Timer.periodic(duration, (t) {
       setState(() => _selected = !_selected);
       if (++times > widget.maxBlinkCount * 2 - 1) {
-        context.read<SettingProvider>().cancelSelected();
+        context.settingProvider.cancelSelected();
         _timer?.cancel();
         _timer = null;
       }

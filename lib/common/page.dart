@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/view.dart';
-import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/widget/status_bar.dart';
-import 'package:provider/provider.dart';
 
 /*
 * 页面基类
@@ -20,7 +19,7 @@ abstract class ProviderPage extends ProviderView {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final brightness = context.watch<ThemeProvider>().brightness;
+    final brightness = context.theme.brightness;
     return Material(
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         if (primary) StatusBar(brightness: brightness),

@@ -5,7 +5,7 @@ import 'package:flutter_manager/page/knowledge/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
-import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
 import 'package:provider/provider.dart';
@@ -59,6 +59,7 @@ class HomePage extends ProviderPage {
               child: Text('v${context.watch<String>()}'),
               onPressed: () async {
                 showAndroidSignKey(context);
+
                 /// TODO: 2021/8/31 14:25 版本更新检查
               },
             );
@@ -115,7 +116,7 @@ class HomePageProvider extends BaseProvider {
 
   HomePageProvider(super.context) {
     // 注册设置跳转方法
-    final provider = context.read<SettingProvider>();
+    final provider = context.setting;
     provider.addListener(() {
       if (provider.selectedKey != null) {
         setNavigationIndex(navigationRailPageList.length - 1);

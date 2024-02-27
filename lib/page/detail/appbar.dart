@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/database/project.dart';
-import 'package:flutter_manager/provider/theme.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
@@ -46,7 +46,7 @@ class ProjectDetailAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = project.getColor();
     final hasColor = color != Colors.transparent;
-    final brightness = context.read<ThemeProvider>().brightness;
+    final brightness = context.theme.brightness;
     return SliverAppBar(
       pinned: true,
       bottom: bottom,

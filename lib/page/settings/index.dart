@@ -6,7 +6,7 @@ import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
 import 'package:flutter_manager/page/settings/platform_sort_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
-import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
@@ -76,7 +76,7 @@ class SettingsPage extends ProviderPage {
     return SettingItem(
       label: 'Flutter环境',
       content: const EnvironmentList(),
-      key: context.read<SettingProvider>().environmentKey,
+      key: context.setting.environmentKey,
       child: PopupMenuButton(
         tooltip: '添加环境',
         icon: const Icon(Icons.add_circle_outline),
@@ -98,7 +98,7 @@ class SettingsPage extends ProviderPage {
   Widget _buildFlutterEnvironmentCache(BuildContext context) {
     return SettingItem(
       label: 'Flutter环境缓存',
-      key: context.read<SettingProvider>().environmentCacheKey,
+      key: context.setting.environmentCacheKey,
       content: Selector<EnvironmentProvider, List<Environment>>(
         selector: (_, provider) => provider.environments,
         builder: (_, environments, __) {
@@ -130,17 +130,17 @@ class SettingsPage extends ProviderPage {
   Widget _buildProjectPlatformSort(BuildContext context) {
     return SettingItem(
       label: '项目平台排序',
-      key: context.read<SettingProvider>().projectPlatformSortKey,
+      key: context.setting.projectPlatformSortKey,
       content: const PlatformSortList(),
     );
   }
 
   // 构建主题模式设置项
   Widget _buildThemeMode(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
+    final provider = context.theme;
     return SettingItem(
       label: '配色模式',
-      key: context.read<SettingProvider>().themeModeKey,
+      key: context.setting.themeModeKey,
       content: Text(provider.brightness.label),
       child: DropdownButton<ThemeMode>(
         value: provider.themeMode,
@@ -157,12 +157,12 @@ class SettingsPage extends ProviderPage {
 
   // 构建主题色彩设置项
   Widget _buildThemeScheme(BuildContext context) {
-    final provider = context.read<ThemeProvider>();
+    final provider = context.theme;
     final themeScheme = provider.themeScheme;
     return SettingItem(
       label: '应用配色',
       content: Text(themeScheme.label),
-      key: context.read<SettingProvider>().themeSchemeKey,
+      key: context.setting.themeSchemeKey,
       child: ThemeSchemeItem(
         size: 40,
         themeScheme: themeScheme,
@@ -189,7 +189,7 @@ class SettingsPageProvider extends BaseProvider {
 
   SettingsPageProvider(super.context) {
     // 注册设置跳转方法
-    final provider = context.read<SettingProvider>();
+    final provider = context.setting;
     provider.addListener(() {
       final context = provider.selectedKey?.currentContext;
       if (context != null) Scrollable.ensureVisible(context);

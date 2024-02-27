@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/provider/environment.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
@@ -44,7 +45,7 @@ class EnvironmentList extends StatelessWidget {
                 final item = environments[index];
                 return _buildEnvironmentListItemProxy(item);
               },
-              onReorder: context.read<EnvironmentProvider>().reorder,
+              onReorder: context.environment.reorder,
               itemBuilder: (_, index) {
                 final item = environments[index];
                 return _buildEnvironmentListItem(context, item, index);
@@ -59,7 +60,7 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项
   Widget _buildEnvironmentListItem(
       BuildContext context, Environment item, int index) {
-    final provider = context.read<EnvironmentProvider>();
+    final provider = context.environment;
     return Dismissible(
       key: ValueKey(item.id),
       direction: DismissDirection.endToStart,
@@ -96,7 +97,7 @@ class EnvironmentList extends StatelessWidget {
   // 构建Flutter环境列表项选项
   Widget _buildEnvironmentListItemOptions(
       BuildContext context, Environment item, int index) {
-    final provider = context.read<EnvironmentProvider>();
+    final provider = context.environment;
     final pathAvailable = EnvironmentTool.isPathAvailable(item.path);
     return Row(
       mainAxisSize: MainAxisSize.min,

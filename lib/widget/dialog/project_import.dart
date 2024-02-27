@@ -3,8 +3,7 @@ import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/manage/database.dart';
 import 'package:flutter_manager/database/project.dart';
-import 'package:flutter_manager/provider/environment.dart';
-import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
@@ -142,7 +141,7 @@ class ProjectImportDialog extends ProviderView {
   // 构建表单项-环境
   Widget _buildFormFieldEnvironment(BuildContext context) {
     final provider = context.read<ProjectImportDialogProvider>();
-    final environments = context.read<EnvironmentProvider>().environments;
+    final environments = context.environment.environments;
     final envId = provider.formData.envId;
     return DropdownButtonFormField<Id>(
       key: provider.envFormFieldKey,
@@ -242,7 +241,7 @@ class ProjectImportDialogProvider extends BaseProvider {
       if (!(formState?.validate() ?? false)) return null;
       formState!.save();
       if (_formData.envId < 0) throw Exception('缺少环境信息');
-      return context.read<ProjectProvider>().update(
+      return context.project.update(
             (project ?? Project())
               ..path = _formData.path
               ..label = _formData.label

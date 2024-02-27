@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/provider/window.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
@@ -70,12 +71,12 @@ class StatusBar extends StatelessWidget {
         if (isMaximized) {
           return WindowCaptionButton.unmaximize(
             brightness: brightness,
-            onPressed: context.read<WindowProvider>().unMaximize,
+            onPressed: context.window.unMaximize,
           );
         }
         return WindowCaptionButton.maximize(
           brightness: brightness,
-          onPressed: context.read<WindowProvider>().maximize,
+          onPressed: context.window.maximize,
         );
       },
     );

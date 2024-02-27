@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/route.dart';
-import 'package:flutter_manager/manage/router.dart';
 import 'package:flutter_manager/database/environment.dart';
 import 'package:flutter_manager/database/project.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
-import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/provider/setting.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
@@ -17,6 +15,7 @@ import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -84,7 +83,7 @@ class ProjectPage extends ProviderPage {
 
   // 构建置顶项目集合
   Widget _buildPinnedProjects(BuildContext context) {
-    final provider = context.read<ProjectProvider>();
+    final provider = context.project;
     return Selector<ProjectProvider, List<Project>>(
       shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.pinnedProjects,
@@ -103,10 +102,9 @@ class ProjectPage extends ProviderPage {
                   .read<ProjectPageProvider>()
                   .removeProject(context, item),
               onEdit: (item) => showProjectImport(context, project: item),
-              onDetail: (item) => router.pushNamed(
-                RoutePath.projectDetail,
-                arguments: (project: item),
-              )?.then((_) => provider.initialize()),
+              onDetail: (item) => context
+                  .pushNamed(RoutePath.projectDetail, extra: item)
+                  .then((_) => provider.initialize()),
             ),
           ),
         );
@@ -116,7 +114,7 @@ class ProjectPage extends ProviderPage {
 
   // 构建项目集合
   Widget _buildProjects(BuildContext context) {
-    final provider = context.read<ProjectProvider>();
+    final provider = context.project;
     return Selector<ProjectProvider, List<Project>>(
       shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.projects,
@@ -132,10 +130,8 @@ class ProjectPage extends ProviderPage {
           onDelete: (item) =>
               context.read<ProjectPageProvider>().removeProject(context, item),
           onEdit: (item) => showProjectImport(context, project: item),
-          onDetail: (item) => router.pushNamed(
-            RoutePath.projectDetail,
-            arguments: (project: item),
-          ),
+          onDetail: (item) =>
+              context.pushNamed(RoutePath.projectDetail, extra: item),
         );
       },
     );
@@ -143,13 +139,13 @@ class ProjectPage extends ProviderPage {
 
   // 检查环境是否存在
   bool _checkEnvironment(BuildContext context) {
-    final hasEnvironment = context.read<EnvironmentProvider>().hasEnvironment;
+    final hasEnvironment = context.environment.hasEnvironment;
     if (hasEnvironment) return true;
     NoticeTool.error(context,
         message: '缺少Flutter环境',
         action: SnackBarAction(
           label: '设置',
-          onPressed: context.read<SettingProvider>().goEnvironment,
+          onPressed: context.setting.goEnvironment,
         ));
     return hasEnvironment;
   }
@@ -165,7 +161,7 @@ class ProjectPageProvider extends BaseProvider {
 
   // 移除项目
   void removeProject(BuildContext context, Project item) {
-    final provider = context.read<ProjectProvider>()..remove(item);
+    final provider = context.project..remove(item);
     NoticeTool.success(context,
         message: '${item.label} 项目已移除',
         action: SnackBarAction(
@@ -177,7 +173,7 @@ class ProjectPageProvider extends BaseProvider {
   // 文件拖拽完成
   Future<String?> dropDone(BuildContext context, List<String> paths) async {
     if (paths.isEmpty) return null;
-    final provider = context.read<EnvironmentProvider>();
+    final provider = context.environment;
     // 遍历路径集合，从路径中读取项目/环境信息
     final temp = (projects: <Project>[], environments: <Environment>[]);
     for (var e in paths) {

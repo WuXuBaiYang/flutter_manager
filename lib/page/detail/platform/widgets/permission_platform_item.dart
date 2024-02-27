@@ -157,10 +157,10 @@ class PermissionPlatformItem extends StatelessWidget {
           .loading(context, dismissible: false);
     }
 
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
-      onKey: (event) {
-        if (event.runtimeType != RawKeyDownEvent) return;
+      onKeyEvent: (event) {
+        if (event.runtimeType != KeyDownEvent) return;
         if (event.logicalKey.keyId != LogicalKeyboardKey.enter.keyId) return;
         updateInput();
       },

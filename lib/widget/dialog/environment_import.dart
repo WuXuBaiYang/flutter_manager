@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/database/environment.dart';
-import 'package:flutter_manager/provider/environment.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
@@ -134,7 +134,7 @@ class EnvironmentImportDialogProvider extends BaseProvider {
       final formState = formKey.currentState;
       if (!(formState?.validate() ?? false)) return null;
       formState!.save();
-      final provider = context.read<EnvironmentProvider>();
+      final provider = context.environment;
       return environment != null
           ? provider.refresh(environment..path = _formData.path)
           : provider.import(_formData.path);

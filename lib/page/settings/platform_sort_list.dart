@@ -42,7 +42,7 @@ class PlatformSortList extends StatelessWidget {
           itemCount: platformSort.length,
           onReorder: (oldIndex, newIndex) {
             final platforms = [...platformSort].swap(oldIndex, newIndex);
-            context.read<ProjectProvider>().updatePlatformSort(platforms);
+            context.projectProvider.updatePlatformSort(platforms);
           },
           proxyDecorator: (_, index, ___) {
             final item = platformSort[index];

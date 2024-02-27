@@ -1,9 +1,9 @@
 import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/home/index.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
+import 'package:go_router/go_router.dart';
 
 /*
 * 路由路径静态变量
@@ -12,16 +12,22 @@ import 'package:flutter_manager/page/settings/index.dart';
 */
 class RoutePath {
   // 创建路由表
-  static Map<String, WidgetBuilder> get routes => {
-        home: (_) => const HomePage(),
-        project: (_) => const ProjectPage(),
-        projectDetail: (_) => const ProjectDetailPage(),
-        package: (_) => const PackagePage(),
-        settings: (_) => const SettingsPage(),
-      };
+  static GoRouter get routes => GoRouter(routes: [
+        // 首页
+        GoRoute(path: home, builder: (_, __) => const HomePage()),
+        // 项目页
+        GoRoute(path: project, builder: (_, __) => const ProjectPage()),
+        // 项目详情页
+        GoRoute(
+            path: projectDetail, builder: (_, __) => const ProjectDetailPage()),
+        // 包管理页
+        GoRoute(path: package, builder: (_, __) => const PackagePage()),
+        // 设置页
+        GoRoute(path: settings, builder: (_, __) => const SettingsPage()),
+      ]);
 
   // 首页
-  static const String home = '/home';
+  static const String home = '/';
 
   // 项目页
   static const String project = '/project';
