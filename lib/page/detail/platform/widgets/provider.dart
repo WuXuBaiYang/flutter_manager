@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/database/project.dart';
-import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
-import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
 /*
@@ -33,7 +32,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   // 获取全平台（存在）标签对照表(按照设置排序)
   Map<PlatformType, String> get labelMap {
     var result = {..._platformInfoMap}..removeWhere((_, v) => v?.label == null);
-    for (var e in context.projectProvider.platformSort) {
+    for (var e in context.project.platformSort) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
@@ -46,7 +45,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   Map<PlatformType, List<PlatformLogoTuple>> get logoMap {
     var result = {..._platformInfoMap}
       ..removeWhere((_, v) => v?.logos.isEmpty ?? true);
-    for (var e in context.projectProvider.platformSort) {
+    for (var e in context.project.platformSort) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
@@ -70,7 +69,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   Future<void> initialize() async {
     if (project == null) return;
     _platformList = ProjectTool.getPlatforms(project!.path);
-    final platformSort = context.projectProvider.platformSort;
+    final platformSort = context.project.platformSort;
     for (var e in platformSort) {
       if (!_platformList.contains(e)) continue;
       _platformList.remove(e);

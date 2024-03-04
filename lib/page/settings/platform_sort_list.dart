@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:isar/isar.dart';
@@ -42,7 +43,7 @@ class PlatformSortList extends StatelessWidget {
           itemCount: platformSort.length,
           onReorder: (oldIndex, newIndex) {
             final platforms = [...platformSort].swap(oldIndex, newIndex);
-            context.projectProvider.updatePlatformSort(platforms);
+            context.project.updatePlatformSort(platforms);
           },
           proxyDecorator: (_, index, ___) {
             final item = platformSort[index];

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/provider/setting.dart';
 import 'package:provider/provider.dart';
 
@@ -71,7 +72,7 @@ class _SettingItem extends State<SettingItem> {
     _timer = Timer.periodic(duration, (t) {
       setState(() => _selected = !_selected);
       if (++times > widget.maxBlinkCount * 2 - 1) {
-        context.settingProvider.cancelSelected();
+        context.setting.cancelSelected();
         _timer?.cancel();
         _timer = null;
       }
