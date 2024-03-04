@@ -52,6 +52,7 @@ class MyApp extends ProviderView {
           title: 'Flutter项目管理',
           theme: provider.themeData,
           themeMode: provider.themeMode,
+          routerConfig: RoutePath.routes,
           darkTheme: provider.darkThemeData,
           debugShowCheckedModeBanner: false,
           supportedLocales: S.delegate.supportedLocales,
@@ -61,7 +62,6 @@ class MyApp extends ProviderView {
             GlobalMaterialLocalizations.delegate,
             ChineseCupertinoLocalizations.delegate,
           ],
-          routerConfig: RoutePath.routes,
         );
       },
       child: const HomePage(),

@@ -130,8 +130,7 @@ class ProjectPage extends ProviderPage {
           onDelete: (item) =>
               context.read<ProjectPageProvider>().removeProject(context, item),
           onEdit: (item) => showProjectImport(context, project: item),
-          onDetail: (item) =>
-              context.pushNamed(RoutePath.projectDetail, extra: item),
+          onDetail: (item) => context.push(RoutePath.projectDetail, extra: item),
         );
       },
     );
