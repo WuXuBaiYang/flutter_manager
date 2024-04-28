@@ -1,7 +1,8 @@
 import 'dart:io';
+
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -44,11 +45,14 @@ class ProjectProvider extends BaseProvider {
   // 获取项目集合
   Future<void> initialize() async {
     final result = await database.getProjectList(orderDesc: true);
-    _projectTuple = (projects: <Project>[
-      ...result.where((e) => !e.pinned),
-    ], pinnedProjects: <Project>[
-      ...result.where((e) => e.pinned),
-    ]);
+    _projectTuple = (
+      projects: <Project>[
+        ...result.where((e) => !e.pinned),
+      ],
+      pinnedProjects: <Project>[
+        ...result.where((e) => e.pinned),
+      ]
+    );
     notifyListeners();
   }
 

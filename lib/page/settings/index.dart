@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/database/environment.dart';
+import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
 import 'package:flutter_manager/page/settings/platform_sort_list.dart';

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/route.dart';
-import 'package:flutter_manager/database/environment.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/project.dart';
@@ -130,7 +130,8 @@ class ProjectPage extends ProviderPage {
           onDelete: (item) =>
               context.read<ProjectPageProvider>().removeProject(context, item),
           onEdit: (item) => showProjectImport(context, project: item),
-          onDetail: (item) => context.push(RoutePath.projectDetail, extra: item),
+          onDetail: (item) =>
+              context.push(RoutePath.projectDetail, extra: item),
         );
       },
     );

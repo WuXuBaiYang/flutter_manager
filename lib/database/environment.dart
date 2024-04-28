@@ -1,89 +1,53 @@
 import 'package:isar/isar.dart';
 
-part 'environment.g.dart';
+import 'base/base.dart';
+import 'model/environment.dart';
+import 'model/project.dart';
 
-@collection
-class Environment {
-  Id id = Isar.autoIncrement;
+/*
+* 环境相关数据库操作
+* @author wuxubaiyang
+* @Time 2024/4/28 9:19
+*/
+mixin EnvironmentDatabase on BaseDatabase {
+  // 根据环境id获取项目列表
+  Future<List<Project>> getProjectsByEnvironmentId(Id id) {
+    return isar.projects.where().filter().envIdEqualTo(id).findAll();
+  }
 
-  // 环境目录
-  @Index(unique: true, replace: true)
-  String path = '';
+  // 根据id获取环境信息
+  Future<Environment?> getEnvironmentById(Id id) {
+    return isar.environments.where().idEqualTo(id).findFirst();
+  }
 
-  // flutter版本号
-  String version = '';
+  // 获取环境数量
+  Future<int> get environmentCount async => (await getEnvironmentList()).length;
 
-  // flutter分支
-  String channel = '';
+  // 获取全部环境列表
+  Future<List<Environment>> getEnvironmentList({bool orderDesc = false}) {
+    var queryBuilder = isar.environments.where();
+    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
+    return queryBuilder.sortByOrder().findAll();
+  }
 
-  // git地址
-  String gitUrl = '';
+  // 添加/更新环境
+  Future<Environment> updateEnvironment(Environment item) async {
+    final count = await environmentCount;
+    return writeTxn<Environment>(() {
+      return isar.environments.put(item..order = count).then(
+            (id) => item..id = id,
+          );
+    });
+  }
 
-  // 框架版本
-  String frameworkReversion = '';
+  // 更新环境集合
+  Future<List<Environment>> updateEnvironments(List<Environment> items) =>
+      writeTxn<List<Environment>>(() {
+        return isar.environments.putAll(items).then((_) => items);
+      });
 
-  // 引擎版本
-  String engineReversion = '';
-
-  // dart版本号
-  String dartVersion = '';
-
-  // 开发版本
-  String devToolsVersion = '';
-
-  // 更新时间
-  String updatedAt = '';
-
-  // 排序
-  int order = -1;
-
-  Environment();
-
-  // 获取环境信息标题
-  @ignore
-  String get title => 'Flutter · $version · $channel';
-
-  Environment.from(obj)
-      : path = obj['path'] ?? '',
-        channel = obj['channel'] ?? '',
-        gitUrl = obj['gitUrl'] ?? '',
-        version = obj['version'] ?? '',
-        dartVersion = obj['dartVersion'] ?? '',
-        devToolsVersion = obj['devToolsVersion'] ?? '',
-        frameworkReversion = obj['frameworkReversion'] ?? '',
-        engineReversion = obj['engineReversion'] ?? '',
-        updatedAt = obj['updatedAt'] ?? '',
-        order = obj['order'] ?? -1;
-
-  // 环境对比
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Environment &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          channel == other.channel &&
-          gitUrl == other.gitUrl &&
-          version == other.version &&
-          dartVersion == other.dartVersion &&
-          devToolsVersion == other.devToolsVersion &&
-          frameworkReversion == other.frameworkReversion &&
-          engineReversion == other.engineReversion &&
-          updatedAt == other.updatedAt &&
-          order == other.order;
-
-  // 环境哈希值
-  @ignore
-  @override
-  int get hashCode =>
-      path.hashCode ^
-      channel.hashCode ^
-      gitUrl.hashCode ^
-      version.hashCode ^
-      dartVersion.hashCode ^
-      devToolsVersion.hashCode ^
-      frameworkReversion.hashCode ^
-      engineReversion.hashCode ^
-      updatedAt.hashCode ^
-      order.hashCode;
+  // 移除环境
+  Future<bool> removeEnvironment(Id id) => writeTxn<bool>(() {
+        return isar.environments.delete(id);
+      });
 }

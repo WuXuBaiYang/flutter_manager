@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/view.dart';
-import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/color_picker.dart';
+import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_pinned.dart';
-import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -242,14 +242,14 @@ class ProjectImportDialogProvider extends BaseProvider {
       formState!.save();
       if (_formData.envId < 0) throw Exception('缺少环境信息');
       return context.project.update(
-            (project ?? Project())
-              ..path = _formData.path
-              ..label = _formData.label
-              ..logo = _formData.logo
-              ..envId = _formData.envId
-              ..color = _formData.color
-              ..pinned = _formData.pinned,
-          );
+        (project ?? Project())
+          ..path = _formData.path
+          ..label = _formData.label
+          ..logo = _formData.logo
+          ..envId = _formData.envId
+          ..color = _formData.color
+          ..pinned = _formData.pinned,
+      );
     } catch (e) {
       showError(e.toString(), title: '操作失败');
     }

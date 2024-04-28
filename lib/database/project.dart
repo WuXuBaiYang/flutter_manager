@@ -1,98 +1,42 @@
-import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
-part 'project.g.dart';
+import 'base/base.dart';
+import 'model/project.dart';
 
-@collection
-class Project {
-  Id id = Isar.autoIncrement;
+/*
+* 项目相关数据库操作
+* @author wuxubaiyang
+* @Time 2024/4/28 9:19
+*/
+mixin ProjectDatabase on BaseDatabase {
+  // 获取项目数量
+  Future<int> get projectCount async => (await getProjectList()).length;
 
-  // 项目名(自定义)
-  String label = '';
-
-  // 项目图标(自定义)
-  String logo = '';
-
-  // 项目路径
-  @Index(unique: true, replace: true)
-  String path = '';
-
-  // 环境id
-  int envId = -1;
-
-  // 项目颜色
-  int color = Colors.transparent.value;
-
-  // 是否订到顶部
-  bool pinned = false;
-
-  // 项目排序
-  int order = -1;
-
-  // 创建时间
-  DateTime createAt = DateTime.now();
-
-  // 更新时间
-  DateTime updateAt = DateTime.now();
-
-  // 获取颜色
-  Color getColor([double opacity = 1]) {
-    if (color == Colors.transparent.value) return Colors.transparent;
-    return Color(color).withOpacity(opacity);
+  // 获取项目列表
+  Future<List<Project>> getProjectList({bool orderDesc = false}) {
+    var queryBuilder = isar.projects.where();
+    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
+    return queryBuilder.sortByOrder().findAll();
   }
 
-  // 实现copyWith
-  Project copyWith({
-    Id? id,
-    String? label,
-    String? logo,
-    String? path,
-    int? envId,
-    int? color,
-    bool? pinned,
-    int? order,
-    DateTime? createAt,
-    DateTime? updateAt,
-  }) {
-    return Project()
-      ..id = id ?? this.id
-      ..label = label ?? this.label
-      ..logo = logo ?? this.logo
-      ..path = path ?? this.path
-      ..envId = envId ?? this.envId
-      ..color = color ?? this.color
-      ..pinned = pinned ?? this.pinned
-      ..order = order ?? this.order
-      ..createAt = createAt ?? this.createAt
-      ..updateAt = updateAt ?? this.updateAt;
+  // 添加/更新项目
+  Future<Project?> updateProject(Project item) async {
+    final count = await projectCount;
+    return writeTxn<Project?>(() {
+      return isar.projects.put(item..order = count).then(
+            (id) => item..id = id,
+          );
+    });
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Project &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          label == other.label &&
-          logo == other.logo &&
-          path == other.path &&
-          envId == other.envId &&
-          color == other.color &&
-          pinned == other.pinned &&
-          order == other.order &&
-          createAt == other.createAt &&
-          updateAt == other.updateAt;
+  // 更新项目排序
+  Future<List<Project>> updateProjects(List<Project> items) =>
+      writeTxn<List<Project>>(() {
+        return isar.projects.putAll(items).then((_) => items);
+      });
 
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      label.hashCode ^
-      logo.hashCode ^
-      path.hashCode ^
-      envId.hashCode ^
-      color.hashCode ^
-      pinned.hashCode ^
-      order.hashCode ^
-      createAt.hashCode ^
-      updateAt.hashCode;
+  // 移除项目
+  Future<bool> removeProject(Id id) => writeTxn<bool>(() {
+        return isar.projects.delete(id);
+      });
 }

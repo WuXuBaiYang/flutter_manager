@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/page.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/page/detail/appbar.dart';
 import 'package:flutter_manager/page/detail/platform/android.dart';
 import 'package:flutter_manager/page/detail/platform/ios.dart';

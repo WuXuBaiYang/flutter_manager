@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:dio/dio.dart';
-import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/project.dart';
+import 'package:flutter_manager/tool/cache.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
@@ -62,7 +63,7 @@ class ProjectTool {
 
   // 获取项目详情页平台排序
   static List<PlatformType> getPlatformSort() {
-    getSort(String key) => cache
+    getSort(String key) => localCache
         .getJson<List>(key)
         ?.map<PlatformType>((e) => PlatformType.values[e as int])
         .toList();
@@ -72,7 +73,7 @@ class ProjectTool {
   // 缓存项目详情页平台排序
   static Future<bool> cachePlatformSort(List<PlatformType> platforms) async {
     final values = platforms.map<int>((e) => e.index).toList();
-    return cache.setJson(_platformSortKey, values);
+    return localCache.setJson(_platformSortKey, values);
   }
 
   // 判断是否存在该平台

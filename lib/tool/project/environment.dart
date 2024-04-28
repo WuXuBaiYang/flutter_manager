@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
-import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/database/environment.dart';
+import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/tool/cache.dart';
 import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -108,11 +109,11 @@ class EnvironmentTool {
   // 获取当前平台的环境安装包列表
   static Future<EnvironmentPackageResult> getEnvironmentPackageList() async {
     final platform = Platform.operatingSystem;
-    var json = cache.getJson(_environmentPackageCacheKey);
+    var json = localCache.getJson(_environmentPackageCacheKey);
     if (json == null) {
       final url = _environmentPackageInfoUrl.replaceAll('{platform}', platform);
       json = (await Dio().get(url)).data;
-      await cache.setJson(_environmentPackageCacheKey, json,
+      await localCache.setJson(_environmentPackageCacheKey, json,
           expiration: const Duration(days: 1));
     }
     final result = <String, List<EnvironmentPackageTuple>>{};

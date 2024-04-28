@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/database/project.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 
 // 展示项目构建弹窗
-Future<void> showProjectBuild(BuildContext context, {required Project project}) async {
+Future<void> showProjectBuild(BuildContext context,
+    {required Project project}) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,

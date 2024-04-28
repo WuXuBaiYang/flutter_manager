@@ -1,8 +1,9 @@
 import 'dart:io';
+
 import 'package:archive/archive_io.dart';
 import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/manage/database.dart';
-import 'package:flutter_manager/database/environment.dart';
+import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/tool.dart';
 

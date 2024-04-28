@@ -1,25 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_manager/common/localization/chinese_cupertino_localizations.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/common/view.dart';
-import 'package:flutter_manager/manage/cache.dart';
-import 'package:flutter_manager/manage/database.dart';
+import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/page/home/index.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:window_manager/window_manager.dart';
+
 import 'generated/l10n.dart';
+import 'tool/cache.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // 初始化所有管理方法
-  await Future.forEach(
-    [cache, database],
-    (e) => e.initialize(),
-  );
+  // 初始化工具方法
+  await localCache.initialize();
   // 初始化窗口管理
   const windowSize = Size(800, 600);
   await windowManager.ensureInitialized();
