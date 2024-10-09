@@ -4,8 +4,9 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_drop
-  isar_flutter_libs
+  objectbox_flutter_libs
   open_dir_windows
+  permission_handler_windows
   screen_retriever
   window_manager
 )

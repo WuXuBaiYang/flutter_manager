@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'project/platform/platform.dart';
+import '../tool/project/platform/platform.dart';
 
 /*
 * 项目图标网格组件
@@ -61,10 +61,12 @@ class ProjectLogoGrid extends StatelessWidget {
               constraints: BoxConstraints.loose(maxSize),
               child: Image(image: FileImage(File(item.path))..evict())),
           const SizedBox(height: 4),
-          Text(item.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall),
+          Text(
+            item.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
         ]),
       ),
     );

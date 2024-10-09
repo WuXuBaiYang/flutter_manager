@@ -1,14 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:dio/dio.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/database/model/environment.dart';
-import 'package:flutter_manager/tool/cache.dart';
-import 'package:flutter_manager/tool/download.dart';
-import 'package:flutter_manager/tool/file.dart';
-import 'package:flutter_manager/tool/tool.dart';
-import 'package:path/path.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 环境安装包结果类型
 typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackageTuple>>;

@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 设置提供者
@@ -9,11 +8,11 @@ import 'package:flutter_manager/tool/tool.dart';
 */
 class SettingProvider extends BaseProvider {
   // 设置项key
-  final environmentKey = GlobalObjectKey(Tool.genID()),
-      environmentCacheKey = GlobalObjectKey(Tool.genID()),
-      projectPlatformSortKey = GlobalObjectKey(Tool.genID()),
-      themeModeKey = GlobalObjectKey(Tool.genID()),
-      themeSchemeKey = GlobalObjectKey(Tool.genID());
+  final environmentKey = GlobalObjectKey(genDateSign()),
+      environmentCacheKey = GlobalObjectKey(genDateSign()),
+      projectPlatformSortKey = GlobalObjectKey(genDateSign()),
+      themeModeKey = GlobalObjectKey(genDateSign()),
+      themeSchemeKey = GlobalObjectKey(genDateSign());
 
   // 选中的设置项key
   GlobalObjectKey? _selectedKey;

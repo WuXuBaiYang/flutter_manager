@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/project_logo.dart';
+import 'package:flutter_manager/widget/project_logo.dart';
 
 // 项目图标折叠展示表单项值元组
 typedef LogoPanelFieldTuple = ({

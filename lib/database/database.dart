@@ -1,10 +1,6 @@
-import 'package:flutter_manager/common/common.dart';
-import 'package:flutter_manager/database/model/environment.dart';
-import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/database/project.dart';
-
-import 'base/base.dart';
 import 'environment.dart';
+import 'package:jtech_base/jtech_base.dart';
+import 'project.dart';
 
 /*
 * 数据库入口
@@ -16,11 +12,12 @@ class Database extends BaseDatabase with EnvironmentDatabase, ProjectDatabase {
 
   factory Database() => _instance;
 
-  Database._internal()
-      : super([
-          EnvironmentSchema,
-          ProjectSchema,
-        ], name: Common.databaseName);
+  Database._internal();
+
+  @override
+  Future<Store> createStore(String directory) async {
+    return openStore(directory: directory);
+  }
 }
 
 // 全局单例入口

@@ -1,11 +1,9 @@
 import 'dart:io';
-
 import 'package:archive/archive_io.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 环境变量提供者
@@ -13,6 +11,8 @@ import 'package:flutter_manager/tool/tool.dart';
 * @Time 2023/11/26 13:29
 */
 class EnvironmentProvider extends BaseProvider {
+  EnvironmentProvider(super.context);
+
   // 环境变量集合
   List<Environment>? _environments;
 
@@ -22,17 +22,13 @@ class EnvironmentProvider extends BaseProvider {
   // 判断是否存在环境信息
   bool get hasEnvironment => environments.isNotEmpty;
 
-  EnvironmentProvider(super.context) {
-    initialize();
-  }
-
-  // 初始化加载环境变量
-  Future<void> initialize() async {
-    _environments = await database.getEnvironmentList(
-      orderDesc: true,
-    );
-    notifyListeners();
-  }
+  // // 初始化加载环境变量
+  // Future<void> initialize() async {
+  //   _environments = await database.getEnvironmentList(
+  //     orderDesc: true,
+  //   );
+  //   notifyListeners();
+  // }
 
   // 导入环境变量
   Future<Environment> import(String path) async {

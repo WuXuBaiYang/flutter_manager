@@ -1,89 +1,81 @@
-import 'package:isar/isar.dart';
+import 'package:jtech_base/jtech_base.dart';
 
-part 'environment.g.dart';
-
-@collection
+@Entity()
 class Environment {
-  Id id = Isar.autoIncrement;
+  int id;
 
   // 环境目录
-  @Index(unique: true, replace: true)
-  String path = '';
+  String path;
 
   // flutter版本号
-  String version = '';
+  String version;
 
   // flutter分支
-  String channel = '';
+  String channel;
 
   // git地址
-  String gitUrl = '';
+  String gitUrl;
 
   // 框架版本
-  String frameworkReversion = '';
+  String frameworkReversion;
 
   // 引擎版本
-  String engineReversion = '';
+  String engineReversion;
 
   // dart版本号
-  String dartVersion = '';
+  String dartVersion;
 
   // 开发版本
-  String devToolsVersion = '';
+  String devToolsVersion;
 
   // 更新时间
-  String updatedAt = '';
+  String updatedAt;
 
   // 排序
-  int order = -1;
+  int order;
 
-  Environment();
+  Environment({
+    this.path = '',
+    this.version = '',
+    this.channel = '',
+    this.gitUrl = '',
+    this.frameworkReversion = '',
+    this.engineReversion = '',
+    this.dartVersion = '',
+    this.devToolsVersion = '',
+    this.updatedAt = '',
+    this.order = -1,
+    this.id = 0,
+  });
 
   // 获取环境信息标题
-  @ignore
+  @Transient()
   String get title => 'Flutter · $version · $channel';
 
-  Environment.from(obj)
-      : path = obj['path'] ?? '',
-        channel = obj['channel'] ?? '',
-        gitUrl = obj['gitUrl'] ?? '',
-        version = obj['version'] ?? '',
-        dartVersion = obj['dartVersion'] ?? '',
-        devToolsVersion = obj['devToolsVersion'] ?? '',
-        frameworkReversion = obj['frameworkReversion'] ?? '',
-        engineReversion = obj['engineReversion'] ?? '',
-        updatedAt = obj['updatedAt'] ?? '',
-        order = obj['order'] ?? -1;
-
-  // 环境对比
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Environment &&
-          runtimeType == other.runtimeType &&
-          path == other.path &&
-          channel == other.channel &&
-          gitUrl == other.gitUrl &&
-          version == other.version &&
-          dartVersion == other.dartVersion &&
-          devToolsVersion == other.devToolsVersion &&
-          frameworkReversion == other.frameworkReversion &&
-          engineReversion == other.engineReversion &&
-          updatedAt == other.updatedAt &&
-          order == other.order;
-
-  // 环境哈希值
-  @ignore
-  @override
-  int get hashCode =>
-      path.hashCode ^
-      channel.hashCode ^
-      gitUrl.hashCode ^
-      version.hashCode ^
-      dartVersion.hashCode ^
-      devToolsVersion.hashCode ^
-      frameworkReversion.hashCode ^
-      engineReversion.hashCode ^
-      updatedAt.hashCode ^
-      order.hashCode;
+  Environment copyWith({
+    int? id,
+    String? path,
+    String? version,
+    String? channel,
+    String? gitUrl,
+    String? frameworkReversion,
+    String? engineReversion,
+    String? dartVersion,
+    String? devToolsVersion,
+    String? updatedAt,
+    int? order,
+  }) {
+    return Environment()
+      ..id = id ?? this.id
+      ..path = path ?? this.path
+      ..version = version ?? this.version
+      ..channel = channel ?? this.channel
+      ..gitUrl = gitUrl ?? this.gitUrl
+      ..frameworkReversion = frameworkReversion ?? this.frameworkReversion
+      ..engineReversion = engineReversion ?? this.engineReversion
+      ..dartVersion = dartVersion ?? this.dartVersion
+      ..devToolsVersion = devToolsVersion ?? this.devToolsVersion
+      ..updatedAt = updatedAt ?? this.updatedAt
+      ..order = order ?? this.order;
+  }
 }

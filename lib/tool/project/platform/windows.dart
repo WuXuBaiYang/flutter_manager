@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/image.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform.dart';
 
 // windows平台参数元组

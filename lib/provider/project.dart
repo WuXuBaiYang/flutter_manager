@@ -1,11 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 项目信息元组类型
 typedef ProjectTuple = ({List<Project> projects, List<Project> pinnedProjects});

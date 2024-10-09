@@ -1,39 +1,49 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
+import 'package:jtech_base/jtech_base.dart';
 
-part 'project.g.dart';
-
-@collection
+@Entity()
 class Project {
-  Id id = Isar.autoIncrement;
+  int id;
 
   // 项目名(自定义)
-  String label = '';
+  String label;
 
   // 项目图标(自定义)
-  String logo = '';
+  String logo;
 
   // 项目路径
-  @Index(unique: true, replace: true)
-  String path = '';
+  String path;
 
   // 环境id
-  int envId = -1;
+  int envId;
 
   // 项目颜色
-  int color = Colors.transparent.value;
+  int color;
 
   // 是否订到顶部
-  bool pinned = false;
+  bool pinned;
 
   // 项目排序
-  int order = -1;
+  int order;
 
   // 创建时间
+  @Property(type: PropertyType.date)
   DateTime createAt = DateTime.now();
 
   // 更新时间
+  @Property(type: PropertyType.date)
   DateTime updateAt = DateTime.now();
+
+  Project({
+    this.id = 0,
+    this.label = '',
+    this.logo = '',
+    this.path = '',
+    this.envId = 0,
+    this.pinned = false,
+    this.order = -1,
+    Color color = Colors.transparent,
+  }) : color = color.value;
 
   // 获取颜色
   Color getColor([double opacity = 1]) {
@@ -43,7 +53,7 @@ class Project {
 
   // 实现copyWith
   Project copyWith({
-    Id? id,
+    int? id,
     String? label,
     String? logo,
     String? path,
@@ -66,33 +76,4 @@ class Project {
       ..createAt = createAt ?? this.createAt
       ..updateAt = updateAt ?? this.updateAt;
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Project &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          label == other.label &&
-          logo == other.logo &&
-          path == other.path &&
-          envId == other.envId &&
-          color == other.color &&
-          pinned == other.pinned &&
-          order == other.order &&
-          createAt == other.createAt &&
-          updateAt == other.updateAt;
-
-  @override
-  int get hashCode =>
-      id.hashCode ^
-      label.hashCode ^
-      logo.hashCode ^
-      path.hashCode ^
-      envId.hashCode ^
-      color.hashCode ^
-      pinned.hashCode ^
-      order.hashCode ^
-      createAt.hashCode ^
-      updateAt.hashCode;
 }

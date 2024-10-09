@@ -1,11 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/common/assets.dart';
-import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/image.dart';
-import 'package:path/path.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
 
 // 平台基本信息元组

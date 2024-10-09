@@ -1,5 +1,5 @@
-import 'package:flutter_manager/common/provider.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 窗口提供者
