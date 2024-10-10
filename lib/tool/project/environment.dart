@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/tool/download.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 环境安装包结果类型
@@ -54,9 +54,6 @@ class EnvironmentTool {
 
   // 关键文件相对路径
   static const String _keyFilePath = 'bin/flutter';
-
-  // 下载缓存目录
-  static const String _downloadCachePath = 'download';
 
   // 获取环境信息
   static Future<Environment?> getEnvironmentInfo(String environmentPath) async {
@@ -134,7 +131,7 @@ class EnvironmentTool {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
   }) async {
-    final baseDir = await getDownloadCachePath();
+    final baseDir = await Tool.getCacheFilePath();
     if (baseDir == null) throw Exception('获取下载目录失败');
     final savePath = join(baseDir, basename(url));
     if (File(savePath).existsSync()) return savePath;
@@ -166,7 +163,7 @@ class EnvironmentTool {
   // 获取已下载文件列表
   static Future<DownloadedFileTuple> getDownloadedFileList() async {
     final result = (downloaded: <String>[], tmp: <String>[]);
-    final baseDir = await getDownloadCachePath();
+    final baseDir = await Tool.getCacheFilePath();
     if (baseDir == null) return result;
     final dir = Directory(baseDir);
     if (!dir.existsSync()) return result;
@@ -180,12 +177,6 @@ class EnvironmentTool {
     });
     return result;
   }
-
-  // 获取下载缓存目录
-  static Future<String?> getDownloadCachePath() => FileTool.getDirPath(
-        join(Common.baseCachePath, _downloadCachePath),
-        root: FileDir.applicationDocuments,
-      );
 
   // 获取默认的安装包目录
   static Future<String?> getDefaultInstallPath(

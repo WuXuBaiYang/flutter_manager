@@ -1,48 +1,71 @@
-import 'package:flutter_manager/common/page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/knowledge/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
 import 'package:flutter_manager/page/project/index.dart';
 import 'package:flutter_manager/page/settings/index.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:flutter_manager/widget/status_bar.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 首页
 * @author wuxubaiyang
 * @Time 2023/11/21 13:57
 */
-class HomePage extends ProviderPage {
-  const HomePage({super.key});
+class HomePage extends ProviderPage<HomePageProvider> {
+  const HomePage({super.key, super.state});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => HomePageProvider(context)),
-      ];
+  HomePageProvider createProvider(BuildContext context, GoRouterState? state) =>
+      HomePageProvider(context, state);
 
   @override
-  Widget buildPage(BuildContext context) {
-    final provider = context.watch<HomePageProvider>();
+  Widget buildWidget(BuildContext context) {
+    final brightness = context.theme.brightness;
     return Scaffold(
-      body: Row(children: [
-        NavigationRail(
-          selectedIndex: provider.navigationIndex,
-          trailing: _buildNavigationRailTrailing(),
-          destinations: provider.navigationRailList,
-          onDestinationSelected: provider.setNavigationIndex,
-        ),
-        const VerticalDivider(),
-        Expanded(
-          child: IndexedStack(
-            index: provider.navigationIndex,
-            children: provider.navigationRailPageList,
+      appBar: StatusBar(
+        brightness: brightness,
+      ),
+      body: _buildContent(context),
+    );
+  }
+
+  // 构建内容
+  Widget _buildContent(BuildContext context) {
+    final children = getProvider(context).pages.map((e) {
+      return e.child ?? const SizedBox();
+    }).toList();
+    return Selector<HomePageProvider, int>(
+      selector: (_, provider) => provider.currentIndex,
+      builder: (_, currentIndex, __) {
+        return Row(children: [
+          _buildNavigationRail(context, currentIndex),
+          const VerticalDivider(),
+          Expanded(
+            child: IndexedStack(
+              index: currentIndex,
+              children: children,
+            ),
           ),
-        ),
-      ]),
+        ]);
+      },
+    );
+  }
+
+  // 构建导航栏
+  Widget _buildNavigationRail(BuildContext context, int currentIndex) {
+    return NavigationRail(
+      selectedIndex: currentIndex,
+      trailing: _buildNavigationRailTrailing(),
+      onDestinationSelected: getProvider(context).setCurrentIndex,
+      destinations: getProvider(context).pages.map((e) {
+        return NavigationRailDestination(
+          padding: EdgeInsets.only(top: 8),
+          icon: e.icon ?? Icon(Icons.error),
+          label: Text(e.label),
+        );
+      }).toList(),
     );
   }
 
@@ -76,61 +99,53 @@ class HomePage extends ProviderPage {
 * @author wuxubaiyang
 * @Time 2023/11/21 14:02
 */
-class HomePageProvider extends BaseProvider {
-  // 导航下标管理
-  int _navigationIndex = 0;
-
-  // 导航列表
-  final navigationRailList = [
-    const NavigationRailDestination(
+class HomePageProvider extends PageProvider {
+  // 导航分页集合
+  final pages = <OptionItem>[
+    OptionItem(
+      label: '项目',
       icon: Icon(Icons.home_rounded),
-      label: Text('项目'),
+      child: const ProjectPage(),
     ),
-    const NavigationRailDestination(
-      padding: EdgeInsets.only(top: 8),
+    OptionItem(
+      label: '打包',
       icon: Icon(Icons.build),
-      label: Text('打包'),
+      child: const PackagePage(),
     ),
-    const NavigationRailDestination(
-      padding: EdgeInsets.only(top: 8),
+    OptionItem(
+      label: '知识库',
       icon: Icon(Icons.document_scanner),
-      label: Text('知识库'),
+      child: const KnowledgePage(),
     ),
-    const NavigationRailDestination(
-      padding: EdgeInsets.only(top: 8),
+    OptionItem(
+      label: '设置',
       icon: Icon(Icons.settings),
-      label: Text('设置'),
+      child: const SettingsPage(),
     ),
   ];
 
-  // 导航页面列表
-  final navigationRailPageList = [
-    const ProjectPage(),
-    const PackagePage(),
-    const KnowledgePage(),
-    const SettingsPage(),
-  ];
-
-  // 获取导航下标
-  int get navigationIndex => _navigationIndex;
-
-  HomePageProvider(super.context) {
+  HomePageProvider(super.context, super.state) {
     // 注册设置跳转方法
-    final provider = context.setting;
-    provider.addListener(() {
-      if (provider.selectedKey != null) {
-        setNavigationIndex(navigationRailPageList.length - 1);
+    context.setting.addListener(() {
+      if (context.setting.selectedKey != null) {
+        setCurrentIndex(pages.length - 1);
       }
     });
   }
 
+  // 导航下标管理
+  int _currentIndex = 0;
+
+  // 获取导航下标
+  int get currentIndex => _currentIndex;
+
   // 判断传入下标是否为当前下标
-  bool isNavigationIndex(int index) => _navigationIndex == index;
+  bool isCurrentIndex(int index) => _currentIndex == index;
 
   // 设置导航下标
-  setNavigationIndex(int index) {
-    if (index < 0 || index >= navigationRailList.length) return;
-    _navigationIndex = index;
+  void setCurrentIndex(int index) {
+    if (index < 0 || index >= pages.length) return;
+    _currentIndex = index;
     notifyListeners();
   }
 }

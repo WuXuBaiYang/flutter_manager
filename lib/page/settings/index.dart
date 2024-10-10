@@ -1,40 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/settings/environment_list.dart';
 import 'package:flutter_manager/page/settings/platform_sort_list.dart';
 import 'package:flutter_manager/provider/environment.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/provider/theme.dart';
-import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:flutter_manager/widget/dialog/environment_import_remote.dart';
-import 'package:flutter_manager/widget/dialog/scheme_picker.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
-import 'package:flutter_manager/widget/scheme_item.dart';
 import 'package:flutter_manager/page/settings/setting_item.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
+import 'package:open_dir/open_dir.dart';
 
 /*
 * 设置页
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPage extends ProviderPage {
-  const SettingsPage({super.key, super.primary = false});
+class SettingsPage extends ProviderPage<SettingsPageProvider> {
+  const SettingsPage({super.key, super.state});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => SettingsPageProvider(context)),
-      ];
+  SettingsPageProvider createProvider(
+          BuildContext context, GoRouterState? state) =>
+      SettingsPageProvider(context, state);
 
   @override
-  Widget buildPage(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('设置'),
@@ -46,7 +39,7 @@ class SettingsPage extends ProviderPage {
   // 构建拖拽内容区域
   Widget _buildDropArea(BuildContext context) {
     final provider = context.read<SettingsPageProvider>();
-    final enable = context.watch<HomePageProvider>().isNavigationIndex(3);
+    final enable = context.watch<HomePageProvider>().isCurrentIndex(3);
     return DropFileView(
       enable: enable,
       hint: '请放入Flutter环境文件',
@@ -119,8 +112,9 @@ class SettingsPage extends ProviderPage {
         tooltip: '打开缓存目录',
         icon: const Icon(Icons.file_open_outlined),
         onPressed: () async {
-          final path = await EnvironmentTool.getDownloadCachePath();
-          Tool.openLocalPath(path);
+          final path = await Tool.getCacheFilePath();
+          if (path == null) return;
+          OpenDir().openNativeDir(path: path);
         },
       ),
     );
@@ -183,11 +177,11 @@ class SettingsPage extends ProviderPage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPageProvider extends BaseProvider {
+class SettingsPageProvider extends PageProvider {
   // 滚动控制器
   final scrollController = ScrollController();
 
-  SettingsPageProvider(super.context) {
+  SettingsPageProvider(super.context, super.state) {
     // 注册设置跳转方法
     final provider = context.setting;
     provider.addListener(() {

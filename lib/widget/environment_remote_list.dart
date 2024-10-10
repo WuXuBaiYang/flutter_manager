@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/widget/loading.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 开始下载回调
 typedef StartDownloadCallback = void Function(
@@ -41,9 +39,11 @@ class EnvironmentRemoteList extends StatelessWidget {
       providers: _providers,
       builder: (context, _) {
         final package = context.watch<EnvironmentPackageResult>();
-        return LoadingView(
-          loading: package.isEmpty,
-          builder: (_) {
+        final status =
+            package.isEmpty ? LoadStatus.loading : LoadStatus.success;
+        return LoadingStatus(
+          status: status,
+          builder: (_, __) {
             return _buildContent(context, package);
           },
         );
@@ -146,7 +146,7 @@ class EnvironmentRemoteList extends StatelessWidget {
                 icon: const Icon(Icons.copy_rounded),
                 onPressed: () {
                   Clipboard.setData(ClipboardData(text: item.url));
-                  NoticeTool.success(context, message: '已复制下载链接');
+                  Notice.showSuccess(context, message: '已复制下载链接');
                 },
               ),
               IconButton(

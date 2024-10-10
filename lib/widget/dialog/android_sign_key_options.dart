@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'android_sign_key.dart';
 
 // dName可选项表单元组

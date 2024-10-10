@@ -1,11 +1,7 @@
 import 'dart:io';
 import 'dart:math';
-
-import 'package:dio/dio.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/tool/cache.dart';
-import 'package:flutter_manager/tool/file.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
@@ -15,7 +11,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/platform/web.dart';
 import 'package:flutter_manager/tool/project/platform/windows.dart';
 import 'package:image/image.dart';
-import 'package:path/path.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 项目管理工具
@@ -45,7 +41,7 @@ class ProjectTool {
   // 创建项目平台
   static Future<bool> createPlatform(
       Project project, PlatformType platform) async {
-    final environment = await database.getEnvironmentById(project.envId);
+    final environment = database.getEnvironmentById(project.envId);
     if (environment == null) return false;
     final output = await EnvironmentTool.runEnvironmentCommand(
         environment.path, ['create', '--platforms', platform.name, '.'],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/widget/color_item.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示颜色选择弹窗
 Future<Color?> showColorPicker(

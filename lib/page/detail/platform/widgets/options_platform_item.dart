@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/alert_message.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform_item.dart';
 
 /*
@@ -65,7 +64,7 @@ class OptionsPlatformItem extends StatelessWidget {
           title: '删除平台',
           content: '是否删除当前平台？',
         ).then((result) {
-          if (result != true) return;
+          if (result != true || !context.mounted) return;
           provider.removePlatform(platform).loading(context);
         }),
       ),

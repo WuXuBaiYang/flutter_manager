@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示修改图标弹窗
 Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
@@ -34,9 +30,10 @@ class ProjectLogoDialog extends ProviderView {
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider(
-          create: (_) => ProjectLogoDialogProvider(context, platformLogoMap),
+          create: (context) =>
+              ProjectLogoDialogProvider(context, platformLogoMap),
         ),
       ];
 
@@ -55,9 +52,11 @@ class ProjectLogoDialog extends ProviderView {
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () => provider.submitForm(context).then((result) {
-            if (result != null) Navigator.pop(context, result);
-          }),
+          onPressed: () async {
+            final result = await provider.submitForm(context);
+            if (result == null || !context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -137,7 +136,7 @@ class ProjectLogoDialogProvider extends BaseProvider {
       formState!.save();
       return _formData;
     } catch (e) {
-      showError(e.toString(), title: '操作失败');
+      Notice.showError(context, message: e.toString(), title: '操作失败');
     }
     return null;
   }

@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/project_label.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform/widgets/provider.dart';
 
 /*
@@ -61,30 +60,27 @@ class ProjectDetailTabBar extends StatelessWidget {
         child: TextButton.icon(
           label: const Text('名称'),
           icon: const Icon(Icons.edit_attributes_rounded, size: 18),
-          onPressed: () => showProjectLabel(
-            context,
-            platformLabelMap: provider.labelMap,
-          ).then((result) {
-            if (result == null) return;
+          onPressed: () async {
+            final result = await showProjectLabel(context,
+                platformLabelMap: provider.labelMap);
+            if (result == null || !context.mounted) return;
             provider.updateLabels(result).loading(context, dismissible: false);
-          }),
+          },
         ),
       ),
       Tooltip(
         message: '替换图标',
         child: TextButton.icon(
           label: const Text('图标'),
-          onPressed: () => showProjectLogo(
-            context,
-            platformLogoMap: provider.logoMap,
-          ).then((result) {
-            if (result == null) return;
+          onPressed: () async {
+            final result = await showProjectLogo(context,
+                platformLogoMap: provider.logoMap);
+            if (result == null || !context.mounted) return;
             final controller = StreamController<double>();
-            provider.updateLogos(result, controller: controller).loading(
-                context,
-                inputStream: controller.stream,
-                dismissible: false);
-          }),
+            provider
+                .updateLogos(result, controller: controller)
+                .loading(context, dismissible: false);
+          },
           icon: const Icon(Icons.imagesearch_roller_rounded, size: 18),
         ),
       ),

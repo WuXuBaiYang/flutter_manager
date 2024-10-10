@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示字体资源管理弹窗
 Future<dynamic> showProjectFont(BuildContext context) async {

@@ -14,21 +14,14 @@ class EnvironmentProvider extends BaseProvider {
   EnvironmentProvider(super.context);
 
   // 环境变量集合
-  List<Environment>? _environments;
+  late List<Environment> _environments =
+      database.getEnvironmentList(desc: true);
 
   // 获取环境变量集合
-  List<Environment> get environments => _environments ?? [];
+  List<Environment> get environments => _environments;
 
   // 判断是否存在环境信息
-  bool get hasEnvironment => environments.isNotEmpty;
-
-  // // 初始化加载环境变量
-  // Future<void> initialize() async {
-  //   _environments = await database.getEnvironmentList(
-  //     orderDesc: true,
-  //   );
-  //   notifyListeners();
-  // }
+  bool get hasEnvironment => _environments.isNotEmpty;
 
   // 导入环境变量
   Future<Environment> import(String path) async {
@@ -58,21 +51,15 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 添加环境变量
-  Future<Environment?> update(Environment item) async {
-    final result = await database.updateEnvironment(item);
-    await initialize();
-    return result;
-  }
+  Future<Environment?> update(Environment item) =>
+      database.updateEnvironment(item);
 
   // 移除环境变量
-  Future<void> remove(Environment item) async {
-    if (!await database.removeEnvironment(item.id)) return;
-    return initialize();
-  }
+  bool remove(Environment item) => database.removeEnvironment(item.id);
 
   // 验证是否可移除环境变量
-  Future<String?> removeValidator(Environment item) async {
-    final result = await database.getProjectsByEnvironmentId(item.id);
+  String? removeValidator(Environment item) {
+    final result = database.getProjectsByEnvironmentId(item.id);
     if (result.isEmpty) return null;
     final length = result.length;
     final label = result.first.label;

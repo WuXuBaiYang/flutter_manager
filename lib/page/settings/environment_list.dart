@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/environment.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/loading.dart';
-import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 环境列表
@@ -66,20 +64,23 @@ class EnvironmentList extends StatelessWidget {
       direction: DismissDirection.endToStart,
       onDismissed: (_) {
         provider.remove(item);
-        NoticeTool.success(context,
-            message: '${item.title} 环境已移除',
-            action: SnackBarAction(
-              label: '撤销',
+        Notice.showSuccess(
+          context,
+          message: '${item.title} 环境已移除',
+          actions: [
+            TextButton(
               onPressed: () => provider.update(item),
-            ));
+              child: Text('撤销'),
+            )
+          ],
+        );
       },
-      confirmDismiss: (_) => provider.removeValidator(item).then((result) {
-        final canRemove = result == null;
-        if (!canRemove) {
-          NoticeTool.error(context, message: result, title: '环境移除失败');
-        }
-        return canRemove;
-      }),
+      confirmDismiss: (_) async {
+        final result = provider.removeValidator(item);
+        if (result == null) return true;
+        Notice.showError(context, message: result, title: '环境移除失败');
+        return false;
+      },
       background: Container(
         color: Colors.redAccent,
         alignment: Alignment.centerRight,
@@ -123,14 +124,12 @@ class EnvironmentList extends StatelessWidget {
           iconSize: 18,
           tooltip: '刷新环境',
           icon: const Icon(Icons.refresh),
-          onPressed: () => provider
-              .refresh(item)
-              .loading(context)
-              .then((_) {})
-              .catchError((e) {
-            NoticeTool.error(context, message: '$e', title: '刷新失败');
+          onPressed: () async {
+            final result = await provider.refresh(item).loading(context);
+            if (!context.mounted) return;
+            Notice.showError(context, message: '$result', title: '刷新失败');
             provider.update(item);
-          }),
+          },
         ),
         const SizedBox(width: 8),
         ReorderableDragStartListener(

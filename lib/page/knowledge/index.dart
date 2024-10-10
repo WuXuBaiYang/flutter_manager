@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 知识库页面
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgePage extends ProviderPage {
-  const KnowledgePage({super.key, super.primary = false});
+class KnowledgePage extends ProviderPage<KnowledgePageProvider> {
+  const KnowledgePage({super.key, super.state});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => KnowledgePageProvider(context)),
-      ];
+  KnowledgePageProvider createProvider(
+          BuildContext context, GoRouterState? state) =>
+      KnowledgePageProvider(context, state);
 
   @override
-  Widget buildPage(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('知识库'),
@@ -39,6 +36,6 @@ class KnowledgePage extends ProviderPage {
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgePageProvider extends BaseProvider {
-  KnowledgePageProvider(super.context);
+class KnowledgePageProvider extends PageProvider {
+  KnowledgePageProvider(super.context, super.state);
 }

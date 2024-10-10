@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/database/model/environment.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示导入环境弹窗
 Future<Environment?> showEnvironmentImport(BuildContext context,
@@ -34,9 +29,10 @@ class EnvironmentImportDialog extends ProviderView {
   const EnvironmentImportDialog({super.key, this.environment});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider<EnvironmentImportDialogProvider>(
-          create: (_) => EnvironmentImportDialogProvider(context, environment),
+          create: (context) =>
+              EnvironmentImportDialogProvider(context, environment),
         ),
       ];
 
@@ -55,12 +51,13 @@ class EnvironmentImportDialog extends ProviderView {
         ),
         TextButton(
           child: Text(isEdit ? '修改' : '添加'),
-          onPressed: () => provider
-              .submitForm(context, environment)
-              .loading(context)
-              .then((result) {
-            if (result != null) Navigator.pop(context, result);
-          }),
+          onPressed: () async {
+            final result = await provider
+                .submitForm(context, environment)
+                .loading(context);
+            if (result == null || !context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -139,7 +136,7 @@ class EnvironmentImportDialogProvider extends BaseProvider {
           ? provider.refresh(environment..path = _formData.path)
           : provider.import(_formData.path);
     } catch (e) {
-      showError(e.toString(), title: '操作失败');
+      Notice.showError(context, message: e.toString(), title: '操作失败');
     }
     return null;
   }

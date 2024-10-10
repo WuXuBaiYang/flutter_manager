@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
-import 'package:flutter_manager/widget/loading.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示权限选择弹窗
 Future<List<PlatformPermissionTuple>?> showPermissionPicker(
@@ -42,9 +37,9 @@ class PermissionPickerDialog extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider<PermissionPickerDialogProvider>(
-          create: (_) => PermissionPickerDialogProvider(context,
+          create: (context) => PermissionPickerDialogProvider(context,
               permissions: permissions ?? []),
         ),
       ];
@@ -84,9 +79,11 @@ class PermissionPickerDialog extends ProviderView {
       builder: (context, __) {
         final permissions =
             context.watch<List<PlatformPermissionTuple>?>() ?? [];
-        return LoadingView(
-          loading: permissions.isEmpty,
-          builder: (_) {
+        final status =
+            permissions.isEmpty ? LoadStatus.loading : LoadStatus.success;
+        return LoadingStatus(
+          status: status,
+          builder: (_, __) {
             return StatefulBuilder(
               builder: (_, setState) {
                 final temp = controller.text.isNotEmpty

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/permission_picker.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform_item.dart';
 import 'provider.dart';
 
@@ -60,12 +58,15 @@ class PermissionPlatformItem extends StatelessWidget {
     return IconButton(
       iconSize: 20,
       icon: const Icon(Icons.add),
-      onPressed: () => showPermissionPicker(
-        context,
-        platform: platform,
-        permissions: permissions,
-      ).then((result) =>
-          provider.updatePermission(platform, result).loading(context)),
+      onPressed: () async {
+        final result = await showPermissionPicker(
+          context,
+          platform: platform,
+          permissions: permissions,
+        );
+        if (!context.mounted) return;
+        provider.updatePermission(platform, result).loading(context);
+      },
     );
   }
 

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/provider/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/tool/tool.dart';
-import 'package:isar/isar.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 平台排序列表
@@ -13,7 +11,7 @@ import 'package:provider/provider.dart';
 */
 class PlatformSortList extends StatelessWidget {
   // 项目id
-  final Id? projectId;
+  final int? projectId;
 
   // 约束
   final BoxConstraints constraints;

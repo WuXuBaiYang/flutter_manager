@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_manager/common/common.dart';
+import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:window_manager/window_manager.dart';
@@ -15,6 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 初始化工具方法
   await localCache.initialize();
+  await database.initialize(Common.databaseName);
   // 初始化窗口管理
   const windowSize = Size(800, 600);
   await windowManager.ensureInitialized();
@@ -66,6 +69,7 @@ class MyApp extends ProviderView {
             S.delegate,
             GlobalWidgetsLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
           ],
         );
       },

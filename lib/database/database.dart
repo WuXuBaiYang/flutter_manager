@@ -1,3 +1,5 @@
+import 'package:flutter_manager/objectbox.g.dart';
+
 import 'environment.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'project.dart';

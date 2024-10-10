@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/form_field/color_picker.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
 import 'package:flutter_manager/widget/form_field/project_pinned.dart';
-import 'package:isar/isar.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示项目导入弹窗
 Future<Project?> showProjectImport(BuildContext context, {Project? project}) {
@@ -38,9 +32,9 @@ class ProjectImportDialog extends ProviderView {
   const ProjectImportDialog({super.key, this.project});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider(
-            create: (_) => ProjectImportDialogProvider(context, project)),
+            create: (context) => ProjectImportDialogProvider(context, project)),
       ];
 
   @override
@@ -58,10 +52,11 @@ class ProjectImportDialog extends ProviderView {
         ),
         TextButton(
           child: Text(isEdit ? '修改' : '添加'),
-          onPressed: () =>
-              provider.submitForm().loading(context).then((result) {
-            if (result != null) Navigator.pop(context, result);
-          }),
+          onPressed: () async {
+            final result = await provider.submitForm().loading(context);
+            if (result == null || !context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -143,7 +138,7 @@ class ProjectImportDialog extends ProviderView {
     final provider = context.read<ProjectImportDialogProvider>();
     final environments = context.environment.environments;
     final envId = provider.formData.envId;
-    return DropdownButtonFormField<Id>(
+    return DropdownButtonFormField<int>(
       key: provider.envFormFieldKey,
       value: envId >= 0 ? envId : null,
       hint: const Text('请选择环境'),
@@ -188,7 +183,7 @@ typedef ProjectImportDialogFormTuple = ({
   String path,
   String label,
   String logo,
-  Id envId,
+  int envId,
   int color,
   bool pinned,
 });
@@ -208,7 +203,7 @@ class ProjectImportDialogProvider extends BaseProvider {
   // 别名表单项key
   final labelFormFieldKey = GlobalKey<FormFieldState<String>>(),
       logoFormFieldKey = GlobalKey<FormFieldState<String>>(),
-      envFormFieldKey = GlobalKey<FormFieldState<Id>>();
+      envFormFieldKey = GlobalKey<FormFieldState<int>>();
 
   // 表单数据
   ProjectImportDialogFormTuple _formData;
@@ -225,14 +220,13 @@ class ProjectImportDialogProvider extends BaseProvider {
           color: project?.color ?? Colors.transparent.value,
           pinned: project?.pinned ?? false,
         ) {
-    initialize();
+    final result = database.getEnvironmentList(desc: true);
+    if (result.isEmpty) return;
+    envFormFieldKey.currentState?.didChange(result.first.id);
   }
 
   // 初始化数据
-  Future<void> initialize() async {
-    final envs = await database.getEnvironmentList(orderDesc: true);
-    if (envs.isNotEmpty) envFormFieldKey.currentState?.didChange(envs.first.id);
-  }
+  Future<void> initialize() async {}
 
   // 导入项目
   Future<Project?> submitForm() async {
@@ -251,7 +245,7 @@ class ProjectImportDialogProvider extends BaseProvider {
           ..pinned = _formData.pinned,
       );
     } catch (e) {
-      showError(e.toString(), title: '操作失败');
+      Notice.showError(context, message: e.toString(), title: '操作失败');
     }
     return null;
   }
@@ -270,7 +264,7 @@ class ProjectImportDialogProvider extends BaseProvider {
     String? path,
     String? label,
     String? logo,
-    Id? envId,
+    int? envId,
     int? color,
     bool? pinned,
   }) =>

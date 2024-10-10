@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/provider/provider.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/setting.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 设置项子项

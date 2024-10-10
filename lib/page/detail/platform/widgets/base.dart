@@ -3,7 +3,7 @@ import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 项目平台信息页面基类

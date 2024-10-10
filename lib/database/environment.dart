@@ -1,8 +1,6 @@
-import 'package:isar/isar.dart';
-
-import 'base/base.dart';
+import 'package:flutter_manager/objectbox.g.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'model/environment.dart';
-import 'model/project.dart';
 
 /*
 * 环境相关数据库操作
@@ -10,44 +8,46 @@ import 'model/project.dart';
 * @Time 2024/4/28 9:19
 */
 mixin EnvironmentDatabase on BaseDatabase {
-  // 根据环境id获取项目列表
-  Future<List<Project>> getProjectsByEnvironmentId(Id id) {
-    return isar.projects.where().filter().envIdEqualTo(id).findAll();
-  }
+  // 环境数据盒子
+  late final environmentBox = getBox<Environment>();
 
   // 根据id获取环境信息
-  Future<Environment?> getEnvironmentById(Id id) {
-    return isar.environments.where().idEqualTo(id).findFirst();
+  Environment? getEnvironmentById(int id) {
+    return environmentBox.get(id);
   }
 
   // 获取环境数量
-  Future<int> get environmentCount async => (await getEnvironmentList()).length;
+  int get environmentCount {
+    return environmentBox.count();
+  }
 
   // 获取全部环境列表
-  Future<List<Environment>> getEnvironmentList({bool orderDesc = false}) {
-    var queryBuilder = isar.environments.where();
-    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
-    return queryBuilder.sortByOrder().findAll();
+  List<Environment> getEnvironmentList({bool desc = false}) {
+    final flags = desc ? Order.descending : 0;
+    return environmentBox
+        .query()
+        .order(Environment_.order, flags: flags)
+        .build()
+        .find();
   }
 
   // 添加/更新环境
-  Future<Environment> updateEnvironment(Environment item) async {
-    final count = await environmentCount;
-    return writeTxn<Environment>(() {
-      return isar.environments.put(item..order = count).then(
-            (id) => item..id = id,
-          );
-    });
+  Future<Environment> updateEnvironment(Environment environment) {
+    return environmentBox.putAndGetAsync(
+      environment..order = environmentCount,
+    );
   }
 
   // 更新环境集合
-  Future<List<Environment>> updateEnvironments(List<Environment> items) =>
-      writeTxn<List<Environment>>(() {
-        return isar.environments.putAll(items).then((_) => items);
-      });
+  Future<List<Environment>> updateEnvironments(List<Environment> environments) {
+    int index = 0;
+    return environmentBox.putAndGetManyAsync(environments.map((e) {
+      return e..order = index++;
+    }).toList());
+  }
 
   // 移除环境
-  Future<bool> removeEnvironment(Id id) => writeTxn<bool>(() {
-        return isar.environments.delete(id);
-      });
+  bool removeEnvironment(int id) {
+    return environmentBox.remove(id);
+  }
 }

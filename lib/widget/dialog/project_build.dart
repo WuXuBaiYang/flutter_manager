@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示项目构建弹窗
 Future<void> showProjectBuild(BuildContext context,

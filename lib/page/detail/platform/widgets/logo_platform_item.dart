@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/project_logo.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/image_editor.dart';
-import 'package:provider/provider.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform_item.dart';
 import 'provider.dart';
 
@@ -50,24 +48,23 @@ class LogoPlatformItem extends StatelessWidget {
 
   // 构建编辑图标按钮
   Widget _buildEditLogoButton(BuildContext context) {
+    final platformProvider = context.read<PlatformProvider>();
     return IconButton(
       iconSize: 14,
       icon: const Icon(Icons.edit),
       visualDensity: VisualDensity.compact,
-      onPressed: () => Tool.pickImageWithEdit(
-        context,
-        dialogTitle: '选择项目图标',
-        absoluteRatio: CropAspectRatio.ratio1_1,
-      ).then((result) {
-        if (result == null) return;
+      onPressed: () async {
+        var result = await Tool.pickImage(dialogTitle: '选择项目图标');
+        if (result == null || !context.mounted) return;
+        result = await showImageEditor(context,
+            path: result, absoluteRatio: CropAspectRatio.ratio1_1);
+        if (result == null || !context.mounted) return;
         final controller = StreamController<double>();
-        context
-            .read<PlatformProvider>()
+        platformProvider
             .updateLogo(platform, result,
                 progressCallback: (c, t) => controller.add(c / t))
-            .loading(context,
-                inputStream: controller.stream, dismissible: false);
-      }),
+            .loading(context, dismissible: false);
+      },
     );
   }
 }

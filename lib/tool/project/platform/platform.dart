@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_manager/gen/assets.gen.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
@@ -203,8 +204,13 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   @override
   Future<List<PlatformPermissionTuple>?> getFullPermissions() async {
     try {
-      final path = Assets.getPermission(platform);
-      final content = await rootBundle.loadString(path);
+      final content = await rootBundle.loadString(
+        switch (platform) {
+          PlatformType.android => Assets.permission.android,
+          PlatformType.ios => Assets.permission.ios,
+          _ => '',
+        },
+      );
       return jsonDecode(content)
           .map<PlatformPermissionTuple>((e) => (
                 name: '${e['name']}',

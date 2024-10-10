@@ -2,16 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/database.dart';
-import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_font.dart';
 import 'package:flutter_manager/widget/environment_badge.dart';
 import 'package:flutter_manager/widget/status_bar.dart';
-import 'package:provider/provider.dart';
+import 'package:open_dir/open_dir.dart';
 
 /*
 * 项目详情页appBar
@@ -105,7 +103,10 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建项目信息
   Widget _buildProjectInfo(BuildContext context) {
-    var bodyStyle = Theme.of(context).textTheme.bodySmall;
+    var bodyStyle = Theme
+        .of(context)
+        .textTheme
+        .bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
     return ListTile(
@@ -114,7 +115,7 @@ class ProjectDetailAppBar extends StatelessWidget {
         ConstrainedBox(
           constraints: BoxConstraints.loose(const Size.fromWidth(220)),
           child:
-              Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
         _buildEnvironmentBadge(),
@@ -152,17 +153,20 @@ class ProjectDetailAppBar extends StatelessWidget {
           iconSize: 20,
           tooltip: '打开项目目录',
           icon: const Icon(Icons.file_open_outlined),
-          onPressed: () => Tool.openLocalPath(project.path),
+          onPressed: () => OpenDir().openNativeDir(path: project.path),
         ),
         FilledButton.icon(
           label: const Text('打包'),
           icon: const Icon(Icons.build),
           style: ButtonStyle(
-            fixedSize: MaterialStateProperty.all(const Size.fromHeight(55)),
-            shape: MaterialStateProperty.all(
+            fixedSize: WidgetStatePropertyAll(const Size.fromHeight(55)),
+            shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            textStyle: MaterialStateProperty.all(
-                Theme.of(context).textTheme.bodyLarge),
+            textStyle:
+            WidgetStatePropertyAll(Theme
+                .of(context)
+                .textTheme
+                .bodyLarge),
           ),
           onPressed: () => showProjectBuild(context, project: project),
         ),
@@ -172,14 +176,8 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建项目环境标签
   Widget _buildEnvironmentBadge() {
-    return FutureProvider<Environment?>(
-      initialData: null,
-      create: (_) => database.getEnvironmentById(project.envId),
-      builder: (context, _) {
-        final environment = context.watch<Environment?>();
-        if (environment == null) return const SizedBox();
-        return EnvironmentBadge(environment: environment);
-      },
-    );
+    final environment = database.getEnvironmentById(project.envId);
+    if (environment == null) return const SizedBox();
+    return EnvironmentBadge(environment: environment);
   }
 }

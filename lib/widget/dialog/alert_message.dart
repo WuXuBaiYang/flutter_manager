@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示消息确认弹窗
 Future<bool?> showAlertMessage(

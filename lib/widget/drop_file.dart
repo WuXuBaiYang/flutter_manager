@@ -1,9 +1,6 @@
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'empty_box.dart';
 
 // 文件拖拽回调
@@ -52,9 +49,10 @@ class DropFileView extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context)=>[
-    ChangeNotifierProvider(create: (_) => DropFileViewProvider(context)),
-  ];
+  List<SingleChildWidget> get providers => [
+        ChangeNotifierProvider(
+            create: (context) => DropFileViewProvider(context)),
+      ];
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -62,21 +60,18 @@ class DropFileView extends ProviderView {
     return DropTarget(
         enable: enable,
         onDragEntered: (details) async {
-          final message =
-          await onEnterValidator?.call(details.globalPosition);
+          final message = await onEnterValidator?.call(details.globalPosition);
           provider.updateDropState(message != null, message ?? hint);
         },
         onDragExited: (details) async {
-          final message =
-          await onExitValidator?.call(details.globalPosition);
+          final message = await onExitValidator?.call(details.globalPosition);
           provider.updateWarningState(message);
           if (message != null) await Future.delayed(delayExit);
           provider.dropExited();
         },
         onDragUpdated: (details) async {
           if (onUpdateValidator == null) return;
-          final message =
-          await onUpdateValidator?.call(details.globalPosition);
+          final message = await onUpdateValidator?.call(details.globalPosition);
           provider.updateDropState(message != null, message ?? hint);
         },
         onDragDone: (details) async {

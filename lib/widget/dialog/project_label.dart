@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示修改别名弹窗
 Future<Map<PlatformType, String>?> showProjectLabel(BuildContext context,
@@ -31,11 +27,12 @@ class ProjectLabelDialog extends ProviderView {
   const ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context)=>[
-    ChangeNotifierProvider(
-      create: (_) => ProjectLabelDialogProvider(context, platformLabelMap),
-    ),
-  ];
+  List<SingleChildWidget> get providers => [
+        ChangeNotifierProvider(
+          create: (context) =>
+              ProjectLabelDialogProvider(context, platformLabelMap),
+        ),
+      ];
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -52,9 +49,11 @@ class ProjectLabelDialog extends ProviderView {
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () => provider.submitForm().then((result) {
-            if (result != null) Navigator.pop(context, result);
-          }),
+          onPressed: () async {
+            final result = await provider.submitForm();
+            if (result == null || !context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -215,7 +214,7 @@ class ProjectLabelDialogProvider extends BaseProvider {
       formState!.save();
       return _formData;
     } catch (e) {
-      showError(e.toString(), title: '操作失败');
+      Notice.showError(context, message: e.toString(), title: '操作失败');
     }
     return null;
   }

@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 本地路径文本输入框组件

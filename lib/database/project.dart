@@ -1,6 +1,5 @@
-import 'package:isar/isar.dart';
-
-import 'base/base.dart';
+import 'package:flutter_manager/objectbox.g.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'model/project.dart';
 
 /*
@@ -9,34 +8,44 @@ import 'model/project.dart';
 * @Time 2024/4/28 9:19
 */
 mixin ProjectDatabase on BaseDatabase {
+  // 项目数据盒
+  late final projectBox = getBox<Project>();
+
   // 获取项目数量
-  Future<int> get projectCount async => (await getProjectList()).length;
+  int get projectCount => projectBox.count();
+
+  // 根据环境id获取项目列表
+  List<Project> getProjectsByEnvironmentId(int id) {
+    return projectBox.query(Project_.envId.equals(id)).build().find();
+  }
 
   // 获取项目列表
-  Future<List<Project>> getProjectList({bool orderDesc = false}) {
-    var queryBuilder = isar.projects.where();
-    if (orderDesc) return queryBuilder.sortByOrderDesc().findAll();
-    return queryBuilder.sortByOrder().findAll();
+  List<Project> getProjectList({bool desc = false, bool pinned = false}) {
+    final flags = desc ? Order.descending : 0;
+    return projectBox
+        .query(Project_.pinned.equals(pinned))
+        .order(Project_.order, flags: flags)
+        .build()
+        .find();
   }
 
   // 添加/更新项目
-  Future<Project?> updateProject(Project item) async {
-    final count = await projectCount;
-    return writeTxn<Project?>(() {
-      return isar.projects.put(item..order = count).then(
-            (id) => item..id = id,
-          );
-    });
+  Future<Project> updateProject(Project project) {
+    return projectBox.putAndGetAsync(
+      project..order = projectCount,
+    );
   }
 
   // 更新项目排序
-  Future<List<Project>> updateProjects(List<Project> items) =>
-      writeTxn<List<Project>>(() {
-        return isar.projects.putAll(items).then((_) => items);
-      });
+  Future<List<Project>> updateProjects(List<Project> projects) {
+    int index = 0;
+    return projectBox.putAndGetManyAsync(projects.map((e) {
+      return e..order = index++;
+    }).toList());
+  }
 
   // 移除项目
-  Future<bool> removeProject(Id id) => writeTxn<bool>(() {
-        return isar.projects.delete(id);
-      });
+  bool removeProject(int id) {
+    return projectBox.remove(id);
+  }
 }

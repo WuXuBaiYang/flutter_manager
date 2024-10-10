@@ -1,5 +1,5 @@
 import 'package:flutter_manager/tool/image.dart';
-import 'package:path/path.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
 import 'platform.dart';
 

@@ -3,17 +3,9 @@ import 'dart:math';
 import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/tool/image.dart';
-import 'package:flutter_manager/tool/loading.dart';
-import 'package:flutter_manager/tool/notice.dart';
-import 'package:flutter_manager/tool/tool.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
-import 'package:path/path.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示图片编辑弹窗
 Future<String?> showImageEditor(BuildContext context,
@@ -51,9 +43,9 @@ class ImageEditorDialog extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider<ImageEditorDialogProvider>(
-          create: (_) => ImageEditorDialogProvider(context, (
+          create: (context) => ImageEditorDialogProvider(context, (
             ratio: initializeRatio,
             rotate: 0,
             borderRadius: 0,
@@ -79,11 +71,10 @@ class ImageEditorDialog extends ProviderView {
         ),
         TextButton(
           child: const Text('另存为'),
-          onPressed: () {
-            provider.saveOtherPath().loading(context).then((result) {
-              if (result == null) return;
-              NoticeTool.success(context, title: '图片保存成功', message: result);
-            });
+          onPressed: () async {
+            final result = await provider.saveOtherPath().loading(context);
+            if (result == null || !context.mounted) return;
+            Notice.showSuccess(context, title: '图片保存成功', message: result);
           },
         ),
         TextButton(
@@ -92,10 +83,11 @@ class ImageEditorDialog extends ProviderView {
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () => provider
-              .saveCrop()
-              .loading(context)
-              .then((v) => Navigator.pop(context, v)),
+          onPressed: () async {
+            final result = await provider.saveCrop().loading(context);
+            if (!context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -291,7 +283,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   ImageEditorActionTuple get actionTuple => _actionTuple;
 
   // 生成图片文件名称
-  String get _imageFileName => '${Tool.genID()}.${_actionTuple.imageType.name}';
+  String get _imageFileName => '${genID()}.${_actionTuple.imageType.name}';
 
   ImageEditorDialogProvider(super.context, this._initializeActionTuple)
       : _actionTuple = _initializeActionTuple;
@@ -304,7 +296,8 @@ class ImageEditorDialogProvider extends BaseProvider {
         return saveCrop(savePath: join(result, _imageFileName));
       }
     } catch (e) {
-      showError(e.toString(), title: '图片另存为失败');
+      if (!context.mounted) return null;
+      Notice.showError(context, message: e.toString(), title: '图片另存为失败');
     }
     return null;
   }
@@ -312,14 +305,15 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 保存裁剪后的图片并返回路径
   Future<String?> saveCrop({String? savePath}) async {
     try {
-      final baseDir = await Tool.getFileCachePath();
+      final baseDir = await Tool.getCacheFilePath();
       final cropImage = await controller.onCropImage();
       if (baseDir == null || cropImage == null) return null;
       savePath ??= join(baseDir, _imageFileName);
       return ImageTool.saveData(
           cropImage.bytes, savePath, _actionTuple.imageType);
     } catch (e) {
-      showError(e.toString(), title: '图片裁剪失败');
+      if (!context.mounted) return null;
+      Notice.showError(context, message: e.toString(), title: '图片裁剪失败');
     }
     return null;
   }

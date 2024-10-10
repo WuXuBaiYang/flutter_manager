@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/provider/provider.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/project_logo.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 平台组件数据提供者
@@ -107,7 +106,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
       final result = await ProjectTool.createPlatform(project!, platform);
       if (result) return initialize();
     } catch (e) {
-      showError(e.toString(), title: '创建失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '创建失败');
     }
   }
 
@@ -121,7 +121,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
       if (clearCache) clearCacheByPlatform(platform);
       initialize();
     } catch (e) {
-      showError(e.toString(), title: '移除失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '移除失败');
     }
   }
 
@@ -133,7 +134,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
           .map((e) => ProjectTool.setLabel(project!.path, e.key, e.value)));
       return initialize();
     } catch (e) {
-      showError(e.toString(), title: '标签修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '标签修改失败');
     }
   }
 
@@ -154,7 +156,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
       }
       return initialize();
     } catch (e) {
-      showError(e.toString(), title: '图标修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '图标修改失败');
     }
   }
 
@@ -165,7 +168,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
       final result = await ProjectTool.setLabel(project!.path, platform, label);
       if (result) updatePlatformInfo(platform);
     } catch (e) {
-      showError(e.toString(), title: '标签修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '标签修改失败');
     }
   }
 
@@ -179,7 +183,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
           progressCallback: progressCallback);
       if (result) updatePlatformInfo(platform);
     } catch (e) {
-      showError(e.toString(), title: '图标修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '图标修改失败');
     }
   }
 
@@ -191,7 +196,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
           await ProjectTool.setPackage(project!.path, platform, package);
       if (result) updatePlatformInfo(platform);
     } catch (e) {
-      showError(e.toString(), title: '包名修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '包名修改失败');
     }
   }
 
@@ -204,7 +210,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
           project!.path, platform, permissions);
       if (result) updatePlatformInfo(platform);
     } catch (e) {
-      showError(e.toString(), title: '权限修改失败');
+      if (!context.mounted) return;
+      Notice.showError(context, message: e.toString(), title: '权限修改失败');
     }
   }
 

@@ -9,14 +9,12 @@
 .history
 .svn/
 migrate_working_dir/
-*.keystore
 
 # IntelliJ related
 *.iml
 *.ipr
 *.iws
 .idea/
-.vscode/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -29,7 +27,6 @@ migrate_working_dir/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
-.packages
 .pub-cache/
 .pub/
 /build/
@@ -40,16 +37,16 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-build_pgy.sh
-build_tf.sh
-
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
 
-# gen file
-gen/
-generated/
+# 生成文件忽略
+/lib/generated/
+/lib/gen/
+/venv/
 
+# 忽略签名文件
+*.keystore
 *.g.dart

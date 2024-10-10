@@ -40,10 +40,10 @@ class Project {
     this.logo = '',
     this.path = '',
     this.envId = 0,
+    this.color = 0,
     this.pinned = false,
     this.order = -1,
-    Color color = Colors.transparent,
-  }) : color = color.value;
+  });
 
   // 获取颜色
   Color getColor([double opacity = 1]) {

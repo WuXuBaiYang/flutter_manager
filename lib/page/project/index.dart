@@ -1,39 +1,34 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/notice.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 项目页
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPage extends ProviderPage {
-  const ProjectPage({super.key, super.primary = false});
+class ProjectPage extends ProviderPage<ProjectPageProvider> {
+  const ProjectPage({super.key, super.state});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => ProjectPageProvider(context)),
-      ];
+  ProjectPageProvider createProvider(
+          BuildContext context, GoRouterState? state) =>
+      ProjectPageProvider(context, state);
 
   @override
-  Widget buildPage(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('项目'),
@@ -52,7 +47,7 @@ class ProjectPage extends ProviderPage {
   // 构建文件拖拽区域
   Widget _buildDropArea(BuildContext context) {
     final provider = context.read<ProjectPageProvider>();
-    final enable = context.watch<HomePageProvider>().isNavigationIndex(0);
+    final enable = context.watch<HomePageProvider>().isCurrentIndex(0);
     return DropFileView(
       enable: enable,
       onDoneValidator: (paths) {
@@ -83,7 +78,7 @@ class ProjectPage extends ProviderPage {
 
   // 构建置顶项目集合
   Widget _buildPinnedProjects(BuildContext context) {
-    final provider = context.project;
+    final projectProvider = context.project;
     return Selector<ProjectProvider, List<Project>>(
       shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.pinnedProjects,
@@ -96,15 +91,16 @@ class ProjectPage extends ProviderPage {
             ),
             child: ProjectGridView(
               projects: pinnedProjects,
-              onReorder: provider.reorderPinned,
-              onPinned: provider.togglePinned,
+              onPinned: projectProvider.togglePinned,
+              onReorder: projectProvider.reorderPinned,
               onDelete: (item) => context
                   .read<ProjectPageProvider>()
                   .removeProject(context, item),
               onEdit: (item) => showProjectImport(context, project: item),
-              onDetail: (item) => context
-                  .pushNamed(RoutePath.projectDetail, extra: item)
-                  .then((_) => provider.initialize()),
+              onDetail: (item) async {
+                await router.goProjectDetail(item);
+                projectProvider.refresh();
+              },
             ),
           ),
         );
@@ -114,7 +110,7 @@ class ProjectPage extends ProviderPage {
 
   // 构建项目集合
   Widget _buildProjects(BuildContext context) {
-    final provider = context.project;
+    final projectProvider = context.project;
     return Selector<ProjectProvider, List<Project>>(
       shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.projects,
@@ -122,16 +118,18 @@ class ProjectPage extends ProviderPage {
         if (projects.isEmpty) return const SizedBox();
         return ProjectGridView(
           projects: projects,
-          onReorder: provider.reorder,
-          onPinned: provider.togglePinned,
+          onReorder: projectProvider.reorder,
+          onPinned: projectProvider.togglePinned,
           padding: const EdgeInsets.all(14).copyWith(
             bottom: kToolbarHeight + 24,
           ),
+          onDetail: (item) async {
+            await router.goProjectDetail(item);
+            projectProvider.refresh();
+          },
           onDelete: (item) =>
               context.read<ProjectPageProvider>().removeProject(context, item),
           onEdit: (item) => showProjectImport(context, project: item),
-          onDetail: (item) =>
-              context.push(RoutePath.projectDetail, extra: item),
         );
       },
     );
@@ -141,12 +139,16 @@ class ProjectPage extends ProviderPage {
   bool _checkEnvironment(BuildContext context) {
     final hasEnvironment = context.environment.hasEnvironment;
     if (hasEnvironment) return true;
-    NoticeTool.error(context,
-        message: '缺少Flutter环境',
-        action: SnackBarAction(
-          label: '设置',
+    Notice.showError(
+      context,
+      message: '缺少Flutter环境',
+      actions: [
+        TextButton(
           onPressed: context.setting.goEnvironment,
-        ));
+          child: Text('设置'),
+        ),
+      ],
+    );
     return hasEnvironment;
   }
 }
@@ -156,18 +158,22 @@ class ProjectPage extends ProviderPage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPageProvider extends BaseProvider {
-  ProjectPageProvider(super.context);
+class ProjectPageProvider extends PageProvider {
+  ProjectPageProvider(super.context, super.state);
 
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.project..remove(item);
-    NoticeTool.success(context,
-        message: '${item.label} 项目已移除',
-        action: SnackBarAction(
-          label: '撤销',
+    Notice.showSuccess(
+      context,
+      message: '${item.label} 项目已移除',
+      actions: [
+        TextButton(
+          child: Text('撤销'),
           onPressed: () => provider.update(item),
-        ));
+        ),
+      ],
+    );
   }
 
   // 文件拖拽完成

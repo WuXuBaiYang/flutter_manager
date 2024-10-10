@@ -1,3 +1,4 @@
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/page/package/index.dart';
@@ -48,7 +49,7 @@ class Router extends BaseRouter {
           name: home,
           path: homePath,
           builder: (_, state) {
-            return const HomePage(state: state);
+            return HomePage(state: state);
           },
         ),
         // 项目页
@@ -56,7 +57,7 @@ class Router extends BaseRouter {
           name: project,
           path: projectPath,
           builder: (_, state) {
-            return const ProjectPage(state: state);
+            return ProjectPage(state: state);
           },
         ),
         // 项目详情页
@@ -64,7 +65,7 @@ class Router extends BaseRouter {
           name: projectDetail,
           path: projectDetailPath,
           builder: (_, state) {
-            return const ProjectDetailPage(state: state);
+            return ProjectDetailPage(state: state);
           },
         ),
         // 包管理页
@@ -72,7 +73,7 @@ class Router extends BaseRouter {
           name: package,
           path: packagePath,
           builder: (_, state) {
-            return const PackagePage(state: state);
+            return PackagePage(state: state);
           },
         ),
         // 设置页
@@ -80,7 +81,7 @@ class Router extends BaseRouter {
           name: settings,
           path: settingsPath,
           builder: (_, state) {
-            return const SettingsPage(state: state);
+            return SettingsPage(state: state);
           },
         ),
       ];
@@ -92,7 +93,8 @@ class Router extends BaseRouter {
   void goProject() => routerConfig.pushNamed(project);
 
   // 跳转项目详情页
-  void goProjectDetail() => routerConfig.pushNamed(projectDetail);
+  Future<void> goProjectDetail(Project project) =>
+      routerConfig.pushNamed(projectDetail, extra: project);
 
   // 跳转打包页
   void goPackage() => routerConfig.pushNamed(package);

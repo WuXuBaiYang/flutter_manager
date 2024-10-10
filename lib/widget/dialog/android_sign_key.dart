@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
-import 'package:flutter_manager/tool/loading.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key_options.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示android签名创建弹窗
 Future<bool?> showAndroidSignKey(BuildContext context) {
@@ -29,10 +24,9 @@ class AndroidSignKeyDialog extends ProviderView {
   const AndroidSignKeyDialog({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider<AndroidSignKeyDialogProvider>(
-          create: (_) => AndroidSignKeyDialogProvider(context),
-        ),
+            create: (context) => AndroidSignKeyDialogProvider(context)),
       ];
 
   @override
@@ -48,10 +42,11 @@ class AndroidSignKeyDialog extends ProviderView {
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () =>
-              provider.submitForm().loading(context).then((result) {
-            if (result == true) Navigator.pop(context);
-          }),
+          onPressed: () async {
+            final result = await provider.submitForm().loading(context);
+            if (result == null || !context.mounted) return;
+            Navigator.pop(context, result);
+          },
         ),
       ],
     );
@@ -232,7 +227,7 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
       if (form == null) return false;
       return ProjectTool.genAndroidSignKey(form);
     } catch (e) {
-      showError(e.toString(), title: '签名生成失败');
+      Notice.showError(context, message: e.toString(), title: '签名生成失败');
     }
     return false;
   }

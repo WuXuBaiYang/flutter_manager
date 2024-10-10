@@ -1,19 +1,12 @@
 import 'dart:async';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/provider.dart';
-import 'package:flutter_manager/common/view.dart';
 import 'package:flutter_manager/database/model/environment.dart';
-import 'package:flutter_manager/provider/provider.dart';
-import 'package:flutter_manager/tool/file.dart';
-import 'package:flutter_manager/tool/loading.dart';
+import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/widget/custom_dialog.dart';
 import 'package:flutter_manager/widget/environment_remote_list.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 // 展示远程导入环境弹窗
 Future<Environment?> showEnvironmentImportRemote(BuildContext context,
@@ -34,9 +27,9 @@ class EnvironmentImportRemoteDialog extends ProviderView {
   const EnvironmentImportRemoteDialog({super.key});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
+  List<SingleChildWidget> get providers => [
         ChangeNotifierProvider<EnvironmentRemoteImportDialogProvider>(
-          create: (_) => EnvironmentRemoteImportDialogProvider(context),
+          create: (context) => EnvironmentRemoteImportDialogProvider(context),
         ),
       ];
 
@@ -156,10 +149,11 @@ class EnvironmentImportRemoteDialog extends ProviderView {
       BuildContext context, int currentStep, String? savePath) {
     if (currentStep >= 2 || savePath == null) return null;
     final provider = context.read<EnvironmentRemoteImportDialogProvider>();
-    return () {
-      provider.submitForm(context, savePath).loading(context).then((result) {
-        if (result != null) Navigator.pop(context, result);
-      });
+    return () async {
+      final result =
+          await provider.submitForm(context, savePath).loading(context);
+      if (result == null || !context.mounted) return;
+      Navigator.pop(context, result);
     };
   }
 }
@@ -228,7 +222,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
       formState!.save();
       return context.environment.importArchive(archiveFile, _formData.path);
     } catch (e) {
-      showError(e.toString(), title: '操作失败');
+      Notice.showError(context, message: e.toString(), title: '操作失败');
     }
     return null;
   }

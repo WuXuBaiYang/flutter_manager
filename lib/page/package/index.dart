@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/common/page.dart';
-import 'package:flutter_manager/common/provider.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
-import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 打包页
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePage extends ProviderPage {
-  const PackagePage({super.key, super.primary = false});
+class PackagePage extends ProviderPage<PackagePageProvider> {
+  const PackagePage({super.key, super.state});
 
   @override
-  List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (_) => PackagePageProvider(context)),
-      ];
+  PackagePageProvider createProvider(
+          BuildContext context, GoRouterState? state) =>
+      PackagePageProvider(context, state);
 
   @override
-  Widget buildPage(BuildContext context) {
+  Widget buildWidget(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('打包'),
@@ -39,6 +36,6 @@ class PackagePage extends ProviderPage {
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePageProvider extends BaseProvider {
-  PackagePageProvider(super.context);
+class PackagePageProvider extends PageProvider {
+  PackagePageProvider(super.context, super.state);
 }

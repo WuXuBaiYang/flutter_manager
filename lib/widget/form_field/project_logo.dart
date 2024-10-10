@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/dialog/image_editor.dart';
+import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 项目图标表单字段组件
@@ -85,9 +85,11 @@ class ProjectLogoFormField extends StatelessWidget {
   // 切换项目图标
   Future<void> _changeLogoFile(
       BuildContext context, FormFieldState<String> field) async {
-    final result = await Tool.pickImageWithEdit(context,
-        dialogTitle: '选择项目图标', absoluteRatio: CropAspectRatio.ratio1_1);
-    if (result?.isEmpty ?? true) return;
+    var result = await Tool.pickImage(dialogTitle: '选择项目图标');
+    if (result == null || !context.mounted) return;
+    result = await showImageEditor(context,
+        path: result, absoluteRatio: CropAspectRatio.ratio1_1);
+    if (result == null) return;
     field.didChange(result);
     field.validate();
   }

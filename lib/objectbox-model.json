@@ -1,0 +1,141 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:9034861443883401027",
+      "lastPropertyId": "11:7649046399407369963",
+      "name": "Environment",
+      "properties": [
+        {
+          "id": "1:8011211555514586270",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1683755057546683126",
+          "name": "path",
+          "type": 9
+        },
+        {
+          "id": "3:5638072462937838056",
+          "name": "version",
+          "type": 9
+        },
+        {
+          "id": "4:2991534112155378040",
+          "name": "channel",
+          "type": 9
+        },
+        {
+          "id": "5:1814456378255865900",
+          "name": "gitUrl",
+          "type": 9
+        },
+        {
+          "id": "6:2355590175767925814",
+          "name": "frameworkReversion",
+          "type": 9
+        },
+        {
+          "id": "7:4161918952061780323",
+          "name": "engineReversion",
+          "type": 9
+        },
+        {
+          "id": "8:4076346637452882472",
+          "name": "dartVersion",
+          "type": 9
+        },
+        {
+          "id": "9:4676214352282958599",
+          "name": "devToolsVersion",
+          "type": 9
+        },
+        {
+          "id": "10:5305824034247615464",
+          "name": "updatedAt",
+          "type": 9
+        },
+        {
+          "id": "11:7649046399407369963",
+          "name": "order",
+          "type": 6
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:7826516913224224885",
+      "lastPropertyId": "10:7815765538782068326",
+      "name": "Project",
+      "properties": [
+        {
+          "id": "1:3154218391712015297",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:3314509925949404389",
+          "name": "label",
+          "type": 9
+        },
+        {
+          "id": "3:4435528029119711153",
+          "name": "logo",
+          "type": 9
+        },
+        {
+          "id": "4:8328946749862318625",
+          "name": "path",
+          "type": 9
+        },
+        {
+          "id": "5:4225736659663167534",
+          "name": "envId",
+          "type": 6
+        },
+        {
+          "id": "6:1458920948108913861",
+          "name": "color",
+          "type": 6
+        },
+        {
+          "id": "7:4557941675069096724",
+          "name": "pinned",
+          "type": 1
+        },
+        {
+          "id": "8:6521180072809685562",
+          "name": "order",
+          "type": 6
+        },
+        {
+          "id": "9:7126985955892300994",
+          "name": "createAt",
+          "type": 10
+        },
+        {
+          "id": "10:7815765538782068326",
+          "name": "updateAt",
+          "type": 10
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "2:7826516913224224885",
+  "lastIndexId": "0:0",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}
