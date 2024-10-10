@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/provider/environment.dart';
-import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:jtech_base/jtech_base.dart';
-import 'environment_list.dart';
-import 'setting_item.dart';
+import 'item.dart';
+
+// 异步移除验证回调
+typedef AsyncRemoveValidator<T> = Future<bool> Function(T environment);
 
 /*
 * 设置项-环境设置
@@ -13,37 +14,180 @@ import 'setting_item.dart';
 * @Time 2024/10/10 16:25
 */
 class SettingItemEnvironment extends StatelessWidget {
+  // 设置key
+  final Key settingKey;
+
+  // 环境列表
+  final List<Environment> environments;
+
   // 本地导入回调
   final VoidCallback? onImportLocal;
 
   // 远程导入回调
   final VoidCallback? onImportRemote;
 
+  // 约束
+  final BoxConstraints constraints;
+
+  // 排序回调
+  final ReorderCallback onReorder;
+
+  // 环境移除回调
+  final ValueChanged<Environment>? onRemove;
+
+  // 环境移除异步确认
+  final AsyncRemoveValidator<Environment> removeValidator;
+
+  // 环境刷新回调
+  final ValueChanged<Environment>? onRefresh;
+
+  // 环境编辑回调
+  final ValueChanged<Environment>? onEdit;
+
   const SettingItemEnvironment({
     super.key,
+    required this.onReorder,
+    required this.settingKey,
+    required this.environments,
+    required this.removeValidator,
+    this.onEdit,
+    this.onRemove,
+    this.onRefresh,
     this.onImportLocal,
     this.onImportRemote,
+    this.constraints = const BoxConstraints(maxHeight: 240),
   });
 
   @override
   Widget build(BuildContext context) {
     return SettingItem(
-      key: key,
+      key: settingKey,
       label: 'Flutter环境',
-      content: const EnvironmentList(),
-      child: PopupMenuButton(
-        tooltip: '添加环境',
-        icon: const Icon(Icons.add_circle_outline),
-        itemBuilder: (_) => [
-          PopupMenuItem(
-            onTap: onImportLocal,
-            child: const Text('本地导入'),
+      content: _buildContent(context),
+      child: _buildAddButton(context),
+    );
+  }
+
+  // 操作按钮
+  Widget _buildAddButton(BuildContext context) {
+    return PopupMenuButton(
+      tooltip: '添加环境',
+      icon: const Icon(Icons.add_circle_outline),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          onTap: onImportLocal,
+          child: const Text('本地导入'),
+        ),
+        PopupMenuItem(
+          onTap: onImportRemote,
+          child: const Text('远程导入'),
+        ),
+      ],
+    );
+  }
+
+  // 构建环境列表
+  Widget _buildContent(BuildContext context) {
+    return ConstrainedBox(
+      constraints: constraints,
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        child: _buildList(context),
+      ),
+    );
+  }
+
+  // 构建环境列表
+  Widget _buildList(BuildContext context) {
+    if (environments.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(14),
+        child: Text('暂无环境'),
+      );
+    }
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      onReorder: onReorder,
+      itemCount: environments.length,
+      buildDefaultDragHandles: false,
+      proxyDecorator: (_, index, ___) {
+        final item = environments[index];
+        return _buildListItemProxy(item);
+      },
+      itemBuilder: (_, index) {
+        final item = environments[index];
+        return _buildListItem(context, item, index);
+      },
+    );
+  }
+
+  // 构建Flutter环境列表项
+  Widget _buildListItem(BuildContext context, Environment item, int index) {
+    return Dismissible(
+      key: ValueKey(item.id),
+      direction: DismissDirection.endToStart,
+      onDismissed: (_) => onRemove?.call(item),
+      confirmDismiss: (_) => removeValidator(item),
+      background: Container(
+        color: Colors.redAccent,
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 14),
+        child: const Icon(Icons.delete, color: Colors.white),
+      ),
+      child: ListTile(
+        title: Text(item.title),
+        subtitle: Text(item.path),
+        trailing: _buildListItemOptions(context, item, index),
+      ),
+    );
+  }
+
+  // 构建Flutter环境列表项选项
+  Widget _buildListItemOptions(
+      BuildContext context, Environment item, int index) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!EnvironmentTool.isPathAvailable(item.path)) ...[
+          const Tooltip(
+            message: '环境不存在',
+            child: Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.redAccent,
+              size: 18,
+            ),
           ),
-          PopupMenuItem(
-            onTap: onImportRemote,
-            child: const Text('远程导入'),
-          ),
+          const SizedBox(width: 14),
         ],
+        IconButton(
+          iconSize: 18,
+          tooltip: '编辑环境',
+          icon: const Icon(Icons.edit),
+          onPressed: () => onEdit?.call(item),
+        ),
+        IconButton(
+          iconSize: 18,
+          tooltip: '刷新环境',
+          icon: const Icon(Icons.refresh),
+          onPressed: () => onRefresh?.call(item),
+        ),
+        const SizedBox(width: 8),
+        ReorderableDragStartListener(
+          index: index,
+          child: const Icon(Icons.drag_handle),
+        ),
+      ],
+    );
+  }
+
+  // 构建Flutter环境列表项代理
+  Widget _buildListItemProxy(Environment item) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: ListTile(
+        title: Text(item.title),
+        subtitle: Text(item.path),
+        trailing: const Icon(Icons.drag_handle),
       ),
     );
   }
@@ -55,32 +199,30 @@ class SettingItemEnvironment extends StatelessWidget {
 * @Time 2024/10/10 16:30
 */
 class SettingItemEnvironmentCache extends StatelessWidget {
+  // 设置key
+  final Key settingKey;
+
+  // 下载文件记录
+  final DownloadFileInfoTuple? downloadFileInfo;
+
   // 打开缓存目录回调
   final VoidCallback? onOpenCacheDirectory;
 
   const SettingItemEnvironmentCache({
     super.key,
+    required this.settingKey,
+    this.downloadFileInfo,
     this.onOpenCacheDirectory,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cacheCount = '${downloadFileInfo?.count ?? 0}个缓存文件';
+    final cacheSize = FileTool.formatSize(downloadFileInfo?.totalSize ?? 0);
     return SettingItem(
-      key: key,
+      key: settingKey,
       label: 'Flutter环境缓存',
-      content: Consumer<EnvironmentProvider>(
-        builder: (_, provider, __) {
-          return FutureBuilder<DownloadFileInfoTuple>(
-            future: EnvironmentTool.getDownloadFileInfo(),
-            builder: (_, snap) {
-              final info = snap.data;
-              final cacheCount = '${info?.count ?? 0}个缓存文件';
-              final cacheSize = FileTool.formatSize(info?.totalSize ?? 0);
-              return Text('$cacheCount/$cacheSize');
-            },
-          );
-        },
-      ),
+      content: Text('$cacheCount/$cacheSize'),
       child: IconButton(
         tooltip: '打开缓存目录',
         onPressed: onOpenCacheDirectory,
@@ -96,6 +238,12 @@ class SettingItemEnvironmentCache extends StatelessWidget {
 * @Time 2024/10/10 16:34
 */
 class SettingItemPlatformSort extends StatelessWidget {
+  // 设置key
+  final Key settingKey;
+
+  // 排序列表
+  final List<PlatformType> platforms;
+
   // 约束
   final BoxConstraints constraints;
 
@@ -104,14 +252,16 @@ class SettingItemPlatformSort extends StatelessWidget {
 
   const SettingItemPlatformSort({
     super.key,
+    required this.platforms,
     required this.onReorder,
+    required this.settingKey,
     this.constraints = const BoxConstraints.tightFor(height: 55),
   });
 
   @override
   Widget build(BuildContext context) {
     return SettingItem(
-      key: key,
+      key: settingKey,
       label: '项目平台排序',
       content: ConstrainedBox(
         constraints: constraints,
@@ -122,32 +272,27 @@ class SettingItemPlatformSort extends StatelessWidget {
 
   // 构建平台列表
   Widget _buildPlatformList(BuildContext context) {
-    return Selector<ProjectProvider, List<PlatformType>>(
-      selector: (_, provider) => provider.platformSort,
-      builder: (_, platformSort, __) {
-        return ReorderableListView.builder(
-          onReorder: onReorder,
-          itemCount: platformSort.length,
-          buildDefaultDragHandles: false,
-          scrollDirection: Axis.horizontal,
-          proxyDecorator: (_, index, ___) {
-            final item = platformSort[index];
-            return Material(
-              color: Colors.transparent,
-              child: _buildPlatformListItem(context, item),
-            );
-          },
-          itemBuilder: (_, i) {
-            final item = platformSort[i];
-            return ReorderableDragStartListener(
-              index: i,
-              key: ValueKey(item.index),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: _buildPlatformListItem(context, item),
-              ),
-            );
-          },
+    return ReorderableListView.builder(
+      onReorder: onReorder,
+      itemCount: platforms.length,
+      buildDefaultDragHandles: false,
+      scrollDirection: Axis.horizontal,
+      proxyDecorator: (_, index, ___) {
+        final item = platforms[index];
+        return Material(
+          color: Colors.transparent,
+          child: _buildPlatformListItem(context, item),
+        );
+      },
+      itemBuilder: (_, i) {
+        final item = platforms[i];
+        return ReorderableDragStartListener(
+          index: i,
+          key: ValueKey(item.index),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: _buildPlatformListItem(context, item),
+          ),
         );
       },
     );
@@ -169,6 +314,9 @@ class SettingItemPlatformSort extends StatelessWidget {
 * @Time 2024/10/10 16:43
 */
 class SettingItemThemeMode extends StatelessWidget {
+  // 设置key
+  final Key settingKey;
+
   // 当前主题模式
   final ThemeMode themeMode;
 
@@ -180,6 +328,7 @@ class SettingItemThemeMode extends StatelessWidget {
 
   const SettingItemThemeMode({
     super.key,
+    required this.settingKey,
     this.onThemeChange,
     this.themeMode = ThemeMode.system,
     this.brightness = Brightness.light,
@@ -188,7 +337,7 @@ class SettingItemThemeMode extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingItem(
-      key: key,
+      key: settingKey,
       label: '配色模式',
       content: Text(brightness.label),
       child: DropdownButton<ThemeMode>(
@@ -211,6 +360,9 @@ class SettingItemThemeMode extends StatelessWidget {
 * @Time 2024/10/10 16:47
 */
 class SettingItemThemeScheme extends StatelessWidget {
+  // 设置key
+  final Key settingKey;
+
   // 当前主题配色
   final ThemeScheme themeScheme;
 
@@ -219,6 +371,7 @@ class SettingItemThemeScheme extends StatelessWidget {
 
   const SettingItemThemeScheme({
     super.key,
+    required this.settingKey,
     required this.themeScheme,
     this.onThemeSchemeChange,
   });
@@ -226,7 +379,7 @@ class SettingItemThemeScheme extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SettingItem(
-      key: key,
+      key: settingKey,
       label: '应用配色',
       content: Text(themeScheme.label),
       child: ThemeSchemeItem(

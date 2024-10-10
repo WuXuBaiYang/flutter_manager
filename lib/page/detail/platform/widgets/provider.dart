@@ -32,7 +32,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   // 获取全平台（存在）标签对照表(按照设置排序)
   Map<PlatformType, String> get labelMap {
     var result = {..._platformInfoMap}..removeWhere((_, v) => v?.label == null);
-    for (var e in context.project.platformSort) {
+    for (var e in context.project.platforms) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
@@ -45,7 +45,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   Map<PlatformType, List<PlatformLogoTuple>> get logoMap {
     var result = {..._platformInfoMap}
       ..removeWhere((_, v) => v?.logos.isEmpty ?? true);
-    for (var e in context.project.platformSort) {
+    for (var e in context.project.platforms) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
@@ -69,8 +69,8 @@ class PlatformProvider extends BaseProvider with WindowListener {
   Future<void> initialize() async {
     if (project == null) return;
     _platformList = ProjectTool.getPlatforms(project!.path);
-    final platformSort = context.project.platformSort;
-    for (var e in platformSort) {
+    final platforms = context.project.platforms;
+    for (var e in platforms) {
       if (!_platformList.contains(e)) continue;
       _platformList.remove(e);
       _platformList.add(e);

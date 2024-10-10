@@ -56,8 +56,8 @@ class MyApp extends ProviderView {
     return Consumer<ThemeProvider>(
       builder: (_, theme, __) {
         return MaterialApp.router(
+          title: 'Flutter管理',
           theme: theme.themeData,
-          title: S.current.appName,
           themeMode: theme.themeMode,
           darkTheme: theme.darkThemeData,
           debugShowCheckedModeBanner: false,

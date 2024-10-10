@@ -33,10 +33,10 @@ class ProjectProvider extends BaseProvider {
   bool get hasProject => _projects.isNotEmpty || _pinnedProjects.isNotEmpty;
 
   // 默认项目平台排序表
-  late List<PlatformType> _platformSort = ProjectTool.getPlatformSort();
+  late List<PlatformType> _platforms = ProjectTool.getPlatformSort();
 
   // 获取默认项目平台排序表
-  List<PlatformType> get platformSort => _platformSort;
+  List<PlatformType> get platforms => _platforms;
 
   ProjectProvider(super.context);
 
@@ -48,13 +48,13 @@ class ProjectProvider extends BaseProvider {
 
   // 调换项目平台排序
   void swapPlatformSort(int oldIndex, int newIndex) {
-    _platformSort = [..._platformSort].swap(oldIndex, newIndex);
+    _platforms = [..._platforms].swap(oldIndex, newIndex);
     notifyListeners();
   }
 
   // 更新项目平台排序
   Future<bool> updatePlatformSort(List<PlatformType> platforms) async {
-    _platformSort = platforms;
+    _platforms = platforms;
     notifyListeners();
     return ProjectTool.cachePlatformSort(platforms);
   }

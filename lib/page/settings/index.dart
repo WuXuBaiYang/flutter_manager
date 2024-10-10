@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/home/index.dart';
+import 'package:flutter_manager/provider/environment.dart';
+import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
 import 'package:flutter_manager/widget/dialog/environment_import_remote.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
@@ -50,29 +53,62 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   // 构建内容区域
   Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
-      controller: context.read<SettingsPageProvider>().scrollController,
+      controller: getProvider(context).scrollController,
       child: Column(children: [
-        SettingItemEnvironment(
-          key: context.setting.environmentKey,
-          onImportLocal: () => showEnvironmentImport(context),
-          onImportRemote: () => showEnvironmentImportRemote(context),
+        // 环境设置
+        Selector<EnvironmentProvider, List<Environment>>(
+          selector: (_, provider) => provider.environments,
+          builder: (_, environments, __) {
+            return SettingItemEnvironment(
+              environments: environments,
+              onReorder: context.environment.reorder,
+              settingKey: context.setting.environmentKey,
+              onRemove: getProvider(context).removeEnvironment,
+              onRefresh: getProvider(context).refreshEnvironment,
+              onImportLocal: () => showEnvironmentImport(context),
+              onImportRemote: () => showEnvironmentImportRemote(context),
+              onEdit: (e) => showEnvironmentImport(context, environment: e),
+              removeValidator: getProvider(context).removeEnvironmentConfirm,
+            );
+          },
         ),
-        SettingItemEnvironmentCache(
-          key: context.setting.environmentCacheKey,
-          onOpenCacheDirectory: getProvider(context).openCacheDirectory,
+        // 环境缓存设置
+        Consumer<EnvironmentProvider>(
+          builder: (_, provider, __) {
+            return FutureBuilder<DownloadFileInfoTuple>(
+              future: EnvironmentTool.getDownloadFileInfo(),
+              builder: (_, snap) {
+                return SettingItemEnvironmentCache(
+                  downloadFileInfo: snap.data,
+                  settingKey: context.setting.environmentCacheKey,
+                  onOpenCacheDirectory: getProvider(context).openCacheDirectory,
+                );
+              },
+            );
+          },
         ),
-        SettingItemPlatformSort(
-          key: context.setting.projectPlatformSortKey,
-          onReorder: context.project.swapPlatformSort,
+        // 平台排序设置
+        Selector<ProjectProvider, List<PlatformType>>(
+          selector: (_, provider) => provider.platforms,
+          builder: (_, platforms, __) {
+            return SettingItemPlatformSort(
+              platforms: platforms,
+              onReorder: context.project.swapPlatformSort,
+              settingKey: context.setting.projectPlatformSortKey,
+            );
+          },
         ),
+        // 主题设置
         SettingItemThemeMode(
-          key: context.setting.themeModeKey,
           themeMode: context.theme.themeMode,
           brightness: context.theme.brightness,
+          settingKey: context.setting.themeModeKey,
           onThemeChange: context.theme.changeThemeMode,
         ),
+        // 主题配色设置
         SettingItemThemeScheme(
           themeScheme: context.theme.themeScheme,
+          settingKey: context.setting.themeSchemeKey,
           onThemeSchemeChange: context.theme.showSchemeChangePicker,
         ),
       ]),
@@ -95,6 +131,40 @@ class SettingsPageProvider extends PageProvider {
       final c = context.setting.selectedKey?.currentContext;
       if (c != null) Scrollable.ensureVisible(c);
     });
+  }
+
+  // 移除环境
+  void removeEnvironment(Environment environment) {
+    context.environment.remove(environment);
+    Notice.showSuccess(
+      context,
+      message: '${environment.title} 环境已移除',
+      actions: [
+        TextButton(
+          onPressed: () {
+            context.environment.update(environment);
+          },
+          child: Text('撤销'),
+        )
+      ],
+    );
+  }
+
+  // 移除环境确认
+  Future<bool> removeEnvironmentConfirm(Environment environment) async {
+    final result = context.environment.removeValidator(environment);
+    if (result == null) return true;
+    Notice.showError(context, message: result, title: '环境移除失败');
+    return false;
+  }
+
+  // 刷新环境
+  void refreshEnvironment(Environment environment) async {
+    final result =
+        await context.environment.refresh(environment).loading(context);
+    if (!context.mounted) return;
+    Notice.showError(context, message: '$result', title: '刷新失败');
+    context.environment.update(environment);
   }
 
   // 文件拖拽完成
