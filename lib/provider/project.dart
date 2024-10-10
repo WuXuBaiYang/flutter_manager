@@ -46,6 +46,12 @@ class ProjectProvider extends BaseProvider {
     _updatePinnedProjects();
   }
 
+  // 调换项目平台排序
+  void swapPlatformSort(int oldIndex, int newIndex) {
+    _platformSort = [..._platformSort].swap(oldIndex, newIndex);
+    notifyListeners();
+  }
+
   // 更新项目平台排序
   Future<bool> updatePlatformSort(List<PlatformType> platforms) async {
     _platformSort = platforms;

@@ -23,7 +23,7 @@ class SettingItem extends StatefulWidget {
   final int maxBlinkCount;
 
   const SettingItem({
-    required super.key,
+    super.key,
     required this.label,
     this.child,
     this.content,
