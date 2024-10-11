@@ -14,6 +14,7 @@ class ThemeProvider extends BaseThemeProvider {
       ThemeData themeData, Brightness brightness, bool useMaterial3) {
     return themeData.copyWith(
       focusColor: Colors.transparent,
+      scaffoldBackgroundColor: Colors.black38,
       appBarTheme: const AppBarTheme(
         scrolledUnderElevation: 0,
       ),
