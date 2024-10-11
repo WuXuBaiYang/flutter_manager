@@ -8,7 +8,7 @@ import 'package:jtech_base/jtech_base.dart';
 * @Time 2023/11/24 14:26
 */
 class PackagePage extends ProviderPage<PackagePageProvider> {
-  const PackagePage({super.key, super.state});
+  const PackagePage({super.key, required super.context, super.state});
 
   @override
   PackagePageProvider createProvider(

@@ -21,7 +21,7 @@ import 'project_list.dart';
 * @Time 2023/11/24 14:25
 */
 class ProjectPage extends ProviderPage<ProjectPageProvider> {
-  const ProjectPage({super.key, super.state});
+  const ProjectPage({super.key, required super.context, super.state});
 
   @override
   ProjectPageProvider createProvider(
@@ -36,10 +36,7 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
       ),
       body: _buildDropArea(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (!_checkEnvironment(context)) return;
-          showProjectImport(context);
-        },
+        onPressed: pageProvider.addProject,
         child: const Icon(Icons.add),
       ),
     );
@@ -135,23 +132,6 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
       },
     );
   }
-
-  // 检查环境是否存在
-  bool _checkEnvironment(BuildContext context) {
-    final hasEnvironment = context.environment.hasEnvironment;
-    if (hasEnvironment) return true;
-    Notice.showError(
-      context,
-      message: '缺少Flutter环境',
-      actions: [
-        TextButton(
-          onPressed: context.setting.goEnvironment,
-          child: Text('设置'),
-        ),
-      ],
-    );
-    return hasEnvironment;
-  }
 }
 
 /*
@@ -162,12 +142,27 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
 class ProjectPageProvider extends PageProvider {
   ProjectPageProvider(super.context, super.state);
 
+  // 添加项目
+  void addProject() {
+    if (!context.environment.hasEnvironment) {
+      return showNoticeError(
+        '缺少Flutter环境',
+        actions: [
+          TextButton(
+            onPressed: context.setting.goEnvironment,
+            child: Text('设置'),
+          ),
+        ],
+      );
+    }
+    showProjectImport(context);
+  }
+
   // 移除项目
   void removeProject(BuildContext context, Project item) {
     final provider = context.project..remove(item);
-    Notice.showSuccess(
-      context,
-      message: '${item.label} 项目已移除',
+    showNoticeSuccess(
+      '${item.label} 项目已移除',
       actions: [
         TextButton(
           child: Text('撤销'),

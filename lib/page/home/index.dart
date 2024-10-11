@@ -15,7 +15,7 @@ import 'settings/index.dart';
 * @Time 2023/11/21 13:57
 */
 class HomePage extends ProviderPage<HomePageProvider> {
-  const HomePage({super.key, super.state});
+  const HomePage({super.key, required super.context, super.state});
 
   @override
   HomePageProvider createProvider(BuildContext context, GoRouterState? state) =>
@@ -34,7 +34,7 @@ class HomePage extends ProviderPage<HomePageProvider> {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    final children = getProvider(context).pages.map((e) {
+    final children = pageProvider.pages.map((e) {
       return e.child ?? const SizedBox();
     }).toList();
     return Selector<HomePageProvider, int>(
@@ -59,8 +59,8 @@ class HomePage extends ProviderPage<HomePageProvider> {
     return NavigationRail(
       selectedIndex: currentIndex,
       trailing: _buildNavigationRailTrailing(),
-      onDestinationSelected: getProvider(context).setCurrentIndex,
-      destinations: getProvider(context).pages.map((e) {
+      onDestinationSelected: pageProvider.setCurrentIndex,
+      destinations: pageProvider.pages.map((e) {
         return NavigationRailDestination(
           padding: EdgeInsets.only(top: 8),
           icon: e.icon ?? Icon(Icons.error),
@@ -102,26 +102,26 @@ class HomePage extends ProviderPage<HomePageProvider> {
 */
 class HomePageProvider extends PageProvider {
   // 导航分页集合
-  final pages = <OptionItem>[
+  late final pages = <OptionItem>[
     OptionItem(
       label: '项目',
       icon: Icon(Icons.home_rounded),
-      child: const ProjectPage(),
+      child: ProjectPage(context: context),
     ),
     OptionItem(
       label: '打包',
       icon: Icon(Icons.build),
-      child: const PackagePage(),
+      child: PackagePage(context: context),
     ),
     OptionItem(
       label: '知识库',
       icon: Icon(Icons.document_scanner),
-      child: const KnowledgePage(),
+      child: KnowledgePage(context: context),
     ),
     OptionItem(
       label: '设置',
       icon: Icon(Icons.settings),
-      child: const SettingsPage(),
+      child: SettingsPage(context: context),
     ),
   ];
 

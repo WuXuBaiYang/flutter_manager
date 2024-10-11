@@ -20,7 +20,7 @@ import 'settings.dart';
 * @Time 2023/11/24 14:25
 */
 class SettingsPage extends ProviderPage<SettingsPageProvider> {
-  const SettingsPage({super.key, super.state});
+  const SettingsPage({super.key, required super.context, super.state});
 
   @override
   SettingsPageProvider createProvider(
@@ -44,7 +44,7 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
       enable: enable,
       hint: '请放入Flutter环境文件',
       onDoneValidator: (paths) {
-        return getProvider(context).dropDone(context, paths);
+        return pageProvider.dropDone(context, paths);
       },
       child: _buildContent(context),
     );
@@ -53,7 +53,7 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   // 构建内容区域
   Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
-      controller: getProvider(context).scrollController,
+      controller: pageProvider.scrollController,
       child: Column(children: [
         // 环境设置
         Selector<EnvironmentProvider, List<Environment>>(
@@ -62,13 +62,13 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
             return SettingItemEnvironment(
               environments: environments,
               onReorder: context.environment.reorder,
+              onRemove: pageProvider.removeEnvironment,
+              onRefresh: pageProvider.refreshEnvironment,
               settingKey: context.setting.environmentKey,
-              onRemove: getProvider(context).removeEnvironment,
-              onRefresh: getProvider(context).refreshEnvironment,
               onImportLocal: () => showEnvironmentImport(context),
+              removeValidator: pageProvider.removeEnvironmentConfirm,
               onImportRemote: () => showEnvironmentImportRemote(context),
               onEdit: (e) => showEnvironmentImport(context, environment: e),
-              removeValidator: getProvider(context).removeEnvironmentConfirm,
             );
           },
         ),
@@ -81,7 +81,7 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
                 return SettingItemEnvironmentCache(
                   downloadFileInfo: snap.data,
                   settingKey: context.setting.environmentCacheKey,
-                  onOpenCacheDirectory: getProvider(context).openCacheDirectory,
+                  onOpenCacheDirectory: pageProvider.openCacheDirectory,
                 );
               },
             );
@@ -136,9 +136,8 @@ class SettingsPageProvider extends PageProvider {
   // 移除环境
   void removeEnvironment(Environment environment) {
     context.environment.remove(environment);
-    Notice.showSuccess(
-      context,
-      message: '${environment.title} 环境已移除',
+    showNoticeSuccess(
+      '${environment.title} 环境已移除',
       actions: [
         TextButton(
           onPressed: () {
@@ -154,7 +153,7 @@ class SettingsPageProvider extends PageProvider {
   Future<bool> removeEnvironmentConfirm(Environment environment) async {
     final result = context.environment.removeValidator(environment);
     if (result == null) return true;
-    Notice.showError(context, message: result, title: '环境移除失败');
+    showNoticeError(result, title: '环境移除失败');
     return false;
   }
 
@@ -163,7 +162,7 @@ class SettingsPageProvider extends PageProvider {
     final result =
         await context.environment.refresh(environment).loading(context);
     if (!context.mounted) return;
-    Notice.showError(context, message: '$result', title: '刷新失败');
+    showNoticeError('$result', title: '刷新失败');
     context.environment.update(environment);
   }
 

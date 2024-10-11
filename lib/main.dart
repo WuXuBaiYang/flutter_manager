@@ -32,7 +32,7 @@ void main() async {
     await windowManager.show();
     await windowManager.focus();
   });
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends ProviderView {

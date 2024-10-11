@@ -48,41 +48,35 @@ class Router extends BaseRouter {
         GoRoute(
           name: home,
           path: homePath,
-          builder: (_, state) {
-            return HomePage(state: state);
-          },
+          builder: (context, state) => HomePage(context: context, state: state),
         ),
         // 项目页
         GoRoute(
           name: project,
           path: projectPath,
-          builder: (_, state) {
-            return ProjectPage(state: state);
-          },
+          builder: (context, state) =>
+              ProjectPage(context: context, state: state),
         ),
         // 项目详情页
         GoRoute(
           name: projectDetail,
           path: projectDetailPath,
-          builder: (_, state) {
-            return ProjectDetailPage(state: state);
-          },
+          builder: (context, state) =>
+              ProjectDetailPage(context: context, state: state),
         ),
         // 包管理页
         GoRoute(
           name: package,
           path: packagePath,
-          builder: (_, state) {
-            return PackagePage(state: state);
-          },
+          builder: (context, state) =>
+              PackagePage(context: context, state: state),
         ),
         // 设置页
         GoRoute(
           name: settings,
           path: settingsPath,
-          builder: (_, state) {
-            return SettingsPage(state: state);
-          },
+          builder: (context, state) =>
+              SettingsPage(context: context, state: state),
         ),
       ];
 

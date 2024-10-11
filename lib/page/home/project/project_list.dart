@@ -32,7 +32,7 @@ class ProjectGridView extends StatelessWidget {
   final ValueChanged<Project>? onDetail;
 
   // 位置改变回调
-  final ReorderCallback? onReorder;
+  final ReorderCallback onReorder;
 
   // 确认删除回调
   final ProjectConfirmDismissCallback? confirmDismiss;
@@ -43,11 +43,11 @@ class ProjectGridView extends StatelessWidget {
   const ProjectGridView({
     super.key,
     required this.projects,
+    required this.onReorder,
     this.onEdit,
     this.onPinned,
     this.onDelete,
     this.onDetail,
-    this.onReorder,
     this.confirmDismiss,
     this.padding = const EdgeInsets.all(14),
   });
@@ -73,11 +73,9 @@ class ProjectGridView extends StatelessWidget {
     return ReorderableGridView.builder(
       shrinkWrap: true,
       padding: padding,
+      onReorder: onReorder,
       itemCount: projects.length,
       gridDelegate: _gridDelegate,
-      onReorder: (oldIndex, newIndex) {
-        return onReorder?.call(oldIndex, newIndex);
-      },
       dragWidgetBuilderV2: DragWidgetBuilderV2(
         isScreenshotDragWidget: false,
         builder: (_, child, __) => child,
