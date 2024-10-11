@@ -43,36 +43,37 @@ class Router extends BaseRouter {
   final String settingsPath = '/settings';
 
   @override
-  List<RouteBase> get routes => [
+  List<RouteBase> get routes =>
+      [
         // 首页
         GoRoute(
           name: home,
           path: homePath,
-          builder: (context, state) => HomePage(state: state),
+          builder: (_, state) => HomePage(state: state),
         ),
         // 项目页
         GoRoute(
           name: project,
           path: projectPath,
-          builder: (context, state) => ProjectPage(state: state),
+          builder: (_, state) => ProjectPage(state: state),
         ),
         // 项目详情页
         GoRoute(
           name: projectDetail,
           path: projectDetailPath,
-          builder: (context, state) => ProjectDetailPage(state: state),
+          builder: (_, state) => ProjectDetailPage(state: state),
         ),
         // 包管理页
         GoRoute(
           name: package,
           path: packagePath,
-          builder: (context, state) => PackagePage(state: state),
+          builder: (_, state) => PackagePage(state: state),
         ),
         // 设置页
         GoRoute(
           name: settings,
           path: settingsPath,
-          builder: (context, state) => SettingsPage(state: state),
+          builder: (_, state) => SettingsPage(state: state),
         ),
       ];
 
