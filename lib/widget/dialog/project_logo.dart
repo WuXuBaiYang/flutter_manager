@@ -7,8 +7,7 @@ import 'package:jtech_base/jtech_base.dart';
 
 // 展示修改图标弹窗
 Future<ProjectLogoDialogForm?> showProjectLogo(BuildContext context,
-    {required Map<PlatformType, List<PlatformLogo>>
-        platformLogoMap}) async {
+    {required Map<PlatformType, List<PlatformLogo>> platformLogoMap}) async {
   return showDialog<ProjectLogoDialogForm>(
     context: context,
     barrierDismissible: false,
@@ -27,7 +26,7 @@ class ProjectLogoDialog extends ProviderView {
   // 平台与图标表
   final Map<PlatformType, List<PlatformLogo>> platformLogoMap;
 
-  const ProjectLogoDialog({super.key, required this.platformLogoMap});
+  ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   @override
   List<SingleChildWidget> get providers => [
@@ -123,8 +122,8 @@ class ProjectLogoDialogProvider extends BaseProvider {
   // 获取表单数据
   ProjectLogoDialogForm get formData => _formData;
 
-  ProjectLogoDialogProvider(super.context,
-      Map<PlatformType, List<PlatformLogo>> platformLogoMap) {
+  ProjectLogoDialogProvider(
+      super.context, Map<PlatformType, List<PlatformLogo>> platformLogoMap) {
     updateFormData(platforms: platformLogoMap.keys.toList());
   }
 

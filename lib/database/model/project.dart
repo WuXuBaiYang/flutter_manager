@@ -39,7 +39,7 @@ class Project {
     this.label = '',
     this.logo = '',
     this.path = '',
-    this.envId = 0,
+    this.envId = -1,
     this.color = 0,
     this.pinned = false,
     this.order = -1,

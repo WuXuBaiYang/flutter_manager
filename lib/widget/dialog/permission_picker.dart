@@ -30,7 +30,7 @@ class PermissionPickerDialog extends ProviderView {
   // 已选权限集合
   final List<PlatformPermission>? permissions;
 
-  const PermissionPickerDialog({
+  PermissionPickerDialog({
     super.key,
     required this.platform,
     this.permissions,
@@ -77,8 +77,7 @@ class PermissionPickerDialog extends ProviderView {
       initialData: null,
       create: (_) => ProjectTool.getFullPermissions(platform),
       builder: (context, __) {
-        final permissions =
-            context.watch<List<PlatformPermission>?>() ?? [];
+        final permissions = context.watch<List<PlatformPermission>?>() ?? [];
         final status =
             permissions.isEmpty ? LoadStatus.loading : LoadStatus.success;
         return LoadingStatus(

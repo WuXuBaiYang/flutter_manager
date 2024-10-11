@@ -26,7 +26,7 @@ class EnvironmentImportDialog extends ProviderView {
   // 环境对象
   final Environment? environment;
 
-  const EnvironmentImportDialog({super.key, this.environment});
+  EnvironmentImportDialog({super.key, this.environment});
 
   @override
   List<SingleChildWidget> get providers => [

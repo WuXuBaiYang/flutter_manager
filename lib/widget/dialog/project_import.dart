@@ -29,7 +29,7 @@ class ProjectImportDialog extends ProviderView {
   // 项目对象
   final Project? project;
 
-  const ProjectImportDialog({super.key, this.project});
+  ProjectImportDialog({super.key, this.project});
 
   @override
   List<SingleChildWidget> get providers => [

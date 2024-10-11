@@ -8,7 +8,7 @@ import 'package:jtech_base/jtech_base.dart';
 * @Time 2023/11/26 18:21
 */
 class KnowledgePage extends ProviderPage<KnowledgePageProvider> {
-  const KnowledgePage({super.key, required super.context, super.state});
+  KnowledgePage({super.key, super.state});
 
   @override
   KnowledgePageProvider createProvider(

@@ -35,7 +35,7 @@ class ImageEditorDialog extends ProviderView {
   // 初始化裁剪比例
   final CropAspectRatio initializeRatio;
 
-  const ImageEditorDialog({
+  ImageEditorDialog({
     super.key,
     required this.path,
     this.absoluteRatio,
@@ -309,8 +309,7 @@ class ImageEditorDialogProvider extends BaseProvider {
       final cropImage = await controller.onCropImage();
       if (baseDir == null || cropImage == null) return null;
       savePath ??= join(baseDir, _imageFileName);
-      return ImageTool.saveData(
-          cropImage.bytes, savePath, _action.imageType);
+      return ImageTool.saveData(cropImage.bytes, savePath, _action.imageType);
     } catch (e) {
       if (!context.mounted) return null;
       Notice.showError(context, message: e.toString(), title: '图片裁剪失败');

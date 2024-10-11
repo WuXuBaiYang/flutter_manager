@@ -36,7 +36,7 @@ class DropFileView extends ProviderView {
   // 是否启用
   final bool enable;
 
-  const DropFileView({
+  DropFileView({
     super.key,
     required this.child,
     required this.onDoneValidator,

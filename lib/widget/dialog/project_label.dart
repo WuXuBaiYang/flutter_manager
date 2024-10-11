@@ -24,7 +24,7 @@ class ProjectLabelDialog extends ProviderView {
   // 平台与label对照表
   final Map<PlatformType, String> platformLabelMap;
 
-  const ProjectLabelDialog({super.key, required this.platformLabelMap});
+  ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   @override
   List<SingleChildWidget> get providers => [

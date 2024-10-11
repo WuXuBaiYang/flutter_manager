@@ -15,7 +15,7 @@ import 'settings/index.dart';
 * @Time 2023/11/21 13:57
 */
 class HomePage extends ProviderPage<HomePageProvider> {
-  const HomePage({super.key, required super.context, super.state});
+  HomePage({super.key, super.state});
 
   @override
   HomePageProvider createProvider(BuildContext context, GoRouterState? state) =>
@@ -106,22 +106,22 @@ class HomePageProvider extends PageProvider {
     OptionItem(
       label: '项目',
       icon: Icon(Icons.home_rounded),
-      child: ProjectPage(context: context),
+      child: ProjectPage(),
     ),
     OptionItem(
       label: '打包',
       icon: Icon(Icons.build),
-      child: PackagePage(context: context),
+      child: PackagePage(),
     ),
     OptionItem(
       label: '知识库',
       icon: Icon(Icons.document_scanner),
-      child: KnowledgePage(context: context),
+      child: KnowledgePage(),
     ),
     OptionItem(
       label: '设置',
       icon: Icon(Icons.settings),
-      child: SettingsPage(context: context),
+      child: SettingsPage(),
     ),
   ];
 

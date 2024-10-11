@@ -36,7 +36,7 @@ void main() async {
 }
 
 class MyApp extends ProviderView {
-  const MyApp({super.key});
+  MyApp({super.key});
 
   @override
   List<SingleChildWidget> get providers => [

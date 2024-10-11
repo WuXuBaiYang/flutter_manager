@@ -21,7 +21,7 @@ import 'project_list.dart';
 * @Time 2023/11/24 14:25
 */
 class ProjectPage extends ProviderPage<ProjectPageProvider> {
-  const ProjectPage({super.key, required super.context, super.state});
+  ProjectPage({super.key, super.state});
 
   @override
   ProjectPageProvider createProvider(

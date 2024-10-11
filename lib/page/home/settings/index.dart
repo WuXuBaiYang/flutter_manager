@@ -20,7 +20,7 @@ import 'settings.dart';
 * @Time 2023/11/24 14:25
 */
 class SettingsPage extends ProviderPage<SettingsPageProvider> {
-  const SettingsPage({super.key, required super.context, super.state});
+  SettingsPage({super.key, super.state});
 
   @override
   SettingsPageProvider createProvider(

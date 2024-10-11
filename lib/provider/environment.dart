@@ -25,11 +25,9 @@ class EnvironmentProvider extends BaseProvider {
 
   // 导入环境变量
   Future<Environment> import(String path) async {
-    dynamic result = await EnvironmentTool.getEnvironmentInfo(path);
+    final result = await EnvironmentTool.getEnvironmentInfo(path);
     if (result == null) throw Exception('查询flutter信息失败');
-    result = await update(result);
-    if (result == null) throw Exception('写入flutter信息失败');
-    return result;
+    return update(result);
   }
 
   // 导入压缩包的环境变量
@@ -43,19 +41,24 @@ class EnvironmentProvider extends BaseProvider {
 
   // 刷新环境变量
   Future<Environment> refresh(Environment item) async {
-    dynamic result = await EnvironmentTool.getEnvironmentInfo(item.path);
+    final result = await EnvironmentTool.getEnvironmentInfo(item.path);
     if (result == null) throw Exception('查询flutter信息失败');
-    result = await update(result..id = item.id);
-    if (result == null) throw Exception('写入flutter信息失败');
-    return result;
+    return update(result..id = item.id);
   }
 
   // 添加环境变量
-  Future<Environment?> update(Environment item) =>
-      database.updateEnvironment(item);
+  Future<Environment> update(Environment item) async {
+    final result = await database.updateEnvironment(item);
+    reload();
+    return result;
+  }
 
   // 移除环境变量
-  bool remove(Environment item) => database.removeEnvironment(item.id);
+  bool remove(Environment item) {
+    final result = database.removeEnvironment(item.id);
+    if (result) reload();
+    return result;
+  }
 
   // 验证是否可移除环境变量
   String? removeValidator(Environment item) {
@@ -74,5 +77,11 @@ class EnvironmentProvider extends BaseProvider {
     _environments = temp.reversed.toList();
     notifyListeners();
     await database.updateEnvironments(temp);
+  }
+
+  // 重新加载环境变量列表
+  void reload() {
+    _environments = database.getEnvironmentList(desc: true);
+    notifyListeners();
   }
 }

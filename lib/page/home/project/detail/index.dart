@@ -21,7 +21,7 @@ import 'tabbar.dart';
 * @Time 2023/11/30 16:35
 */
 class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
-  const ProjectDetailPage({super.key, required super.context, super.state});
+  ProjectDetailPage({super.key, super.state});
 
   @override
   ProjectDetailPageProvider createProvider(

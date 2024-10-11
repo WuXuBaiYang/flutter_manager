@@ -14,7 +14,7 @@ Future<Environment?> showEnvironmentImportRemote(BuildContext context,
   return showDialog<Environment>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => const EnvironmentImportRemoteDialog(),
+    builder: (_) => EnvironmentImportRemoteDialog(),
   );
 }
 
@@ -24,7 +24,7 @@ Future<Environment?> showEnvironmentImportRemote(BuildContext context,
 * @Time 2023/11/26 10:17
 */
 class EnvironmentImportRemoteDialog extends ProviderView {
-  const EnvironmentImportRemoteDialog({super.key});
+  EnvironmentImportRemoteDialog({super.key});
 
   @override
   List<SingleChildWidget> get providers => [
@@ -134,8 +134,7 @@ class EnvironmentImportRemoteDialog extends ProviderView {
   }
 
   // 构建表单项-信息
-  Widget _buildFormFieldInfo(
-      BuildContext context, EnvironmentPackage package) {
+  Widget _buildFormFieldInfo(BuildContext context, EnvironmentPackage package) {
     return Card(
       child: ListTile(
         title: Text(package.title),
@@ -251,8 +250,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   }
 
   // 开始导入
-  Future<void> startImport(
-      EnvironmentPackage package, String filePath) async {
+  Future<void> startImport(EnvironmentPackage package, String filePath) async {
     _currentStep = 2;
     updateFormData(path: await EnvironmentTool.getDefaultInstallPath(package));
     _updateDownloadInfo(package: package, path: filePath);

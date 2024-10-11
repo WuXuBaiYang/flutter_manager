@@ -11,7 +11,7 @@ Future<bool?> showAndroidSignKey(BuildContext context) {
   return showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => const AndroidSignKeyDialog(),
+    builder: (_) => AndroidSignKeyDialog(),
   );
 }
 
@@ -21,7 +21,7 @@ Future<bool?> showAndroidSignKey(BuildContext context) {
 * @Time 2023/12/15 9:00
 */
 class AndroidSignKeyDialog extends ProviderView {
-  const AndroidSignKeyDialog({super.key});
+  AndroidSignKeyDialog({super.key});
 
   @override
   List<SingleChildWidget> get providers => [
