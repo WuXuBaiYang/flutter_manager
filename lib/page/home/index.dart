@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/main.dart';
-import 'package:flutter_manager/page/knowledge/index.dart';
-import 'package:flutter_manager/page/package/index.dart';
-import 'package:flutter_manager/page/project/index.dart';
-import 'package:flutter_manager/page/settings/index.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
 import 'package:flutter_manager/widget/status_bar.dart';
 import 'package:jtech_base/jtech_base.dart';
+
+import 'knowledge/index.dart';
+import 'package/index.dart';
+import 'project/index.dart';
+import 'settings/index.dart';
 
 /*
 * 首页

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'platform_item.dart';
+import 'provider.dart';
 
 /*
 * 项目平台label组件项

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/page/detail/platform/widgets/base.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'widgets/base.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
 import 'widgets/options_platform_item.dart';

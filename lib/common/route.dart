@@ -1,9 +1,9 @@
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/page/detail/index.dart';
 import 'package:flutter_manager/page/home/index.dart';
-import 'package:flutter_manager/page/package/index.dart';
-import 'package:flutter_manager/page/project/index.dart';
-import 'package:flutter_manager/page/settings/index.dart';
+import 'package:flutter_manager/page/home/package/index.dart';
+import 'package:flutter_manager/page/home/project/detail/index.dart';
+import 'package:flutter_manager/page/home/project/index.dart';
+import 'package:flutter_manager/page/home/settings/index.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 /*

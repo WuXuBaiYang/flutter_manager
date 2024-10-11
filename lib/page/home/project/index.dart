@@ -4,7 +4,6 @@ import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/home/index.dart';
-import 'package:flutter_manager/page/project/project_list.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
@@ -13,6 +12,8 @@ import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
+
+import 'project_list.dart';
 
 /*
 * 项目页

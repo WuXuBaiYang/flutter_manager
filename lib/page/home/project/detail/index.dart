@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/page/detail/appbar.dart';
-import 'package:flutter_manager/page/detail/platform/android.dart';
-import 'package:flutter_manager/page/detail/platform/ios.dart';
-import 'package:flutter_manager/page/detail/platform/linux.dart';
-import 'package:flutter_manager/page/detail/platform/macos.dart';
-import 'package:flutter_manager/page/detail/platform/web.dart';
-import 'package:flutter_manager/page/detail/platform/widgets/provider.dart';
-import 'package:flutter_manager/page/detail/platform/windows.dart';
-import 'package:flutter_manager/page/detail/tabbar.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
+
+import 'appbar.dart';
+import 'platform/android.dart';
+import 'platform/ios.dart';
+import 'platform/linux.dart';
+import 'platform/macos.dart';
+import 'platform/web.dart';
+import 'platform/widgets/provider.dart';
+import 'platform/windows.dart';
+import 'tabbar.dart';
 
 /*
 * 项目详情页
@@ -133,18 +134,15 @@ class ProjectDetailPageProvider extends PageProvider {
   // 滚动控制器
   final scrollController = ScrollController();
 
-  // 平台对照表
-  final _platformMap = const {
-    PlatformType.android: ProjectPlatformAndroidView(),
-    PlatformType.ios: ProjectPlatformIosView(),
-    PlatformType.web: ProjectPlatformWebView(),
-    PlatformType.macos: ProjectPlatformMacosView(),
-    PlatformType.windows: ProjectPlatformWindowsView(),
-    PlatformType.linux: ProjectPlatformLinuxView(),
-  };
-
   // 根据平台类型获取对应的页面
-  Widget getPlatformView(PlatformType platform) => _platformMap[platform]!;
+  Widget getPlatformView(PlatformType platform) => switch (platform) {
+        PlatformType.android => ProjectPlatformAndroidView(),
+        PlatformType.ios => ProjectPlatformIosView(),
+        PlatformType.web => ProjectPlatformWebView(),
+        PlatformType.macos => ProjectPlatformMacosView(),
+        PlatformType.windows => ProjectPlatformWindowsView(),
+        PlatformType.linux => ProjectPlatformLinuxView(),
+      };
 
   ProjectDetailPageProvider(super.context, super.state) {
     // 监听滚动状态
