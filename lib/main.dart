@@ -61,9 +61,7 @@ class MyApp extends ProviderView {
           themeMode: theme.themeMode,
           darkTheme: theme.darkThemeData,
           debugShowCheckedModeBanner: false,
-          routerConfig: router.createRouter(
-            initialLocation: router.homePath,
-          ),
+          routerConfig: router.createRouter(),
           supportedLocales: S.delegate.supportedLocales,
           localizationsDelegates: const [
             S.delegate,

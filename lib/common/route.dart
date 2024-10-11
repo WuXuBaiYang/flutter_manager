@@ -18,83 +18,58 @@ class Router extends BaseRouter {
 
   Router._internal();
 
-  // 首页
-  final String home = 'home';
-  final String homePath = '/home';
-
-  // 项目
-  final String project = 'project';
-  final String projectPath = '/project';
-
-  // 项目详情
-  final String projectDetail = 'projectDetail';
-  final String projectDetailPath = '/project/detail';
-
-  // 打包
-  final String package = 'package';
-  final String packagePath = '/package';
-
-  // 知识库
-  final String knowledge = 'knowledge';
-  final String knowledgePath = '/knowledge';
-
-  // 设置页
-  final String settings = 'settings';
-  final String settingsPath = '/settings';
-
   @override
-  List<RouteBase> get routes =>
-      [
+  List<RouteBase> get routes => [
         // 首页
         GoRoute(
-          name: home,
-          path: homePath,
+          name: 'home',
+          path: '/',
           builder: (_, state) => HomePage(state: state),
         ),
         // 项目页
         GoRoute(
-          name: project,
-          path: projectPath,
+          name: 'homeProject',
+          path: '/home/project',
           builder: (_, state) => ProjectPage(state: state),
         ),
         // 项目详情页
         GoRoute(
-          name: projectDetail,
-          path: projectDetailPath,
+          name: 'homeProjectDetail',
+          path: '/home/project/detail',
           builder: (_, state) => ProjectDetailPage(state: state),
         ),
         // 包管理页
         GoRoute(
-          name: package,
-          path: packagePath,
+          name: 'homePackage',
+          path: '/home/package',
           builder: (_, state) => PackagePage(state: state),
         ),
         // 设置页
         GoRoute(
-          name: settings,
-          path: settingsPath,
+          name: 'homeSettings',
+          path: '/home/settings',
           builder: (_, state) => SettingsPage(state: state),
         ),
       ];
 
   // 跳转首页
-  void goHome() => routerConfig.pushNamed(home);
+  void goHome() => routerConfig.pushNamed('home');
 
   // 跳转项目页
-  void goProject() => routerConfig.pushNamed(project);
+  void goProject() => routerConfig.pushNamed('homeProject');
 
   // 跳转项目详情页
   Future<void> goProjectDetail(Project project) =>
-      routerConfig.pushNamed(projectDetail, extra: project);
+      routerConfig.pushNamed('homeProjectDetail', extra: project);
 
   // 跳转打包页
-  void goPackage() => routerConfig.pushNamed(package);
+  void goPackage() => routerConfig.pushNamed('homePackage');
 
   // 跳转知识库页
-  void goKnowledge() => routerConfig.pushNamed(knowledge);
+  void goKnowledge() => routerConfig.pushNamed('homeKnowledge');
 
   // 跳转设置页
-  void goSettings() => routerConfig.pushNamed(settings);
+  void goSettings() => routerConfig.pushNamed('homeSettings');
 }
 
 // 全局单例
