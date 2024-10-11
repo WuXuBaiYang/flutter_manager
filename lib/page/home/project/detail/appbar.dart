@@ -7,7 +7,7 @@ import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_font.dart';
-import 'package:flutter_manager/widget/environment_badge.dart';
+import 'package:flutter_manager/widget/environment/badge.dart';
 import 'package:flutter_manager/widget/status_bar.dart';
 import 'package:open_dir/open_dir.dart';
 

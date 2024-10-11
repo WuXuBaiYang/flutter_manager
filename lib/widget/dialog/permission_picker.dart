@@ -4,12 +4,12 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 展示权限选择弹窗
-Future<List<PlatformPermissionTuple>?> showPermissionPicker(
+Future<List<PlatformPermission>?> showPermissionPicker(
   BuildContext context, {
   required PlatformType platform,
-  List<PlatformPermissionTuple>? permissions,
+  List<PlatformPermission>? permissions,
 }) {
-  return showDialog<List<PlatformPermissionTuple>>(
+  return showDialog<List<PlatformPermission>>(
     context: context,
     builder: (context) => PermissionPickerDialog(
       platform: platform,
@@ -28,7 +28,7 @@ class PermissionPickerDialog extends ProviderView {
   final PlatformType platform;
 
   // 已选权限集合
-  final List<PlatformPermissionTuple>? permissions;
+  final List<PlatformPermission>? permissions;
 
   const PermissionPickerDialog({
     super.key,
@@ -73,12 +73,12 @@ class PermissionPickerDialog extends ProviderView {
   Widget _buildContent(BuildContext context) {
     final controller = TextEditingController();
     final provider = context.read<PermissionPickerDialogProvider>();
-    return FutureProvider<List<PlatformPermissionTuple>?>(
+    return FutureProvider<List<PlatformPermission>?>(
       initialData: null,
       create: (_) => ProjectTool.getFullPermissions(platform),
       builder: (context, __) {
         final permissions =
-            context.watch<List<PlatformPermissionTuple>?>() ?? [];
+            context.watch<List<PlatformPermission>?>() ?? [];
         final status =
             permissions.isEmpty ? LoadStatus.loading : LoadStatus.success;
         return LoadingStatus(
@@ -92,7 +92,7 @@ class PermissionPickerDialog extends ProviderView {
                         .toList()
                     : permissions;
                 return Selector<PermissionPickerDialogProvider,
-                    List<PlatformPermissionTuple>>(
+                    List<PlatformPermission>>(
                   selector: (_, provider) => provider.selectPermissions,
                   builder: (_, selectPermissions, __) {
                     final checked = (temp.length != selectPermissions.length)
@@ -128,8 +128,8 @@ class PermissionPickerDialog extends ProviderView {
   // 构建权限列表
   Widget _buildPermissionList(
     BuildContext context,
-    List<PlatformPermissionTuple> permissions,
-    List<PlatformPermissionTuple> selectPermissions,
+    List<PlatformPermission> permissions,
+    List<PlatformPermission> selectPermissions,
   ) {
     final provider = context.read<PermissionPickerDialogProvider>();
     return ListView.separated(
@@ -164,23 +164,23 @@ class PermissionPickerDialog extends ProviderView {
 */
 class PermissionPickerDialogProvider extends BaseProvider {
   // 已选权限集合
-  List<PlatformPermissionTuple> _selectPermissions;
+  List<PlatformPermission> _selectPermissions;
 
   // 获取已选权限集合
-  List<PlatformPermissionTuple> get selectPermissions => _selectPermissions;
+  List<PlatformPermission> get selectPermissions => _selectPermissions;
 
   // 设置已选权限集合
-  set selectPermissions(List<PlatformPermissionTuple> value) {
+  set selectPermissions(List<PlatformPermission> value) {
     _selectPermissions = value;
     notifyListeners();
   }
 
   PermissionPickerDialogProvider(super.context,
-      {required List<PlatformPermissionTuple> permissions})
+      {required List<PlatformPermission> permissions})
       : _selectPermissions = permissions;
 
   // 选择权限
-  void selectPermission(PlatformPermissionTuple permission) {
+  void selectPermission(PlatformPermission permission) {
     _selectPermissions = [
       if (!selectPermissions.contains(permission)) permission,
       ...selectPermissions.where((e) => e != permission),

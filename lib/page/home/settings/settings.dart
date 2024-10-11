@@ -203,7 +203,7 @@ class SettingItemEnvironmentCache extends StatelessWidget {
   final Key settingKey;
 
   // 下载文件记录
-  final DownloadFileInfoTuple? downloadFileInfo;
+  final DownloadFileInfo? downloadFileInfo;
 
   // 打开缓存目录回调
   final VoidCallback? onOpenCacheDirectory;

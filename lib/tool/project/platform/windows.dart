@@ -4,7 +4,7 @@ import 'package:jtech_base/jtech_base.dart';
 import 'platform.dart';
 
 // windows平台参数元组
-typedef WindowsPlatformInfoTuple = ();
+typedef WindowsPlatformInfo = ();
 
 /*
 * windows平台工具类
@@ -28,7 +28,7 @@ class WindowsPlatformTool extends PlatformTool {
   static final labelValidatorRegExp = RegExp(r'^[a-zA-Z1-9_]+$');
 
   @override
-  Future<PlatformInfoTuple<WindowsPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<WindowsPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -36,7 +36,7 @@ class WindowsPlatformTool extends PlatformTool {
       label: await getLabel(projectPath) ?? '',
       package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
-      permissions: <PlatformPermissionTuple>[],
+      permissions: <PlatformPermission>[],
       info: (),
     );
   }
@@ -61,10 +61,10 @@ class WindowsPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final dir = Directory(getPlatformFilePath(projectPath, _resPath));
-    final result = <PlatformLogoTuple>[];
+    final result = <PlatformLogo>[];
     for (final file in dir.listSync()) {
       final path = file.path;
       final name = File(path).name;

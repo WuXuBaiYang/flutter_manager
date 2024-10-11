@@ -5,9 +5,9 @@ import 'package:jtech_base/jtech_base.dart';
 import 'android_sign_key.dart';
 
 // dName可选项表单元组
-typedef AndroidSignDNameTuple = ({
+typedef AndroidSignDName = ({
   String label,
-  String? Function(AndroidSignKeyFormTuple? signKeyInfo) initialValue,
+  String? Function(AndroidSignKeyForm? signKeyInfo) initialValue,
   void Function(AndroidSignKeyDialogProvider provider, String? v) onSaved,
 });
 
@@ -20,7 +20,7 @@ class AndroidSignKeyOptions extends StatelessWidget {
   AndroidSignKeyOptions({super.key});
 
   // 可选项DName表
-  final List<List<AndroidSignDNameTuple>> _dNameOptions = [
+  final List<List<AndroidSignDName>> _dNameOptions = [
     [
       (
         label: '组织',

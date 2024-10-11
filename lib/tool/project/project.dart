@@ -144,7 +144,7 @@ class ProjectTool {
       getPlatformTool(platform).setLabel(projectPath, label);
 
   // 根据平台获取图标
-  static Future<List<PlatformLogoTuple>?> getLogos(
+  static Future<List<PlatformLogo>?> getLogos(
           String projectPath, PlatformType platform) =>
       getPlatformTool(platform).getLogos(projectPath);
 
@@ -166,18 +166,18 @@ class ProjectTool {
       getPlatformTool(platform).setPackage(projectPath, package);
 
   // 获取完整权限列表
-  static Future<List<PlatformPermissionTuple>?> getFullPermissions(
+  static Future<List<PlatformPermission>?> getFullPermissions(
           PlatformType platform) =>
       getPlatformTool(platform).getFullPermissions();
 
   // 获取平台权限列表
-  static Future<List<PlatformPermissionTuple>?> getPermissions(
+  static Future<List<PlatformPermission>?> getPermissions(
           String projectPath, PlatformType platform) =>
       getPlatformTool(platform).getPermissions(projectPath);
 
   // 设置平台权限列表
   static Future<bool> setPermissions(String projectPath, PlatformType platform,
-          List<PlatformPermissionTuple> permissions) =>
+          List<PlatformPermission> permissions) =>
       getPlatformTool(platform).setPermissions(projectPath, permissions);
 
   // 获取android签名工具路径
@@ -186,7 +186,7 @@ class ProjectTool {
           .getJavaKeyToolPath();
 
   // 生成android端签名
-  static Future<bool> genAndroidSignKey(AndroidSignKeyFormTuple form) =>
+  static Future<bool> genAndroidSignKey(AndroidSignKeyForm form) =>
       getPlatformTool<AndroidPlatformTool>(PlatformType.android)
           .genSignKey(form);
 }

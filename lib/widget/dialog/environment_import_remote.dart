@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/widget/environment_remote_list.dart';
+import 'package:flutter_manager/widget/environment/remote_list.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -75,7 +75,7 @@ class EnvironmentImportRemoteDialog extends ProviderView {
   // 构建步骤2-下载所选环境
   Widget _buildPackageDownload(BuildContext context) {
     final provider = context.read<EnvironmentRemoteImportDialogProvider>();
-    return Selector<EnvironmentRemoteImportDialogProvider, DownloadInfoTuple?>(
+    return Selector<EnvironmentRemoteImportDialogProvider, DownloadInfo?>(
       selector: (_, provider) => provider.downloadInfo,
       builder: (_, downloadInfo, __) {
         final speed = FileTool.formatSize(downloadInfo?.speed ?? 0);
@@ -135,7 +135,7 @@ class EnvironmentImportRemoteDialog extends ProviderView {
 
   // 构建表单项-信息
   Widget _buildFormFieldInfo(
-      BuildContext context, EnvironmentPackageTuple package) {
+      BuildContext context, EnvironmentPackage package) {
     return Card(
       child: ListTile(
         title: Text(package.title),
@@ -159,15 +159,15 @@ class EnvironmentImportRemoteDialog extends ProviderView {
 }
 
 // 下载信息元组类型
-typedef DownloadInfoTuple = ({
-  EnvironmentPackageTuple? package,
+typedef DownloadInfo = ({
+  EnvironmentPackage? package,
   String path,
   int totalSize,
   int speed
 });
 
 // 环境远程导入弹窗表单数据元组
-typedef EnvironmentImportRemoteDialogFormTuple = ({
+typedef EnvironmentImportRemoteDialogForm = ({
   String path,
 });
 
@@ -193,16 +193,16 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   Timer? _downloadTimer;
 
   // 下载信息元组
-  DownloadInfoTuple? _downloadInfo;
+  DownloadInfo? _downloadInfo;
 
   // 获取下载信息元组
-  DownloadInfoTuple? get downloadInfo => _downloadInfo;
+  DownloadInfo? get downloadInfo => _downloadInfo;
 
   // 表单数据
-  EnvironmentImportRemoteDialogFormTuple _formData = (path: '');
+  EnvironmentImportRemoteDialogForm _formData = (path: '');
 
   // 获取表单数据
-  EnvironmentImportRemoteDialogFormTuple get formData => _formData;
+  EnvironmentImportRemoteDialogForm get formData => _formData;
 
   // 下载进度流
   final downloadProgress = StreamController<double?>.broadcast();
@@ -228,7 +228,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
   }
 
   // 启动下载
-  Future<void> startDownload(EnvironmentPackageTuple package) async {
+  Future<void> startDownload(EnvironmentPackage package) async {
     _currentStep = 1;
     _cancelToken = CancelToken();
     int tempSpeed = 0, totalSize = 0;
@@ -252,7 +252,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
 
   // 开始导入
   Future<void> startImport(
-      EnvironmentPackageTuple package, String filePath) async {
+      EnvironmentPackage package, String filePath) async {
     _currentStep = 2;
     updateFormData(path: await EnvironmentTool.getDefaultInstallPath(package));
     _updateDownloadInfo(package: package, path: filePath);
@@ -260,7 +260,7 @@ class EnvironmentRemoteImportDialogProvider extends BaseProvider {
 
   // 更新下载信息
   void _updateDownloadInfo({
-    EnvironmentPackageTuple? package,
+    EnvironmentPackage? package,
     String? path,
     int? totalSize,
     int? speed,

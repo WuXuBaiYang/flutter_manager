@@ -5,16 +5,16 @@ import 'package:flutter_manager/tool/download.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 环境安装包结果类型
-typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackageTuple>>;
+typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
 
 // 已下载文件元组
-typedef DownloadedFileTuple = ({List<String> downloaded, List<String> tmp});
+typedef DownloadedFileResult = ({List<String> downloaded, List<String> tmp});
 
 // 已下载文件信息元组
-typedef DownloadFileInfoTuple = ({int count, int totalSize});
+typedef DownloadFileInfo = ({int count, int totalSize});
 
 // 环境安装包信息元组
-typedef EnvironmentPackageTuple = ({
+typedef EnvironmentPackage = ({
   String platform,
   String url,
   String fileName,
@@ -25,7 +25,7 @@ typedef EnvironmentPackageTuple = ({
 });
 
 // 扩展环境安装包信息元组
-extension EnvironmentPackageTupleExtension on EnvironmentPackageTuple {
+extension EnvironmentPackageExtension on EnvironmentPackage {
   // 获取标题
   String get title => 'Flutter · $version · $channel';
 
@@ -107,7 +107,7 @@ class EnvironmentTool {
       await localCache.setJson(_environmentPackageCacheKey, json,
           expiration: const Duration(days: 1));
     }
-    final result = <String, List<EnvironmentPackageTuple>>{};
+    final result = <String, List<EnvironmentPackage>>{};
     for (final e in json['releases'] ?? []) {
       final archive = e['archive'] ?? '';
       final package = (
@@ -146,7 +146,7 @@ class EnvironmentTool {
   }
 
   // 获取已下载文件信息
-  static Future<DownloadFileInfoTuple> getDownloadFileInfo() async {
+  static Future<DownloadFileInfo> getDownloadFileInfo() async {
     final result = await getDownloadedFileList();
     final downloaded = result.downloaded;
     final tmp = result.tmp;
@@ -161,7 +161,7 @@ class EnvironmentTool {
   }
 
   // 获取已下载文件列表
-  static Future<DownloadedFileTuple> getDownloadedFileList() async {
+  static Future<DownloadedFileResult> getDownloadedFileList() async {
     final result = (downloaded: <String>[], tmp: <String>[]);
     final baseDir = await Tool.getCacheFilePath();
     if (baseDir == null) return result;
@@ -180,7 +180,7 @@ class EnvironmentTool {
 
   // 获取默认的安装包目录
   static Future<String?> getDefaultInstallPath(
-      EnvironmentPackageTuple package) async {
+      EnvironmentPackage package) async {
     final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
     return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
   }

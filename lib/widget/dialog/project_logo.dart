@@ -6,10 +6,10 @@ import 'package:flutter_manager/widget/form_field/project_logo_panel.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 展示修改图标弹窗
-Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
-    {required Map<PlatformType, List<PlatformLogoTuple>>
+Future<ProjectLogoDialogForm?> showProjectLogo(BuildContext context,
+    {required Map<PlatformType, List<PlatformLogo>>
         platformLogoMap}) async {
-  return showDialog<ProjectLogoDialogFormTuple>(
+  return showDialog<ProjectLogoDialogForm>(
     context: context,
     barrierDismissible: false,
     builder: (_) => ProjectLogoDialog(
@@ -25,7 +25,7 @@ Future<ProjectLogoDialogFormTuple?> showProjectLogo(BuildContext context,
 */
 class ProjectLogoDialog extends ProviderView {
   // 平台与图标表
-  final Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap;
+  final Map<PlatformType, List<PlatformLogo>> platformLogoMap;
 
   const ProjectLogoDialog({super.key, required this.platformLogoMap});
 
@@ -103,7 +103,7 @@ class ProjectLogoDialog extends ProviderView {
 }
 
 // 项目修改图标弹窗表单数据元组
-typedef ProjectLogoDialogFormTuple = ({
+typedef ProjectLogoDialogForm = ({
   String logo,
   List<PlatformType> platforms,
 });
@@ -118,18 +118,18 @@ class ProjectLogoDialogProvider extends BaseProvider {
   final formKey = GlobalKey<FormState>();
 
   // 表单数据
-  ProjectLogoDialogFormTuple _formData = (logo: '', platforms: []);
+  ProjectLogoDialogForm _formData = (logo: '', platforms: []);
 
   // 获取表单数据
-  ProjectLogoDialogFormTuple get formData => _formData;
+  ProjectLogoDialogForm get formData => _formData;
 
   ProjectLogoDialogProvider(super.context,
-      Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap) {
+      Map<PlatformType, List<PlatformLogo>> platformLogoMap) {
     updateFormData(platforms: platformLogoMap.keys.toList());
   }
 
   // 验证表单并返回
-  Future<ProjectLogoDialogFormTuple?> submitForm(BuildContext context) async {
+  Future<ProjectLogoDialogForm?> submitForm(BuildContext context) async {
     try {
       final formState = formKey.currentState;
       if (!(formState?.validate() ?? false)) return null;

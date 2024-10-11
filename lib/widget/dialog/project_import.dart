@@ -179,7 +179,7 @@ class ProjectImportDialog extends ProviderView {
 }
 
 // 项目导入弹窗表单数据元组
-typedef ProjectImportDialogFormTuple = ({
+typedef ProjectImportDialogForm = ({
   String path,
   String label,
   String logo,
@@ -206,10 +206,10 @@ class ProjectImportDialogProvider extends BaseProvider {
       envFormFieldKey = GlobalKey<FormFieldState<int>>();
 
   // 表单数据
-  ProjectImportDialogFormTuple _formData;
+  ProjectImportDialogForm _formData;
 
   // 获取表单数据
-  ProjectImportDialogFormTuple get formData => _formData;
+  ProjectImportDialogForm get formData => _formData;
 
   ProjectImportDialogProvider(super.context, this.project)
       : _formData = (

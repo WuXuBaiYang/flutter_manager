@@ -11,7 +11,7 @@ import 'widgets/options_platform_item.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformWebView extends ProjectPlatformView<WebPlatformInfoTuple> {
+class ProjectPlatformWebView extends ProjectPlatformView<WebPlatformInfo> {
   const ProjectPlatformWebView({
     super.key,
     super.platform = PlatformType.web,
@@ -19,7 +19,7 @@ class ProjectPlatformWebView extends ProjectPlatformView<WebPlatformInfoTuple> {
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-      PlatformInfoTuple<WebPlatformInfoTuple>? platformInfo) {
+      PlatformInfo<WebPlatformInfo>? platformInfo) {
     return [
       LabelPlatformItem(
         platform: platform,

@@ -81,7 +81,7 @@ class DropFileView extends ProviderView {
           if (message != null) await Future.delayed(delayExit);
           provider.dropExited();
         },
-        child: Selector<DropFileViewProvider, FileDropStateTuple?>(
+        child: Selector<DropFileViewProvider, FileDropState?>(
           selector: (_, provider) => provider.dropState,
           builder: (_, dropState, __) {
             final color = dropState?.warning == true
@@ -99,7 +99,7 @@ class DropFileView extends ProviderView {
 }
 
 // 文件拖拽状态元组
-typedef FileDropStateTuple = ({bool warning, String message});
+typedef FileDropState = ({bool warning, String message});
 
 /*
 * 文件拖拽组件状态管理
@@ -108,10 +108,10 @@ typedef FileDropStateTuple = ({bool warning, String message});
 */
 class DropFileViewProvider extends BaseProvider {
   // 文件拖拽状态
-  FileDropStateTuple? _dropState;
+  FileDropState? _dropState;
 
   // 获取文件拖拽状态
-  FileDropStateTuple? get dropState => _dropState;
+  FileDropState? get dropState => _dropState;
 
   DropFileViewProvider(super.context);
 

@@ -195,10 +195,10 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
   bool get samePass => _samePass;
 
   // 表单数据
-  AndroidSignKeyFormTuple? _signKeyInfo;
+  AndroidSignKeyForm? _signKeyInfo;
 
   // 表单数据
-  AndroidSignKeyFormTuple? get signKeyInfo => _signKeyInfo;
+  AndroidSignKeyForm? get signKeyInfo => _signKeyInfo;
 
   // keytool路径输入控制器
   final keytoolPathController = TextEditingController();

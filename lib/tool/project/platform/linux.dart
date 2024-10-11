@@ -3,7 +3,7 @@ import 'package:jtech_base/jtech_base.dart';
 import 'platform.dart';
 
 // linux平台参数元组
-typedef LinuxPlatformInfoTuple = ();
+typedef LinuxPlatformInfo = ();
 
 /*
 * linux平台工具类
@@ -27,7 +27,7 @@ class LinuxPlatformTool extends PlatformTool {
   ];
 
   @override
-  Future<PlatformInfoTuple<LinuxPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<LinuxPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -35,7 +35,7 @@ class LinuxPlatformTool extends PlatformTool {
       label: await getLabel(projectPath) ?? '',
       package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
-      permissions: <PlatformPermissionTuple>[],
+      permissions: <PlatformPermission>[],
       info: (),
     );
   }

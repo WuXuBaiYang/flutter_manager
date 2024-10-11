@@ -12,7 +12,7 @@ import 'widgets/options_platform_item.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformWindowsView
-    extends ProjectPlatformView<WindowsPlatformInfoTuple> {
+    extends ProjectPlatformView<WindowsPlatformInfo> {
   const ProjectPlatformWindowsView({
     super.key,
     super.platform = PlatformType.windows,
@@ -20,7 +20,7 @@ class ProjectPlatformWindowsView
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-      PlatformInfoTuple<WindowsPlatformInfoTuple>? platformInfo) {
+      PlatformInfo<WindowsPlatformInfo>? platformInfo) {
     return [
       LabelPlatformItem(
         platform: platform,

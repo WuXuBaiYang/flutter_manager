@@ -4,7 +4,7 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // macos平台参数元组
-typedef MacosPlatformInfoTuple = ();
+typedef MacosPlatformInfo = ();
 
 /*
 * macos平台工具类
@@ -37,7 +37,7 @@ class MacosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<PlatformInfoTuple<MacosPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<MacosPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -45,7 +45,7 @@ class MacosPlatformTool extends PlatformTool {
       label: await getLabel(projectPath) ?? '',
       package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
-      permissions: <PlatformPermissionTuple>[],
+      permissions: <PlatformPermission>[],
       info: (),
     );
   }
@@ -82,11 +82,11 @@ class MacosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getIconInfoJson(projectPath);
     final resPath = getPlatformFilePath(projectPath, _iconPath);
-    final result = <PlatformLogoTuple>[];
+    final result = <PlatformLogo>[];
     for (final item in json['images'] ?? []) {
       final filename = item['filename'];
       final entries = (item as Map)

@@ -75,7 +75,7 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
         // 环境缓存设置
         Consumer<EnvironmentProvider>(
           builder: (_, provider, __) {
-            return FutureBuilder<DownloadFileInfoTuple>(
+            return FutureBuilder<DownloadFileInfo>(
               future: EnvironmentTool.getDownloadFileInfo(),
               builder: (_, snap) {
                 return SettingItemEnvironmentCache(

@@ -19,15 +19,15 @@ abstract class ProjectPlatformView<T extends Record> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Selector<PlatformProvider, PlatformInfoTuple<T>?>(
-      selector: (_, provider) => provider.getPlatformTuple<T>(platform),
-      builder: (_, platformTuple, __) {
+    return Selector<PlatformProvider, PlatformInfo<T>?>(
+      selector: (_, provider) => provider.getPlatform<T>(platform),
+      builder: (_, platform, __) {
         return EmptyBoxView(
           hint: '无平台信息',
-          isEmpty: platformTuple == null,
+          isEmpty: platform == null,
           builder: (_, __) {
-            if (platformTuple == null) return const SizedBox();
-            return _buildPlatformWidget(context, platformTuple);
+            if (platform == null) return const SizedBox();
+            return _buildPlatformWidget(context, platform);
           },
         );
       },
@@ -36,7 +36,7 @@ abstract class ProjectPlatformView<T extends Record> extends StatelessWidget {
 
   // 构建平台信息
   Widget _buildPlatformWidget(
-      BuildContext context, PlatformInfoTuple<T> platformInfo) {
+      BuildContext context, PlatformInfo<T> platformInfo) {
     final children = buildPlatformItems(context, platformInfo);
     return EmptyBoxView(
       hint: '暂无方法',
@@ -55,5 +55,5 @@ abstract class ProjectPlatformView<T extends Record> extends StatelessWidget {
 
   // 获取平台构造项
   List<Widget> buildPlatformItems(
-      BuildContext context, PlatformInfoTuple<T> platformInfo);
+      BuildContext context, PlatformInfo<T> platformInfo);
 }

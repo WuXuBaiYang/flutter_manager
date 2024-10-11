@@ -18,7 +18,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   final Project? project;
 
   // 平台信息表
-  final _platformInfoMap = <PlatformType, PlatformInfoTuple?>{};
+  final _platformInfoMap = <PlatformType, PlatformInfo?>{};
 
   // 当前支持的平台列表（排序后）
   List<PlatformType> _platformList = [];
@@ -42,14 +42,14 @@ class PlatformProvider extends BaseProvider with WindowListener {
   }
 
   // 获取全平台（存在）图标对照表
-  Map<PlatformType, List<PlatformLogoTuple>> get logoMap {
+  Map<PlatformType, List<PlatformLogo>> get logoMap {
     var result = {..._platformInfoMap}
       ..removeWhere((_, v) => v?.logos.isEmpty ?? true);
     for (var e in context.project.platforms) {
       final value = result.remove(e);
       if (value != null) result[e] = value;
     }
-    return result.map<PlatformType, List<PlatformLogoTuple>>(
+    return result.map<PlatformType, List<PlatformLogo>>(
       (k, v) => MapEntry(k, v!.logos),
     );
   }
@@ -95,9 +95,9 @@ class PlatformProvider extends BaseProvider with WindowListener {
       _cacheMap.removeWhere((k, _) => k.contains('$platform'));
 
   // 获取平台信息元组
-  PlatformInfoTuple<T>? getPlatformTuple<T extends Record>(
+  PlatformInfo<T>? getPlatform<T extends Record>(
           PlatformType platform) =>
-      _platformInfoMap[platform] as PlatformInfoTuple<T>?;
+      _platformInfoMap[platform] as PlatformInfo<T>?;
 
   // 创建平台
   Future<void> createPlatform(PlatformType platform) async {
@@ -140,7 +140,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   }
 
   // 批量更新图标
-  Future<void> updateLogos(ProjectLogoDialogFormTuple? logoData,
+  Future<void> updateLogos(ProjectLogoDialogForm? logoData,
       {StreamController<double>? controller}) async {
     if (project == null || logoData == null) return;
     try {
@@ -203,7 +203,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
 
   // 更新权限
   Future<void> updatePermission(
-      PlatformType platform, List<PlatformPermissionTuple>? permissions) async {
+      PlatformType platform, List<PlatformPermission>? permissions) async {
     if (project == null || permissions == null) return;
     try {
       final result = await ProjectTool.setPermissions(

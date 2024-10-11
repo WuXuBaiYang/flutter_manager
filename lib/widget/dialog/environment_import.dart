@@ -97,7 +97,7 @@ class EnvironmentImportDialog extends ProviderView {
 }
 
 // 环境导入弹窗表单数据元组
-typedef EnvironmentImportDialogFormTuple = ({
+typedef EnvironmentImportDialogForm = ({
   String path,
 });
 
@@ -111,10 +111,10 @@ class EnvironmentImportDialogProvider extends BaseProvider {
   final formKey = GlobalKey<FormState>();
 
   // 表单数据
-  EnvironmentImportDialogFormTuple _formData = (path: '');
+  EnvironmentImportDialogForm _formData = (path: '');
 
   // 获取表单数据
-  EnvironmentImportDialogFormTuple get formData => _formData;
+  EnvironmentImportDialogForm get formData => _formData;
 
   EnvironmentImportDialogProvider(super.context, Environment? item) {
     updateFormData(path: item?.path);

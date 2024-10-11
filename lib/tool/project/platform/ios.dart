@@ -4,7 +4,7 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // ios平台参数元组
-typedef IosPlatformInfoTuple = ();
+typedef IosPlatformInfo = ();
 
 /*
 * ios平台工具类
@@ -37,7 +37,7 @@ class IosPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _iconInfoPath);
 
   @override
-  Future<PlatformInfoTuple<IosPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<IosPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -82,11 +82,11 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getIconInfoJson(projectPath);
     final resPath = getPlatformFilePath(projectPath, _iconPath);
-    final result = <PlatformLogoTuple>[];
+    final result = <PlatformLogo>[];
     for (final item in json['images'] ?? []) {
       final filename = item['filename'];
       final entries = (item as Map)
@@ -132,7 +132,7 @@ class IosPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissions(
+  Future<List<PlatformPermission>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getPlistDocument(projectPath))
@@ -140,8 +140,8 @@ class IosPlatformTool extends PlatformTool {
         ?.getElement('dict')
         ?.findElements('key');
     if (permissions == null) return null;
-    final result = <PlatformPermissionTuple>[];
-    for (PlatformPermissionTuple e in await getFullPermissions() ?? []) {
+    final result = <PlatformPermission>[];
+    for (PlatformPermission e in await getFullPermissions() ?? []) {
       final element = permissions.where((it) {
         return it.innerText == e.value;
       }).firstOrNull;
@@ -157,7 +157,7 @@ class IosPlatformTool extends PlatformTool {
 
   @override
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermissionTuple> permissions) async {
+      String projectPath, List<PlatformPermission> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);
     final fullPermissions = (await getFullPermissions())?.map((e) => e.value);

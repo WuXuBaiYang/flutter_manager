@@ -12,7 +12,7 @@ import 'widgets/options_platform_item.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformMacosView
-    extends ProjectPlatformView<MacosPlatformInfoTuple> {
+    extends ProjectPlatformView<MacosPlatformInfo> {
   const ProjectPlatformMacosView({
     super.key,
     super.platform = PlatformType.macos,
@@ -20,7 +20,7 @@ class ProjectPlatformMacosView
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-      PlatformInfoTuple<MacosPlatformInfoTuple>? platformInfo) {
+      PlatformInfo<MacosPlatformInfo>? platformInfo) {
     return [
       LabelPlatformItem(
         platform: platform,

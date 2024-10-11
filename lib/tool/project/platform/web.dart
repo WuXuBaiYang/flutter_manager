@@ -2,7 +2,7 @@ import 'package:flutter_manager/tool/image.dart';
 import 'platform.dart';
 
 // web平台参数元组
-typedef WebPlatformInfoTuple = ();
+typedef WebPlatformInfo = ();
 
 /*
 * web平台工具类
@@ -27,7 +27,7 @@ class WebPlatformTool extends PlatformTool {
       readPlatformFileJson(projectPath, _manifestPath);
 
   @override
-  Future<PlatformInfoTuple<WebPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<WebPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -35,7 +35,7 @@ class WebPlatformTool extends PlatformTool {
       label: await getLabel(projectPath) ?? '',
       package: await getPackage(projectPath) ?? '',
       logos: await getLogos(projectPath) ?? [],
-      permissions: <PlatformPermissionTuple>[],
+      permissions: <PlatformPermission>[],
       info: (),
     );
   }
@@ -57,12 +57,12 @@ class WebPlatformTool extends PlatformTool {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getManifestJson(projectPath);
     final faviconSize =
         await ImageTool.getSize(getPlatformFilePath(projectPath, _faviconPath));
-    final result = <PlatformLogoTuple>[
+    final result = <PlatformLogo>[
       if (faviconSize != null)
         (
           name: 'favicon',

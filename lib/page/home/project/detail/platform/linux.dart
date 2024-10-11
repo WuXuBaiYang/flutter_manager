@@ -11,7 +11,7 @@ import 'widgets/options_platform_item.dart';
 * @Time 2023/11/30 17:04
 */
 class ProjectPlatformLinuxView
-    extends ProjectPlatformView<LinuxPlatformInfoTuple> {
+    extends ProjectPlatformView<LinuxPlatformInfo> {
   const ProjectPlatformLinuxView({
     super.key,
     super.platform = PlatformType.linux,
@@ -19,7 +19,7 @@ class ProjectPlatformLinuxView
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-      PlatformInfoTuple<LinuxPlatformInfoTuple>? platformInfo) {
+      PlatformInfo<LinuxPlatformInfo>? platformInfo) {
     return [
       LabelPlatformItem(
         platform: platform,

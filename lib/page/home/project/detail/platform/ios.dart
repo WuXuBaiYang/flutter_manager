@@ -13,7 +13,7 @@ import 'widgets/permission_platform_item.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 17:03
 */
-class ProjectPlatformIosView extends ProjectPlatformView<IosPlatformInfoTuple> {
+class ProjectPlatformIosView extends ProjectPlatformView<IosPlatformInfo> {
   const ProjectPlatformIosView({
     super.key,
     super.platform = PlatformType.ios,
@@ -21,7 +21,7 @@ class ProjectPlatformIosView extends ProjectPlatformView<IosPlatformInfoTuple> {
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-          PlatformInfoTuple<IosPlatformInfoTuple>? platformInfo) =>
+          PlatformInfo<IosPlatformInfo>? platformInfo) =>
       [
         LabelPlatformItem(
           platform: platform,

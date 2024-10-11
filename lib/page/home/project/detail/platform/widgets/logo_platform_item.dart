@@ -17,7 +17,7 @@ class LogoPlatformItem extends StatelessWidget {
   final PlatformType platform;
 
   // 图标列表
-  final List<PlatformLogoTuple> logos;
+  final List<PlatformLogo> logos;
 
   // 水平风向占用格子数
   final int crossAxisCellCount;

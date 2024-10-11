@@ -7,20 +7,20 @@ import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
 
 // 平台基本信息元组
-typedef PlatformInfoTuple<T extends Record> = ({
+typedef PlatformInfo<T extends Record> = ({
   String path,
   String label,
   String package,
-  List<PlatformLogoTuple> logos,
-  List<PlatformPermissionTuple> permissions,
+  List<PlatformLogo> logos,
+  List<PlatformPermission> permissions,
   T info,
 });
 
 // 平台图标信息元组
-typedef PlatformLogoTuple = ({String name, String path, Size size});
+typedef PlatformLogo = ({String name, String path, Size size});
 
 // 平台权限信息元组
-typedef PlatformPermissionTuple = ({
+typedef PlatformPermission = ({
   String name,
   String desc,
   String value,
@@ -28,7 +28,7 @@ typedef PlatformPermissionTuple = ({
 });
 
 // 扩展平台权限信息元组
-extension PlatformPermissionTupleExtension on PlatformPermissionTuple {
+extension PlatformPermissionExtension on PlatformPermission {
   // 根据条件搜索判断是否符合要求
   bool search(String keyword) {
     if (keyword.isEmpty) return true;
@@ -38,7 +38,7 @@ extension PlatformPermissionTupleExtension on PlatformPermissionTuple {
   }
 
   // 实现copyWith
-  PlatformPermissionTuple copyWith(
+  PlatformPermission copyWith(
           {String? name, String? desc, String? value, String? input}) =>
       (
         name: name ?? this.name,
@@ -167,7 +167,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   Future<bool> setLabel(String projectPath, String label) async => true;
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async => null;
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async => null;
 
   @override
   Future<bool> replaceLogo(String projectPath, String logoPath,
@@ -202,7 +202,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   Future<bool> setPackage(String projectPath, String package) async => true;
 
   @override
-  Future<List<PlatformPermissionTuple>?> getFullPermissions() async {
+  Future<List<PlatformPermission>?> getFullPermissions() async {
     try {
       final content = await rootBundle.loadString(
         switch (platform) {
@@ -212,7 +212,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
         },
       );
       return jsonDecode(content)
-          .map<PlatformPermissionTuple>((e) => (
+          .map<PlatformPermission>((e) => (
                 name: '${e['name']}',
                 desc: '${e['desc']}',
                 value: '${e['value']}',
@@ -224,13 +224,13 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissions(
+  Future<List<PlatformPermission>?> getPermissions(
           String projectPath) async =>
       null;
 
   @override
   Future<bool> setPermissions(String projectPath,
-          List<PlatformPermissionTuple> permissions) async =>
+          List<PlatformPermission> permissions) async =>
       true;
 }
 
@@ -241,7 +241,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 */
 abstract mixin class PlatformToolMixin<T extends Record> {
   // 获取平台信息
-  Future<PlatformInfoTuple<T>?> getPlatformInfo(String projectPath);
+  Future<PlatformInfo<T>?> getPlatformInfo(String projectPath);
 
   // 获取项目名
   Future<String?> getLabel(String projectPath);
@@ -250,7 +250,7 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<bool> setLabel(String projectPath, String label);
 
   // 获取logo
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath);
+  Future<List<PlatformLogo>?> getLogos(String projectPath);
 
   // 替换logo
   Future<bool> replaceLogo(String projectPath, String logoPath,
@@ -263,14 +263,14 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<bool> setPackage(String projectPath, String package);
 
   // 获取该平台完整权限列表
-  Future<List<PlatformPermissionTuple>?> getFullPermissions();
+  Future<List<PlatformPermission>?> getFullPermissions();
 
   // 获取权限列表
-  Future<List<PlatformPermissionTuple>?> getPermissions(String projectPath);
+  Future<List<PlatformPermission>?> getPermissions(String projectPath);
 
   // 设置权限列表
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermissionTuple> permissions);
+      String projectPath, List<PlatformPermission> permissions);
 }
 
 // 支持平台枚举

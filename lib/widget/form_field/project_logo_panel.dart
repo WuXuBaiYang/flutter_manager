@@ -3,7 +3,7 @@ import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/project_logo.dart';
 
 // 项目图标折叠展示表单项值元组
-typedef LogoPanelFieldTuple = ({
+typedef LogoPanelField = ({
   PlatformType? expanded,
   List<PlatformType> platforms,
 });
@@ -18,13 +18,13 @@ class ProjectLogoPanelFormField extends StatelessWidget {
   final Key? fieldKey;
 
   // 初始化值
-  final LogoPanelFieldTuple? initialValue;
+  final LogoPanelField? initialValue;
 
   // 保存回调
-  final FormFieldSetter<LogoPanelFieldTuple>? onSaved;
+  final FormFieldSetter<LogoPanelField>? onSaved;
 
   // 平台与图标表
-  final Map<PlatformType, List<PlatformLogoTuple>> platformLogoMap;
+  final Map<PlatformType, List<PlatformLogo>> platformLogoMap;
 
   const ProjectLogoPanelFormField({
     super.key,
@@ -36,7 +36,7 @@ class ProjectLogoPanelFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormField<LogoPanelFieldTuple>(
+    return FormField<LogoPanelField>(
       key: fieldKey,
       onSaved: onSaved,
       initialValue: initialValue,
@@ -54,7 +54,7 @@ class ProjectLogoPanelFormField extends StatelessWidget {
 
   // 构建表单字段
   Widget _buildFormField(
-      BuildContext context, FormFieldState<LogoPanelFieldTuple> field) {
+      BuildContext context, FormFieldState<LogoPanelField> field) {
     final inputDecoration = InputDecoration(
       border: InputBorder.none,
       errorText: field.errorText,
@@ -80,8 +80,8 @@ class ProjectLogoPanelFormField extends StatelessWidget {
   // 构建展开项
   ExpansionPanelRadio _buildExpansionPanelItem(
       BuildContext context,
-      MapEntry<PlatformType, List<PlatformLogoTuple>> item,
-      FormFieldState<LogoPanelFieldTuple> field) {
+      MapEntry<PlatformType, List<PlatformLogo>> item,
+      FormFieldState<LogoPanelField> field) {
     final checked = field.value?.platforms.contains(item.key) ?? false;
     return ExpansionPanelRadio(
       value: item.key,
@@ -113,7 +113,7 @@ class ProjectLogoPanelFormField extends StatelessWidget {
 
   // 展开项事件
   void _onExpansionPanelChanged(
-      int index, bool isExpanded, FormFieldState<LogoPanelFieldTuple> field) {
+      int index, bool isExpanded, FormFieldState<LogoPanelField> field) {
     field.didChange((
       expanded: isExpanded ? platformLogoMap.keys.elementAt(index) : null,
       platforms: field.value?.platforms ?? []
@@ -122,7 +122,7 @@ class ProjectLogoPanelFormField extends StatelessWidget {
 
   // 多选框事件
   void _onCheckboxChanged(bool checked,
-      FormFieldState<LogoPanelFieldTuple> field, PlatformType platform) {
+      FormFieldState<LogoPanelField> field, PlatformType platform) {
     final temp = field.value?.platforms ?? [];
     field.didChange((
       expanded: field.value?.expanded,

@@ -17,7 +17,7 @@ class PermissionPlatformItem extends StatelessWidget {
   final PlatformType platform;
 
   // 权限列表
-  final List<PlatformPermissionTuple> permissions;
+  final List<PlatformPermission> permissions;
 
   // 水平风向占用格子数
   final int crossAxisCellCount;
@@ -112,7 +112,7 @@ class PermissionPlatformItem extends StatelessWidget {
   }
 
   // 构建默认权限列表项
-  Widget _buildItem(BuildContext context, PlatformPermissionTuple item) {
+  Widget _buildItem(BuildContext context, PlatformPermission item) {
     final textStyle =
         Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey);
     final isThreeLine = [PlatformType.ios].contains(platform);
@@ -132,7 +132,7 @@ class PermissionPlatformItem extends StatelessWidget {
 
   // 恢复input控制器
   TextEditingController _restoreInputController(
-      BuildContext context, PlatformPermissionTuple item) {
+      BuildContext context, PlatformPermission item) {
     final cacheKey = 'permission_input_${platform}_${item.value}';
     final provider = context.read<PlatformProvider>();
     final controller = provider.restoreCache<TextEditingController>(cacheKey) ??
@@ -144,7 +144,7 @@ class PermissionPlatformItem extends StatelessWidget {
   }
 
   // 构建权限输入
-  Widget _buildItemInput(BuildContext context, PlatformPermissionTuple item) {
+  Widget _buildItemInput(BuildContext context, PlatformPermission item) {
     final controller = _restoreInputController(context, item);
     final provider = context.read<PlatformProvider>();
     updateInput() {

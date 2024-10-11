@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/widget/custom_context_menu_region.dart';
-import 'package:flutter_manager/widget/environment_badge.dart';
+import 'package:flutter_manager/widget/context_menu_region.dart';
+import 'package:flutter_manager/widget/environment/badge.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 // 确认删除回调

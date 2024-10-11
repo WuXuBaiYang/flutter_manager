@@ -4,7 +4,7 @@ import 'package:custom_image_crop/custom_image_crop.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/image.dart';
-import 'package:flutter_manager/widget/custom_popup_menu_button.dart';
+import 'package:flutter_manager/widget/popup_menu_button.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 展示图片编辑弹窗
@@ -97,7 +97,7 @@ class ImageEditorDialog extends ProviderView {
   Widget _buildImageTypeSelector(BuildContext context) {
     final provider = context.read<ImageEditorDialogProvider>();
     return Selector<ImageEditorDialogProvider, ImageType>(
-      selector: (_, provider) => provider._actionTuple.imageType,
+      selector: (_, provider) => provider._action.imageType,
       builder: (_, imageType, __) {
         return Row(
           children: [
@@ -163,13 +163,13 @@ class ImageEditorDialog extends ProviderView {
         borderRadius: BorderRadius.circular(8),
         child: Selector<ImageEditorDialogProvider, (CropAspectRatio, double)>(
           selector: (_, provider) {
-            final actionTuple = provider.actionTuple;
-            return (actionTuple.ratio, actionTuple.borderRadius);
+            final action = provider.action;
+            return (action.ratio, action.borderRadius);
           },
-          builder: (_, tuple, __) {
+          builder: (_, result, __) {
             return CustomImageCrop(
-              ratio: tuple.$1.ratio,
-              borderRadius: tuple.$2,
+              ratio: result.$1.ratio,
+              borderRadius: result.$2,
               image: FileImage(File(path)),
               shape: CustomCropShape.Square,
               backgroundColor: Colors.transparent,
@@ -186,9 +186,9 @@ class ImageEditorDialog extends ProviderView {
   Widget _buildImageEditorActions(BuildContext context) {
     final ratioDisable = absoluteRatio != null;
     final provider = context.read<ImageEditorDialogProvider>();
-    return Selector<ImageEditorDialogProvider, ImageEditorActionTuple>(
-      selector: (_, provider) => provider.actionTuple,
-      builder: (_, actionTuple, __) {
+    return Selector<ImageEditorDialogProvider, ImageEditorAction>(
+      selector: (_, provider) => provider.action,
+      builder: (_, action, __) {
         return Row(
           children: [
             ConstrainedBox(
@@ -201,8 +201,8 @@ class ImageEditorDialog extends ProviderView {
                   onPressed: () => provider.updateActions(borderRadius: 0),
                   label: Slider(
                     max: 80,
-                    value: actionTuple.borderRadius,
-                    label: '${actionTuple.borderRadius.round()}px',
+                    value: action.borderRadius,
+                    label: '${action.borderRadius.round()}px',
                     onChanged: (v) => provider.updateActions(borderRadius: v),
                   ),
                 ),
@@ -210,7 +210,7 @@ class ImageEditorDialog extends ProviderView {
             ),
             const Spacer(),
             Transform.rotate(
-              angle: actionTuple.rotate,
+              angle: action.rotate,
               child: IconButton.filled(
                 iconSize: 16,
                 tooltip: '向左旋转',
@@ -220,7 +220,7 @@ class ImageEditorDialog extends ProviderView {
               ),
             ),
             Transform.rotate(
-              angle: actionTuple.rotate,
+              angle: action.rotate,
               child: IconButton.filled(
                 iconSize: 16,
                 tooltip: '向右旋转',
@@ -257,7 +257,7 @@ class ImageEditorDialog extends ProviderView {
 }
 
 // 图片编辑操作项元组
-typedef ImageEditorActionTuple = ({
+typedef ImageEditorAction = ({
   CropAspectRatio ratio,
   double rotate,
   double borderRadius,
@@ -274,19 +274,19 @@ class ImageEditorDialogProvider extends BaseProvider {
   final controller = CustomImageCropController();
 
   // 缓存初始化字段
-  final ImageEditorActionTuple _initializeActionTuple;
+  final ImageEditorAction _initializeaction;
 
   // 图片编辑操作参数元组
-  ImageEditorActionTuple _actionTuple;
+  ImageEditorAction _action;
 
   // 获取图片编辑操作参数元组
-  ImageEditorActionTuple get actionTuple => _actionTuple;
+  ImageEditorAction get action => _action;
 
   // 生成图片文件名称
-  String get _imageFileName => '${genID()}.${_actionTuple.imageType.name}';
+  String get _imageFileName => '${genID()}.${_action.imageType.name}';
 
-  ImageEditorDialogProvider(super.context, this._initializeActionTuple)
-      : _actionTuple = _initializeActionTuple;
+  ImageEditorDialogProvider(super.context, this._initializeaction)
+      : _action = _initializeaction;
 
   // 另存为其他路径
   Future<String?> saveOtherPath() async {
@@ -310,7 +310,7 @@ class ImageEditorDialogProvider extends BaseProvider {
       if (baseDir == null || cropImage == null) return null;
       savePath ??= join(baseDir, _imageFileName);
       return ImageTool.saveData(
-          cropImage.bytes, savePath, _actionTuple.imageType);
+          cropImage.bytes, savePath, _action.imageType);
     } catch (e) {
       if (!context.mounted) return null;
       Notice.showError(context, message: e.toString(), title: '图片裁剪失败');
@@ -348,7 +348,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 重置图片状态
   void reset() {
     controller.reset();
-    _actionTuple = _initializeActionTuple;
+    _action = _initializeaction;
     notifyListeners();
   }
 
@@ -359,11 +359,11 @@ class ImageEditorDialogProvider extends BaseProvider {
     double? borderRadius,
     ImageType? imageType,
   }) {
-    _actionTuple = (
-      ratio: ratio ?? _actionTuple.ratio,
-      rotate: rotate ?? _actionTuple.rotate,
-      borderRadius: borderRadius ?? _actionTuple.borderRadius,
-      imageType: imageType ?? _actionTuple.imageType,
+    _action = (
+      ratio: ratio ?? _action.ratio,
+      rotate: rotate ?? _action.rotate,
+      borderRadius: borderRadius ?? _action.borderRadius,
+      imageType: imageType ?? _action.imageType,
     );
     notifyListeners();
   }

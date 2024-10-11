@@ -12,10 +12,10 @@ class ProjectLogoGrid extends StatelessWidget {
   final Size maxSize;
 
   // 图标列表
-  final List<PlatformLogoTuple> logoList;
+  final List<PlatformLogo> logoList;
 
   // 点击事件
-  final ValueChanged<PlatformLogoTuple>? onTap;
+  final ValueChanged<PlatformLogo>? onTap;
 
   // 内间距
   final EdgeInsetsGeometry padding;
@@ -50,7 +50,7 @@ class ProjectLogoGrid extends StatelessWidget {
   }
 
   // 构建图标项
-  Widget _buildLogoItem(BuildContext context, PlatformLogoTuple item) {
+  Widget _buildLogoItem(BuildContext context, PlatformLogo item) {
     return InkWell(
       borderRadius: BorderRadius.circular(4),
       onTap: onTap != null ? () => onTap?.call(item) : null,

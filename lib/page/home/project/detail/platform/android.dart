@@ -15,7 +15,7 @@ import 'widgets/permission_platform_item.dart';
 * @Time 2023/11/30 17:02
 */
 class ProjectPlatformAndroidView
-    extends ProjectPlatformView<AndroidPlatformInfoTuple> {
+    extends ProjectPlatformView<AndroidPlatformInfo> {
   const ProjectPlatformAndroidView({
     super.key,
     super.platform = PlatformType.android,
@@ -23,7 +23,7 @@ class ProjectPlatformAndroidView
 
   @override
   List<Widget> buildPlatformItems(BuildContext context,
-          PlatformInfoTuple<AndroidPlatformInfoTuple>? platformInfo) =>
+          PlatformInfo<AndroidPlatformInfo>? platformInfo) =>
       [
         LabelPlatformItem(
           platform: platform,

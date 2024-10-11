@@ -5,7 +5,7 @@ import 'package:jtech_base/jtech_base.dart';
 
 // 开始下载回调
 typedef StartDownloadCallback = void Function(
-    EnvironmentPackageTuple package, String savePath);
+    EnvironmentPackage package, String savePath);
 
 /*
 * 远程环境安装包列表组件
@@ -27,7 +27,7 @@ class EnvironmentRemoteList extends StatelessWidget {
       initialData: const {},
       create: (_) => EnvironmentTool.getEnvironmentPackageList(),
     ),
-    FutureProvider<DownloadedFileTuple>(
+    FutureProvider<DownloadedFileResult>(
       initialData: (downloaded: <String>[], tmp: <String>[]),
       create: (_) => EnvironmentTool.getDownloadedFileList(),
     )
@@ -53,7 +53,7 @@ class EnvironmentRemoteList extends StatelessWidget {
 
   // 构建内容
   Widget _buildContent(BuildContext context, EnvironmentPackageResult package) {
-    final downloadFile = context.watch<DownloadedFileTuple>();
+    final downloadFile = context.watch<DownloadedFileResult>();
     final stableIndex = package.keys.toList().indexOf('stable');
     return DefaultTabController(
       length: package.length,
@@ -69,7 +69,11 @@ class EnvironmentRemoteList extends StatelessWidget {
             children: List.generate(package.length, (i) {
               final packages = package.values.elementAt(i);
               return _buildPackageChannelTabView(
-                  context, package.keys.elementAt(i), packages, downloadFile);
+                context,
+                packages: packages,
+                downloadFile: downloadFile,
+                channel: package.keys.elementAt(i),
+              );
             }),
           ),
         ),
@@ -83,11 +87,11 @@ class EnvironmentRemoteList extends StatelessWidget {
 
   // 构建安装包渠道列表
   Widget _buildPackageChannelTabView(
-    BuildContext context,
-    String channel,
-    List<EnvironmentPackageTuple> packages,
-    DownloadedFileTuple downloadFile,
-  ) {
+    BuildContext context, {
+    required String channel,
+    required DownloadedFileResult downloadFile,
+    required List<EnvironmentPackage> packages,
+  }) {
     final controller = _getSearchController(channel);
     return StatefulBuilder(
       builder: (_, setState) {
@@ -105,7 +109,9 @@ class EnvironmentRemoteList extends StatelessWidget {
               ),
             ),
             Expanded(
-                child: _buildPackageChannelList(context, temp, downloadFile)),
+              child: _buildPackageChannelList(context,
+                  packages: temp, downloadFile: downloadFile),
+            ),
           ],
         );
       },
@@ -114,10 +120,10 @@ class EnvironmentRemoteList extends StatelessWidget {
 
   // 构建安装包渠道列表
   Widget _buildPackageChannelList(
-    BuildContext context,
-    List<EnvironmentPackageTuple> packages,
-    DownloadedFileTuple downloadFile,
-  ) {
+    BuildContext context, {
+    required DownloadedFileResult downloadFile,
+    required List<EnvironmentPackage> packages,
+  }) {
     return ListView.separated(
       shrinkWrap: true,
       itemCount: packages.length,

@@ -5,10 +5,10 @@ import 'package:xml/xml.dart';
 import 'platform.dart';
 
 // android平台信息元组
-typedef AndroidPlatformInfoTuple = ();
+typedef AndroidPlatformInfo = ();
 
 // android签名生成工具表单数据
-typedef AndroidSignKeyFormTuple = ({
+typedef AndroidSignKeyForm = ({
   String keytoolPath,
   String path,
   String alias,
@@ -30,7 +30,7 @@ typedef AndroidSignKeyFormTuple = ({
 * @author wuxubaiyang
 * @Time 2023/11/29 14:55
 */
-class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
+class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
   @override
   PlatformType get platform => PlatformType.android;
 
@@ -62,7 +62,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
       readPlatformFile(projectPath, keyFilePath);
 
   @override
-  Future<PlatformInfoTuple<AndroidPlatformInfoTuple>?> getPlatformInfo(
+  Future<PlatformInfo<AndroidPlatformInfo>?> getPlatformInfo(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
@@ -98,7 +98,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   }
 
   @override
-  Future<List<PlatformLogoTuple>?> getLogos(String projectPath) async {
+  Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     // 从manifest中获取logo的路径信息
     final iconPath = (await _getManifestDocument(projectPath))
@@ -112,7 +112,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
     final iconRegExp = RegExp(iconPath.replaceAll('/', '|'));
     final dir = Directory(getPlatformFilePath(projectPath, _resPath));
     // 移除不符合条件的文件
-    final result = <PlatformLogoTuple>[];
+    final result = <PlatformLogo>[];
     for (final file in dir.listSync(recursive: true)) {
       final parent = file.parent.path, path = file.path;
       if (!parent.contains(parentKey) || !path.contains(iconRegExp)) continue;
@@ -141,7 +141,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   }
 
   @override
-  Future<List<PlatformPermissionTuple>?> getPermissions(
+  Future<List<PlatformPermission>?> getPermissions(
       String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getManifestDocument(projectPath))
@@ -156,7 +156,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
 
   @override
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermissionTuple> permissions) async {
+      String projectPath, List<PlatformPermission> permissions) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getManifestFragment(projectPath);
     final fullPermissions = (await getFullPermissions())?.map((e) => e.value);
@@ -187,7 +187,7 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfoTuple> {
   }
 
   // 生成android端签名
-  Future<bool> genSignKey(AndroidSignKeyFormTuple form) async {
+  Future<bool> genSignKey(AndroidSignKeyForm form) async {
     final arguments = [
       '-genkey',
       '-v',
