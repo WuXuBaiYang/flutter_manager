@@ -10,8 +10,7 @@ class ThemeProvider extends BaseThemeProvider {
   ThemeProvider(super.context);
 
   @override
-  ThemeData customTheme(
-      ThemeData themeData, Brightness brightness, bool useMaterial3) {
+  ThemeData customTheme(ThemeData themeData, Brightness brightness) {
     return themeData.copyWith(
       focusColor: Colors.transparent,
       appBarTheme: const AppBarTheme(
