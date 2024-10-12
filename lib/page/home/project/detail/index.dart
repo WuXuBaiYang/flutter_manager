@@ -44,7 +44,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final project = context.watch<ProjectDetailPageProvider>().project;
+    final project = pageProvider.project;
     return Scaffold(
       body: EmptyBoxView(
         hint: '项目不存在',
@@ -146,17 +146,14 @@ class ProjectDetailPageProvider extends PageProvider {
 
   ProjectDetailPageProvider(super.context, super.state) {
     // 监听滚动状态
-    bool scrollTop = false;
-    scrollController.addListener(() {
-      if (scrollTop != isScrollTop) {
-        scrollTop = isScrollTop;
-        notifyListeners();
-      }
-    });
+    scrollController.addListener(_updateScrollTop);
   }
 
+  // 记录是否滚动到顶部状态
+  bool _isScrollTop = false;
+
   // 判断当前是否已经滚动到顶部
-  bool get isScrollTop => scrollController.offset >= headerHeight;
+  bool get isScrollTop => _isScrollTop;
 
   // 缓存项目信息
   late Project? _project = getExtra<Project>();
@@ -168,6 +165,14 @@ class ProjectDetailPageProvider extends PageProvider {
   void updateProject(Project? project) {
     if (project == null) return;
     _project = project;
+    notifyListeners();
+  }
+
+  // 更新滚动到顶部状态
+  void _updateScrollTop() {
+    final isScrollTop = scrollController.offset >= headerHeight;
+    if (_isScrollTop == isScrollTop) return;
+    _isScrollTop = isScrollTop;
     notifyListeners();
   }
 }

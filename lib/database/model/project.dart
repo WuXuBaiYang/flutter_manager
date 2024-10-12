@@ -76,4 +76,33 @@ class Project {
       ..createAt = createAt ?? this.createAt
       ..updateAt = updateAt ?? this.updateAt;
   }
+
+  @override
+  int get hashCode =>
+      id.hashCode &
+      label.hashCode &
+      logo.hashCode &
+      path.hashCode &
+      envId.hashCode &
+      color.hashCode &
+      pinned.hashCode &
+      order.hashCode &
+      createAt.hashCode &
+      updateAt.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! Project) return false;
+    return id == other.id &&
+        label == other.label &&
+        logo == other.logo &&
+        path == other.path &&
+        envId == other.envId &&
+        color == other.color &&
+        pinned == other.pinned &&
+        order == other.order &&
+        createAt == other.createAt &&
+        updateAt == other.updateAt;
+  }
 }
