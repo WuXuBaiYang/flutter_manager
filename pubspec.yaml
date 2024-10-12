@@ -40,8 +40,6 @@ dependencies:
   archive: ^3.6.1
   open_dir: ^0.0.1+6
   jtech_base: ^0.1.5
-#  jtech_base:
-#    path: ../jtech_base
   flutter_gen: ^5.8.0
   desktop_drop: ^0.5.0
   window_manager: ^0.4.2
