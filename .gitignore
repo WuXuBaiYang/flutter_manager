@@ -46,6 +46,7 @@ app.*.map.json
 /lib/generated/
 /lib/gen/
 /venv/
+pubspec.lock
 
 # 忽略签名文件
 *.keystore

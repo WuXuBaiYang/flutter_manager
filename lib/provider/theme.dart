@@ -14,7 +14,6 @@ class ThemeProvider extends BaseThemeProvider {
       ThemeData themeData, Brightness brightness, bool useMaterial3) {
     return themeData.copyWith(
       focusColor: Colors.transparent,
-      scaffoldBackgroundColor: Colors.black38,
       appBarTheme: const AppBarTheme(
         scrolledUnderElevation: 0,
       ),
@@ -23,8 +22,8 @@ class ThemeProvider extends BaseThemeProvider {
         clipBehavior: Clip.antiAlias,
       ),
       dividerTheme: const DividerThemeData(
-        thickness: 0.3,
         space: 0,
+        thickness: 0.3,
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         showDragHandle: true,
