@@ -26,12 +26,16 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   // 是否自动显示返回按钮
   final bool automaticallyImplyLeading;
 
+  // 操作按钮大小
+  final Size actionSize;
+
   const CustomAppBar({
     super.key,
     this.title,
     this.leading,
     this.backgroundColor,
     this.actions = const [],
+    this.actionSize = const Size(40, 35),
     this.automaticallyImplyLeading = true,
   });
 
@@ -49,29 +53,39 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             actions: [
               ...actions,
               SizedBox(width: 14),
-              ClipRRect(
-                clipBehavior: Clip.antiAlias,
-                borderRadius: BorderRadius.circular(4),
-                child: WindowCaptionButton.minimize(
-                  brightness: brightness,
-                  onPressed: windowManager.minimize,
+              SizedBox.fromSize(
+                size: actionSize,
+                child: ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: WindowCaptionButton.minimize(
+                    brightness: brightness,
+                    onPressed: windowManager.minimize,
+                  ),
                 ),
               ),
               SizedBox(width: 8),
-              ClipRRect(
-                clipBehavior: Clip.antiAlias,
-                borderRadius: BorderRadius.circular(4),
-                child: _buildMaximizeButton(brightness),
-              ),
-              SizedBox(width: 8),
-              ClipRRect(
-                clipBehavior: Clip.antiAlias,
-                borderRadius: BorderRadius.circular(4),
-                child: WindowCaptionButton.close(
-                  brightness: brightness,
-                  onPressed: windowManager.close,
+              SizedBox.fromSize(
+                size: actionSize,
+                child: ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: _buildMaximizeButton(brightness),
                 ),
               ),
+              SizedBox(width: 8),
+              SizedBox.fromSize(
+                size: actionSize,
+                child: ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: WindowCaptionButton.close(
+                    brightness: brightness,
+                    onPressed: windowManager.close,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8),
             ],
           ),
         );

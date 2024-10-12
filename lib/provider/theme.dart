@@ -19,9 +19,7 @@ class ThemeProvider extends BaseThemeProvider {
       cardTheme: CardTheme(
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
-        color: brightness == Brightness.light
-            ? Colors.white
-            : Colors.black,
+        color: brightness == Brightness.light ? Colors.white : Colors.black,
       ),
       dividerTheme: const DividerThemeData(
         space: 0,
