@@ -18,9 +18,6 @@ class KnowledgePage extends ProviderPage<KnowledgePageProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('知识库'),
-      ),
       body: const EmptyBoxView(
         isEmpty: true,
         hint: '功能施工中',

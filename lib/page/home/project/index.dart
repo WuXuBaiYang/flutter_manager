@@ -31,9 +31,6 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('项目'),
-      ),
       body: _buildDropArea(context),
       floatingActionButton: FloatingActionButton(
         onPressed: pageProvider.addProject,

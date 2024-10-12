@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/main.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/provider/window.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:window_manager/window_manager.dart';
@@ -13,50 +14,51 @@ class StatusBar extends StatelessWidget implements PreferredSizeWidget {
   // 动作按钮集合
   final List<Widget> actions;
 
-  // 主题亮度
-  final Brightness brightness;
-
   const StatusBar({
     super.key,
     this.actions = const [],
-    this.brightness = Brightness.light,
   });
 
   @override
   Widget build(BuildContext context) {
-    return DragToMoveArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          children: [
-            ...actions,
-            const Spacer(),
-            ClipRRect(
-              clipBehavior: Clip.antiAlias,
-              borderRadius: BorderRadius.circular(4),
-              child: WindowCaptionButton.minimize(
-                brightness: brightness,
-                onPressed: windowManager.minimize,
-              ),
+    return Consumer<ThemeProvider>(
+      builder: (_, theme, __) {
+        final brightness = theme.brightness;
+        return DragToMoveArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              children: [
+                ...actions,
+                const Spacer(),
+                ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: WindowCaptionButton.minimize(
+                    brightness: brightness,
+                    onPressed: windowManager.minimize,
+                  ),
+                ),
+                ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: _buildMaximizeButton(brightness),
+                ),
+                ClipRRect(
+                  clipBehavior: Clip.antiAlias,
+                  borderRadius: BorderRadius.circular(4),
+                  child: WindowCaptionButton.close(
+                    brightness: brightness,
+                    onPressed: windowManager.close,
+                  ),
+                ),
+              ].expand<Widget>((child) {
+                return [child, const SizedBox(width: 4)];
+              }).toList(),
             ),
-            ClipRRect(
-              clipBehavior: Clip.antiAlias,
-              borderRadius: BorderRadius.circular(4),
-              child: _buildMaximizeButton(brightness),
-            ),
-            ClipRRect(
-              clipBehavior: Clip.antiAlias,
-              borderRadius: BorderRadius.circular(4),
-              child: WindowCaptionButton.close(
-                brightness: brightness,
-                onPressed: windowManager.close,
-              ),
-            ),
-          ].expand<Widget>((child) {
-            return [child, const SizedBox(width: 4)];
-          }).toList(),
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

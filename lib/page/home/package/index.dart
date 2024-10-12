@@ -18,9 +18,6 @@ class PackagePage extends ProviderPage<PackagePageProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('打包'),
-      ),
       body: const EmptyBoxView(
         isEmpty: true,
         hint: '功能施工中',

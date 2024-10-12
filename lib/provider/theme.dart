@@ -13,12 +13,15 @@ class ThemeProvider extends BaseThemeProvider {
   ThemeData customTheme(ThemeData themeData, Brightness brightness) {
     return themeData.copyWith(
       focusColor: Colors.transparent,
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         scrolledUnderElevation: 0,
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
+        color: brightness == Brightness.light
+            ? Colors.white
+            : Colors.black,
       ),
       dividerTheme: const DividerThemeData(
         space: 0,

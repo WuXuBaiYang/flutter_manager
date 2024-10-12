@@ -4,6 +4,7 @@ import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/environment_import.dart';
@@ -30,9 +31,6 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('设置'),
-      ),
       body: _buildDropArea(context),
     );
   }
@@ -99,17 +97,27 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
           },
         ),
         // 主题设置
-        SettingItemThemeMode(
-          themeMode: context.theme.themeMode,
-          brightness: context.theme.brightness,
-          settingKey: context.setting.themeModeKey,
-          onThemeChange: context.theme.changeThemeMode,
+        Selector<ThemeProvider, ThemeMode>(
+          selector: (_, provider) => provider.themeMode,
+          builder: (_, themeMode, __) {
+            return SettingItemThemeMode(
+              themeMode: themeMode,
+              brightness: context.theme.brightness,
+              settingKey: context.setting.themeModeKey,
+              onThemeChange: context.theme.changeThemeMode,
+            );
+          },
         ),
         // 主题配色设置
-        SettingItemThemeScheme(
-          themeScheme: context.theme.themeScheme,
-          settingKey: context.setting.themeSchemeKey,
-          onThemeSchemeChange: context.theme.showSchemeChangePicker,
+        Selector<ThemeProvider, ThemeScheme>(
+          selector: (_, provider) => provider.themeScheme,
+          builder: (_, themeScheme, __) {
+            return SettingItemThemeScheme(
+              themeScheme: themeScheme,
+              settingKey: context.setting.themeSchemeKey,
+              onThemeSchemeChange: context.theme.showSchemeChangePicker,
+            );
+          },
         ),
       ]),
     );

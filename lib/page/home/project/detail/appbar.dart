@@ -54,7 +54,7 @@ class ProjectDetailAppBar extends StatelessWidget {
       automaticallyImplyLeading: false,
       scrolledUnderElevation: hasColor ? 8 : 1,
       surfaceTintColor: hasColor ? color : null,
-      title: StatusBar(brightness: brightness, actions: [
+      title: StatusBar(actions: [
         const BackButton(),
         Expanded(child: _buildCollapsedTitle(context)),
       ]),
@@ -103,10 +103,7 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建项目信息
   Widget _buildProjectInfo(BuildContext context) {
-    var bodyStyle = Theme
-        .of(context)
-        .textTheme
-        .bodySmall;
+    var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withOpacity(0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
     return ListTile(
@@ -115,7 +112,7 @@ class ProjectDetailAppBar extends StatelessWidget {
         ConstrainedBox(
           constraints: BoxConstraints.loose(const Size.fromWidth(220)),
           child:
-          Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
         _buildEnvironmentBadge(),
@@ -163,10 +160,7 @@ class ProjectDetailAppBar extends StatelessWidget {
             shape: WidgetStatePropertyAll(
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
             textStyle:
-            WidgetStatePropertyAll(Theme
-                .of(context)
-                .textTheme
-                .bodyLarge),
+                WidgetStatePropertyAll(Theme.of(context).textTheme.bodyLarge),
           ),
           onPressed: () => showProjectBuild(context, project: project),
         ),

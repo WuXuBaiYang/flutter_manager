@@ -23,11 +23,8 @@ class HomePage extends ProviderPage<HomePageProvider> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final brightness = context.theme.brightness;
     return Scaffold(
-      appBar: StatusBar(
-        brightness: brightness,
-      ),
+      appBar: StatusBar(),
       body: _buildContent(context),
     );
   }
