@@ -3,12 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_font.dart';
 import 'package:flutter_manager/widget/environment/badge.dart';
-import 'package:flutter_manager/widget/status_bar.dart';
+import 'package:flutter_manager/widget/app_bar.dart';
 import 'package:open_dir/open_dir.dart';
 
 /*
@@ -45,7 +44,6 @@ class ProjectDetailAppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = project.getColor();
     final hasColor = color != Colors.transparent;
-    final brightness = context.theme.brightness;
     return SliverAppBar(
       pinned: true,
       bottom: bottom,
@@ -54,10 +52,15 @@ class ProjectDetailAppBar extends StatelessWidget {
       automaticallyImplyLeading: false,
       scrolledUnderElevation: hasColor ? 8 : 1,
       surfaceTintColor: hasColor ? color : null,
-      title: StatusBar(actions: [
-        const BackButton(),
-        Expanded(child: _buildCollapsedTitle(context)),
-      ]),
+      title: CustomAppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.transparent,
+        actions: [
+          const BackButton(),
+          _buildCollapsedTitle(context),
+          const Spacer(),
+        ],
+      ),
       flexibleSpace: _buildFlexibleSpace(
           context, hasColor ? color.withOpacity(0.2) : null),
     );
