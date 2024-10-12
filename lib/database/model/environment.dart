@@ -78,4 +78,33 @@ class Environment {
       ..updatedAt = updatedAt ?? this.updatedAt
       ..order = order ?? this.order;
   }
+
+  @override
+  int get hashCode =>
+      id.hashCode &
+      path.hashCode &
+      version.hashCode &
+      channel.hashCode &
+      gitUrl.hashCode &
+      frameworkReversion.hashCode &
+      engineReversion.hashCode &
+      dartVersion.hashCode &
+      devToolsVersion.hashCode &
+      updatedAt.hashCode &
+      order.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      other is Environment &&
+      id == other.id &&
+      path == other.path &&
+      version == other.version &&
+      channel == other.channel &&
+      gitUrl == other.gitUrl &&
+      frameworkReversion == other.frameworkReversion &&
+      engineReversion == other.engineReversion &&
+      dartVersion == other.dartVersion &&
+      devToolsVersion == other.devToolsVersion &&
+      updatedAt == other.updatedAt &&
+      order == other.order;
 }

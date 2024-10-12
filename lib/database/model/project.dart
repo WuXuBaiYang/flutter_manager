@@ -91,18 +91,16 @@ class Project {
       updateAt.hashCode;
 
   @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    if (other is! Project) return false;
-    return id == other.id &&
-        label == other.label &&
-        logo == other.logo &&
-        path == other.path &&
-        envId == other.envId &&
-        color == other.color &&
-        pinned == other.pinned &&
-        order == other.order &&
-        createAt == other.createAt &&
-        updateAt == other.updateAt;
-  }
+  bool operator ==(Object other) =>
+      other is Project &&
+      id == other.id &&
+      label == other.label &&
+      logo == other.logo &&
+      path == other.path &&
+      envId == other.envId &&
+      color == other.color &&
+      pinned == other.pinned &&
+      order == other.order &&
+      createAt == other.createAt &&
+      updateAt == other.updateAt;
 }
