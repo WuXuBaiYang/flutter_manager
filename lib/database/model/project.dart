@@ -16,7 +16,8 @@ class Project {
   String path = '';
 
   // 项目颜色
-  int color = Colors.transparent.value;
+  @Transient()
+  Color color = Colors.transparent;
 
   // 是否订到顶部
   bool pinned = false;
@@ -56,29 +57,25 @@ class Project {
     required this.logo,
     required this.path,
     required this.pinned,
-    required Color color,
+    required this.color,
     required Environment environment,
-  }) : color = color.value {
+  }) {
     environmentDB.target = environment;
   }
+
+  // 设置数据库颜色
+  set colorDB(int value) => color = Color(value);
+
+  // 获取数据库颜色
+  int get colorDB => color.value;
 
   // 获取环境
   @Transient()
   Environment? get environment => environmentDB.target;
 
-  // 设置环境
-  @Transient()
-  set environment(Environment? value) => environmentDB.target = value;
-
   // 获取环境id
   @Transient()
   int? get envId => environment?.id;
-
-  // 获取颜色
-  Color getColor([double opacity = 1]) {
-    if (color == Colors.transparent.value) return Colors.transparent;
-    return Color(color).withOpacity(opacity);
-  }
 
   // 实现copyWith
   Project copyWith({
@@ -96,7 +93,7 @@ class Project {
       label: label ?? this.label,
       logo: logo ?? this.logo,
       path: path ?? this.path,
-      color: color?.value ?? this.color,
+      color: color ?? this.color,
       pinned: pinned ?? this.pinned,
       order: order ?? this.order,
       createAt: createAt ?? this.createAt,

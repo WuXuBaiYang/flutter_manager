@@ -124,7 +124,7 @@ class ProjectGridView extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       height: double.maxFinite,
-      color: item.getColor(0.2),
+      color: item.color.withOpacity(0.2),
       child: ListTile(
         contentPadding: contentPadding,
         title: Row(children: [

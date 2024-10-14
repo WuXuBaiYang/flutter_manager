@@ -34,6 +34,14 @@ class Environment {
   // 排序
   int order = 0;
 
+  // 创建时间
+  @Property(type: PropertyType.date)
+  DateTime createAt = DateTime.now();
+
+  // 更新时间
+  @Property(type: PropertyType.date)
+  DateTime updateAt = DateTime.now();
+
   Environment();
 
   Environment.c({
@@ -62,14 +70,6 @@ class Environment {
     required this.devToolsVersion,
     required this.updateTime,
   });
-
-  // 创建时间
-  @Property(type: PropertyType.date)
-  DateTime createAt = DateTime.now();
-
-  // 更新时间
-  @Property(type: PropertyType.date)
-  DateTime updateAt = DateTime.now();
 
   // 获取环境信息标题
   @Transient()

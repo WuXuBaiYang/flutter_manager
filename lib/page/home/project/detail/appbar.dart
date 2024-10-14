@@ -41,7 +41,7 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = project.getColor();
+    final color = project.color;
     final hasColor = color != Colors.transparent;
     return SliverAppBar(
       pinned: true,

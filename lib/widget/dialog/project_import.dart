@@ -217,7 +217,7 @@ class ProjectImportDialogProvider extends BaseProvider {
           label: project?.label ?? '',
           logo: project?.logo ?? '',
           environment: project?.environment,
-          color: project?.getColor() ?? Colors.transparent,
+          color: project?.color ?? Colors.transparent,
           pinned: project?.pinned ?? false,
         ) {
     final result = database.getEnvironmentList(desc: true);
