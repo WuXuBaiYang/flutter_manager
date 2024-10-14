@@ -163,8 +163,8 @@ class ProjectImportDialog extends ProviderView {
   Widget _buildFormFieldColor(BuildContext context) {
     final provider = context.read<ProjectImportDialogProvider>();
     return ColorPickerFormField(
-      initialValue: Color(provider.formData.color),
-      onSaved: (v) => provider.updateFormData(color: v?.value),
+      initialValue: provider.formData.color,
+      onSaved: (v) => provider.updateFormData(color: v),
     );
   }
 
@@ -184,7 +184,7 @@ typedef ProjectImportDialogForm = ({
   String label,
   String logo,
   Environment? environment,
-  int color,
+  Color color,
   bool pinned,
 });
 
@@ -217,7 +217,7 @@ class ProjectImportDialogProvider extends BaseProvider {
           label: project?.label ?? '',
           logo: project?.logo ?? '',
           environment: project?.environment,
-          color: project?.color ?? Colors.transparent.value,
+          color: project?.getColor() ?? Colors.transparent,
           pinned: project?.pinned ?? false,
         ) {
     final result = database.getEnvironmentList(desc: true);
@@ -236,13 +236,14 @@ class ProjectImportDialogProvider extends BaseProvider {
       formState!.save();
       if (_formData.environment == null) throw Exception('缺少环境信息');
       return context.project.update(
-        (project ?? Project())
-          ..path = _formData.path
-          ..label = _formData.label
-          ..logo = _formData.logo
-          ..environment = _formData.environment
-          ..color = _formData.color
-          ..pinned = _formData.pinned,
+        (project ?? Project()).copyWith(
+          path: _formData.path,
+          label: _formData.label,
+          logo: _formData.logo,
+          environment: _formData.environment,
+          color: _formData.color,
+          pinned: _formData.pinned,
+        ),
       );
     } catch (e) {
       Notice.showError(context, message: e.toString(), title: '操作失败');
@@ -265,7 +266,7 @@ class ProjectImportDialogProvider extends BaseProvider {
     String? label,
     String? logo,
     Environment? environment,
-    int? color,
+    Color? color,
     bool? pinned,
   }) =>
       _formData = (

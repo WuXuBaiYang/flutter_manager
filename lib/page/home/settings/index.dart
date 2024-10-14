@@ -24,8 +24,8 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   SettingsPage({super.key, super.state});
 
   @override
-  SettingsPageProvider createProvider(BuildContext context,
-      GoRouterState? state) =>
+  SettingsPageProvider createProvider(
+          BuildContext context, GoRouterState? state) =>
       SettingsPageProvider(context, state);
 
   @override
@@ -169,7 +169,7 @@ class SettingsPageProvider extends PageProvider {
   // 刷新环境
   void refreshEnvironment(Environment environment) async {
     final result =
-    await context.environment.refresh(environment).loading(context);
+        await context.environment.refresh(environment).loading(context);
     if (!context.mounted) return;
     showNoticeError('$result', title: '刷新失败');
     context.environment.update(environment);
@@ -181,8 +181,7 @@ class SettingsPageProvider extends PageProvider {
     // 遍历路径集合，从路径中读取项目/环境信息
     final environments = paths.map((e) {
       if (!EnvironmentTool.isPathAvailable(e)) return null;
-      return Environment()
-        ..path = e;
+      return Environment()..path = e;
     }).toList()
       ..removeWhere((e) => e == null);
     // 如果没有有效内容，直接返回
