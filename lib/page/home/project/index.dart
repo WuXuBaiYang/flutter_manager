@@ -7,7 +7,7 @@ import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/environment_import.dart';
+import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
@@ -141,7 +141,7 @@ class ProjectPageProvider extends PageProvider {
 
   // 添加项目
   void addProject() {
-    if (!context.environment.hasEnvironment) {
+    if (!context.env.hasEnvironment) {
       return showNoticeError(
         '缺少Flutter环境',
         actions: [
@@ -172,20 +172,20 @@ class ProjectPageProvider extends PageProvider {
   // 文件拖拽完成
   Future<String?> dropDone(BuildContext context, List<String> paths) async {
     if (paths.isEmpty) return null;
-    final provider = context.environment;
+    final provider = context.env;
     // 遍历路径集合，从路径中读取项目/环境信息
     final temp = (projects: <Project>[], environments: <Environment>[]);
     for (var e in paths) {
       final project = await ProjectTool.getProjectInfo(e);
       if (project != null) temp.projects.add(project);
-      if (EnvironmentTool.isPathAvailable(e)) {
+      if (EnvironmentTool.isAvailable(e)) {
         temp.environments.add(Environment()..path = e);
       }
     }
     // 如果没有有效内容，直接返回
     if (temp.projects.isEmpty && temp.environments.isEmpty) return '无效内容！';
     await Future.forEach(temp.environments.map((e) {
-      return showEnvironmentImport(context, environment: e);
+      return showImportEnvLocal(context, env: e);
     }), (e) => e);
     if (!provider.hasEnvironment && temp.projects.isNotEmpty) {
       return '请先添加环境信息';

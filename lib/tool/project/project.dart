@@ -43,7 +43,7 @@ class ProjectTool {
       Project project, PlatformType platform) async {
     final environment = database.getEnvironmentById(project.envId);
     if (environment == null) return false;
-    final output = await EnvironmentTool.runEnvironmentCommand(
+    final output = await EnvironmentTool.runCommand(
         environment.path, ['create', '--platforms', platform.name, '.'],
         workingDirectory: project.path);
     if (output == null) return false;

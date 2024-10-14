@@ -5,7 +5,7 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/dialog/project_asset.dart';
 import 'package:flutter_manager/widget/dialog/project_build.dart';
 import 'package:flutter_manager/widget/dialog/project_font.dart';
-import 'package:flutter_manager/widget/environment/badge.dart';
+import 'package:flutter_manager/widget/env_badge.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
 import 'package:open_dir/open_dir.dart';
 
@@ -172,8 +172,8 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建项目环境标签
   Widget _buildEnvironmentBadge() {
-    final environment = database.getEnvironmentById(project.envId);
-    if (environment == null) return const SizedBox();
-    return EnvironmentBadge(environment: environment);
+    final result = database.getEnvironmentById(project.envId);
+    if (result == null) return const SizedBox();
+    return EnvBadge(env: result);
   }
 }

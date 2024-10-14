@@ -1,43 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/model/env_package.dart';
 import 'package:flutter_manager/tool/download.dart';
 import 'package:jtech_base/jtech_base.dart';
 
-// 环境安装包结果类型
-typedef EnvironmentPackageResult = Map<String, List<EnvironmentPackage>>;
-
 // 已下载文件元组
-typedef DownloadedFileResult = ({List<String> downloaded, List<String> tmp});
+typedef DownloadEnvResult = ({List<String> downloaded, List<String> tmp});
 
 // 已下载文件信息元组
-typedef DownloadFileInfo = ({int count, int totalSize});
-
-// 环境安装包信息元组
-typedef EnvironmentPackage = ({
-  String platform,
-  String url,
-  String fileName,
-  String channel,
-  String version,
-  String dartVersion,
-  String dartArch,
-});
-
-// 扩展环境安装包信息元组
-extension EnvironmentPackageExtension on EnvironmentPackage {
-  // 获取标题
-  String get title => 'Flutter · $version · $channel';
-
-  // 根据条件搜索判断是否符合要求
-  bool search(String keyword) {
-    if (keyword.isEmpty) return true;
-    return title.contains(keyword) ||
-        platform.contains(keyword) ||
-        dartVersion.contains(keyword) ||
-        dartArch.contains(keyword);
-  }
-}
+typedef DownloadEnvInfo = ({int count, int totalFileSize});
 
 /*
 * 环境管理工具
@@ -46,42 +18,30 @@ extension EnvironmentPackageExtension on EnvironmentPackage {
 */
 class EnvironmentTool {
   // 缓存环境安装包字段
-  static const String _environmentPackageCacheKey = 'environmentPackage';
+  static const String _envPackageCacheKey = 'envPackageCache';
 
   // 环境安装包信息接口地址
-  static const String _environmentPackageInfoUrl =
+  static const String _envPackageInfoUrl =
       'https://storage.flutter-io.cn/flutter_infra_release/releases/releases_{platform}.json';
 
   // 关键文件相对路径
   static const String _keyFilePath = 'bin/flutter';
 
-  // 获取环境信息
-  static Future<Environment?> getEnvironmentInfo(String environmentPath) async {
-    if (!isPathAvailable(environmentPath)) return null;
-    // 执行flutter version命令并将结果格式化对象
-    final output = await runEnvironmentCommand(environmentPath, ['--version']);
-    if (output == null) return null;
-    return Environment.create(
-      path: environmentPath,
-      gitUrl: output.regFirstGroup(r'http.*\.git'),
-      version: output.regFirstGroup(r'Flutter (.*?) •', 1),
-      channel: output.regFirstGroup(r'channel (.*?) •', 1),
-      dartVersion: output.regFirstGroup(r'Dart (.*?) •', 1),
-      devToolsVersion: output.regFirstGroup(r'DevTools(.*)', 1),
-      frameworkReversion:
-          output.regFirstGroup(r'Framework • revision (.*?) \(', 1),
-      engineReversion: output.regFirstGroup(r'Engine • revision (.*)', 1),
-      updateTime:
-          output.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}'),
-    );
+  // 判断当前路径是否可用
+  static bool isAvailable(String? path) {
+    if (path == null) return false;
+    final file = File(join(path, _keyFilePath));
+    return file.existsSync();
   }
 
   // 执行环境命令
-  static Future<String?> runEnvironmentCommand(
-      String environmentPath, List<String> arguments,
-      {String? workingDirectory}) async {
+  static Future<String?> runCommand(
+    String path,
+    List<String> arguments, {
+    String? workingDirectory,
+  }) async {
     final result = await Process.run(
-      join(environmentPath, _keyFilePath),
+      join(path, _keyFilePath),
       arguments,
       runInShell: true,
       stdoutEncoding: utf8,
@@ -92,42 +52,47 @@ class EnvironmentTool {
     return result.stdout.toString();
   }
 
-  // 判断当前路径是否可用
-  static bool isPathAvailable(String environmentPath) {
-    final file = File(join(environmentPath, _keyFilePath));
-    return file.existsSync();
+  // 获取环境信息
+  static Future<Environment?> getInfo(String path) async {
+    if (!isAvailable(path)) return null;
+    // 执行flutter version命令并将结果格式化对象
+    final result = await runCommand(path, ['--version']);
+    if (result == null) return null;
+    return Environment.create(
+      path: path,
+      gitUrl: result.regFirstGroup(r'http.*\.git'),
+      version: result.regFirstGroup(r'Flutter (.*?) •', 1),
+      channel: result.regFirstGroup(r'channel (.*?) •', 1),
+      dartVersion: result.regFirstGroup(r'Dart (.*?) •', 1),
+      devToolsVersion: result.regFirstGroup(r'DevTools(.*)', 1),
+      frameworkReversion:
+          result.regFirstGroup(r'Framework • revision (.*?) \(', 1),
+      engineReversion: result.regFirstGroup(r'Engine • revision (.*)', 1),
+      updateTime:
+          result.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}'),
+    );
   }
 
   // 获取当前平台的环境安装包列表
-  static Future<EnvironmentPackageResult> getEnvironmentPackageList() async {
-    final platform = Platform.operatingSystem;
-    var json = localCache.getJson(_environmentPackageCacheKey);
+  static Future<Map<String, List<EnvironmentPackage>>>
+      getChannelPackages() async {
+    var json = localCache.getJson(_envPackageCacheKey);
     if (json == null) {
-      final url = _environmentPackageInfoUrl.replaceAll('{platform}', platform);
+      final url = _envPackageInfoUrl.replaceAll(
+        '{platform}',
+        Platform.operatingSystem,
+      );
       json = (await Dio().get(url)).data;
-      await localCache.setJson(_environmentPackageCacheKey, json,
+      await localCache.setJson(_envPackageCacheKey, json,
           expiration: const Duration(days: 1));
     }
-    final result = <String, List<EnvironmentPackage>>{};
-    for (final e in json['releases'] ?? []) {
-      final archive = e['archive'] ?? '';
-      final package = (
-        platform: platform,
-        url: '${json['base_url']}/$archive',
-        fileName: basename(archive),
-        channel: '${e['channel']}',
-        version: '${e['version']}',
-        dartVersion: '${e['dart_sdk_version']}',
-        dartArch: '${e['dart_sdk_arch']}',
-      );
-      final temp = result[package.channel] ?? [];
-      result[package.channel] = temp..add(package);
-    }
-    return result;
+    return List<EnvironmentPackage>.from(
+      (json['releases'] ?? []).map(EnvironmentPackage.from),
+    ).groupBy<String>((e) => e.channel);
   }
 
   // 下载环境安装包
-  static Future<String?> downloadPackage(
+  static Future<String?> download(
     String url, {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
@@ -147,22 +112,19 @@ class EnvironmentTool {
   }
 
   // 获取已下载文件信息
-  static Future<DownloadFileInfo> getDownloadFileInfo() async {
-    final result = await getDownloadedFileList();
-    final downloaded = result.downloaded;
+  static Future<DownloadEnvInfo> getDownloadInfo() async {
+    final result = await getDownloadResult();
     final tmp = result.tmp;
+    final downloaded = result.downloaded;
     final count = downloaded.length + tmp.length;
-    final totalSize = downloaded.fold<int>(0, (previousValue, element) {
-          return previousValue + File(element).lengthSync();
-        }) +
-        tmp.fold<int>(0, (previousValue, element) {
-          return previousValue + File(element).lengthSync();
-        });
-    return (count: count, totalSize: totalSize);
+    final totalFileSize =
+        downloaded.fold<int>(0, (p, e) => p + File(e).lengthSync()) +
+            tmp.fold<int>(0, (p, e) => p + File(e).lengthSync());
+    return (count: count, totalFileSize: totalFileSize);
   }
 
   // 获取已下载文件列表
-  static Future<DownloadedFileResult> getDownloadedFileList() async {
+  static Future<DownloadEnvResult> getDownloadResult() async {
     final result = (downloaded: <String>[], tmp: <String>[]);
     final baseDir = await Tool.getCacheFilePath();
     if (baseDir == null) return result;
@@ -180,8 +142,7 @@ class EnvironmentTool {
   }
 
   // 获取默认的安装包目录
-  static Future<String?> getDefaultInstallPath(
-      EnvironmentPackage package) async {
+  static Future<String?> getInstallPath(EnvironmentPackage package) async {
     final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
     return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
   }

@@ -6,13 +6,13 @@ import 'package:flutter_manager/database/model/environment.dart';
 * @author wuxubaiyang
 * @Time 2023/11/28 18:57
 */
-class EnvironmentBadge extends StatelessWidget {
+class EnvBadge extends StatelessWidget {
   // 环境信息
-  final Environment environment;
+  final Environment env;
 
-  const EnvironmentBadge({
+  const EnvBadge({
     super.key,
-    required this.environment,
+    required this.env,
   });
 
   @override
@@ -27,7 +27,7 @@ class EnvironmentBadge extends StatelessWidget {
         const FlutterLogo(size: 12),
         const SizedBox(width: 6),
         Text(
-          environment.version,
+          env.version,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ]),

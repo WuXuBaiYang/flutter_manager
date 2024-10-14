@@ -84,7 +84,7 @@ extension GlobeProviderExtension on BuildContext {
   WindowProvider get window => Provider.of<WindowProvider>(this, listen: false);
 
   // 获取环境provider
-  EnvironmentProvider get environment =>
+  EnvironmentProvider get env =>
       Provider.of<EnvironmentProvider>(this, listen: false);
 
   // 获取项目provider

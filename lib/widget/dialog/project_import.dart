@@ -137,7 +137,7 @@ class ProjectImportDialog extends ProviderView {
   // 构建表单项-环境
   Widget _buildFormFieldEnvironment(BuildContext context) {
     final provider = context.read<ProjectImportDialogProvider>();
-    final environments = context.environment.environments;
+    final environments = context.env.environments;
     return DropdownButtonFormField<Environment>(
       hint: const Text('请选择环境'),
       key: provider.envFormFieldKey,

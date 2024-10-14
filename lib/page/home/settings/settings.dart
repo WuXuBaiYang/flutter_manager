@@ -148,7 +148,7 @@ class SettingItemEnvironment extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!EnvironmentTool.isPathAvailable(item.path)) ...[
+        if (!EnvironmentTool.isAvailable(item.path)) ...[
           const Tooltip(
             message: '环境不存在',
             child: Icon(
@@ -203,7 +203,7 @@ class SettingItemEnvironmentCache extends StatelessWidget {
   final Key settingKey;
 
   // 下载文件记录
-  final DownloadFileInfo? downloadFileInfo;
+  final DownloadEnvInfo? downloadFileInfo;
 
   // 打开缓存目录回调
   final VoidCallback? onOpenCacheDirectory;
@@ -218,7 +218,7 @@ class SettingItemEnvironmentCache extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cacheCount = '${downloadFileInfo?.count ?? 0}个缓存文件';
-    final cacheSize = FileTool.formatSize(downloadFileInfo?.totalSize ?? 0);
+    final cacheSize = FileTool.formatSize(downloadFileInfo?.totalFileSize ?? 0);
     return SettingItem(
       key: settingKey,
       label: 'Flutter环境缓存',

@@ -4,7 +4,7 @@ import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/context_menu_region.dart';
-import 'package:flutter_manager/widget/environment/badge.dart';
+import 'package:flutter_manager/widget/env_badge.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 // 确认删除回调
@@ -164,8 +164,8 @@ class ProjectGridView extends StatelessWidget {
 
   // 构建项目环境标签
   Widget _buildEnvironmentBadge(Project item) {
-    final environment = database.getEnvironmentById(item.envId);
-    if (environment == null) return const SizedBox();
-    return EnvironmentBadge(environment: environment);
+    final result = database.getEnvironmentById(item.envId);
+    if (result == null) return const SizedBox();
+    return EnvBadge(env: result);
   }
 }

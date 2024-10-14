@@ -25,7 +25,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 导入环境变量
   Future<Environment> import(String path) async {
-    final result = await EnvironmentTool.getEnvironmentInfo(path);
+    final result = await EnvironmentTool.getInfo(path);
     if (result == null) throw Exception('查询flutter信息失败');
     return update(result);
   }
@@ -40,10 +40,10 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 刷新环境变量
-  Future<Environment> refresh(Environment item) async {
-    final result = await EnvironmentTool.getEnvironmentInfo(item.path);
+  Future<Environment> refresh(Environment env) async {
+    final result = await EnvironmentTool.getInfo(env.path);
     if (result == null) throw Exception('查询flutter信息失败');
-    return update(result..id = item.id);
+    return update(result..id = env.id);
   }
 
   // 添加环境变量

@@ -7,8 +7,8 @@ import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/dialog/environment_import.dart';
-import 'package:flutter_manager/widget/dialog/environment_import_remote.dart';
+import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
+import 'package:flutter_manager/widget/dialog/environment/import_remote.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:open_dir/open_dir.dart';
@@ -59,22 +59,22 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
           builder: (_, environments, __) {
             return SettingItemEnvironment(
               environments: environments,
-              onReorder: context.environment.reorder,
+              onReorder: context.env.reorder,
               onRemove: pageProvider.removeEnvironment,
               onRefresh: pageProvider.refreshEnvironment,
               settingKey: context.setting.environmentKey,
-              onImportLocal: () => showEnvironmentImport(context),
               removeValidator: pageProvider.removeEnvironmentConfirm,
-              onImportRemote: () => showEnvironmentImportRemote(context),
-              onEdit: (e) => showEnvironmentImport(context, environment: e),
+              onImportLocal: () => showImportEnvLocal(context),
+              onEdit: (e) => showImportEnvLocal(context, env: e),
+              onImportRemote: () => showImportEnvRemote(context),
             );
           },
         ),
         // 环境缓存设置
         Consumer<EnvironmentProvider>(
           builder: (_, provider, __) {
-            return FutureBuilder<DownloadFileInfo>(
-              future: EnvironmentTool.getDownloadFileInfo(),
+            return FutureBuilder<DownloadEnvInfo>(
+              future: EnvironmentTool.getDownloadInfo(),
               builder: (_, snap) {
                 return SettingItemEnvironmentCache(
                   downloadFileInfo: snap.data,
@@ -144,13 +144,13 @@ class SettingsPageProvider extends PageProvider {
 
   // 移除环境
   void removeEnvironment(Environment environment) {
-    context.environment.remove(environment);
+    context.env.remove(environment);
     showNoticeSuccess(
       '${environment.title} 环境已移除',
       actions: [
         TextButton(
           onPressed: () {
-            context.environment.update(environment);
+            context.env.update(environment);
           },
           child: Text('撤销'),
         )
@@ -160,7 +160,7 @@ class SettingsPageProvider extends PageProvider {
 
   // 移除环境确认
   Future<bool> removeEnvironmentConfirm(Environment environment) async {
-    final result = context.environment.removeValidator(environment);
+    final result = context.env.removeValidator(environment);
     if (result == null) return true;
     showNoticeError(result, title: '环境移除失败');
     return false;
@@ -168,11 +168,10 @@ class SettingsPageProvider extends PageProvider {
 
   // 刷新环境
   void refreshEnvironment(Environment environment) async {
-    final result =
-        await context.environment.refresh(environment).loading(context);
+    final result = await context.env.refresh(environment).loading(context);
     if (!context.mounted) return;
     showNoticeError('$result', title: '刷新失败');
-    context.environment.update(environment);
+    context.env.update(environment);
   }
 
   // 文件拖拽完成
@@ -180,14 +179,14 @@ class SettingsPageProvider extends PageProvider {
     if (paths.isEmpty) return null;
     // 遍历路径集合，从路径中读取项目/环境信息
     final environments = paths.map((e) {
-      if (!EnvironmentTool.isPathAvailable(e)) return null;
+      if (!EnvironmentTool.isAvailable(e)) return null;
       return Environment()..path = e;
     }).toList()
       ..removeWhere((e) => e == null);
     // 如果没有有效内容，直接返回
     if (environments.isEmpty) return '无效内容！';
     await Future.forEach(environments.map((e) {
-      return showEnvironmentImport(context, environment: e);
+      return showImportEnvLocal(context, env: e);
     }), (e) => e);
     return null;
   }
