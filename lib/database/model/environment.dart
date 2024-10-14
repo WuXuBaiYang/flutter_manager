@@ -2,58 +2,80 @@ import 'package:jtech_base/jtech_base.dart';
 
 @Entity()
 class Environment {
-  int id;
+  int id = 0;
 
   // 环境目录
-  String path;
+  String path = '';
 
   // flutter版本号
-  String version;
+  String version = '';
 
   // flutter分支
-  String channel;
+  String channel = '';
 
   // git地址
-  String gitUrl;
+  String gitUrl = '';
 
   // 框架版本
-  String frameworkReversion;
+  String frameworkReversion = '';
 
   // 引擎版本
-  String engineReversion;
+  String engineReversion = '';
 
   // dart版本号
-  String dartVersion;
+  String dartVersion = '';
 
   // 开发版本
-  String devToolsVersion;
+  String devToolsVersion = '';
 
-  // 更新时间
-  String updatedAt;
+  // sdk更新时间
+  String updateTime = '';
 
   // 排序
-  int order;
+  int order = 0;
 
-  Environment({
-    this.path = '',
-    this.version = '',
-    this.channel = '',
-    this.gitUrl = '',
-    this.frameworkReversion = '',
-    this.engineReversion = '',
-    this.dartVersion = '',
-    this.devToolsVersion = '',
-    this.updatedAt = '',
-    this.order = -1,
-    this.id = 0,
+  Environment();
+
+  Environment.c({
+    required this.path,
+    required this.version,
+    required this.channel,
+    required this.gitUrl,
+    required this.frameworkReversion,
+    required this.engineReversion,
+    required this.dartVersion,
+    required this.devToolsVersion,
+    required this.order,
+    required this.updateTime,
+    required this.createAt,
+    required this.updateAt,
   });
+
+  Environment.create({
+    required this.path,
+    required this.version,
+    required this.channel,
+    required this.gitUrl,
+    required this.frameworkReversion,
+    required this.engineReversion,
+    required this.dartVersion,
+    required this.devToolsVersion,
+    required this.updateTime,
+  });
+
+  // 创建时间
+  @Property(type: PropertyType.date)
+  DateTime createAt = DateTime.now();
+
+  // 更新时间
+  @Property(type: PropertyType.date)
+  DateTime updateAt = DateTime.now();
 
   // 获取环境信息标题
   @Transient()
   String get title => 'Flutter · $version · $channel';
 
   Environment copyWith({
-    int? id,
     String? path,
     String? version,
     String? channel,
@@ -62,21 +84,25 @@ class Environment {
     String? engineReversion,
     String? dartVersion,
     String? devToolsVersion,
-    String? updatedAt,
     int? order,
+    String? updateTime,
+    DateTime? updateAt,
+    DateTime? createAt,
   }) {
-    return Environment()
-      ..id = id ?? this.id
-      ..path = path ?? this.path
-      ..version = version ?? this.version
-      ..channel = channel ?? this.channel
-      ..gitUrl = gitUrl ?? this.gitUrl
-      ..frameworkReversion = frameworkReversion ?? this.frameworkReversion
-      ..engineReversion = engineReversion ?? this.engineReversion
-      ..dartVersion = dartVersion ?? this.dartVersion
-      ..devToolsVersion = devToolsVersion ?? this.devToolsVersion
-      ..updatedAt = updatedAt ?? this.updatedAt
-      ..order = order ?? this.order;
+    return Environment.c(
+      path: path ?? this.path,
+      version: version ?? this.version,
+      channel: channel ?? this.channel,
+      gitUrl: gitUrl ?? this.gitUrl,
+      frameworkReversion: frameworkReversion ?? this.frameworkReversion,
+      engineReversion: engineReversion ?? this.engineReversion,
+      dartVersion: dartVersion ?? this.dartVersion,
+      devToolsVersion: devToolsVersion ?? this.devToolsVersion,
+      order: order ?? this.order,
+      updateTime: updateTime ?? this.updateTime,
+      createAt: createAt ?? this.createAt,
+      updateAt: updateAt ?? this.updateAt,
+    );
   }
 
   @override
@@ -90,7 +116,9 @@ class Environment {
       engineReversion.hashCode &
       dartVersion.hashCode &
       devToolsVersion.hashCode &
-      updatedAt.hashCode &
+      updateTime.hashCode &
+      updateAt.hashCode &
+      createAt.hashCode &
       order.hashCode;
 
   @override
@@ -105,6 +133,8 @@ class Environment {
       engineReversion == other.engineReversion &&
       dartVersion == other.dartVersion &&
       devToolsVersion == other.devToolsVersion &&
-      updatedAt == other.updatedAt &&
+      updateTime == other.updateTime &&
+      updateAt == other.updateAt &&
+      createAt == other.createAt &&
       order == other.order;
 }

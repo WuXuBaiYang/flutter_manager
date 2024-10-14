@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:9034861443883401027",
-      "lastPropertyId": "11:7649046399407369963",
+      "lastPropertyId": "13:2015348460998532900",
       "name": "Environment",
       "properties": [
         {
@@ -55,21 +55,26 @@
           "type": 9
         },
         {
-          "id": "10:5305824034247615464",
-          "name": "updatedAt",
-          "type": 9
-        },
-        {
           "id": "11:7649046399407369963",
           "name": "order",
           "type": 6
+        },
+        {
+          "id": "12:3166399306562223234",
+          "name": "createAt",
+          "type": 10
+        },
+        {
+          "id": "13:2015348460998532900",
+          "name": "updateAt",
+          "type": 10
         }
       ],
       "relations": []
     },
     {
       "id": "2:7826516913224224885",
-      "lastPropertyId": "10:7815765538782068326",
+      "lastPropertyId": "11:872923173652415464",
       "name": "Project",
       "properties": [
         {
@@ -92,11 +97,6 @@
           "id": "4:8328946749862318625",
           "name": "path",
           "type": 9
-        },
-        {
-          "id": "5:4225736659663167534",
-          "name": "envId",
-          "type": 6
         },
         {
           "id": "6:1458920948108913861",
@@ -122,20 +122,55 @@
           "id": "10:7815765538782068326",
           "name": "updateAt",
           "type": 10
+        },
+        {
+          "id": "11:872923173652415464",
+          "name": "environmentDBId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:7071689730841027760",
+          "relationTarget": "Environment"
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:7914057410716670341",
+      "lastPropertyId": "3:5760097715558161574",
+      "name": "Package",
+      "properties": [
+        {
+          "id": "1:7448159638868341117",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7635255126157265184",
+          "name": "createAt",
+          "type": 10
+        },
+        {
+          "id": "3:5760097715558161574",
+          "name": "updateAt",
+          "type": 10
         }
       ],
       "relations": []
     }
   ],
-  "lastEntityId": "2:7826516913224224885",
-  "lastIndexId": "0:0",
+  "lastEntityId": "3:7914057410716670341",
+  "lastIndexId": "1:7071689730841027760",
   "lastRelationId": "0:0",
   "lastSequenceId": "0:0",
   "modelVersion": 5,
   "modelVersionParserMinimum": 5,
   "retiredEntityUids": [],
   "retiredIndexUids": [],
-  "retiredPropertyUids": [],
+  "retiredPropertyUids": [
+    4225736659663167534,
+    5305824034247615464
+  ],
   "retiredRelationUids": [],
   "version": 1
 }

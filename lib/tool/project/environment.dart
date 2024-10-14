@@ -61,18 +61,19 @@ class EnvironmentTool {
     // 执行flutter version命令并将结果格式化对象
     final output = await runEnvironmentCommand(environmentPath, ['--version']);
     if (output == null) return null;
-    return Environment()
-      ..path = environmentPath
-      ..gitUrl = output.regFirstGroup(r'http.*\.git')
-      ..version = output.regFirstGroup(r'Flutter (.*?) •', 1)
-      ..channel = output.regFirstGroup(r'channel (.*?) •', 1)
-      ..dartVersion = output.regFirstGroup(r'Dart (.*?) •', 1)
-      ..devToolsVersion = output.regFirstGroup(r'DevTools(.*)', 1)
-      ..frameworkReversion =
-          output.regFirstGroup(r'Framework • revision (.*?) \(', 1)
-      ..engineReversion = output.regFirstGroup(r'Engine • revision (.*)', 1)
-      ..updatedAt =
-          output.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}');
+    return Environment.create(
+      path: environmentPath,
+      gitUrl: output.regFirstGroup(r'http.*\.git'),
+      version: output.regFirstGroup(r'Flutter (.*?) •', 1),
+      channel: output.regFirstGroup(r'channel (.*?) •', 1),
+      dartVersion: output.regFirstGroup(r'Dart (.*?) •', 1),
+      devToolsVersion: output.regFirstGroup(r'DevTools(.*)', 1),
+      frameworkReversion:
+          output.regFirstGroup(r'Framework • revision (.*?) \(', 1),
+      engineReversion: output.regFirstGroup(r'Engine • revision (.*)', 1),
+      updateTime:
+          output.regFirstGroup(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} -\d{4}'),
+    );
   }
 
   // 执行环境命令

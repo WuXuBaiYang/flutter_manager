@@ -16,7 +16,7 @@ mixin ProjectDatabase on BaseDatabase {
 
   // 根据环境id获取项目列表
   List<Project> getProjectsByEnvironmentId(int id) {
-    return projectBox.query(Project_.envId.equals(id)).build().find();
+    return projectBox.query(Project_.environmentDB.equals(id)).build().find();
   }
 
   // 获取项目列表

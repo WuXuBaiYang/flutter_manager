@@ -12,7 +12,8 @@ mixin EnvironmentDatabase on BaseDatabase {
   late final environmentBox = getBox<Environment>();
 
   // 根据id获取环境信息
-  Environment? getEnvironmentById(int id) {
+  Environment? getEnvironmentById(int? id) {
+    if (id == null) return null;
     return environmentBox.get(id);
   }
 

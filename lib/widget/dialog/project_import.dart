@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/project.dart';
@@ -137,11 +138,10 @@ class ProjectImportDialog extends ProviderView {
   Widget _buildFormFieldEnvironment(BuildContext context) {
     final provider = context.read<ProjectImportDialogProvider>();
     final environments = context.environment.environments;
-    final envId = provider.formData.envId;
-    return DropdownButtonFormField<int>(
-      key: provider.envFormFieldKey,
-      value: envId >= 0 ? envId : null,
+    return DropdownButtonFormField<Environment>(
       hint: const Text('请选择环境'),
+      key: provider.envFormFieldKey,
+      value: provider.formData.environment,
       onChanged: (v) {},
       validator: (v) {
         if (v == null) {
@@ -149,10 +149,10 @@ class ProjectImportDialog extends ProviderView {
         }
         return null;
       },
-      onSaved: (v) => provider.updateFormData(envId: v),
+      onSaved: (v) => provider.updateFormData(environment: v),
       items: environments
           .map((e) => DropdownMenuItem(
-                value: e.id,
+                value: e,
                 child: Text(e.title),
               ))
           .toList(),
@@ -183,7 +183,7 @@ typedef ProjectImportDialogForm = ({
   String path,
   String label,
   String logo,
-  int envId,
+  Environment? environment,
   int color,
   bool pinned,
 });
@@ -216,7 +216,7 @@ class ProjectImportDialogProvider extends BaseProvider {
           path: project?.path ?? '',
           label: project?.label ?? '',
           logo: project?.logo ?? '',
-          envId: project?.envId ?? -1,
+          environment: project?.environment,
           color: project?.color ?? Colors.transparent.value,
           pinned: project?.pinned ?? false,
         ) {
@@ -234,13 +234,13 @@ class ProjectImportDialogProvider extends BaseProvider {
       final formState = formKey.currentState;
       if (!(formState?.validate() ?? false)) return null;
       formState!.save();
-      if (_formData.envId < 0) throw Exception('缺少环境信息');
+      if (_formData.environment == null) throw Exception('缺少环境信息');
       return context.project.update(
         (project ?? Project())
           ..path = _formData.path
           ..label = _formData.label
           ..logo = _formData.logo
-          ..envId = _formData.envId
+          ..environment = _formData.environment
           ..color = _formData.color
           ..pinned = _formData.pinned,
       );
@@ -264,7 +264,7 @@ class ProjectImportDialogProvider extends BaseProvider {
     String? path,
     String? label,
     String? logo,
-    int? envId,
+    Environment? environment,
     int? color,
     bool? pinned,
   }) =>
@@ -272,8 +272,8 @@ class ProjectImportDialogProvider extends BaseProvider {
         path: path ?? _formData.path,
         label: label ?? _formData.label,
         logo: logo ?? _formData.logo,
-        envId: envId ?? _formData.envId,
         color: color ?? _formData.color,
         pinned: pinned ?? _formData.pinned,
+        environment: environment ?? _formData.environment,
       );
 }
