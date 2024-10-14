@@ -17,7 +17,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // 初始化工具方法
   await localCache.initialize();
-  await database.initialize(Common.databaseName);
+  await database.initialize(Common.defaultCacheName);
   // 初始化窗口管理
   const windowSize = Size(800, 600);
   await windowManager.ensureInitialized();

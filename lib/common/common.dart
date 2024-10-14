@@ -4,6 +4,6 @@
 * @Time 2022/9/8 14:54
 */
 class Common {
-  // 数据库名称
-  static const String databaseName = 'flutter_manager_db';
+  // 默认缓存名称
+  static const String defaultCacheName = 'flutter_manager';
 }
