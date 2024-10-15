@@ -4,7 +4,6 @@ import 'package:flutter_manager/generated/l10n.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
 import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
@@ -50,7 +49,7 @@ class HomePage extends ProviderPage<HomeProvider> {
       selector: (_, provider) => provider.currentIndex,
       builder: (_, currentIndex, __) {
         return Row(children: [
-          _buildNavigationRail(context, currentIndex),
+          _buildNavigation(context, currentIndex),
           const VerticalDivider(),
           Expanded(
             child: IndexedStack(
@@ -64,10 +63,10 @@ class HomePage extends ProviderPage<HomeProvider> {
   }
 
   // 构建导航栏
-  Widget _buildNavigationRail(BuildContext context, int currentIndex) {
+  Widget _buildNavigation(BuildContext context, int currentIndex) {
     return NavigationRail(
       selectedIndex: currentIndex,
-      trailing: _buildNavigationRailTrailing(),
+      trailing: _buildNavigationTrailing(context),
       onDestinationSelected: provider.setCurrentIndex,
       destinations: provider.pages.map((e) {
         return NavigationRailDestination(
@@ -80,21 +79,15 @@ class HomePage extends ProviderPage<HomeProvider> {
   }
 
   // 构建导航侧栏尾部
-  Widget _buildNavigationRailTrailing() {
+  Widget _buildNavigationTrailing(BuildContext context) {
     return Expanded(
-      child: Column(children: [
-        const Spacer(),
-        FutureProvider<String>(
-          initialData: '',
-          create: (_) => Tool.version,
-          builder: (context, _) {
+      child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        FutureBuilder<String>(
+          future: Tool.version,
+          builder: (_, snap) {
             return TextButton(
-              child: Text('v${context.watch<String>()}'),
-              onPressed: () async {
-                showAndroidSignKey(context);
-
-                /// TODO: 2021/8/31 14:25 版本更新检查
-              },
+              onPressed: provider.checkAppVersion,
+              child: Text('v${snap.data}'),
             );
           },
         ),
@@ -165,6 +158,11 @@ class HomeProvider extends PageProvider {
       }
     }
     return null;
+  }
+
+  // 检查版本更新
+  void checkAppVersion() {
+    /// TODO 检查版本更新
   }
 
   // 设置导航下标
