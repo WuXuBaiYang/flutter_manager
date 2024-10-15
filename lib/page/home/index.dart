@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/generated/l10n.dart';
 import 'package:flutter_manager/main.dart';
+import 'package:flutter_manager/tool/project/environment.dart';
+import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
+import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
+import 'package:flutter_manager/widget/dialog/project_import.dart';
+import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:jtech_base/jtech_base.dart';
-
 import 'knowledge/index.dart';
 import 'package/index.dart';
 import 'project/index.dart';
@@ -28,7 +33,11 @@ class HomePage extends ProviderPage<HomeProvider> {
       appBar: CustomAppBar(
         title: Text(S.current.appName),
       ),
-      body: _buildContent(context),
+      body: DropFileView(
+        hint: '可导入项目/环境',
+        onDoneValidator: provider.dropDone,
+        child: _buildContent(context),
+      ),
     );
   }
 
@@ -140,8 +149,23 @@ class HomeProvider extends PageProvider {
   // 获取导航下标
   int get currentIndex => _currentIndex;
 
-  // 判断传入下标是否为当前下标
-  bool isCurrentIndex(int index) => _currentIndex == index;
+  // 文件拖拽完成
+  Future<String?> dropDone(List<String> paths) async {
+    for (var e in paths) {
+      // 判断是否为环境信息
+      if (EnvironmentTool.isAvailable(e)) {
+        final env = Environment.createImport(e);
+        await showImportEnvLocal(context, env: env);
+      } else {
+        // 判断是否为项目信息(如果没有环境则无法导入项目)
+        final project = await ProjectTool.getProjectInfo(e);
+        if (project == null || !context.mounted) continue;
+        if (!context.env.hasEnvironment) return '请先添加环境信息';
+        await showProjectImport(context, project: project);
+      }
+    }
+    return null;
+  }
 
   // 设置导航下标
   void setCurrentIndex(int index) {

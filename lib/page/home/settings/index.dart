@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/main.dart';
-import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/provider/theme.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
 import 'package:flutter_manager/widget/dialog/environment/import_remote.dart';
-import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:open_dir/open_dir.dart';
 
@@ -30,20 +28,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      body: _buildDropArea(context),
-    );
-  }
-
-  // 构建拖拽内容区域
-  Widget _buildDropArea(BuildContext context) {
-    final enable = context.watch<HomeProvider>().isCurrentIndex(3);
-    return DropFileView(
-      enable: enable,
-      hint: '请放入Flutter环境文件',
-      onDoneValidator: (paths) {
-        return provider.dropDone(context, paths);
-      },
-      child: _buildContent(context),
+      body: _buildContent(context),
     );
   }
 
@@ -166,23 +151,6 @@ class HomeSettingsProvider extends BaseProvider {
     if (!context.mounted) return;
     showNoticeError('$result', title: '刷新失败');
     context.env.update(environment);
-  }
-
-  // 文件拖拽完成
-  Future<String?> dropDone(BuildContext context, List<String> paths) async {
-    if (paths.isEmpty) return null;
-    // 遍历路径集合，从路径中读取项目/环境信息
-    final environments = paths.map((e) {
-      if (!EnvironmentTool.isAvailable(e)) return null;
-      return Environment()..path = e;
-    }).toList()
-      ..removeWhere((e) => e == null);
-    // 如果没有有效内容，直接返回
-    if (environments.isEmpty) return '无效内容！';
-    await Future.forEach(environments.map((e) {
-      return showImportEnvLocal(context, env: e);
-    }), (e) => e);
-    return null;
   }
 
   // 打开缓存目录

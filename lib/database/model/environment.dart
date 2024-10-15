@@ -71,6 +71,8 @@ class Environment {
     required this.updateTime,
   });
 
+  Environment.createImport(this.path);
+
   // 获取环境信息标题
   @Transient()
   String get title => 'Flutter · $version · $channel';

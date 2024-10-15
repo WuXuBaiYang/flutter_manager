@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/route.dart';
-import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
-import 'package:flutter_manager/page/home/index.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/tool/project/environment.dart';
-import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
 import 'package:flutter_manager/widget/dialog/project_import.dart';
-import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -30,23 +24,11 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
-      body: _buildDropArea(context),
+      body: _buildContent(context),
       floatingActionButton: FloatingActionButton(
         onPressed: provider.addProject,
         child: const Icon(Icons.add),
       ),
-    );
-  }
-
-  // 构建文件拖拽区域
-  Widget _buildDropArea(BuildContext context) {
-    final enable = context.watch<HomeProvider>().isCurrentIndex(0);
-    return DropFileView(
-      enable: enable,
-      onDoneValidator: (paths) {
-        return provider.dropDone(context, paths);
-      },
-      child: _buildContent(context),
     );
   }
 
@@ -156,32 +138,5 @@ class HomeProjectProvider extends BaseProvider {
         ),
       ],
     );
-  }
-
-  // 文件拖拽完成
-  Future<String?> dropDone(BuildContext context, List<String> paths) async {
-    if (paths.isEmpty) return null;
-    final provider = context.env;
-    // 遍历路径集合，从路径中读取项目/环境信息
-    final temp = (projects: <Project>[], environments: <Environment>[]);
-    for (var e in paths) {
-      final project = await ProjectTool.getProjectInfo(e);
-      if (project != null) temp.projects.add(project);
-      if (EnvironmentTool.isAvailable(e)) {
-        temp.environments.add(Environment()..path = e);
-      }
-    }
-    // 如果没有有效内容，直接返回
-    if (temp.projects.isEmpty && temp.environments.isEmpty) return '无效内容！';
-    await Future.forEach(temp.environments.map((e) {
-      return showImportEnvLocal(context, env: e);
-    }), (e) => e);
-    if (!provider.hasEnvironment && temp.projects.isNotEmpty) {
-      return '请先添加环境信息';
-    }
-    await Future.forEach(temp.projects.map((e) {
-      return showProjectImport(context, project: e);
-    }), (e) => e);
-    return null;
   }
 }
