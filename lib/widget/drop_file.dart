@@ -11,7 +11,7 @@ typedef DropFileValidator<T> = Future<String?> Function(T value);
 * @author wuxubaiyang
 * @Time 2023/11/29 10:31
 */
-class DropFileView extends ProviderView {
+class DropFileView extends ProviderView<DropFileViewProvider> {
   // 拖拽进入校验回调
   final DropFileValidator<Offset>? onEnterValidator;
 
@@ -49,10 +49,8 @@ class DropFileView extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(
-            create: (context) => DropFileViewProvider(context)),
-      ];
+  DropFileViewProvider createProvider(BuildContext context) =>
+      DropFileViewProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {

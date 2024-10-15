@@ -16,17 +16,16 @@ import 'package:open_dir/open_dir.dart';
 import 'settings.dart';
 
 /*
-* 设置页
+* 首页-设置分页
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class SettingsPage extends ProviderPage<SettingsPageProvider> {
-  SettingsPage({super.key, super.state});
+class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
+  HomeSettingsView({super.key});
 
   @override
-  SettingsPageProvider createProvider(
-          BuildContext context, GoRouterState? state) =>
-      SettingsPageProvider(context, state);
+  HomeSettingsProvider? createProvider(BuildContext context) =>
+      HomeSettingsProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -37,12 +36,12 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
 
   // 构建拖拽内容区域
   Widget _buildDropArea(BuildContext context) {
-    final enable = context.watch<HomePageProvider>().isCurrentIndex(3);
+    final enable = context.watch<HomeProvider>().isCurrentIndex(3);
     return DropFileView(
       enable: enable,
       hint: '请放入Flutter环境文件',
       onDoneValidator: (paths) {
-        return pageProvider.dropDone(context, paths);
+        return provider.dropDone(context, paths);
       },
       child: _buildContent(context),
     );
@@ -51,7 +50,7 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   // 构建内容区域
   Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
-      controller: pageProvider.scrollController,
+      controller: provider.scrollController,
       child: Column(children: [
         // 环境设置
         Selector<EnvironmentProvider, List<Environment>>(
@@ -60,10 +59,10 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
             return SettingItemEnvironment(
               environments: environments,
               onReorder: context.env.reorder,
-              onRemove: pageProvider.removeEnvironment,
-              onRefresh: pageProvider.refreshEnvironment,
+              onRemove: provider.removeEnvironment,
+              onRefresh: provider.refreshEnvironment,
               settingKey: context.setting.environmentKey,
-              removeValidator: pageProvider.removeEnvironmentConfirm,
+              removeValidator: provider.removeEnvironmentConfirm,
               onImportLocal: () => showImportEnvLocal(context),
               onEdit: (e) => showImportEnvLocal(context, env: e),
               onImportRemote: () => showImportEnvRemote(context),
@@ -72,14 +71,14 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
         ),
         // 环境缓存设置
         Consumer<EnvironmentProvider>(
-          builder: (_, provider, __) {
+          builder: (_, ___, __) {
             return FutureBuilder<DownloadEnvInfo>(
               future: EnvironmentTool.getDownloadInfo(),
               builder: (_, snap) {
                 return SettingItemEnvironmentCache(
                   downloadFileInfo: snap.data,
                   settingKey: context.setting.environmentCacheKey,
-                  onOpenCacheDirectory: pageProvider.openCacheDirectory,
+                  onOpenCacheDirectory: provider.openCacheDirectory,
                 );
               },
             );
@@ -125,16 +124,11 @@ class SettingsPage extends ProviderPage<SettingsPageProvider> {
   }
 }
 
-/*
-* 设置页状态管理
-* @author wuxubaiyang
-* @Time 2023/11/24 14:25
-*/
-class SettingsPageProvider extends PageProvider {
+class HomeSettingsProvider extends BaseProvider {
   // 滚动控制器
   final scrollController = ScrollController();
 
-  SettingsPageProvider(super.context, super.state) {
+  HomeSettingsProvider(super.context) {
     // 注册设置跳转方法
     context.setting.addListener(() {
       final c = context.setting.selectedKey?.currentContext;

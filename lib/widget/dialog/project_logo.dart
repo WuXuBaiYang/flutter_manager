@@ -22,19 +22,15 @@ Future<ProjectLogoDialogForm?> showProjectLogo(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectLogoDialog extends ProviderView {
+class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
   // 平台与图标表
   final Map<PlatformType, List<PlatformLogo>> platformLogoMap;
 
   ProjectLogoDialog({super.key, required this.platformLogoMap});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(
-          create: (context) =>
-              ProjectLogoDialogProvider(context, platformLogoMap),
-        ),
-      ];
+  ProjectLogoDialogProvider createProvider(context) =>
+      ProjectLogoDialogProvider(context, platformLogoMap);
 
   @override
   Widget buildWidget(BuildContext context) {

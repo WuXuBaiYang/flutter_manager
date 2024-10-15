@@ -20,18 +20,17 @@ import 'tabbar.dart';
 * @author wuxubaiyang
 * @Time 2023/11/30 16:35
 */
-class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
+class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
   ProjectDetailPage({super.key, super.state});
 
   @override
-  ProjectDetailPageProvider createProvider(
+  ProjectDetailProvider createPageProvider(
           BuildContext context, GoRouterState? state) =>
-      ProjectDetailPageProvider(context, state);
+      ProjectDetailProvider(context, state);
 
   @override
   List<SingleChildWidget> extensionProviders() => [
-        ChangeNotifierProxyProvider<ProjectDetailPageProvider,
-            PlatformProvider>(
+        ChangeNotifierProxyProvider<ProjectDetailProvider, PlatformProvider>(
           create: (context) => PlatformProvider(context, null),
           update: (context, provider, platformProvider) {
             if (provider.project != platformProvider?.project) {
@@ -44,7 +43,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final project = pageProvider.project;
+    final project = provider.project;
     return Scaffold(
       body: EmptyBoxView(
         hint: '项目不存在',
@@ -59,7 +58,6 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
 
   // 构建内容
   Widget _buildContent(BuildContext context, Project project) {
-    final provider = context.read<ProjectDetailPageProvider>();
     return Selector<PlatformProvider, List<PlatformType>>(
       selector: (_, provider) => provider.platformList,
       builder: (_, platforms, __) {
@@ -79,8 +77,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
   // 构建AppBar
   Widget _buildAppBar(
       BuildContext context, List<PlatformType> platforms, Project project) {
-    final provider = context.read<ProjectDetailPageProvider>();
-    return Selector<ProjectDetailPageProvider, bool>(
+    return Selector<ProjectDetailProvider, bool>(
       selector: (_, provider) => provider.isScrollTop,
       builder: (_, isScrollTop, __) {
         return ProjectDetailAppBar(
@@ -109,7 +106,6 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
 
   // 构建TabBarView
   Widget _buildTabBarView(BuildContext context, List<PlatformType> platforms) {
-    final provider = context.read<ProjectDetailPageProvider>();
     final views = platforms.map(provider.getPlatformView).toList();
     return TabBarView(children: [
       ...views,
@@ -127,7 +123,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailPageProvider> {
 * @author wuxubaiyang
 * @Time 2023/11/30 16:35
 */
-class ProjectDetailPageProvider extends PageProvider {
+class ProjectDetailProvider extends PageProvider {
   // 头部内容高度
   final headerHeight = 165.0;
 
@@ -144,7 +140,7 @@ class ProjectDetailPageProvider extends PageProvider {
         PlatformType.linux => ProjectPlatformLinuxView(),
       };
 
-  ProjectDetailPageProvider(super.context, super.state) {
+  ProjectDetailProvider(super.context, super.state) {
     // 监听滚动状态
     scrollController.addListener(_updateScrollTop);
   }

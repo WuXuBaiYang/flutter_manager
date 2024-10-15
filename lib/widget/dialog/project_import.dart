@@ -26,17 +26,15 @@ Future<Project?> showProjectImport(BuildContext context, {Project? project}) {
 * @author wuxubaiyang
 * @Time 2023/11/27 14:19
 */
-class ProjectImportDialog extends ProviderView {
+class ProjectImportDialog extends ProviderView<ProjectImportDialogProvider> {
   // 项目对象
   final Project? project;
 
   ProjectImportDialog({super.key, this.project});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(
-            create: (context) => ProjectImportDialogProvider(context, project)),
-      ];
+  ProjectImportDialogProvider createProvider(BuildContext context) =>
+      ProjectImportDialogProvider(context, project);
 
   @override
   Widget buildWidget(BuildContext context) {

@@ -20,18 +20,15 @@ Future<bool?> showAndroidSignKey(BuildContext context) {
 * @author wuxubaiyang
 * @Time 2023/12/15 9:00
 */
-class AndroidSignKeyDialog extends ProviderView {
+class AndroidSignKeyDialog extends ProviderView<AndroidSignKeyDialogProvider> {
   AndroidSignKeyDialog({super.key});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<AndroidSignKeyDialogProvider>(
-            create: (context) => AndroidSignKeyDialogProvider(context)),
-      ];
+  AndroidSignKeyDialogProvider createProvider(BuildContext context) =>
+      AndroidSignKeyDialogProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return CustomDialog(
       title: const Text('创建Android签名'),
       content: _buildContent(context),
@@ -54,7 +51,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return SingleChildScrollView(
       child: Form(
         key: provider.formKey,
@@ -81,7 +77,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建keytool路径输入框
   Widget _buildKeytoolField(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return LocalPathFormField(
       label: 'keytool所在目录',
       hint: '请选择keytool所在目录',
@@ -92,7 +87,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建输出路径输入框
   Widget _buildOutputField(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return LocalPathFormField(
       label: '输出路径',
       hint: '请选择输出路径',
@@ -103,7 +97,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建签名别名输入框
   Widget _buildAliasField(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return TextFormField(
       decoration: const InputDecoration(
         labelText: '签名别名',
@@ -123,7 +116,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建storepass输入框
   Widget _buildStorepassField(BuildContext context, bool samePass) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     final label = '存储库${samePass ? '/密钥' : ''}密码';
     return TextFormField(
       initialValue: provider.signKeyInfo?.storepass,
@@ -148,7 +140,6 @@ class AndroidSignKeyDialog extends ProviderView {
 
   // 构建keypass输入框
   Widget _buildKeypassField(BuildContext context) {
-    final provider = context.read<AndroidSignKeyDialogProvider>();
     return TextFormField(
       decoration: const InputDecoration(
         labelText: '密钥密码',

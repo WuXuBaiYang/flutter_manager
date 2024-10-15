@@ -15,12 +15,12 @@ import 'settings/index.dart';
 * @author wuxubaiyang
 * @Time 2023/11/21 13:57
 */
-class HomePage extends ProviderPage<HomePageProvider> {
+class HomePage extends ProviderPage<HomeProvider> {
   HomePage({super.key, super.state});
 
   @override
-  HomePageProvider createProvider(BuildContext context, GoRouterState? state) =>
-      HomePageProvider(context, state);
+  HomeProvider createPageProvider(BuildContext context, GoRouterState? state) =>
+      HomeProvider(context, state);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -34,10 +34,10 @@ class HomePage extends ProviderPage<HomePageProvider> {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    final children = pageProvider.pages.map((e) {
+    final children = provider.pages.map((e) {
       return e.child ?? const SizedBox();
     }).toList();
-    return Selector<HomePageProvider, int>(
+    return Selector<HomeProvider, int>(
       selector: (_, provider) => provider.currentIndex,
       builder: (_, currentIndex, __) {
         return Row(children: [
@@ -59,8 +59,8 @@ class HomePage extends ProviderPage<HomePageProvider> {
     return NavigationRail(
       selectedIndex: currentIndex,
       trailing: _buildNavigationRailTrailing(),
-      onDestinationSelected: pageProvider.setCurrentIndex,
-      destinations: pageProvider.pages.map((e) {
+      onDestinationSelected: provider.setCurrentIndex,
+      destinations: provider.pages.map((e) {
         return NavigationRailDestination(
           padding: EdgeInsets.only(top: 8),
           icon: e.icon ?? Icon(Icons.error),
@@ -100,32 +100,32 @@ class HomePage extends ProviderPage<HomePageProvider> {
 * @author wuxubaiyang
 * @Time 2023/11/21 14:02
 */
-class HomePageProvider extends PageProvider {
+class HomeProvider extends PageProvider {
   // 导航分页集合
   late final pages = <OptionItem>[
     OptionItem(
       label: '项目',
       icon: Icon(Icons.home_rounded),
-      child: ProjectPage(),
+      child: HomeProjectView(),
     ),
     OptionItem(
       label: '打包',
       icon: Icon(Icons.build),
-      child: PackagePage(),
+      child: HomePackageView(),
     ),
     OptionItem(
       label: '知识库',
       icon: Icon(Icons.document_scanner),
-      child: KnowledgePage(),
+      child: HomeKnowledgeView(),
     ),
     OptionItem(
       label: '设置',
       icon: Icon(Icons.settings),
-      child: SettingsPage(),
+      child: HomeSettingsView(),
     ),
   ];
 
-  HomePageProvider(super.context, super.state) {
+  HomeProvider(super.context, super.state) {
     // 注册设置跳转方法
     context.setting.addListener(() {
       if (context.setting.selectedKey != null) {

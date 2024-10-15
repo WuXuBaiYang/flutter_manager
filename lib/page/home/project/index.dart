@@ -16,24 +16,23 @@ import 'package:jtech_base/jtech_base.dart';
 import 'project_list.dart';
 
 /*
-* 项目页
+* 首页-项目分页
 * @author wuxubaiyang
 * @Time 2023/11/24 14:25
 */
-class ProjectPage extends ProviderPage<ProjectPageProvider> {
-  ProjectPage({super.key, super.state});
+class HomeProjectView extends ProviderView<HomeProjectProvider> {
+  HomeProjectView({super.key});
 
   @override
-  ProjectPageProvider createProvider(
-          BuildContext context, GoRouterState? state) =>
-      ProjectPageProvider(context, state);
+  HomeProjectProvider? createProvider(BuildContext context) =>
+      HomeProjectProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       body: _buildDropArea(context),
       floatingActionButton: FloatingActionButton(
-        onPressed: pageProvider.addProject,
+        onPressed: provider.addProject,
         child: const Icon(Icons.add),
       ),
     );
@@ -41,8 +40,7 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
 
   // 构建文件拖拽区域
   Widget _buildDropArea(BuildContext context) {
-    final provider = context.read<ProjectPageProvider>();
-    final enable = context.watch<HomePageProvider>().isCurrentIndex(0);
+    final enable = context.watch<HomeProvider>().isCurrentIndex(0);
     return DropFileView(
       enable: enable,
       onDoneValidator: (paths) {
@@ -73,7 +71,6 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
 
   // 构建置顶项目集合
   Widget _buildPinnedProjects(BuildContext context) {
-    final projectProvider = context.project;
     return Selector<ProjectProvider, List<Project>>(
       shouldRebuild: (_, __) => true,
       selector: (_, provider) => provider.pinnedProjects,
@@ -86,15 +83,13 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
             ),
             child: ProjectGridView(
               projects: pinnedProjects,
-              onPinned: projectProvider.togglePinned,
-              onReorder: projectProvider.reorderPinned,
-              onDelete: (item) => context
-                  .read<ProjectPageProvider>()
-                  .removeProject(context, item),
+              onPinned: context.project.togglePinned,
+              onReorder: context.project.reorderPinned,
+              onDelete: (item) => provider.removeProject(context, item),
               onEdit: (item) => showProjectImport(context, project: item),
               onDetail: (item) async {
                 await router.goProjectDetail(item);
-                projectProvider.refresh();
+                if (context.mounted) context.project.refresh();
               },
             ),
           ),
@@ -122,8 +117,7 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
             await router.goProjectDetail(item);
             projectProvider.refresh();
           },
-          onDelete: (item) =>
-              context.read<ProjectPageProvider>().removeProject(context, item),
+          onDelete: (item) => provider.removeProject(context, item),
           onEdit: (item) => showProjectImport(context, project: item),
         );
       },
@@ -131,13 +125,8 @@ class ProjectPage extends ProviderPage<ProjectPageProvider> {
   }
 }
 
-/*
-* 项目列表页状态管理
-* @author wuxubaiyang
-* @Time 2023/11/24 14:25
-*/
-class ProjectPageProvider extends PageProvider {
-  ProjectPageProvider(super.context, super.state);
+class HomeProjectProvider extends BaseProvider {
+  HomeProjectProvider(super.context);
 
   // 添加项目
   void addProject() {

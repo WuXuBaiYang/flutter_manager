@@ -24,19 +24,13 @@ Future<Environment?> showImportEnvRemote(BuildContext context) {
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class ImportEnvRemoteDialog extends ProviderView {
+class ImportEnvRemoteDialog
+    extends ProviderView<ImportEnvRemoteDialogProvider> {
   ImportEnvRemoteDialog({super.key});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<ImportEnvRemoteDialogProvider>(
-          create: (context) => ImportEnvRemoteDialogProvider(context),
-        ),
-      ];
-
-  // 获取当前代理
-  ImportEnvRemoteDialogProvider get _envProvider =>
-      context.read<ImportEnvRemoteDialogProvider>();
+  ImportEnvRemoteDialogProvider createProvider(BuildContext context) =>
+      ImportEnvRemoteDialogProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -58,7 +52,7 @@ class ImportEnvRemoteDialog extends ProviderView {
             ),
             TextButton(
               onPressed: currentStep >= 2
-                  ? () => _envProvider.submit().loading(context)
+                  ? () => provider.submit().loading(context)
                   : null,
               child: const Text('导入'),
             ),
@@ -74,8 +68,8 @@ class ImportEnvRemoteDialog extends ProviderView {
       onFuture: EnvironmentTool.getChannelPackages,
       builder: (_, channelPackages, __) {
         return EnvironmentRemoteList(
-          onCopyLink: _envProvider.copyLink,
-          onStartDownload: _envProvider.startNextStep,
+          onCopyLink: provider.copyLink,
+          onStartDownload: provider.startNextStep,
           channelPackages: channelPackages ?? const {},
         );
       },
@@ -85,10 +79,10 @@ class ImportEnvRemoteDialog extends ProviderView {
   // 构建步骤2-下载所选环境
   Widget _buildPackageDownload(BuildContext context) {
     return StreamBuilder<DownloadInfo>(
-      stream: _envProvider.downloadProgress.stream,
+      stream: provider.downloadProgress.stream,
       builder: (_, snap) {
         final downloadInfo = snap.data;
-        final package = _envProvider.currentPackage;
+        final package = provider.currentPackage;
         final speed = FileTool.formatSize(downloadInfo?.speed ?? 0);
         final totalSize = FileTool.formatSize(downloadInfo?.total ?? 0);
         return Column(
@@ -115,7 +109,7 @@ class ImportEnvRemoteDialog extends ProviderView {
       selector: (_, provider) => provider.currentPackage,
       builder: (_, currentPackage, __) {
         return Form(
-          key: _envProvider.formKey,
+          key: provider.formKey,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             _buildFormFieldPath(context, currentPackage?.savePath),
             const SizedBox(height: 8),
@@ -132,7 +126,7 @@ class ImportEnvRemoteDialog extends ProviderView {
       label: '安装路径',
       hint: '请选择安装路径',
       initialValue: savePath,
-      onSaved: (v) => _envProvider.updateFormData(savePath: v),
+      onSaved: (v) => provider.updateFormData(savePath: v),
     );
   }
 

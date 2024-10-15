@@ -20,19 +20,15 @@ Future<Map<PlatformType, String>?> showProjectLabel(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectLabelDialog extends ProviderView {
+class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
   // 平台与label对照表
   final Map<PlatformType, String> platformLabelMap;
 
   ProjectLabelDialog({super.key, required this.platformLabelMap});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider(
-          create: (context) =>
-              ProjectLabelDialogProvider(context, platformLabelMap),
-        ),
-      ];
+  ProjectLabelDialogProvider createProvider(BuildContext context) =>
+      ProjectLabelDialogProvider(context, platformLabelMap);
 
   @override
   Widget buildWidget(BuildContext context) {

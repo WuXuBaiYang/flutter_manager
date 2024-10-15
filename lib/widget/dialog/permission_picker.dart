@@ -23,7 +23,8 @@ Future<List<PlatformPermission>?> showPermissionPicker(
 * @author wuxubaiyang
 * @Time 2023/11/25 19:38
 */
-class PermissionPickerDialog extends ProviderView {
+class PermissionPickerDialog
+    extends ProviderView<PermissionPickerDialogProvider> {
   // 所选平台
   final PlatformType platform;
 
@@ -37,12 +38,8 @@ class PermissionPickerDialog extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<PermissionPickerDialogProvider>(
-          create: (context) => PermissionPickerDialogProvider(context,
-              permissions: permissions ?? []),
-        ),
-      ];
+  PermissionPickerDialogProvider createProvider(BuildContext context) =>
+      PermissionPickerDialogProvider(context, permissions: permissions ?? []);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -156,11 +153,6 @@ class PermissionPickerDialog extends ProviderView {
   }
 }
 
-/*
-* 权限选择列表弹窗数据提供者
-* @author wuxubaiyang
-* @Time 2023/12/14 9:38
-*/
 class PermissionPickerDialogProvider extends BaseProvider {
   // 已选权限集合
   List<PlatformPermission> _selectPermissions;

@@ -7,13 +7,12 @@ import 'package:jtech_base/jtech_base.dart';
 * @author wuxubaiyang
 * @Time 2023/11/24 14:26
 */
-class PackagePage extends ProviderPage<PackagePageProvider> {
-  PackagePage({super.key, super.state});
+class HomePackageView extends ProviderView<HomePackageProvider> {
+  HomePackageView({super.key});
 
   @override
-  PackagePageProvider createProvider(
-          BuildContext context, GoRouterState? state) =>
-      PackagePageProvider(context, state);
+  HomePackageProvider? createProvider(BuildContext context) =>
+      HomePackageProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -28,11 +27,6 @@ class PackagePage extends ProviderPage<PackagePageProvider> {
   }
 }
 
-/*
-* 打包页状态管理
-* @author wuxubaiyang
-* @Time 2023/11/24 14:26
-*/
-class PackagePageProvider extends PageProvider {
-  PackagePageProvider(super.context, super.state);
+class HomePackageProvider extends BaseProvider {
+  HomePackageProvider(super.context);
 }

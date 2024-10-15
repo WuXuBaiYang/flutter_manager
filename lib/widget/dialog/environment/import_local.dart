@@ -21,26 +21,18 @@ Future<Environment?> showImportEnvLocal(
 * @author wuxubaiyang
 * @Time 2023/11/26 10:17
 */
-class ImportEnvLocalDialog extends ProviderView {
+class ImportEnvLocalDialog extends ProviderView<ImportEnvLocalDialogProvider> {
   // 环境对象
   final Environment? env;
 
   ImportEnvLocalDialog({super.key, this.env});
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<ImportEnvLocalDialogProvider>(
-          create: (context) =>
-              ImportEnvLocalDialogProvider(context, env ?? Environment()),
-        ),
-      ];
+  ImportEnvLocalDialogProvider createProvider(BuildContext context) =>
+      ImportEnvLocalDialogProvider(context, env ?? Environment());
 
   // 判断是否为编辑状态
   bool get _isEdite => env != null;
-
-  // 获取当前代理
-  ImportEnvLocalDialogProvider get _envProvider =>
-      context.read<ImportEnvLocalDialogProvider>();
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -55,7 +47,7 @@ class ImportEnvLocalDialog extends ProviderView {
         ),
         TextButton(
           child: Text(_isEdite ? '修改' : '添加'),
-          onPressed: () => _envProvider.submit(_isEdite).loading(context),
+          onPressed: () => provider.submit(_isEdite).loading(context),
         ),
       ],
     );
@@ -67,7 +59,7 @@ class ImportEnvLocalDialog extends ProviderView {
       selector: (_, provider) => provider.env,
       builder: (_, env, __) {
         return Form(
-          key: _envProvider.formKey,
+          key: provider.formKey,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             _buildFormFieldPath(context, env),
           ]),
@@ -82,7 +74,7 @@ class ImportEnvLocalDialog extends ProviderView {
       label: 'flutter路径',
       initialValue: env.path,
       hint: '请选择flutter路径',
-      onSaved: (v) => _envProvider.updateFormData(path: v),
+      onSaved: (v) => provider.updateFormData(path: v),
       validator: (v) {
         if (!EnvironmentTool.isAvailable(v)) {
           return '路径不可用';

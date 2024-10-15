@@ -3,17 +3,16 @@ import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 /*
-* 知识库页面
+* 首页-知识库分页
 * @author wuxubaiyang
 * @Time 2023/11/26 18:21
 */
-class KnowledgePage extends ProviderPage<KnowledgePageProvider> {
-  KnowledgePage({super.key, super.state});
+class HomeKnowledgeView extends ProviderView<HomeKnowledgeProvider> {
+  HomeKnowledgeView({super.key});
 
   @override
-  KnowledgePageProvider createProvider(
-          BuildContext context, GoRouterState? state) =>
-      KnowledgePageProvider(context, state);
+  HomeKnowledgeProvider? createProvider(BuildContext context) =>
+      HomeKnowledgeProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -28,11 +27,6 @@ class KnowledgePage extends ProviderPage<KnowledgePageProvider> {
   }
 }
 
-/*
-* 状态管理
-* @author wuxubaiyang
-* @Time 2023/11/26 18:21
-*/
-class KnowledgePageProvider extends PageProvider {
-  KnowledgePageProvider(super.context, super.state);
+class HomeKnowledgeProvider extends BaseProvider {
+  HomeKnowledgeProvider(super.context);
 }

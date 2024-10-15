@@ -25,7 +25,7 @@ Future<String?> showImageEditor(BuildContext context,
 * @author wuxubaiyang
 * @Time 2023/12/6 8:48
 */
-class ImageEditorDialog extends ProviderView {
+class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
   // 图片路径
   final String path;
 
@@ -43,16 +43,13 @@ class ImageEditorDialog extends ProviderView {
   });
 
   @override
-  List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<ImageEditorDialogProvider>(
-          create: (context) => ImageEditorDialogProvider(context, (
-            ratio: initializeRatio,
-            rotate: 0,
-            borderRadius: 0,
-            imageType: ImageType.png,
-          )),
-        ),
-      ];
+  ImageEditorDialogProvider createProvider(BuildContext context) =>
+      ImageEditorDialogProvider(context, (
+        rotate: 0,
+        borderRadius: 0,
+        ratio: initializeRatio,
+        imageType: ImageType.png,
+      ));
 
   @override
   Widget buildWidget(BuildContext context) {
@@ -95,7 +92,6 @@ class ImageEditorDialog extends ProviderView {
 
   // 构建图片类型选择器
   Widget _buildImageTypeSelector(BuildContext context) {
-    final provider = context.read<ImageEditorDialogProvider>();
     return Selector<ImageEditorDialogProvider, ImageType>(
       selector: (_, provider) => provider._action.imageType,
       builder: (_, imageType, __) {
@@ -150,7 +146,6 @@ class ImageEditorDialog extends ProviderView {
 
   // 构建图片编辑器
   Widget _buildImageEditor(BuildContext context) {
-    final provider = context.read<ImageEditorDialogProvider>();
     return Listener(
       onPointerSignal: (event) {
         if (event is PointerScrollEvent) {
@@ -185,7 +180,6 @@ class ImageEditorDialog extends ProviderView {
   // 构建图片编辑器操作
   Widget _buildImageEditorActions(BuildContext context) {
     final ratioDisable = absoluteRatio != null;
-    final provider = context.read<ImageEditorDialogProvider>();
     return Selector<ImageEditorDialogProvider, ImageEditorAction>(
       selector: (_, provider) => provider.action,
       builder: (_, action, __) {
@@ -264,11 +258,6 @@ typedef ImageEditorAction = ({
   ImageType imageType,
 });
 
-/*
-* 图片编辑弹窗数据提供者
-* @author wuxubaiyang
-* @Time 2023/12/6 8:51
-*/
 class ImageEditorDialogProvider extends BaseProvider {
   // 图片编辑控制器
   final controller = CustomImageCropController();

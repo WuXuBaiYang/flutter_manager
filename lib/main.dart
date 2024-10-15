@@ -40,8 +40,7 @@ class MyApp extends ProviderView {
 
   @override
   List<SingleChildWidget> get providers => [
-        ChangeNotifierProvider<ThemeProvider>(
-            create: (context) => ThemeProvider(context)),
+        ChangeNotifierProvider(create: (context) => ThemeProvider(context)),
         ChangeNotifierProvider(create: (context) => WindowProvider(context)),
         ChangeNotifierProvider<EnvironmentProvider>(
             create: (context) => EnvironmentProvider(context)),
