@@ -94,9 +94,9 @@ class EnvironmentRemoteList extends StatelessWidget {
 
   // 构建包列表子项
   Widget _buildPackageListItem(BuildContext context, EnvironmentPackage item) {
-    final iconData = item.hasSavePath
+    final iconData = item.hasDownload
         ? Icons.download_done_rounded
-        : (item.hasTempPath
+        : (item.hasTemp
             ? Icons.download_for_offline_rounded
             : Icons.download_rounded);
     final subText = 'Dart · ${item.dartVersion} · ${item.dartArch}';

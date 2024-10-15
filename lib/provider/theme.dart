@@ -11,15 +11,17 @@ class ThemeProvider extends BaseThemeProvider {
 
   @override
   ThemeData customTheme(ThemeData themeData, Brightness brightness) {
+    final cardColor =
+        brightness == Brightness.light ? Colors.white : Colors.black;
     return themeData.copyWith(
       focusColor: Colors.transparent,
       appBarTheme: AppBarTheme(
         scrolledUnderElevation: 0,
       ),
       cardTheme: CardTheme(
+        color: cardColor,
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
-        color: brightness == Brightness.light ? Colors.white : Colors.black,
       ),
       dividerTheme: const DividerThemeData(
         space: 0,
@@ -28,9 +30,10 @@ class ThemeProvider extends BaseThemeProvider {
       bottomSheetTheme: const BottomSheetThemeData(
         showDragHandle: true,
       ),
-      searchBarTheme: const SearchBarThemeData(
+      searchBarTheme: SearchBarThemeData(
         elevation: WidgetStatePropertyAll(2),
         constraints: BoxConstraints.tightFor(height: 45),
+        backgroundColor: WidgetStatePropertyAll(cardColor),
       ),
       tabBarTheme: const TabBarTheme(
         dividerHeight: 0,

@@ -57,7 +57,7 @@ class Downloader {
       received += data.length;
       tempSpeed += received - lastReceived;
       lastReceived = received;
-      Debounce.c(() {
+      Throttle.c(() {
         onReceiveProgress?.call(received, total, tempSpeed);
         downloadStream?.add((
           progress: received / total,

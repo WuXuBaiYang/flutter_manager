@@ -24,8 +24,11 @@ class EnvironmentPackage extends BaseModel {
   // dart架构
   final String dartArch;
 
+  // 部署路径
+  final String? buildPath;
+
   // 已下载文件路径
-  final String? savePath;
+  final String? downloadPath;
 
   // 已下载临时文件路径
   final String? tempPath;
@@ -37,23 +40,33 @@ class EnvironmentPackage extends BaseModel {
     required this.version,
     required this.dartVersion,
     required this.dartArch,
-    this.savePath,
     this.tempPath,
+    this.buildPath,
+    this.downloadPath,
   });
 
-  EnvironmentPackage.from(obj, {String? fileName, this.savePath, this.tempPath})
-      : fileName = fileName ?? basename(obj?['archive'] ?? ''),
-        url = '${obj?['base_url'] ?? ''}/${obj?['archive'] ?? ''}',
+  EnvironmentPackage.from(
+    obj, {
+    required String baseUrl,
+    this.tempPath,
+    this.buildPath,
+    String? fileName,
+    this.downloadPath,
+  })  : fileName = fileName ?? basename(obj?['archive'] ?? ''),
+        url = '$baseUrl/${obj?['archive'] ?? ''}',
         channel = obj?['channel'] ?? '',
         version = obj?['version'] ?? '',
         dartVersion = obj?['dart_sdk_version'] ?? '',
         dartArch = obj?['dart_sdk_arch'] ?? '';
 
+  // 判断当前是否满足导入条件（包含部署地址与安装包地址）
+  bool get canImport => buildPath != null && downloadPath != null;
+
   // 判断是否存在已下载文件路径
-  bool get hasSavePath => savePath != null;
+  bool get hasDownload => downloadPath != null;
 
   // 判断是否存在已下载临时文件路径
-  bool get hasTempPath => tempPath != null;
+  bool get hasTemp => tempPath != null;
 
   // 获取标题
   String get title => 'Flutter · $version · $channel';
@@ -74,7 +87,8 @@ class EnvironmentPackage extends BaseModel {
     String? version,
     String? dartVersion,
     String? dartArch,
-    String? savePath,
+    String? downloadPath,
+    String? buildPath,
     String? tempPath,
   }) {
     return EnvironmentPackage(
@@ -84,7 +98,8 @@ class EnvironmentPackage extends BaseModel {
       version: version ?? this.version,
       dartVersion: dartVersion ?? this.dartVersion,
       dartArch: dartArch ?? this.dartArch,
-      savePath: savePath ?? this.savePath,
+      downloadPath: downloadPath ?? this.downloadPath,
+      buildPath: buildPath ?? this.buildPath,
       tempPath: tempPath ?? this.tempPath,
     );
   }

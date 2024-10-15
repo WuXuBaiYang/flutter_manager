@@ -90,14 +90,17 @@ class EnvironmentTool {
     final result = await getDownloadResult();
     final downloadedMap =
         result.downloaded.asMap().map((_, v) => MapEntry(basename(v), v));
-    final tempMap = result.tmp.asMap().map((_, v) => MapEntry(basename(v), v));
+    final tempMap = result.tmp.asMap().map((_, v) {
+      return MapEntry(basename(v).replaceAll('.tmp', ''), v);
+    });
     return List<EnvironmentPackage>.from(
       (json['releases'] ?? []).map((e) {
         final fileName = basename(e?['archive'] ?? '');
         return EnvironmentPackage.from(e,
+            baseUrl: json['base_url'] ?? '',
             fileName: fileName,
             tempPath: tempMap[fileName],
-            savePath: downloadedMap[fileName]);
+            downloadPath: downloadedMap[fileName]);
       }),
     ).groupBy<String>((e) => e.channel);
   }

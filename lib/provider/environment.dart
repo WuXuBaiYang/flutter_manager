@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/model/env_package.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -31,12 +32,16 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 导入压缩包的环境变量
-  Future<Environment> importArchive(String archiveFile, String savePath) async {
-    await extractFileToDisk(archiveFile, savePath, asyncWrite: true);
-    final dir = Directory(savePath);
-    final tmp = dir.listSync();
-    if (tmp.length <= 1) savePath = tmp.first.path;
-    return import(savePath);
+  Future<Environment?> importArchive(EnvironmentPackage package) async {
+    if (!package.canImport) return null;
+    var buildPath = package.buildPath;
+    await extractFileToDisk(
+      package.downloadPath!,
+      buildPath!,
+      asyncWrite: true,
+    );
+    final list = Directory(buildPath).listSync();
+    return import(list.length <= 1 ? list.first.path : buildPath);
   }
 
   // 刷新环境变量
