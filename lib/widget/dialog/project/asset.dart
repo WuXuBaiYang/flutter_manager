@@ -3,43 +3,46 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
 
-// 展示项目构建弹窗
-Future<void> showProjectBuild(BuildContext context,
+// 展示asset资源管理弹窗
+Future<void> showProjectAsset(BuildContext context,
     {required Project project}) async {
-  return showDialog<void>(
+  return showDialog(
     context: context,
     barrierDismissible: false,
-    builder: (_) => ProjectBuildDialog(
+    builder: (_) => ProjectAssetDialog(
       project: project,
     ),
   );
 }
 
 /*
-* 项目构建弹窗
+* 项目asset资源管理
 * @author wuxubaiyang
 * @Time 2023/12/1 9:17
 */
-class ProjectBuildDialog extends StatelessWidget {
+class ProjectAssetDialog extends ProviderView<ProjectAssetDialogProvider> {
   // 项目信息
   final Project project;
 
-  const ProjectBuildDialog({super.key, required this.project});
+  ProjectAssetDialog({super.key, required this.project});
 
   @override
-  Widget build(BuildContext context) {
+  ProjectAssetDialogProvider? createProvider(BuildContext context) =>
+      ProjectAssetDialogProvider(context, project);
+
+  @override
+  Widget buildWidget(BuildContext context) {
     return CustomDialog(
-      title: const Text('打包'),
+      title: const Text('Asset管理'),
       content: _buildContent(context),
-      constraints: BoxConstraints.tight(const Size.square(200)),
       actions: [
         TextButton(
           child: const Text('取消'),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        TextButton(
-          child: const Text('确定'),
-          onPressed: () {},
+        const TextButton(
+          onPressed: null,
+          child: Text('确定'),
         ),
       ],
     );
@@ -48,10 +51,16 @@ class ProjectBuildDialog extends StatelessWidget {
   // 构建内容
   Widget _buildContent(BuildContext context) {
     return const EmptyBoxView(
+      hint: '无可用平台',
       isEmpty: true,
-      hint: '功能施工中',
-      iconData: Icons.build,
       child: SizedBox(),
     );
   }
+}
+
+class ProjectAssetDialogProvider extends BaseProvider {
+  // 项目信息
+  final Project project;
+
+  ProjectAssetDialogProvider(super.context, this.project);
 }

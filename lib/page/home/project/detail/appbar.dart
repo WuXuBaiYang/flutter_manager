@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
-import 'package:flutter_manager/widget/dialog/project/project_asset.dart';
-import 'package:flutter_manager/widget/dialog/project/project_build.dart';
-import 'package:flutter_manager/widget/dialog/project/project_font.dart';
+import 'package:flutter_manager/widget/dialog/project/asset.dart';
+import 'package:flutter_manager/widget/dialog/project/build.dart';
+import 'package:flutter_manager/widget/dialog/project/font.dart';
 import 'package:flutter_manager/widget/env_badge.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
 import 'package:open_dir/open_dir.dart';
@@ -140,13 +140,13 @@ class ProjectDetailAppBar extends StatelessWidget {
           iconSize: 20,
           tooltip: 'Asset管理',
           icon: const Icon(Icons.assessment_outlined),
-          onPressed: () => showProjectAsset(context),
+          onPressed: () => showProjectAsset(context, project: project),
         ),
         IconButton.outlined(
           iconSize: 20,
           tooltip: '字体管理',
           icon: const Icon(Icons.font_download_outlined),
-          onPressed: () => showProjectFont(context),
+          onPressed: () => showProjectFont(context, project: project),
         ),
         IconButton.outlined(
           iconSize: 20,
