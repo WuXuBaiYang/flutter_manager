@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_manager/database/model/environment.dart';
@@ -86,8 +87,18 @@ class EnvironmentTool {
       await localCache.setJson(_envPackageCacheKey, json,
           expiration: const Duration(days: 1));
     }
+    final result = await getDownloadResult();
+    final downloadedMap =
+        result.downloaded.asMap().map((_, v) => MapEntry(basename(v), v));
+    final tempMap = result.tmp.asMap().map((_, v) => MapEntry(basename(v), v));
     return List<EnvironmentPackage>.from(
-      (json['releases'] ?? []).map(EnvironmentPackage.from),
+      (json['releases'] ?? []).map((e) {
+        final fileName = basename(e?['archive'] ?? '');
+        return EnvironmentPackage.from(e,
+            fileName: fileName,
+            tempPath: tempMap[fileName],
+            savePath: downloadedMap[fileName]);
+      }),
     ).groupBy<String>((e) => e.channel);
   }
 
@@ -96,6 +107,7 @@ class EnvironmentTool {
     String url, {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
+    StreamController<DownloadInfo>? downloadProgress,
   }) async {
     final baseDir = await Tool.getCacheFilePath();
     if (baseDir == null) throw Exception('获取下载目录失败');
@@ -105,6 +117,7 @@ class EnvironmentTool {
       url,
       '$savePath.tmp',
       cancelToken: cancelToken,
+      downloadStream: downloadProgress,
       onReceiveProgress: onReceiveProgress,
     );
     if (tempPath == null) throw Exception('下载文件失败');

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/model/env_package.dart';
+import 'package:flutter_manager/tool/download.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/widget/dialog/environment/remote_list.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
@@ -69,23 +70,13 @@ class ImportEnvRemoteDialog extends ProviderView {
 
   // 构建步骤1-选择要下载的环境
   Widget _buildPackageList(BuildContext context) {
-    return LoadingFutureBuilder<
-        ({
-          Map<String, List<EnvironmentPackage>> channelPackages,
-          DownloadEnvResult downloadResult
-        })>(
-      onFuture: () async => (
-        channelPackages: await EnvironmentTool.getChannelPackages(),
-        downloadResult: await EnvironmentTool.getDownloadResult(),
-      ),
-      builder: (_, result, __) {
+    return LoadingFutureBuilder<Map<String, List<EnvironmentPackage>>>(
+      onFuture: EnvironmentTool.getChannelPackages,
+      builder: (_, channelPackages, __) {
         return EnvironmentRemoteList(
-          downloadResult: result?.downloadResult,
-          channelPackages: result?.channelPackages ?? {},
-          onStartDownload: (result) => result.savePath != null
-              ? _envProvider.startImport(result.package, result.savePath)
-              : _envProvider.startDownload(result.package),
           onCopyLink: _envProvider.copyLink,
+          onStartDownload: _envProvider.startNextStep,
+          channelPackages: channelPackages ?? const {},
         );
       },
     );
@@ -120,19 +111,15 @@ class ImportEnvRemoteDialog extends ProviderView {
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    return Selector<ImportEnvRemoteDialogProvider,
-        ({EnvironmentPackage? package, String? savePath})>(
-      selector: (_, provider) => (
-        package: provider.currentPackage,
-        savePath: provider.savePath,
-      ),
-      builder: (_, result, __) {
+    return Selector<ImportEnvRemoteDialogProvider, EnvironmentPackage?>(
+      selector: (_, provider) => provider.currentPackage,
+      builder: (_, currentPackage, __) {
         return Form(
           key: _envProvider.formKey,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            _buildFormFieldPath(context, result.savePath),
+            _buildFormFieldPath(context, currentPackage?.savePath),
             const SizedBox(height: 8),
-            _buildFormFieldInfo(context, result.package),
+            _buildFormFieldInfo(context, currentPackage),
           ]),
         );
       },
@@ -145,7 +132,7 @@ class ImportEnvRemoteDialog extends ProviderView {
       label: '安装路径',
       hint: '请选择安装路径',
       initialValue: savePath,
-      onSaved: (v) => _envProvider.updateFormData(path: v),
+      onSaved: (v) => _envProvider.updateFormData(savePath: v),
     );
   }
 
@@ -161,14 +148,6 @@ class ImportEnvRemoteDialog extends ProviderView {
   }
 }
 
-// 下载进度元组
-typedef DownloadInfo = ({
-  double progress,
-  int speed,
-  int total,
-  int count,
-});
-
 class ImportEnvRemoteDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
@@ -182,10 +161,7 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
   int get currentStep => _currentStep;
 
   // 压缩包文件
-  String? _archiveFile, _savePath;
-
-  // 获取保存路径
-  String? get savePath => _savePath;
+  String? _archiveFile;
 
   // 当前选择包信息
   EnvironmentPackage? _currentPackage;
@@ -199,51 +175,38 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
   // 下载取消key
   CancelToken? _cancelToken;
 
-  // 启动下载
-  Future<void> startDownload(EnvironmentPackage package) async {
-    _currentPackage = package;
-    _updateStep(1);
-    int tempSpeed = 0;
-    _archiveFile = await EnvironmentTool.download(
-      package.url,
-      cancelToken: _cancelToken = CancelToken(),
-      onReceiveProgress: (count, total, speed) {
-        tempSpeed += speed;
-        Debounce.c(
-          () {
-            downloadProgress.add((
-              progress: count / total,
-              speed: tempSpeed,
-              total: total,
-              count: count,
-            ));
-            tempSpeed = 0;
-          },
-          'update_download',
-          delay: Duration(seconds: 1),
-        );
-      },
-    );
-    if (_archiveFile == null) throw Exception('下载失败');
-    return startImport(package);
-  }
-
-  // 开始导入
-  Future<void> startImport(EnvironmentPackage package,
-      [String? savePath]) async {
-    _savePath = savePath ?? await EnvironmentTool.getInstallPath(package);
-    _currentPackage = package;
-    _updateStep(2);
+  // 执行下一步
+  Future<void> startNextStep(EnvironmentPackage package) async {
+    try {
+      _currentPackage = package;
+      // 已有下载路径则跳转到导入页面
+      if (package.hasSavePath) return _updateStep(2);
+      // 没有则跳转并开始下载
+      _updateStep(1);
+      _archiveFile = await EnvironmentTool.download(
+        package.url,
+        downloadProgress: downloadProgress,
+        cancelToken: _cancelToken = CancelToken(),
+      );
+      if (_archiveFile == null) throw Exception('下载失败');
+      // 下载完成后更新保存路径并跳转到导入页面
+      return startNextStep(package.copyWith(
+        savePath: await EnvironmentTool.getInstallPath(package),
+      ));
+    } catch (e) {
+      showNoticeError(e.toString(), title: '环境导入失败');
+    }
   }
 
   // 导入环境
   Future<Environment?> submit() async {
-    if (_archiveFile == null || _savePath == null) return null;
+    final savePath = _currentPackage?.savePath;
+    if (_archiveFile == null || savePath == null) return null;
     try {
       final formState = formKey.currentState;
       if (formState == null || !formState.validate()) return null;
       formState.save();
-      final result = await context.env.importArchive(_archiveFile!, _savePath!);
+      final result = await context.env.importArchive(_archiveFile!, savePath);
       if (context.mounted) context.pop();
       return result;
     } catch (e) {
@@ -258,9 +221,10 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
   }
 
   // 更新表单数据
-  void updateFormData({EnvironmentPackage? package, String? path}) {
-    _savePath = path ?? _savePath;
-    _currentPackage = package ?? _currentPackage;
+  void updateFormData({String? savePath}) {
+    _currentPackage = _currentPackage?.copyWith(
+      savePath: savePath,
+    );
     notifyListeners();
   }
 

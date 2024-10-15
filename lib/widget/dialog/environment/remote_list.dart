@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/model/env_package.dart';
-import 'package:flutter_manager/tool/project/environment.dart';
 
 /*
 * 远程环境安装包列表组件
@@ -14,12 +13,8 @@ class EnvironmentRemoteList extends StatelessWidget {
   // 渠道安装包信息
   final Map<String, List<EnvironmentPackage>> channelPackages;
 
-  // 已下载安装包信息
-  final DownloadEnvResult? downloadResult;
-
   // 启动下载回调
-  final ValueChanged<({EnvironmentPackage package, String? savePath})>?
-      onStartDownload;
+  final ValueChanged<EnvironmentPackage>? onStartDownload;
 
   // 默认展示下标
   final int initialIndex;
@@ -31,7 +26,6 @@ class EnvironmentRemoteList extends StatelessWidget {
     super.key,
     required this.channelPackages,
     this.onCopyLink,
-    this.downloadResult,
     this.onStartDownload,
     String initialChannel = 'stable',
   }) : initialIndex = channelPackages.keys.toList().indexOf(initialChannel);
@@ -98,28 +92,11 @@ class EnvironmentRemoteList extends StatelessWidget {
     );
   }
 
-  // 获取已下载路径
-  String? _getSavePath(EnvironmentPackage item) {
-    for (final e in downloadResult?.downloaded ?? []) {
-      if (e.contains(item.fileName)) return e;
-    }
-    return null;
-  }
-
-  // 获取已下载缓存路径
-  String? _getTmpPath(EnvironmentPackage item) {
-    for (final e in downloadResult?.tmp ?? []) {
-      if (e.contains(item.fileName)) return e;
-    }
-    return null;
-  }
-
   // 构建包列表子项
   Widget _buildPackageListItem(BuildContext context, EnvironmentPackage item) {
-    final savePath = _getSavePath(item);
-    final iconData = savePath != null
+    final iconData = item.hasSavePath
         ? Icons.download_done_rounded
-        : (_getTmpPath(item) != null
+        : (item.hasTempPath
             ? Icons.download_for_offline_rounded
             : Icons.download_rounded);
     final subText = 'Dart · ${item.dartVersion} · ${item.dartArch}';
@@ -128,7 +105,6 @@ class EnvironmentRemoteList extends StatelessWidget {
       Icons.download_done_rounded: '已下载',
       Icons.download_for_offline_rounded: '继续下载',
     }[iconData];
-    final result = (package: item, savePath: savePath);
     return ListTile(
       title: Text(item.title),
       subtitle: Text(subText),
@@ -141,10 +117,10 @@ class EnvironmentRemoteList extends StatelessWidget {
         IconButton(
           icon: Icon(iconData),
           tooltip: startTooltip,
-          onPressed: () => onStartDownload?.call(result),
+          onPressed: () => onStartDownload?.call(item),
         ),
       ]),
-      onTap: () => onStartDownload?.call(result),
+      onTap: () => onStartDownload?.call(item),
     );
   }
 }

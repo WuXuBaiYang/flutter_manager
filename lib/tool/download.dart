@@ -6,6 +6,14 @@ import 'package:jtech_base/jtech_base.dart';
 typedef DownloaderProgressCallback = void Function(
     int count, int total, int speed);
 
+// 下载进度元组
+typedef DownloadInfo = ({
+  double progress,
+  int speed,
+  int total,
+  int count,
+});
+
 /*
 * 基于dio实现的文件下载器
 * @author wuxubaiyang
@@ -18,6 +26,8 @@ class Downloader {
     String savePath, {
     CancelToken? cancelToken,
     DownloaderProgressCallback? onReceiveProgress,
+    StreamController<DownloadInfo>? downloadStream,
+    Duration streamDelay = const Duration(seconds: 1),
   }) async {
     int beginIndex = 0;
     final file = File(savePath);
@@ -41,11 +51,22 @@ class Downloader {
         received = beginIndex,
         total = _getContentLength(resp);
     if (supportPause) total += beginIndex;
+    int tempSpeed = 0;
     final subscription = resp.data?.stream.listen((data) {
-      received += data.length;
-      onReceiveProgress?.call(received, total, received - lastReceived);
-      lastReceived = received;
       raf.writeFromSync(data);
+      received += data.length;
+      tempSpeed += received - lastReceived;
+      lastReceived = received;
+      Debounce.c(() {
+        onReceiveProgress?.call(received, total, tempSpeed);
+        downloadStream?.add((
+          progress: received / total,
+          speed: tempSpeed,
+          total: total,
+          count: received,
+        ));
+        tempSpeed = 0;
+      }, 'download_update', delay: streamDelay);
     }, onDone: () {
       raf.close();
       if (completer.isCompleted) return;
