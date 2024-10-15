@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/dialog/project_import.dart';
+import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -84,7 +84,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
           project: project,
           isCollapsed: isScrollTop,
           bottom: _buildTabBar(context, platforms),
-          onProjectEdit: () => showProjectImport(
+          onProjectEdit: () => showImportProject(
             context,
             project: project,
           ).then(provider.updateProject),

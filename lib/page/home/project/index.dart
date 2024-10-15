@@ -3,7 +3,7 @@ import 'package:flutter_manager/common/route.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
-import 'package:flutter_manager/widget/dialog/project_import.dart';
+import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -68,7 +68,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
               onPinned: context.project.togglePinned,
               onReorder: context.project.reorderPinned,
               onDelete: (item) => provider.removeProject(context, item),
-              onEdit: (item) => showProjectImport(context, project: item),
+              onEdit: (item) => showImportProject(context, project: item),
               onDetail: (item) async {
                 await router.goProjectDetail(item);
                 if (context.mounted) context.project.refresh();
@@ -100,7 +100,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
             projectProvider.refresh();
           },
           onDelete: (item) => provider.removeProject(context, item),
-          onEdit: (item) => showProjectImport(context, project: item),
+          onEdit: (item) => showImportProject(context, project: item),
         );
       },
     );
@@ -123,7 +123,7 @@ class HomeProjectProvider extends BaseProvider {
         ],
       );
     }
-    showProjectImport(context);
+    showImportProject(context);
   }
 
   // 移除项目

@@ -263,7 +263,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   final controller = CustomImageCropController();
 
   // 缓存初始化字段
-  final ImageEditorAction _initializeaction;
+  final ImageEditorAction _initializeAction;
 
   // 图片编辑操作参数元组
   ImageEditorAction _action;
@@ -274,8 +274,8 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 生成图片文件名称
   String get _imageFileName => '${genID()}.${_action.imageType.name}';
 
-  ImageEditorDialogProvider(super.context, this._initializeaction)
-      : _action = _initializeaction;
+  ImageEditorDialogProvider(super.context, this._initializeAction)
+      : _action = _initializeAction;
 
   // 另存为其他路径
   Future<String?> saveOtherPath() async {
@@ -336,7 +336,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 重置图片状态
   void reset() {
     controller.reset();
-    _action = _initializeaction;
+    _action = _initializeAction;
     notifyListeners();
   }
 

@@ -6,7 +6,7 @@ import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
 import 'package:flutter_manager/widget/dialog/environment/import_local.dart';
-import 'package:flutter_manager/widget/dialog/project_import.dart';
+import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/drop_file.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'knowledge/index.dart';
@@ -154,7 +154,7 @@ class HomeProvider extends PageProvider {
         final project = await ProjectTool.getProjectInfo(e);
         if (project == null || !context.mounted) continue;
         if (!context.env.hasEnvironment) return '请先添加环境信息';
-        await showProjectImport(context, project: project);
+        await showImportProject(context, project: project);
       }
     }
     return null;

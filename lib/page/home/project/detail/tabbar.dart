@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/dialog/project_label.dart';
-import 'package:flutter_manager/widget/dialog/project_logo.dart';
+import 'package:flutter_manager/widget/dialog/project/project_label.dart';
+import 'package:flutter_manager/widget/dialog/project/project_logo.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'platform/widgets/provider.dart';
 

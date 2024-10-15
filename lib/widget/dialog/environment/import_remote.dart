@@ -15,6 +15,7 @@ import 'package:jtech_base/jtech_base.dart';
 Future<Environment?> showImportEnvRemote(BuildContext context) {
   return showDialog<Environment>(
     context: context,
+    barrierDismissible: false,
     builder: (_) => ImportEnvRemoteDialog(),
   );
 }

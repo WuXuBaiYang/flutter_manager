@@ -12,6 +12,7 @@ Future<Environment?> showImportEnvLocal(
 }) {
   return showDialog<Environment>(
     context: context,
+    barrierDismissible: false,
     builder: (_) => ImportEnvLocalDialog(env: env),
   );
 }

@@ -4,7 +4,7 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/project_logo.dart';
+import 'package:flutter_manager/widget/dialog/project/project_logo.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:jtech_base/jtech_base.dart';
 
