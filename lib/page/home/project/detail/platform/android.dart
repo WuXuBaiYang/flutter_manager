@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
-import 'package:flutter_manager/widget/dialog/android_sign_key.dart';
+import 'package:flutter_manager/widget/dialog/android_sign/create.dart';
 import 'widgets/base.dart';
 import 'widgets/label_platform_item.dart';
 import 'widgets/logo_platform_item.dart';
@@ -38,7 +38,7 @@ class ProjectPlatformAndroidView
             tooltip: '创建签名',
             isSelected: false,
             icon: const Icon(Icons.key_rounded),
-            onPressed: () => showAndroidSignKey(context),
+            onPressed: () => showCreateAndroidSign(context),
           ),
         ]),
         PermissionPlatformItem(

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/project.dart';
-import 'package:flutter_manager/widget/dialog/android_sign_key_options.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:jtech_base/jtech_base.dart';
+import 'create_options.dart';
 
 // 展示android签名创建弹窗
-Future<bool?> showAndroidSignKey(BuildContext context) {
+Future<bool?> showCreateAndroidSign(BuildContext context) {
   return showDialog<bool>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => AndroidSignKeyDialog(),
+    builder: (_) => CreateAndroidSignDialog(),
   );
 }
 
@@ -20,8 +20,9 @@ Future<bool?> showAndroidSignKey(BuildContext context) {
 * @author wuxubaiyang
 * @Time 2023/12/15 9:00
 */
-class AndroidSignKeyDialog extends ProviderView<AndroidSignKeyDialogProvider> {
-  AndroidSignKeyDialog({super.key});
+class CreateAndroidSignDialog
+    extends ProviderView<AndroidSignKeyDialogProvider> {
+  CreateAndroidSignDialog({super.key});
 
   @override
   AndroidSignKeyDialogProvider createProvider(BuildContext context) =>
@@ -165,7 +166,7 @@ class AndroidSignKeyDialog extends ProviderView<AndroidSignKeyDialogProvider> {
     return ExpansionTile(
       tilePadding: EdgeInsets.zero,
       title: const Text('其他可选参数'),
-      children: [AndroidSignKeyOptions()],
+      children: [CreateAndroidSignOptions()],
     );
   }
 }

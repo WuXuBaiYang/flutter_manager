@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:jtech_base/jtech_base.dart';
-import 'android_sign_key.dart';
+import 'create.dart';
 
 // dName可选项表单元组
 typedef AndroidSignDName = ({
@@ -16,8 +16,8 @@ typedef AndroidSignDName = ({
 * @author wuxubaiyang
 * @Time 2023/12/28 8:26
 */
-class AndroidSignKeyOptions extends StatelessWidget {
-  AndroidSignKeyOptions({super.key});
+class CreateAndroidSignOptions extends StatelessWidget {
+  CreateAndroidSignOptions({super.key});
 
   // 可选项DName表
   final List<List<AndroidSignDName>> _dNameOptions = [
