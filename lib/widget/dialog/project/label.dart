@@ -45,11 +45,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () async {
-            final result = await provider.submitForm();
-            if (result == null || !context.mounted) return;
-            Navigator.pop(context, result);
-          },
+          onPressed: () => provider.submit().loading(context),
         ),
       ],
     );
@@ -132,7 +128,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
       style: textStyle,
       initialValue: item.value,
       key: provider.getPlatformFieldKey(item.key),
-      validator: provider.getPlatformValidator(item.key),
+      validator: provider.platformValidator(item.key),
       onSaved: (v) => provider.updateLabel(item.key, v),
       decoration: InputDecoration(
           labelStyle: textStyle,
@@ -203,28 +199,26 @@ class ProjectLabelDialogProvider extends BaseProvider {
   }
 
   // 提交表单数据
-  Future<Map<PlatformType, String>?> submitForm() async {
+  Future<Map<PlatformType, String>?> submit() async {
     try {
       final formState = formKey.currentState;
-      if (!(formState?.validate() ?? false)) return null;
-      formState!.save();
+      if (formState == null || !formState.validate()) return null;
+      formState.save();
+      context.pop(_formData);
       return _formData;
     } catch (e) {
-      Notice.showError(context, message: e.toString(), title: '操作失败');
+      showNoticeError(e.toString(), title: '操作失败');
     }
     return null;
   }
 
   // 根据平台校验label
-  FormFieldValidator<String> getPlatformValidator(PlatformType platform) {
-    return _platformValidatorMap[platform] ??
-        (v) {
-          if (v?.isEmpty ?? true) {
-            return '请输入别名';
-          }
-          return null;
-        };
-  }
+  FormFieldValidator<String> platformValidator(PlatformType platform) =>
+      _platformValidatorMap[platform] ??
+      (v) {
+        if (v?.isNotEmpty != true) return '请输入别名';
+        return null;
+      };
 
   // 获取平台对应的表单项key
   GlobalKey<FormFieldState<String>> getPlatformFieldKey(PlatformType platform) {
