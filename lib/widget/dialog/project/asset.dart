@@ -41,8 +41,8 @@ class ProjectAssetDialog extends ProviderView<ProjectAssetDialogProvider> {
       ),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.of(context).pop(),
         ),
         const TextButton(
           onPressed: null,

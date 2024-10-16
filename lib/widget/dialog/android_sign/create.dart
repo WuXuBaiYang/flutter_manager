@@ -35,8 +35,8 @@ class CreateAndroidSignDialog
       content: _buildContent(context),
       actions: <Widget>[
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           child: const Text('确定'),

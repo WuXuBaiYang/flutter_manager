@@ -41,8 +41,8 @@ class ProjectFontDialog extends ProviderView<ProjectFontDialogProvider> {
       ),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.of(context).pop(),
         ),
         const TextButton(
           onPressed: null,

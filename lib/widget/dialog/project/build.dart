@@ -41,8 +41,8 @@ class ProjectBuildDialog extends ProviderView<ProjectBuildDialogProvider> {
       ),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.of(context).pop(),
         ),
         TextButton(
           child: const Text('确定'),

@@ -43,7 +43,7 @@ class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
       actions: [
         TextButton(
           child: const Text('取消'),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.pop(),
         ),
         TextButton(
           child: const Text('确定'),
@@ -137,9 +137,13 @@ class ProjectLogoDialogProvider extends BaseProvider {
   }
 
   // 更新表单数据
-  void updateFormData({String? logo, List<PlatformType>? platforms}) =>
-      _formData = (
-        logo: logo ?? _formData.logo,
-        platforms: platforms ?? _formData.platforms,
-      );
+  void updateFormData({
+    String? logo,
+    List<PlatformType>? platforms,
+  }) {
+    _formData = (
+      logo: logo ?? _formData.logo,
+      platforms: platforms ?? _formData.platforms,
+    );
+  }
 }

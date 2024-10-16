@@ -48,8 +48,8 @@ class ImportEnvRemoteDialog
           ][currentStep],
           actions: [
             TextButton(
+              onPressed: context.pop,
               child: const Text('取消'),
-              onPressed: () => Navigator.pop(context),
             ),
             TextButton(
               onPressed: currentStep >= 2

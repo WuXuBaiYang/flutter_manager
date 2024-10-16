@@ -47,8 +47,8 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
       content: _buildContent(context),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           child: Text(isEdit ? '修改' : '添加'),

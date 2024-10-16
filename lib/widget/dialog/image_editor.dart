@@ -68,23 +68,15 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
         ),
         TextButton(
           child: const Text('另存为'),
-          onPressed: () async {
-            final result = await provider.saveOtherPath().loading(context);
-            if (result == null || !context.mounted) return;
-            Notice.showSuccess(context, title: '图片保存成功', message: result);
-          },
+          onPressed: () => provider.saveOtherPath().loading(context),
         ),
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.pop(context),
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () async {
-            final result = await provider.saveCrop().loading(context);
-            if (!context.mounted) return;
-            Navigator.pop(context, result);
-          },
+          onPressed: () => provider.saveCrop().loading(context),
         ),
       ],
     );
@@ -281,12 +273,11 @@ class ImageEditorDialogProvider extends BaseProvider {
   Future<String?> saveOtherPath() async {
     try {
       final result = await Tool.pickDirectory(dialogTitle: '选择保存路径');
-      if (result != null) {
-        return saveCrop(savePath: join(result, _imageFileName));
-      }
+      if (result == null) return null;
+      return saveCrop(savePath: join(result, _imageFileName));
     } catch (e) {
       if (!context.mounted) return null;
-      Notice.showError(context, message: e.toString(), title: '图片另存为失败');
+      showNoticeError(e.toString(), title: '图片另存为失败');
     }
     return null;
   }
@@ -298,7 +289,10 @@ class ImageEditorDialogProvider extends BaseProvider {
       final cropImage = await controller.onCropImage();
       if (baseDir == null || cropImage == null) return null;
       savePath ??= join(baseDir, _imageFileName);
-      return ImageTool.saveData(cropImage.bytes, savePath, _action.imageType);
+      final result = await ImageTool.saveData(
+          cropImage.bytes, savePath, _action.imageType);
+      if (result != null && context.mounted) context.pop(result);
+      return result;
     } catch (e) {
       if (!context.mounted) return null;
       Notice.showError(context, message: e.toString(), title: '图片裁剪失败');
