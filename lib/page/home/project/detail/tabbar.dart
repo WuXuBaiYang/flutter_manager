@@ -61,8 +61,10 @@ class ProjectDetailTabBar extends StatelessWidget {
           label: const Text('名称'),
           icon: const Icon(Icons.edit_attributes_rounded, size: 18),
           onPressed: () async {
-            final result = await showProjectLabel(context,
-                platformLabelMap: provider.labelMap);
+            final result = await showProjectLabel(
+              context,
+              labelMap: provider.labelMap,
+            );
             if (result == null || !context.mounted) return;
             provider.updateLabels(result).loading(context, dismissible: false);
           },
