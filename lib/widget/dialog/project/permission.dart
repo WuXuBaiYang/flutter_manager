@@ -46,12 +46,12 @@ class ProjectPermissionDialog
       constraints: const BoxConstraints.tightFor(width: 340),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => Navigator.of(context).pop(),
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () => Navigator.pop(context, provider.selectPermissions),
+          onPressed: () => context.pop(provider.selectPermissions),
         ),
       ],
     );
