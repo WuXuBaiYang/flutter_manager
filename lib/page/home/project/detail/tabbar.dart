@@ -75,8 +75,10 @@ class ProjectDetailTabBar extends StatelessWidget {
         child: TextButton.icon(
           label: const Text('图标'),
           onPressed: () async {
-            final result = await showProjectLogo(context,
-                platformLogoMap: provider.logoMap);
+            final result = await showProjectLogo(
+              context,
+              logoMap: provider.logoMap,
+            );
             if (result == null || !context.mounted) return;
             final controller = StreamController<double>();
             provider

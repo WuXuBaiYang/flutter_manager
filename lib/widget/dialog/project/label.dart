@@ -47,8 +47,8 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
           child: const Text('取消'),
         ),
         TextButton(
+          onPressed: provider.submit,
           child: const Text('确定'),
-          onPressed: () => provider.submit().loading(context),
         ),
       ],
     );

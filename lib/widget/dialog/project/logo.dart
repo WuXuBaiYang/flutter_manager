@@ -7,12 +7,12 @@ import 'package:jtech_base/jtech_base.dart';
 
 // 展示修改图标弹窗
 Future<ProjectLogoDialogForm?> showProjectLogo(BuildContext context,
-    {required Map<PlatformType, List<PlatformLogo>> platformLogoMap}) async {
+    {required Map<PlatformType, List<PlatformLogo>> logoMap}) async {
   return showDialog<ProjectLogoDialogForm>(
     context: context,
     barrierDismissible: false,
     builder: (_) => ProjectLogoDialog(
-      platformLogoMap: platformLogoMap,
+      logoMap: logoMap,
     ),
   );
 }
@@ -24,34 +24,28 @@ Future<ProjectLogoDialogForm?> showProjectLogo(BuildContext context,
 */
 class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
   // 平台与图标表
-  final Map<PlatformType, List<PlatformLogo>> platformLogoMap;
+  final Map<PlatformType, List<PlatformLogo>> logoMap;
 
-  ProjectLogoDialog({super.key, required this.platformLogoMap});
+  ProjectLogoDialog({super.key, required this.logoMap});
 
   @override
   ProjectLogoDialogProvider createProvider(context) =>
-      ProjectLogoDialogProvider(context, platformLogoMap);
+      ProjectLogoDialogProvider(context, logoMap);
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.watch<ProjectLogoDialogProvider>();
     return CustomDialog(
       title: const Text('图标'),
       content: _buildContent(context),
-      constraints: BoxConstraints.tightFor(
-          width: 380, height: platformLogoMap.isEmpty ? 280 : null),
+      constraints: BoxConstraints(minWidth: 380, maxHeight: 320),
       actions: [
         TextButton(
+          onPressed: context.pop,
           child: const Text('取消'),
-          onPressed: () => context.pop(),
         ),
         TextButton(
+          onPressed: provider.submit,
           child: const Text('确定'),
-          onPressed: () async {
-            final result = await provider.submitForm(context);
-            if (result == null || !context.mounted) return;
-            Navigator.pop(context, result);
-          },
         ),
       ],
     );
@@ -61,25 +55,22 @@ class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
   Widget _buildContent(BuildContext context) {
     return EmptyBoxView(
       hint: '暂无可用平台',
-      isEmpty: platformLogoMap.isEmpty,
+      isEmpty: logoMap.isEmpty,
       child: Form(
-        key: context.read<ProjectLogoDialogProvider>().formKey,
+        key: provider.formKey,
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildFormFieldLogo(context),
-              const SizedBox(height: 14),
-              _buildFormFieldPlatforms(context),
-            ],
-          ),
+          child: Column(children: [
+            _buildFieldLogo(context),
+            const SizedBox(height: 14),
+            _buildFieldPlatforms(context),
+          ]),
         ),
       ),
     );
   }
 
   // 构建图标选择
-  Widget _buildFormFieldLogo(BuildContext context) {
-    final provider = context.read<ProjectLogoDialogProvider>();
+  Widget _buildFieldLogo(BuildContext context) {
     return ProjectLogoFormField(
       logoSize: const Size.square(100),
       onSaved: (v) => provider.updateFormData(logo: v),
@@ -87,10 +78,9 @@ class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
   }
 
   // 构建展开列表
-  Widget _buildFormFieldPlatforms(BuildContext context) {
-    final provider = context.read<ProjectLogoDialogProvider>();
+  Widget _buildFieldPlatforms(BuildContext context) {
     return ProjectLogoPanelFormField(
-      platformLogoMap: platformLogoMap,
+      platformLogoMap: logoMap,
       onSaved: (v) => provider.updateFormData(platforms: v?.platforms),
       initialValue: (expanded: null, platforms: provider.formData.platforms),
     );
@@ -112,26 +102,26 @@ class ProjectLogoDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
+  ProjectLogoDialogProvider(
+      super.context, Map<PlatformType, List<PlatformLogo>> logoMap)
+      : _formData = (logo: '', platforms: logoMap.keys.toList());
+
   // 表单数据
-  ProjectLogoDialogForm _formData = (logo: '', platforms: []);
+  ProjectLogoDialogForm _formData;
 
   // 获取表单数据
   ProjectLogoDialogForm get formData => _formData;
 
-  ProjectLogoDialogProvider(
-      super.context, Map<PlatformType, List<PlatformLogo>> platformLogoMap) {
-    updateFormData(platforms: platformLogoMap.keys.toList());
-  }
-
   // 验证表单并返回
-  Future<ProjectLogoDialogForm?> submitForm(BuildContext context) async {
+  Future<ProjectLogoDialogForm?> submit() async {
     try {
       final formState = formKey.currentState;
-      if (!(formState?.validate() ?? false)) return null;
-      formState!.save();
+      if (formState == null || !formState.validate()) return null;
+      formState.save();
+      context.pop(_formData);
       return _formData;
     } catch (e) {
-      Notice.showError(context, message: e.toString(), title: '操作失败');
+      showNoticeError(e.toString(), title: '操作失败');
     }
     return null;
   }
