@@ -53,11 +53,10 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
 
   @override
   Widget buildWidget(BuildContext context) {
-    final provider = context.watch<ImageEditorDialogProvider>();
     return CustomDialog(
       title: Row(children: [
         const Expanded(child: Text('图片裁剪')),
-        _buildImageTypeSelector(context),
+        _buildImageType(context),
       ]),
       content: _buildContent(context),
       constraints: const BoxConstraints.tightFor(width: 480, height: 350),
@@ -83,82 +82,70 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
   }
 
   // 构建图片类型选择器
-  Widget _buildImageTypeSelector(BuildContext context) {
+  Widget _buildImageType(BuildContext context) {
     return Selector<ImageEditorDialogProvider, ImageType>(
-      selector: (_, provider) => provider._action.imageType,
+      selector: (_, provider) => provider.action.imageType,
       builder: (_, imageType, __) {
-        return Row(
-          children: [
-            if (imageType == ImageType.ico)
-              const Padding(
-                padding: EdgeInsets.only(top: 8),
-                child: Tooltip(
-                  message: '支持最大256边长，将自动输出',
-                  child: Icon(
-                    Icons.warning_amber_rounded,
-                    color: Colors.red,
-                    size: 16,
-                  ),
+        return Row(children: [
+          if (imageType == ImageType.ico)
+            const Padding(
+              padding: EdgeInsets.only(top: 8),
+              child: Tooltip(
+                message: '支持最大256边长，将自动输出',
+                child: Icon(
+                  Icons.warning_amber_rounded,
+                  color: Colors.red,
+                  size: 16,
                 ),
-              ),
-            const SizedBox(width: 8),
-            Tooltip(
-              message: '输出图片格式',
-              child: DropdownButton<ImageType>(
-                value: imageType,
-                icon: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 4),
-                  child: Icon(Icons.image),
-                ),
-                onChanged: (v) => provider.updateActions(imageType: v),
-                items: ImageType.values
-                    .map((e) => DropdownMenuItem<ImageType>(
-                          value: e,
-                          child: Text(' .${e.name}'),
-                        ))
-                    .toList(),
               ),
             ),
-          ],
-        );
+          const SizedBox(width: 8),
+          Tooltip(
+            message: '输出图片格式',
+            child: DropdownButton<ImageType>(
+              value: imageType,
+              icon: const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(Icons.image),
+              ),
+              onChanged: (v) => provider.updateActions(imageType: v),
+              items: ImageType.values
+                  .map((e) => DropdownMenuItem<ImageType>(
+                        value: e,
+                        child: Text(' .${e.name}'),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ]);
       },
     );
   }
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return Column(
-      children: [
-        Expanded(child: _buildImageEditor(context)),
-        const SizedBox(height: 14),
-        _buildImageEditorActions(context),
-      ],
-    );
+    return Column(children: [
+      Expanded(child: _buildImageEditor(context)),
+      const SizedBox(height: 14),
+      _buildImageEditorActions(context),
+    ]);
   }
 
   // 构建图片编辑器
   Widget _buildImageEditor(BuildContext context) {
     return Listener(
-      onPointerSignal: (event) {
-        if (event is PointerScrollEvent) {
-          final delta = event.scrollDelta.dy;
-          provider.changeScale(delta > 0);
-        }
-      },
+      onPointerSignal: provider.changeScale,
       child: ClipRRect(
         clipBehavior: Clip.antiAlias,
         borderRadius: BorderRadius.circular(8),
-        child: Selector<ImageEditorDialogProvider, (CropAspectRatio, double)>(
-          selector: (_, provider) {
-            final action = provider.action;
-            return (action.ratio, action.borderRadius);
-          },
+        child: Selector<ImageEditorDialogProvider, ImageEditorAction>(
+          selector: (_, provider) => provider.action,
           builder: (_, result, __) {
             return CustomImageCrop(
-              ratio: result.$1.ratio,
-              borderRadius: result.$2,
+              ratio: result.ratio.ratio,
               image: FileImage(File(path)),
               shape: CustomCropShape.Square,
+              borderRadius: result.borderRadius,
               backgroundColor: Colors.transparent,
               imageFit: CustomImageFit.fillVisibleSpace,
               cropController: provider.controller,
@@ -175,68 +162,70 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
     return Selector<ImageEditorDialogProvider, ImageEditorAction>(
       selector: (_, provider) => provider.action,
       builder: (_, action, __) {
-        return Row(
-          children: [
-            ConstrainedBox(
-              constraints: const BoxConstraints.tightFor(width: 170),
-              child: Tooltip(
-                message: '圆角',
-                child: TextButton.icon(
-                  autofocus: true,
-                  icon: const Icon(Icons.rounded_corner_rounded),
-                  onPressed: () => provider.updateActions(borderRadius: 0),
-                  label: Slider(
-                    max: 80,
-                    value: action.borderRadius,
-                    label: '${action.borderRadius.round()}px',
-                    onChanged: (v) => provider.updateActions(borderRadius: v),
-                  ),
+        return Row(children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints.tightFor(width: 170),
+            child: Tooltip(
+              message: '圆角',
+              child: TextButton.icon(
+                autofocus: true,
+                icon: const Icon(Icons.rounded_corner_rounded),
+                onPressed: () => provider.updateActions(borderRadius: 0),
+                label: Slider(
+                  max: 80,
+                  value: action.borderRadius,
+                  label: '${action.borderRadius.round()}px',
+                  onChanged: (v) => provider.updateActions(borderRadius: v),
                 ),
               ),
             ),
-            const Spacer(),
-            Transform.rotate(
-              angle: action.rotate,
-              child: IconButton.filled(
-                iconSize: 16,
-                tooltip: '向左旋转',
-                visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.rotate_left_rounded),
-                onPressed: () => provider.changeRotate(false),
-              ),
-            ),
-            Transform.rotate(
-              angle: action.rotate,
-              child: IconButton.filled(
-                iconSize: 16,
-                tooltip: '向右旋转',
-                onPressed: provider.changeRotate,
-                visualDensity: VisualDensity.compact,
-                icon: const Icon(Icons.rotate_right_rounded),
-              ),
-            ),
-            if (!ratioDisable)
-              CustomPopupMenuButton<CropAspectRatio>.filled(
-                iconSize: 16,
-                tooltip: '裁剪比例',
-                icon: const Icon(Icons.aspect_ratio),
-                itemBuilder: (_) => CropAspectRatio.values
-                    .map((e) => PopupMenuItem<CropAspectRatio>(
-                          value: e,
-                          child: Text(e.label),
-                        ))
-                    .toList(),
-                onSelected: provider.changeRatio,
-              ),
-            IconButton.filledTonal(
+          ),
+          const Spacer(),
+          Transform.rotate(
+            angle: action.rotate,
+            child: IconButton.filled(
               iconSize: 16,
-              tooltip: '重置',
-              onPressed: provider.reset,
-              icon: const Icon(Icons.cleaning_services_rounded),
+              tooltip: '向左旋转',
               visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.rotate_left_rounded),
+              onPressed: () => provider.changeRotate(false),
             ),
-          ].expand((e) => [e, const SizedBox(width: 14)]).toList(),
-        );
+          ),
+          const SizedBox(width: 14),
+          Transform.rotate(
+            angle: action.rotate,
+            child: IconButton.filled(
+              iconSize: 16,
+              tooltip: '向右旋转',
+              onPressed: provider.changeRotate,
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.rotate_right_rounded),
+            ),
+          ),
+          const SizedBox(width: 14),
+          if (!ratioDisable) ...[
+            CustomPopupMenuButton<CropAspectRatio>.filled(
+              iconSize: 16,
+              tooltip: '裁剪比例',
+              icon: const Icon(Icons.aspect_ratio),
+              itemBuilder: (_) => CropAspectRatio.values
+                  .map((e) => PopupMenuItem<CropAspectRatio>(
+                        value: e,
+                        child: Text(e.label),
+                      ))
+                  .toList(),
+              onSelected: provider.changeRatio,
+            ),
+            const SizedBox(width: 14),
+          ],
+          IconButton.filledTonal(
+            iconSize: 16,
+            tooltip: '重置',
+            onPressed: provider.reset,
+            icon: const Icon(Icons.cleaning_services_rounded),
+            visualDensity: VisualDensity.compact,
+          ),
+        ]);
       },
     );
   }
@@ -257,17 +246,16 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 缓存初始化字段
   final ImageEditorAction _initializeAction;
 
+  ImageEditorDialogProvider(super.context, this._initializeAction);
+
   // 图片编辑操作参数元组
-  ImageEditorAction _action;
+  late ImageEditorAction _action = _initializeAction;
 
   // 获取图片编辑操作参数元组
   ImageEditorAction get action => _action;
 
   // 生成图片文件名称
   String get _imageFileName => '${genID()}.${_action.imageType.name}';
-
-  ImageEditorDialogProvider(super.context, this._initializeAction)
-      : _action = _initializeAction;
 
   // 另存为其他路径
   Future<String?> saveOtherPath() async {
@@ -319,7 +307,9 @@ class ImageEditorDialogProvider extends BaseProvider {
   }
 
   // 缩放图片
-  void changeScale(bool scaleUp) {
+  void changeScale(PointerSignalEvent event) {
+    if (event is! PointerScrollEvent) return;
+    final scaleUp = event.scrollDelta.dy > 0;
     final scale = controller.cropImageData?.scale ?? 1;
     if (scaleUp && scale < 0.5) return;
     controller.addTransition(CropImageData(
