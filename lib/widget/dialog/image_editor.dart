@@ -264,7 +264,6 @@ class ImageEditorDialogProvider extends BaseProvider {
       if (result == null) return null;
       return saveCrop(savePath: join(result, _imageFileName));
     } catch (e) {
-      if (!context.mounted) return null;
       showNoticeError(e.toString(), title: '图片另存为失败');
     }
     return null;
@@ -282,8 +281,7 @@ class ImageEditorDialogProvider extends BaseProvider {
       if (result != null && context.mounted) context.pop(result);
       return result;
     } catch (e) {
-      if (!context.mounted) return null;
-      Notice.showError(context, message: e.toString(), title: '图片裁剪失败');
+      showNoticeError(e.toString(), title: '图片裁剪失败');
     }
     return null;
   }

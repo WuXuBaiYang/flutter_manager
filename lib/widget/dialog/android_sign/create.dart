@@ -40,11 +40,7 @@ class CreateAndroidSignDialog
         ),
         TextButton(
           child: const Text('确定'),
-          onPressed: () async {
-            final result = await provider.submitForm().loading(context);
-            if (result == null || !context.mounted) return;
-            Navigator.pop(context, result);
-          },
+          onPressed: () => provider.submit().loading(context),
         ),
       ],
     );
@@ -180,6 +176,14 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
+  // keytool路径输入控制器
+  final keytoolPathController = TextEditingController();
+
+  AndroidSignKeyDialogProvider(super.context) {
+    updateSignKeyInfo();
+    _updateKeytoolPath();
+  }
+
   // 是否使用同一个密码
   bool _samePass = true;
 
@@ -192,14 +196,6 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
   // 表单数据
   AndroidSignKeyForm? get signKeyInfo => _signKeyInfo;
 
-  // keytool路径输入控制器
-  final keytoolPathController = TextEditingController();
-
-  AndroidSignKeyDialogProvider(super.context) {
-    updateSignKeyInfo();
-    _updateKeytoolPath();
-  }
-
   // 更新keytool路径
   Future<void> _updateKeytoolPath() async {
     final path = await ProjectTool.getJavaKeyToolPath();
@@ -209,17 +205,17 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
   }
 
   // 提交表单
-  Future<bool> submitForm() async {
+  Future<bool> submit() async {
     try {
       final currentState = formKey.currentState;
-      if (currentState == null) return false;
-      if (!currentState.validate()) return false;
+      if (currentState == null || !currentState.validate()) return false;
       currentState.save();
-      final form = signKeyInfo;
-      if (form == null) return false;
-      return ProjectTool.genAndroidSignKey(form);
+      if (signKeyInfo == null) return false;
+      final result = await ProjectTool.genAndroidSignKey(signKeyInfo!);
+      if (context.mounted) context.pop(result);
+      return result;
     } catch (e) {
-      Notice.showError(context, message: e.toString(), title: '签名生成失败');
+      showNoticeError(e.toString(), title: '签名生成失败');
     }
     return false;
   }
