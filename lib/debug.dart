@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:jtech_base/jtech_base.dart';
 
 /*
 * 调试
@@ -9,14 +8,13 @@ import 'package:jtech_base/jtech_base.dart';
 */
 class Debug {
   // 构建调试按钮
-  static Widget? buildDebugButton(BuildContext context) {
-    if (!kDebugMode) return null;
-    return FloatingActionButton(
+  static Widget buildDebugButton(BuildContext context) {
+    if (!kDebugMode) return const SizedBox();
+    return IconButton(
       onPressed: () => debug(context),
-      child: const Icon(FontAwesomeIcons.bug),
+      icon: const Icon(Icons.bug_report_outlined),
     );
   }
 
-  static Future<void> debug(BuildContext context) async {
-  }
+  static Future<void> debug(BuildContext context) async {}
 }

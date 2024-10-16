@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/debug.dart';
 import 'package:flutter_manager/generated/l10n.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
@@ -82,6 +83,7 @@ class HomePage extends ProviderPage<HomeProvider> {
   Widget _buildNavigationTrailing(BuildContext context) {
     return Expanded(
       child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        Debug.buildDebugButton(context),
         FutureBuilder<String>(
           future: Tool.version,
           builder: (_, snap) {
