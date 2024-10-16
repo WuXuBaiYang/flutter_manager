@@ -35,7 +35,10 @@ class ProjectBuildDialog extends ProviderView<ProjectBuildDialogProvider> {
     return CustomDialog(
       title: const Text('打包'),
       content: _buildContent(context),
-      constraints: BoxConstraints.tight(const Size.square(200)),
+      constraints: const BoxConstraints(
+        maxWidth: 380,
+        maxHeight: 380,
+      ),
       actions: [
         TextButton(
           child: const Text('取消'),
