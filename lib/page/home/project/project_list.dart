@@ -164,8 +164,6 @@ class ProjectGridView extends StatelessWidget {
 
   // 构建项目环境标签
   Widget _buildEnvironmentBadge(Project item) {
-    final result = database.getEnvironmentById(item.envId);
-    if (result == null) return const SizedBox();
-    return EnvBadge(env: result);
+    return EnvBadge(env: database.getEnvById(item.envId));
   }
 }

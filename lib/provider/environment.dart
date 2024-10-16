@@ -16,7 +16,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 环境变量集合
   late List<Environment> _environments =
-      database.getEnvironmentList(desc: true);
+      database.getEnvList(desc: true);
 
   // 获取环境变量集合
   List<Environment> get environments => _environments;
@@ -53,14 +53,14 @@ class EnvironmentProvider extends BaseProvider {
 
   // 添加环境变量
   Future<Environment> update(Environment item) async {
-    final result = await database.updateEnvironment(item);
+    final result = await database.updateEnv(item);
     reload();
     return result;
   }
 
   // 移除环境变量
   bool remove(Environment item) {
-    final result = database.removeEnvironment(item.id);
+    final result = database.removeEnv(item.id);
     if (result) reload();
     return result;
   }
@@ -81,12 +81,12 @@ class EnvironmentProvider extends BaseProvider {
     temp.sort((a, b) => a.order.compareTo(b.order));
     _environments = temp.reversed.toList();
     notifyListeners();
-    await database.updateEnvironments(temp);
+    await database.updateEnvs(temp);
   }
 
   // 重新加载环境变量列表
   void reload() {
-    _environments = database.getEnvironmentList(desc: true);
+    _environments = database.getEnvList(desc: true);
     notifyListeners();
   }
 }

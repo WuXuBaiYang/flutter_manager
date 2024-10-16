@@ -44,10 +44,10 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
             return SettingItemEnvironment(
               environments: environments,
               onReorder: context.env.reorder,
-              onRemove: provider.removeEnvironment,
+              onRemove: provider.removeEnv,
               onRefresh: provider.refreshEnvironment,
               settingKey: context.setting.environmentKey,
-              removeValidator: provider.removeEnvironmentConfirm,
+              removeValidator: provider.removeEnvConfirm,
               onImportLocal: () => showImportEnvLocal(context),
               onEdit: (e) => showImportEnvLocal(context, env: e),
               onImportRemote: () => showImportEnvRemote(context),
@@ -122,7 +122,7 @@ class HomeSettingsProvider extends BaseProvider {
   }
 
   // 移除环境
-  void removeEnvironment(Environment environment) {
+  void removeEnv(Environment environment) {
     context.env.remove(environment);
     showNoticeSuccess(
       '${environment.title} 环境已移除',
@@ -138,7 +138,7 @@ class HomeSettingsProvider extends BaseProvider {
   }
 
   // 移除环境确认
-  Future<bool> removeEnvironmentConfirm(Environment environment) async {
+  Future<bool> removeEnvConfirm(Environment environment) async {
     final result = context.env.removeValidator(environment);
     if (result == null) return true;
     showNoticeError(result, title: '环境移除失败');

@@ -8,7 +8,7 @@ import 'package:flutter_manager/database/model/environment.dart';
 */
 class EnvBadge extends StatelessWidget {
   // 环境信息
-  final Environment env;
+  final Environment? env;
 
   const EnvBadge({
     super.key,
@@ -17,6 +17,7 @@ class EnvBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (env == null) return const SizedBox();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
@@ -27,7 +28,7 @@ class EnvBadge extends StatelessWidget {
         const FlutterLogo(size: 12),
         const SizedBox(width: 6),
         Text(
-          env.version,
+          env!.version,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
       ]),

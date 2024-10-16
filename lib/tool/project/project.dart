@@ -41,7 +41,7 @@ class ProjectTool {
   // 创建项目平台
   static Future<bool> createPlatform(
       Project project, PlatformType platform) async {
-    final environment = database.getEnvironmentById(project.envId);
+    final environment = database.getEnvById(project.envId);
     if (environment == null) return false;
     final output = await EnvironmentTool.runCommand(
         environment.path, ['create', '--platforms', platform.name, '.'],

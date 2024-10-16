@@ -71,20 +71,17 @@ class ProjectDetailAppBar extends StatelessWidget {
     return AnimatedOpacity(
       opacity: isCollapsed ? 1 : 0,
       duration: const Duration(milliseconds: 200),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          ClipRRect(
-            borderRadius: borderRadius,
-            child: Image.file(File(project.logo),
-                fit: BoxFit.cover, width: 30, height: 30),
-          ),
-          const SizedBox(width: 14),
-          Text(project.label),
-          const SizedBox(width: 8),
-          _buildEnvironmentBadge(),
-        ],
-      ),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+        ClipRRect(
+          borderRadius: borderRadius,
+          child: Image.file(File(project.logo),
+              fit: BoxFit.cover, width: 30, height: 30),
+        ),
+        const SizedBox(width: 14),
+        Text(project.label),
+        const SizedBox(width: 8),
+        _buildEnvBadge(),
+      ]),
     );
   }
 
@@ -117,7 +114,7 @@ class ProjectDetailAppBar extends StatelessWidget {
               Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
-        _buildEnvironmentBadge(),
+        _buildEnvBadge(),
         const SizedBox(width: 4),
         IconButton(
           iconSize: 14,
@@ -134,46 +131,45 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建操作按钮
   Widget _buildActions(BuildContext context) {
-    return Row(
-      children: [
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: 'Asset管理',
-          icon: const Icon(Icons.assessment_outlined),
-          onPressed: () => showProjectAsset(context, project: project),
+    return Row(children: [
+      IconButton.outlined(
+        iconSize: 20,
+        tooltip: 'Asset管理',
+        icon: const Icon(Icons.assessment_outlined),
+        onPressed: () => showProjectAsset(context, project: project),
+      ),
+      const SizedBox(width: 14),
+      IconButton.outlined(
+        iconSize: 20,
+        tooltip: '字体管理',
+        icon: const Icon(Icons.font_download_outlined),
+        onPressed: () => showProjectFont(context, project: project),
+      ),
+      const SizedBox(width: 14),
+      IconButton.outlined(
+        iconSize: 20,
+        tooltip: '打开项目目录',
+        icon: const Icon(Icons.file_open_outlined),
+        onPressed: () => OpenDir().openNativeDir(path: project.path),
+      ),
+      const SizedBox(width: 14),
+      FilledButton.icon(
+        label: const Text('打包'),
+        icon: const Icon(Icons.build),
+        style: ButtonStyle(
+          fixedSize: WidgetStatePropertyAll(const Size.fromHeight(55)),
+          shape: WidgetStatePropertyAll(
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+          textStyle:
+              WidgetStatePropertyAll(Theme.of(context).textTheme.bodyLarge),
         ),
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: '字体管理',
-          icon: const Icon(Icons.font_download_outlined),
-          onPressed: () => showProjectFont(context, project: project),
-        ),
-        IconButton.outlined(
-          iconSize: 20,
-          tooltip: '打开项目目录',
-          icon: const Icon(Icons.file_open_outlined),
-          onPressed: () => OpenDir().openNativeDir(path: project.path),
-        ),
-        FilledButton.icon(
-          label: const Text('打包'),
-          icon: const Icon(Icons.build),
-          style: ButtonStyle(
-            fixedSize: WidgetStatePropertyAll(const Size.fromHeight(55)),
-            shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-            textStyle:
-                WidgetStatePropertyAll(Theme.of(context).textTheme.bodyLarge),
-          ),
-          onPressed: () => showProjectBuild(context, project: project),
-        ),
-      ].expand((e) => [e, const SizedBox(width: 14)]).toList(),
-    );
+        onPressed: () => showProjectBuild(context, project: project),
+      ),
+    ]);
   }
 
   // 构建项目环境标签
-  Widget _buildEnvironmentBadge() {
-    final result = database.getEnvironmentById(project.envId);
-    if (result == null) return const SizedBox();
-    return EnvBadge(env: result);
+  Widget _buildEnvBadge() {
+    return EnvBadge(env: database.getEnvById(project.envId));
   }
 }
