@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/dialog/project/asset.dart';
 import 'package:flutter_manager/widget/dialog/project/build.dart';
@@ -80,7 +79,7 @@ class ProjectDetailAppBar extends StatelessWidget {
         const SizedBox(width: 14),
         Text(project.label),
         const SizedBox(width: 8),
-        _buildEnvBadge(),
+        EnvBadge(env: project.environment),
       ]),
     );
   }
@@ -114,7 +113,7 @@ class ProjectDetailAppBar extends StatelessWidget {
               Text(project.label, maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
         const SizedBox(width: 8),
-        _buildEnvBadge(),
+        EnvBadge(env: project.environment),
         const SizedBox(width: 4),
         IconButton(
           iconSize: 14,
@@ -166,10 +165,5 @@ class ProjectDetailAppBar extends StatelessWidget {
         onPressed: () => showProjectBuild(context, project: project),
       ),
     ]);
-  }
-
-  // 构建项目环境标签
-  Widget _buildEnvBadge() {
-    return EnvBadge(env: database.getEnvById(project.envId));
   }
 }
