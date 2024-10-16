@@ -28,8 +28,8 @@ class LabelPlatformItem extends StatelessWidget {
 
   const LabelPlatformItem({
     super.key,
-    required this.platform,
     required this.label,
+    required this.platform,
     this.crossAxisCellCount = 3,
     this.mainAxisExtent = 110,
     this.validator,
@@ -63,12 +63,12 @@ class LabelPlatformItem extends StatelessWidget {
 
   // 构建标签项
   Widget _buildLabelItem(BuildContext context, GlobalKey<FormState> formKey) {
-    final provider = context.watch<PlatformProvider>();
     final controller = _restoreLabelController(context);
     updateLabel() {
       final currentState = formKey.currentState;
       if (currentState == null || !currentState.validate()) return;
-      provider
+      context
+          .read<PlatformProvider>()
           .updateLabel(platform, controller.text)
           .loading(context, dismissible: false);
     }

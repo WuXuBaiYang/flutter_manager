@@ -95,8 +95,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
       _cacheMap.removeWhere((k, _) => k.contains('$platform'));
 
   // 获取平台信息元组
-  PlatformInfo<T>? getPlatform<T extends Record>(
-          PlatformType platform) =>
+  PlatformInfo<T>? getPlatform<T extends Record>(PlatformType platform) =>
       _platformInfoMap[platform] as PlatformInfo<T>?;
 
   // 创建平台
@@ -169,7 +168,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
       if (result) updatePlatformInfo(platform);
     } catch (e) {
       if (!context.mounted) return;
-      Notice.showError(context, message: e.toString(), title: '标签修改失败');
+      showNoticeError(e.toString(), title: '标签修改失败');
     }
   }
 

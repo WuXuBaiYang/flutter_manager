@@ -30,9 +30,9 @@ class PackagePlatformItem extends StatelessWidget {
     super.key,
     required this.platform,
     required this.package,
-    this.crossAxisCellCount = 3,
-    this.mainAxisExtent = 110,
     this.validator,
+    this.mainAxisExtent = 110,
+    this.crossAxisCellCount = 3,
   });
 
   @override
@@ -63,12 +63,12 @@ class PackagePlatformItem extends StatelessWidget {
 
   // 构建包名项
   Widget _buildPackageItem(BuildContext context, GlobalKey<FormState> formKey) {
-    final provider = context.watch<PlatformProvider>();
     final controller = _restorePackageController(context);
     updatePackage() {
       final currentState = formKey.currentState;
       if (currentState == null || !currentState.validate()) return;
-      provider
+      context
+          .read<PlatformProvider>()
           .updatePackage(platform, controller.text)
           .loading(context, dismissible: false);
     }
