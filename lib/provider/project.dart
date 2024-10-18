@@ -63,7 +63,7 @@ class ProjectProvider extends BaseProvider {
   Future<Project?> update(Project item) async {
     dynamic cacheFile = item.logo;
     if (File(item.logo).existsSync()) {
-      cacheFile = await Tool.cacheFile(item.logo);
+      cacheFile = await FileTool.cache(item.logo);
     }
     final result = await database.updateProject(
       item..logo = cacheFile ?? '',

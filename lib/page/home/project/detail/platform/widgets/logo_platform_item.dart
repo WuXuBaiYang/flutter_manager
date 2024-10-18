@@ -54,7 +54,7 @@ class LogoPlatformItem extends StatelessWidget {
       icon: const Icon(Icons.edit),
       visualDensity: VisualDensity.compact,
       onPressed: () async {
-        var result = await Tool.pickImage(dialogTitle: '选择项目图标');
+        var result = await Picker.image(dialogTitle: '选择项目图标');
         if (result == null || !context.mounted) return;
         result = await showImageEditor(context,
             path: result, absoluteRatio: CropAspectRatio.ratio1_1);

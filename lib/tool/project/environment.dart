@@ -112,7 +112,7 @@ class EnvironmentTool {
     DownloaderProgressCallback? onReceiveProgress,
     StreamController<DownloadInfo>? downloadProgress,
   }) async {
-    final baseDir = await Tool.getCacheFilePath();
+    final baseDir = await FileTool.getCachePath();
     if (baseDir == null) throw Exception('获取下载目录失败');
     final savePath = join(baseDir, basename(url));
     if (File(savePath).existsSync()) return savePath;
@@ -142,7 +142,7 @@ class EnvironmentTool {
   // 获取已下载文件列表
   static Future<DownloadEnvResult> getDownloadResult() async {
     final result = (downloaded: <String>[], tmp: <String>[]);
-    final baseDir = await Tool.getCacheFilePath();
+    final baseDir = await FileTool.getCachePath();
     if (baseDir == null) return result;
     final dir = Directory(baseDir);
     if (!dir.existsSync()) return result;

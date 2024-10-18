@@ -260,7 +260,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 另存为其他路径
   Future<String?> saveOtherPath() async {
     try {
-      final result = await Tool.pickDirectory(dialogTitle: '选择保存路径');
+      final result = await Picker.directory(dialogTitle: '选择保存路径');
       if (result == null) return null;
       return saveCrop(savePath: join(result, _imageFileName));
     } catch (e) {
@@ -272,7 +272,7 @@ class ImageEditorDialogProvider extends BaseProvider {
   // 保存裁剪后的图片并返回路径
   Future<String?> saveCrop({String? savePath}) async {
     try {
-      final baseDir = await Tool.getCacheFilePath();
+      final baseDir = await FileTool.getCachePath();
       final cropImage = await controller.onCropImage();
       if (baseDir == null || cropImage == null) return null;
       savePath ??= join(baseDir, _imageFileName);

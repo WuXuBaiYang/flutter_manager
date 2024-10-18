@@ -155,7 +155,7 @@ class HomeSettingsProvider extends BaseProvider {
 
   // 打开缓存目录
   void openCacheDirectory() async {
-    final path = await Tool.getCacheFilePath();
+    final path = await FileTool.getCachePath();
     if (path == null) return;
     OpenDir().openNativeDir(path: path);
   }

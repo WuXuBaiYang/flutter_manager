@@ -82,8 +82,8 @@ class LocalPathFormField extends StatelessWidget {
     final initDir = controller?.text ?? fieldKey.currentState?.value;
     final initFileDir = initDir != null ? File(initDir).parent.path : '';
     final result = await (pickDirectory
-        ? Tool.pickDirectory(dialogTitle: label, initialDirectory: initDir)
-        : Tool.pickFile(dialogTitle: label, initialDirectory: initFileDir));
+        ? Picker.directory(dialogTitle: label, initialDirectory: initDir)
+        : Picker.file(dialogTitle: label, initialDirectory: initFileDir));
     if (result == null) return;
     if (controller != null) {
       controller!.text = result;
