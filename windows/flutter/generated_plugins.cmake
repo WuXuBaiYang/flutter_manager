@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_drop
+  file_selector_windows
   objectbox_flutter_libs
   open_dir_windows
   permission_handler_windows
