@@ -113,7 +113,7 @@ class HomeProjectProvider extends BaseProvider {
   // 添加项目
   void addProject() {
     if (!context.env.hasEnvironment) {
-      return showNoticeError(
+      showNoticeError(
         '缺少Flutter环境',
         actions: [
           TextButton(
@@ -122,6 +122,7 @@ class HomeProjectProvider extends BaseProvider {
           ),
         ],
       );
+      return;
     }
     showImportProject(context);
   }

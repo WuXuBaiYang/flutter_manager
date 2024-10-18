@@ -212,7 +212,7 @@ class AndroidSignKeyDialogProvider extends BaseProvider {
       currentState.save();
       if (signKeyInfo == null) return false;
       final result = await ProjectTool.genAndroidSignKey(signKeyInfo!);
-      if (context.mounted) context.pop(result);
+      if (result && context.mounted) context.pop(result);
       return result;
     } catch (e) {
       showNoticeError(e.toString(), title: '签名生成失败');
