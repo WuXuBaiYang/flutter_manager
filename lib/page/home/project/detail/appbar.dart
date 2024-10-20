@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/dialog/project/asset.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_manager/widget/dialog/project/build.dart';
 import 'package:flutter_manager/widget/dialog/project/font.dart';
 import 'package:flutter_manager/widget/env_badge.dart';
 import 'package:flutter_manager/widget/app_bar.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'package:open_dir/open_dir.dart';
 
 /*
@@ -73,8 +73,10 @@ class ProjectDetailAppBar extends StatelessWidget {
       child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
         ClipRRect(
           borderRadius: borderRadius,
-          child: Image.file(File(project.logo),
-              fit: BoxFit.cover, width: 30, height: 30),
+          child: CustomImage.file(
+            project.logo,
+            size: const Size.square(30),
+          ),
         ),
         const SizedBox(width: 14),
         Text(project.label),
@@ -122,7 +124,7 @@ class ProjectDetailAppBar extends StatelessWidget {
           visualDensity: VisualDensity.compact,
         ),
       ]),
-      leading: Image.file(File(project.logo), width: 55, height: 55),
+      leading: CustomImage.file(project.logo, size: const Size.square(55)),
       subtitle: Text(project.path,
           maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),
     );

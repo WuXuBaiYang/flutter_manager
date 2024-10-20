@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/widget/dialog/image_editor.dart';
 import 'package:jtech_base/jtech_base.dart';
@@ -97,11 +96,6 @@ class ProjectLogoFormField extends StatelessWidget {
   // 构建表单项图标
   Widget _buildFormFieldLogo(String? logoPath) {
     if (logoPath?.isEmpty ?? true) return const Icon(Icons.add);
-    return Image.file(
-      File(logoPath ?? ''),
-      fit: BoxFit.cover,
-      width: logoSize.width,
-      height: logoSize.height,
-    );
+    return CustomImage.file(logoPath ?? '', size: logoSize);
   }
 }

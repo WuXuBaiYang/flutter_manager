@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_context_menu/flutter_context_menu.dart';
 import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/widget/context_menu_region.dart';
 import 'package:flutter_manager/widget/env_badge.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 // 确认删除回调
@@ -141,12 +141,7 @@ class ProjectGridView extends StatelessWidget {
         leading: item.logo.isNotEmpty
             ? ClipRRect(
                 borderRadius: borderRadius,
-                child: Image.file(
-                  File(item.logo),
-                  fit: BoxFit.cover,
-                  width: imageSize.width,
-                  height: imageSize.height,
-                ),
+                child: CustomImage.file(item.logo, size: imageSize),
               )
             : SizedBox.fromSize(size: imageSize),
         trailing: Transform.rotate(
