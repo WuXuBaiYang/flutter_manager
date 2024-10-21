@@ -56,7 +56,7 @@ class ImportEnvLocalDialog extends ProviderView<ImportEnvLocalDialogProvider> {
 
   // 构建内容
   Widget _buildContent(BuildContext context) {
-    return Selector<ImportEnvLocalDialogProvider, Environment>(
+    return createSelector< Environment>(
       selector: (_, provider) => provider.env,
       builder: (_, env, __) {
         return Form(

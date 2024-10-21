@@ -77,7 +77,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
   // 构建AppBar
   Widget _buildAppBar(
       BuildContext context, List<PlatformType> platforms, Project project) {
-    return Selector<ProjectDetailProvider, bool>(
+    return createSelector< bool>(
       selector: (_, provider) => provider.isScrollTop,
       builder: (_, isScrollTop, __) {
         return ProjectDetailAppBar(

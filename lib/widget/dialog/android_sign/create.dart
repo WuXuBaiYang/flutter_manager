@@ -51,7 +51,7 @@ class CreateAndroidSignDialog
     return SingleChildScrollView(
       child: Form(
         key: provider.formKey,
-        child: Selector<AndroidSignKeyDialogProvider, bool>(
+        child: createSelector< bool>(
           selector: (_, provider) => provider.samePass,
           builder: (_, samePass, __) {
             return Column(

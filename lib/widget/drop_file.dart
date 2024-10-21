@@ -79,7 +79,7 @@ class DropFileView extends ProviderView<DropFileViewProvider> {
           if (message != null) await Future.delayed(delayExit);
           provider.dropExited();
         },
-        child: Selector<DropFileViewProvider, FileDropState?>(
+        child: createSelector< FileDropState?>(
           selector: (_, provider) => provider.dropState,
           builder: (_, dropState, __) {
             final color = dropState?.warning == true

@@ -62,7 +62,7 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   Widget _buildContent(BuildContext context) {
     return Form(
       key: provider.formKey,
-      child: Selector<ImportProjectDialogProvider, Project>(
+      child: createSelector<Project>(
         selector: (_, provider) => provider.project,
         builder: (_, project, __) {
           return Column(mainAxisSize: MainAxisSize.min, children: [

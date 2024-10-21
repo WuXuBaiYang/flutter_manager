@@ -46,7 +46,7 @@ class HomePage extends ProviderPage<HomeProvider> {
     final children = provider.pages.map((e) {
       return e.child ?? const SizedBox();
     }).toList();
-    return Selector<HomeProvider, int>(
+    return createSelector<int>(
       selector: (_, provider) => provider.currentIndex,
       builder: (_, currentIndex, __) {
         return Row(children: [

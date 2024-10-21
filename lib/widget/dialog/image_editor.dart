@@ -83,7 +83,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
 
   // 构建图片类型选择器
   Widget _buildImageType(BuildContext context) {
-    return Selector<ImageEditorDialogProvider, ImageType>(
+    return createSelector< ImageType>(
       selector: (_, provider) => provider.action.imageType,
       builder: (_, imageType, __) {
         return Row(children: [
@@ -138,7 +138,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
       child: ClipRRect(
         clipBehavior: Clip.antiAlias,
         borderRadius: BorderRadius.circular(8),
-        child: Selector<ImageEditorDialogProvider, ImageEditorAction>(
+        child: createSelector< ImageEditorAction>(
           selector: (_, provider) => provider.action,
           builder: (_, result, __) {
             return CustomImageCrop(
@@ -159,7 +159,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
   // 构建图片编辑器操作
   Widget _buildImageEditorActions(BuildContext context) {
     final ratioDisable = absoluteRatio != null;
-    return Selector<ImageEditorDialogProvider, ImageEditorAction>(
+    return createSelector< ImageEditorAction>(
       selector: (_, provider) => provider.action,
       builder: (_, action, __) {
         return Row(children: [

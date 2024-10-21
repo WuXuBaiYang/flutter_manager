@@ -59,7 +59,7 @@ class ProjectPermissionDialog
 
   // 构建标题
   Widget _buildTitle(BuildContext context) {
-    return Selector<ProjectPermissionDialogProvider, int>(
+    return createSelector< int>(
       selector: (_, provider) => provider.selectPermissions.length,
       builder: (_, count, __) {
         return Text('${platform.name}权限（$count）');
@@ -74,7 +74,7 @@ class ProjectPermissionDialog
       onFuture: () => ProjectTool.getFullPermissions(platform),
       builder: (_, permissions, __) {
         if (permissions == null) return const SizedBox();
-        return Selector<ProjectPermissionDialogProvider,
+        return createSelector<
             List<PlatformPermission>>(
           selector: (_, provider) => provider.selectPermissions,
           builder: (_, selectPermissions, __) {

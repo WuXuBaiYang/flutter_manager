@@ -35,7 +35,7 @@ class ImportEnvRemoteDialog
 
   @override
   Widget buildWidget(BuildContext context) {
-    return Selector<ImportEnvRemoteDialogProvider, int>(
+    return createSelector< int>(
       selector: (_, provider) => provider.currentStep,
       builder: (_, currentStep, __) {
         return CustomDialog(
@@ -106,7 +106,7 @@ class ImportEnvRemoteDialog
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    return Selector<ImportEnvRemoteDialogProvider, EnvironmentPackage?>(
+    return createSelector< EnvironmentPackage?>(
       selector: (_, provider) => provider.currentPackage,
       builder: (_, currentPackage, __) {
         return Form(
