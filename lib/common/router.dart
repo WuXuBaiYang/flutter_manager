@@ -17,26 +17,24 @@ class Router extends BaseRouter {
 
   @override
   List<RouteBase> get routes => [
-        // 首页
         GoRoute(
-          name: 'home',
           path: '/',
           builder: (_, state) => HomePage(state: state),
-        ),
-        // 项目详情页
-        GoRoute(
-          name: 'projectDetail',
-          path: '/project/detail',
-          builder: (_, state) => ProjectDetailPage(state: state),
+          routes: [
+            GoRoute(
+              path: '/project/detail',
+              builder: (_, state) => ProjectDetailPage(state: state),
+            ),
+          ],
         ),
       ];
 
   // 跳转首页
-  void goHome() => pushNamed('home');
+  void goHome() => push('/');
 
   // 跳转项目详情页
   Future<void> goProjectDetail(Project project) =>
-      pushNamed('projectDetail', extra: project);
+      push('projectDetail', extra: project);
 }
 
 // 全局单例

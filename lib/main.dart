@@ -5,7 +5,7 @@ import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/provider/theme.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:window_manager/window_manager.dart';
-import 'common/route.dart';
+import 'common/router.dart';
 import 'generated/l10n.dart';
 import 'provider/config.dart';
 import 'provider/environment.dart';
