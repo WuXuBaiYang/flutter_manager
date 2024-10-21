@@ -32,11 +32,11 @@ class Router extends BaseRouter {
       ];
 
   // 跳转首页
-  void goHome() => routerConfig.pushNamed('home');
+  void goHome() => pushNamed('home');
 
   // 跳转项目详情页
   Future<void> goProjectDetail(Project project) =>
-      routerConfig.pushNamed('projectDetail', extra: project);
+      pushNamed('projectDetail', extra: project);
 }
 
 // 全局单例
