@@ -37,7 +37,9 @@ class ProjectLogoDialog extends ProviderView<ProjectLogoDialogProvider> {
     return CustomDialog(
       title: const Text('图标'),
       content: _buildContent(context),
-      constraints: BoxConstraints(minWidth: 380, maxHeight: 320),
+      decoration: CustomDialogDecoration(
+        constraints: BoxConstraints(minWidth: 380, maxHeight: 320),
+      ),
       actions: [
         TextButton(
           onPressed: context.pop,

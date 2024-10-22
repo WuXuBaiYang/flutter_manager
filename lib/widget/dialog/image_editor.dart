@@ -59,7 +59,9 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
         _buildImageType(context),
       ]),
       content: _buildContent(context),
-      constraints: const BoxConstraints.tightFor(width: 480, height: 350),
+      decoration: CustomDialogDecoration(
+        constraints: const BoxConstraints.tightFor(width: 480, height: 350),
+      ),
       actions: [
         TextButton(
           child: const Text('使用原图'),
@@ -83,7 +85,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
 
   // 构建图片类型选择器
   Widget _buildImageType(BuildContext context) {
-    return createSelector< ImageType>(
+    return createSelector<ImageType>(
       selector: (_, provider) => provider.action.imageType,
       builder: (_, imageType, __) {
         return Row(children: [
@@ -138,7 +140,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
       child: ClipRRect(
         clipBehavior: Clip.antiAlias,
         borderRadius: BorderRadius.circular(8),
-        child: createSelector< ImageEditorAction>(
+        child: createSelector<ImageEditorAction>(
           selector: (_, provider) => provider.action,
           builder: (_, result, __) {
             return CustomImageCrop(
@@ -159,7 +161,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
   // 构建图片编辑器操作
   Widget _buildImageEditorActions(BuildContext context) {
     final ratioDisable = absoluteRatio != null;
-    return createSelector< ImageEditorAction>(
+    return createSelector<ImageEditorAction>(
       selector: (_, provider) => provider.action,
       builder: (_, action, __) {
         return Row(children: [

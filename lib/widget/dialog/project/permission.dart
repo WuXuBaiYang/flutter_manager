@@ -43,7 +43,9 @@ class ProjectPermissionDialog
     return CustomDialog(
       title: _buildTitle(context),
       content: _buildContent(context),
-      constraints: const BoxConstraints.tightFor(width: 340),
+      decoration: CustomDialogDecoration(
+        constraints: const BoxConstraints.tightFor(width: 340),
+      ),
       actions: [
         TextButton(
           onPressed: context.pop,
@@ -59,7 +61,7 @@ class ProjectPermissionDialog
 
   // 构建标题
   Widget _buildTitle(BuildContext context) {
-    return createSelector< int>(
+    return createSelector<int>(
       selector: (_, provider) => provider.selectPermissions.length,
       builder: (_, count, __) {
         return Text('${platform.name}权限（$count）');
@@ -74,8 +76,7 @@ class ProjectPermissionDialog
       onFuture: () => ProjectTool.getFullPermissions(platform),
       builder: (_, permissions, __) {
         if (permissions == null) return const SizedBox();
-        return createSelector<
-            List<PlatformPermission>>(
+        return createSelector<List<PlatformPermission>>(
           selector: (_, provider) => provider.selectPermissions,
           builder: (_, selectPermissions, __) {
             return StatefulBuilder(

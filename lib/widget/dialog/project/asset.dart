@@ -35,9 +35,8 @@ class ProjectAssetDialog extends ProviderView<ProjectAssetDialogProvider> {
     return CustomDialog(
       title: const Text('Asset管理'),
       content: _buildContent(context),
-      constraints: const BoxConstraints(
-        maxWidth: 380,
-        maxHeight: 380,
+      decoration: CustomDialogDecoration(
+        constraints: const BoxConstraints(maxWidth: 380, maxHeight: 380),
       ),
       actions: [
         TextButton(

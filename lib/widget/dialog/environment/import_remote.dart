@@ -35,12 +35,14 @@ class ImportEnvRemoteDialog
 
   @override
   Widget buildWidget(BuildContext context) {
-    return createSelector< int>(
+    return createSelector<int>(
       selector: (_, provider) => provider.currentStep,
       builder: (_, currentStep, __) {
         return CustomDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
-          constraints: const BoxConstraints.tightFor(width: 340),
+          decoration: CustomDialogDecoration(
+            constraints: const BoxConstraints.tightFor(width: 340),
+          ),
           content: [
             _buildPackageList(context),
             _buildPackageDownload(context),
@@ -106,7 +108,7 @@ class ImportEnvRemoteDialog
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    return createSelector< EnvironmentPackage?>(
+    return createSelector<EnvironmentPackage?>(
       selector: (_, provider) => provider.currentPackage,
       builder: (_, currentPackage, __) {
         return Form(

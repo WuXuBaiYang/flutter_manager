@@ -10,7 +10,7 @@ class ThemeProvider extends BaseThemeProvider {
   ThemeProvider(super.context);
 
   @override
-  ThemeData customTheme(ThemeData themeData, Brightness brightness) {
+  ThemeData createTheme(ThemeData themeData, Brightness brightness) {
     final cardColor =
         brightness == Brightness.light ? Colors.white : Colors.black;
     return themeData.copyWith(
@@ -45,5 +45,10 @@ class ThemeProvider extends BaseThemeProvider {
         showValueIndicator: ShowValueIndicator.onlyForContinuous,
       ),
     );
+  }
+
+  @override
+  CustomTheme? createCustomTheme(ThemeData themeData, Brightness brightness) {
+    return CustomTheme();
   }
 }

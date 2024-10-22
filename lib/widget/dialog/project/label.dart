@@ -37,9 +37,11 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
     return CustomDialog(
       title: const Text('别名'),
       content: _buildContent(context),
-      constraints: BoxConstraints(
-        maxHeight: min(labelMap.length * 100, 380),
-        maxWidth: 380,
+      decoration: CustomDialogDecoration(
+        constraints: BoxConstraints(
+          maxHeight: min(labelMap.length * 100, 380),
+          maxWidth: 380,
+        ),
       ),
       actions: [
         TextButton(
