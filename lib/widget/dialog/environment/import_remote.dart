@@ -40,7 +40,7 @@ class ImportEnvRemoteDialog
       builder: (_, currentStep, __) {
         return CustomDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
-          decoration: CustomDialogDecoration(
+          style: CustomDialogStyle(
             constraints: const BoxConstraints.tightFor(width: 340),
           ),
           content: [
@@ -68,7 +68,7 @@ class ImportEnvRemoteDialog
   // 构建步骤1-选择要下载的环境
   Widget _buildPackageList(BuildContext context) {
     return LoadingFutureBuilder<Map<String, List<EnvironmentPackage>>>(
-      onFuture: EnvironmentTool.getChannelPackages,
+      future: EnvironmentTool.getChannelPackages(),
       builder: (_, channelPackages, __) {
         return EnvironmentRemoteList(
           onCopyLink: provider.copyLink,

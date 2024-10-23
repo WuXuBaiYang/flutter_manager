@@ -35,12 +35,6 @@ class ProjectFontDialog extends ProviderView<ProjectFontDialogProvider> {
     return CustomDialog(
       title: const Text('字体管理'),
       content: _buildContent(context),
-      decoration: CustomDialogDecoration(
-        constraints: const BoxConstraints(
-          maxWidth: 380,
-          maxHeight: 380,
-        ),
-      ),
       actions: [
         TextButton(
           onPressed: context.pop,

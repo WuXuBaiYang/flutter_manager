@@ -59,7 +59,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
         _buildImageType(context),
       ]),
       content: _buildContent(context),
-      decoration: CustomDialogDecoration(
+      style: CustomDialogStyle(
         constraints: const BoxConstraints.tightFor(width: 480, height: 350),
       ),
       actions: [

@@ -49,6 +49,12 @@ class ThemeProvider extends BaseThemeProvider {
 
   @override
   CustomTheme? createCustomTheme(ThemeData themeData, Brightness brightness) {
-    return CustomTheme();
+    return CustomTheme(
+      customDialogTheme: CustomDialogThemeData(
+        style: CustomDialogStyle(
+          constraints: const BoxConstraints(maxWidth: 380, maxHeight: 380),
+        ),
+      ),
+    );
   }
 }

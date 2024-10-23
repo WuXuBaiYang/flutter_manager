@@ -48,7 +48,7 @@ class ProjectProvider extends BaseProvider {
 
   // 调换项目平台排序
   void swapPlatformSort(int oldIndex, int newIndex) {
-    _platforms = [..._platforms].swap(oldIndex, newIndex);
+    _platforms = [..._platforms].swapReorder(oldIndex, newIndex);
     notifyListeners();
   }
 
@@ -107,8 +107,7 @@ class ProjectProvider extends BaseProvider {
 
   // 交换并重排序
   List<Project> _swapAndOrder(List<Project> list, int oldIndex, int newIndex) {
-    newIndex = newIndex > oldIndex ? newIndex + 1 : newIndex;
-    final temp = list.swap(oldIndex, newIndex);
+    final temp = list.swapReorder(oldIndex, newIndex);
     temp.asMap().forEach((i, e) => e.order = i);
     temp.sort((a, b) => a.order.compareTo(b.order));
     return temp;

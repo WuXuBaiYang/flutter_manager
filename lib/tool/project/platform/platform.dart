@@ -183,7 +183,7 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
     int index = 0;
     progressCallback?.call(index, logos.length);
     for (final item in logos) {
-      final imageType = convertImageType(File(item.path).suffixes);
+      final imageType = convertImageType(extension(item.path));
       if (imageType != null) {
         final width = item.size.width.toInt(),
             height = item.size.height.toInt();

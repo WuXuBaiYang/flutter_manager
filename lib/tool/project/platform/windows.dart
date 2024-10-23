@@ -67,9 +67,9 @@ class WindowsPlatformTool extends PlatformTool {
     final result = <PlatformLogo>[];
     for (final file in dir.listSync()) {
       final path = file.path;
-      final name = File(path).name;
+      final name = basename(path);
       final size = await ImageTool.getSize(path);
-      if (name == null || size == null) continue;
+      if (size == null) continue;
       result.add((name: name, path: path, size: size));
     }
     return result;

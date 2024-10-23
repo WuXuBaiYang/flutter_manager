@@ -47,7 +47,7 @@ class ColorPickerDialog extends StatelessWidget {
       scrollable: true,
       title: const Text('选择颜色'),
       content: _buildContent(context),
-      decoration: CustomDialogDecoration(
+      style: CustomDialogStyle(
         constraints: const BoxConstraints.tightFor(width: 340),
       ),
     );

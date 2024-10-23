@@ -43,7 +43,7 @@ class ProjectPermissionDialog
     return CustomDialog(
       title: _buildTitle(context),
       content: _buildContent(context),
-      decoration: CustomDialogDecoration(
+      style: CustomDialogStyle(
         constraints: const BoxConstraints.tightFor(width: 340),
       ),
       actions: [
@@ -73,7 +73,7 @@ class ProjectPermissionDialog
   Widget _buildContent(BuildContext context) {
     final searchController = provider.searchController;
     return LoadingFutureBuilder<List<PlatformPermission>?>(
-      onFuture: () => ProjectTool.getFullPermissions(platform),
+      future: ProjectTool.getFullPermissions(platform),
       builder: (_, permissions, __) {
         if (permissions == null) return const SizedBox();
         return createSelector<List<PlatformPermission>>(

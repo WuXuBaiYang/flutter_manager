@@ -15,8 +15,7 @@ class EnvironmentProvider extends BaseProvider {
   EnvironmentProvider(super.context);
 
   // 环境变量集合
-  late List<Environment> _environments =
-      database.getEnvList(desc: true);
+  late List<Environment> _environments = database.getEnvList(desc: true);
 
   // 获取环境变量集合
   List<Environment> get environments => _environments;
@@ -76,7 +75,7 @@ class EnvironmentProvider extends BaseProvider {
 
   // 环境重排序
   Future<void> reorder(int oldIndex, int newIndex) async {
-    final temp = environments.reversed.toList().swap(oldIndex, newIndex);
+    final temp = environments.reversed.toList().swapReorder(oldIndex, newIndex);
     temp.asMap().forEach((i, e) => e.order = i);
     temp.sort((a, b) => a.order.compareTo(b.order));
     _environments = temp.reversed.toList();
