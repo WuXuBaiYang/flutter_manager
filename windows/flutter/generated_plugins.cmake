@@ -8,7 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   objectbox_flutter_libs
   open_dir_windows
   permission_handler_windows
-  screen_retriever
+  screen_retriever_windows
   window_manager
 )
 

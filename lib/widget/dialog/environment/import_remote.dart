@@ -73,7 +73,7 @@ class ImportEnvRemoteDialog
         return EnvironmentRemoteList(
           onCopyLink: provider.copyLink,
           onStartDownload: provider.startNextStep,
-          channelPackages: channelPackages ?? const {},
+          channelPackages: channelPackages,
         );
       },
     );
@@ -134,8 +134,8 @@ class ImportEnvRemoteDialog
   }
 
   // 构建表单项-信息
-  Widget _buildFormFieldInfo(
-      BuildContext context, EnvironmentPackage? package) {
+  Widget _buildFormFieldInfo(BuildContext context,
+      EnvironmentPackage? package) {
     return Card(
       child: ListTile(
         title: Text(package?.title ?? ''),

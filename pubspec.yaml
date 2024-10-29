@@ -39,10 +39,10 @@ dependencies:
   image: ^4.3.0
   archive: ^3.6.1
   open_dir: ^0.0.2+1
-  jtech_base: ^0.3.4
+  jtech_base: ^0.3.6
   flutter_gen: ^5.8.0
   desktop_drop: ^0.5.0
-  window_manager: ^0.4.2
+  window_manager: ^0.4.3
   custom_image_crop: ^0.0.13
   flutter_context_menu: ^0.2.0
   reorderable_grid_view: ^2.2.8
