@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_manager/database/model/environment.dart';
+import 'package:flutter_manager/main.dart';
+import 'package:flutter_manager/provider/theme.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/widget/scheme_picker.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'item.dart';
 
@@ -364,7 +367,7 @@ class SettingItemThemeScheme extends StatelessWidget {
   final Key settingKey;
 
   // 当前主题配色
-  final ThemeScheme themeScheme;
+  final FlexScheme themeScheme;
 
   // 主题配色改变回调
   final VoidCallback? onThemeSchemeChange;
@@ -378,16 +381,22 @@ class SettingItemThemeScheme extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final schemeData = context.theme.themeSchemes[themeScheme];
+    final schemeColor = switch (Theme.of(context).brightness) {
+      Brightness.light => schemeData?.light,
+      Brightness.dark => schemeData?.dark,
+    };
+    if (schemeColor == null) return SizedBox();
     return SettingItem(
       key: settingKey,
       label: '应用配色',
-      content: Text(themeScheme.label),
       child: ThemeSchemeItem(
         size: 40,
         isSelected: true,
         tooltip: '更换配色',
-        themeScheme: themeScheme,
+        primary: schemeColor.primary,
         onPressed: onThemeSchemeChange,
+        secondary: schemeColor.secondary,
       ),
     );
   }

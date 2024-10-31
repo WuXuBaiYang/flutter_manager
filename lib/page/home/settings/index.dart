@@ -93,14 +93,14 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
           },
         ),
         // 主题配色设置
-        Selector<ThemeProvider, ThemeScheme>(
-          selector: (_, provider) => provider.themeScheme,
+        Selector<ThemeProvider, FlexScheme>(
+          selector: (_, provider) => provider.scheme,
           builder: (_, themeScheme, __) {
             return SettingItemThemeScheme(
               themeScheme: themeScheme,
               settingKey: context.setting.themeSchemeKey,
               onThemeSchemeChange: () =>
-                  context.theme.showSchemeChangePicker(context),
+                  context.theme.showSchemePickerDialog(context),
             );
           },
         ),

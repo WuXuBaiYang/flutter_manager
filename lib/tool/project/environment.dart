@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/model/env_package.dart';
 import 'package:flutter_manager/tool/download.dart';
+import 'package:flutter_manager/tool/tool.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 已下载文件元组
