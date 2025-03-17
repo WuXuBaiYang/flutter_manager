@@ -37,7 +37,6 @@ class EnvironmentProvider extends BaseProvider {
     await extractFileToDisk(
       package.downloadPath!,
       buildPath!,
-      asyncWrite: true,
     );
     final list = Directory(buildPath).listSync();
     return import(list.length <= 1 ? list.first.path : buildPath);
