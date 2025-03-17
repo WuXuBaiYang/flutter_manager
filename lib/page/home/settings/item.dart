@@ -57,7 +57,6 @@ class _SettingItem extends State<SettingItem> {
           trailing: widget.child,
           subtitle: widget.content,
           title: Text(widget.label),
-          selectedColor: Colors.transparent,
           isThreeLine: widget.content != null,
         );
       },

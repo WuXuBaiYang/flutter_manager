@@ -70,10 +70,13 @@ class ImportEnvRemoteDialog
     return LoadingFutureBuilder<Map<String, List<EnvironmentPackage>>>(
       future: EnvironmentTool.getChannelPackages(),
       builder: (_, channelPackages, __) {
-        return EnvironmentRemoteList(
-          onCopyLink: provider.copyLink,
-          onStartDownload: provider.startNextStep,
-          channelPackages: channelPackages,
+        return SizedBox.fromSize(
+          size: Size.fromHeight(400),
+          child: EnvironmentRemoteList(
+            onCopyLink: provider.copyLink,
+            onStartDownload: provider.startNextStep,
+            channelPackages: channelPackages,
+          ),
         );
       },
     );
@@ -134,8 +137,8 @@ class ImportEnvRemoteDialog
   }
 
   // 构建表单项-信息
-  Widget _buildFormFieldInfo(BuildContext context,
-      EnvironmentPackage? package) {
+  Widget _buildFormFieldInfo(
+      BuildContext context, EnvironmentPackage? package) {
     return Card(
       child: ListTile(
         title: Text(package?.title ?? ''),
