@@ -78,10 +78,17 @@ class ProjectProvider extends BaseProvider {
     await database.updateProject(
       project..pinned = !project.pinned,
     );
+    _updateProjects();
+    _updatePinnedProjects();
   }
 
   // 移除项目
-  bool remove(Project project) => database.removeProject(project.id);
+  bool remove(Project project) {
+    final result = database.removeProject(project.id);
+    _updateProjects();
+    _updatePinnedProjects();
+    return result;
+  }
 
   // 对置顶项目重排序
   Future<List<Project>> reorderPinned(int oldIndex, int newIndex) {

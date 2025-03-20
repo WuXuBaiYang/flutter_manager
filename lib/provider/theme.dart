@@ -12,15 +12,12 @@ class ThemeProvider extends BaseThemeProvider {
 
   @override
   ThemeData createTheme(ThemeData themeData, Brightness brightness) {
-    final cardColor =
-        brightness == Brightness.light ? Colors.white : Colors.black;
     return themeData.copyWith(
       focusColor: Colors.transparent,
       appBarTheme: AppBarTheme(
         scrolledUnderElevation: 0,
       ),
       cardTheme: CardTheme(
-        color: cardColor,
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
       ),
@@ -34,7 +31,7 @@ class ThemeProvider extends BaseThemeProvider {
       searchBarTheme: SearchBarThemeData(
         elevation: WidgetStatePropertyAll(2),
         constraints: BoxConstraints.tightFor(height: 45),
-        backgroundColor: WidgetStatePropertyAll(cardColor),
+        // backgroundColor: WidgetStatePropertyAll(cardColor),
       ),
       tabBarTheme: const TabBarTheme(
         dividerHeight: 0,

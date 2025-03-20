@@ -34,7 +34,7 @@ class Router extends BaseRouter {
 
   // 跳转项目详情页
   Future<void> goProjectDetail(Project project) =>
-      push('projectDetail', extra: project);
+      push('/project/detail', extra: project);
 }
 
 // 全局单例

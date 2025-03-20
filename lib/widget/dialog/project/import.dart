@@ -177,7 +177,9 @@ class ImportProjectDialogProvider extends BaseProvider {
   final labelFormFieldKey = GlobalKey<FormFieldState<String>>(),
       logoFormFieldKey = GlobalKey<FormFieldState<String>>();
 
-  ImportProjectDialogProvider(super.context, this._project);
+  ImportProjectDialogProvider(super.context, this._project) {
+    print('object');
+  }
 
   // 项目信息
   Project _project;

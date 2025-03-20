@@ -17,7 +17,7 @@ class Project {
 
   // 项目颜色
   @Transient()
-  Color color = Colors.transparent;
+  Color color = Colors.primaries.last;
 
   // 是否订到顶部
   bool pinned = false;
@@ -39,6 +39,7 @@ class Project {
   Project();
 
   Project.c({
+    required this.id,
     required this.label,
     required this.logo,
     required this.path,
@@ -90,6 +91,7 @@ class Project {
     Environment? environment,
   }) {
     return Project.c(
+      id: id,
       label: label ?? this.label,
       logo: logo ?? this.logo,
       path: path ?? this.path,

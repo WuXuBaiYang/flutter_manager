@@ -39,7 +39,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
       content: _buildContent(context),
       style: CustomDialogStyle(
         constraints: BoxConstraints(
-            maxHeight: min(labelMap.length * 100, 380), maxWidth: 380),
+            maxHeight: min(labelMap.length * 140, 380), maxWidth: 380),
       ),
       actions: [
         TextButton(
@@ -61,11 +61,16 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
       isEmpty: labelMap.isEmpty,
       child: Form(
         key: provider.formKey,
-        child: SingleChildScrollView(
-          child: Column(children: [
-            _buildLinkLabels(context),
-            _buildLabels(context),
-          ]),
+        child: ScrollConfiguration(
+          behavior: ScrollBehavior().copyWith(
+            scrollbars: false,
+          ),
+          child: SingleChildScrollView(
+            child: Column(children: [
+              _buildLinkLabels(context),
+              _buildLabels(context),
+            ]),
+          ),
         ),
       ),
     );
@@ -80,7 +85,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
         return Card(
           margin: EdgeInsets.zero,
           child: Padding(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(14),
             child: Column(children: [
               TextField(
                 autofocus: true,
