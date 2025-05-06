@@ -116,7 +116,7 @@ class ProjectGridView extends StatelessWidget {
   // 构建项目子项内容
   Widget _buildItemContent(BuildContext context, Project item) {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
-    final color = bodyStyle?.color?.withOpacity(0.4);
+    final color = bodyStyle?.color?.withValues(alpha: 0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
     const contentPadding = EdgeInsets.symmetric(horizontal: 14);
     final borderRadius = BorderRadius.circular(8);
@@ -124,7 +124,7 @@ class ProjectGridView extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       height: double.maxFinite,
-      color: item.color.withOpacity(0.2),
+      color: item.color.withValues(alpha: 0.2),
       child: ListTile(
         contentPadding: contentPadding,
         title: Row(children: [

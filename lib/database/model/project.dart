@@ -68,7 +68,7 @@ class Project {
   set colorDB(int value) => color = Color(value);
 
   // 获取数据库颜色
-  int get colorDB => color.value;
+  int get colorDB => color.toARGB32();
 
   // 获取环境
   @Transient()

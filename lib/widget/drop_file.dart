@@ -83,7 +83,7 @@ class DropFileView extends ProviderView<DropFileViewProvider> {
           selector: (_, provider) => provider.dropState,
           builder: (_, dropState, __) {
             final color = dropState?.warning == true
-                ? Colors.red.withOpacity(0.25)
+                ? Colors.red.withValues(alpha: 0.25)
                 : null;
             return EmptyBoxView(
               color: color,

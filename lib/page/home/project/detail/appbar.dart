@@ -60,7 +60,7 @@ class ProjectDetailAppBar extends StatelessWidget {
         ],
       ),
       flexibleSpace: _buildFlexibleSpace(
-          context, hasColor ? color.withOpacity(0.2) : null),
+          context, hasColor ? color.withValues(alpha: 0.2) : null),
     );
   }
 
@@ -104,7 +104,7 @@ class ProjectDetailAppBar extends StatelessWidget {
   // 构建项目信息
   Widget _buildProjectInfo(BuildContext context) {
     var bodyStyle = Theme.of(context).textTheme.bodySmall;
-    final color = bodyStyle?.color?.withOpacity(0.4);
+    final color = bodyStyle?.color?.withValues(alpha: 0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
     return ListTile(
       isThreeLine: true,

@@ -57,7 +57,7 @@ class OptionsPlatformItem extends StatelessWidget {
       IconButton.filled(
         tooltip: '删除平台',
         isSelected: false,
-        color: Colors.redAccent.withOpacity(0.6),
+        color: Colors.redAccent.withValues(alpha: 0.6),
         icon: const Icon(Icons.delete_outline_rounded),
         onPressed: () => showAlertMessage(
           context,

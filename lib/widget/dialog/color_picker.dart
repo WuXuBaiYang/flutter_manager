@@ -77,7 +77,7 @@ class ColorPickerDialog extends StatelessWidget {
         Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.2;
     return ColorPickerItem(
       isSelected: current == Colors.transparent,
-      color: Theme.of(context).splashColor.withOpacity(opacity),
+      color: Theme.of(context).splashColor.withValues(alpha: opacity),
       onPressed: () => Navigator.pop(context, Colors.transparent),
     );
   }

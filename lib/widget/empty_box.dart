@@ -75,7 +75,7 @@ class EmptyBoxView extends StatelessWidget {
   // 构建空白占位图
   Widget _buildPlaceholder(BuildContext context) {
     final titleStyle = Theme.of(context).textTheme.titleLarge;
-    final color = this.color ?? titleStyle?.color?.withOpacity(0.1);
+    final color = this.color ?? titleStyle?.color?.withValues(alpha: 0.1);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
