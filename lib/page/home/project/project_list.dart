@@ -62,8 +62,7 @@ class ProjectGridView extends StatelessWidget {
       );
 
   // 右键菜单
-  ContextMenu get _contextMenu =>
-      ContextMenu(entries: [
+  ContextMenu get _contextMenu => ContextMenu(entries: [
         MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
         MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
         MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
@@ -101,7 +100,7 @@ class ProjectGridView extends StatelessWidget {
           direction: DismissDirection.endToStart,
           onDismissed: (_) => onDelete?.call(item),
           confirmDismiss: (_) =>
-          confirmDismiss?.call(item) ?? Future.value(true),
+              confirmDismiss?.call(item) ?? Future.value(true),
           background: Container(
             color: Colors.redAccent,
             alignment: Alignment.centerRight,
@@ -116,50 +115,67 @@ class ProjectGridView extends StatelessWidget {
 
   // 构建项目子项内容
   Widget _buildItemContent(BuildContext context, Project item) {
-    var bodyStyle = Theme
-        .of(context)
-        .textTheme
-        .bodySmall;
+    final titleStyle = Theme.of(context).textTheme.bodyLarge;
+    var bodyStyle = Theme.of(context).textTheme.bodySmall;
     final color = bodyStyle?.color?.withValues(alpha: 0.4);
-    bodyStyle = bodyStyle?.copyWith(color: color);
-    const contentPadding = EdgeInsets.symmetric(horizontal: 14);
+    bodyStyle = bodyStyle?.copyWith(color: color, fontSize: 10);
+    final titleConstraints = BoxConstraints.loose(const Size.fromWidth(105));
     final borderRadius = BorderRadius.circular(8);
     const imageSize = Size.square(45);
-    return Container(
-      width: double.maxFinite,
-      height: double.maxFinite,
-      color: item.color.withValues(alpha: 0.2),
-      child: ListTile(
-        contentPadding: contentPadding,
-        title: Row(spacing: 8, children: [
-          ConstrainedBox(
-            constraints: BoxConstraints.loose(const Size.fromWidth(105)),
-            child: Text(
-              item.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+    return InkWell(
+      child: Container(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        color: item.color.withValues(alpha: 0.2),
+        padding: EdgeInsets.symmetric(horizontal: 14),
+        child: Row(
+          spacing: 14,
+          children: [
+            item.logo.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: borderRadius,
+                    child: CustomImage.file(item.logo, size: imageSize),
+                  )
+                : SizedBox.fromSize(size: imageSize),
+            Expanded(
+              child: Column(
+                spacing: 4,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(spacing: 8, children: [
+                    ConstrainedBox(
+                      constraints: titleConstraints,
+                      child: Text(
+                        item.label,
+                        maxLines: 1,
+                        style: titleStyle,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    _buildEnvironmentBadge(item),
+                  ]),
+                  Text(
+                    item.path,
+                    maxLines: 2,
+                    style: bodyStyle,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-          _buildEnvironmentBadge(item),
-        ]),
-        subtitle: Text(item.path,
-            maxLines: 2, style: bodyStyle, overflow: TextOverflow.ellipsis),
-        leading: item.logo.isNotEmpty
-            ? ClipRRect(
-          borderRadius: borderRadius,
-          child: CustomImage.file(item.logo, size: imageSize),
-        )
-            : SizedBox.fromSize(size: imageSize),
-        trailing: Transform.rotate(
-          angle: item.pinned ? 45 : 0,
-          child: IconButton(
-            iconSize: 18,
-            icon: const Icon(Icons.push_pin_outlined),
-            onPressed: () => onPinned?.call(item),
-          ),
+            Transform.rotate(
+              angle: item.pinned ? 45 : 0,
+              child: IconButton(
+                iconSize: 18,
+                icon: const Icon(Icons.push_pin_outlined),
+                onPressed: () => onPinned?.call(item),
+              ),
+            ),
+          ],
         ),
-        onTap: () => onDetail?.call(item),
       ),
+      onTap: () => onDetail?.call(item),
     );
   }
 
