@@ -124,7 +124,13 @@ class ProjectDetailAppBar extends StatelessWidget {
           visualDensity: VisualDensity.compact,
         ),
       ]),
-      leading: CustomImage.file(project.logo, size: const Size.square(55)),
+      leading: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: CustomImage.file(
+          project.logo,
+          size: const Size.square(55),
+        ),
+      ),
       subtitle: Text(project.path,
           maxLines: 1, style: bodyStyle, overflow: TextOverflow.ellipsis),
     );
@@ -132,28 +138,25 @@ class ProjectDetailAppBar extends StatelessWidget {
 
   // 构建操作按钮
   Widget _buildActions(BuildContext context) {
-    return Row(children: [
+    return Row(spacing: 14, children: [
       IconButton.outlined(
         iconSize: 20,
         tooltip: 'Asset管理',
         icon: const Icon(Icons.assessment_outlined),
         onPressed: () => showProjectAsset(context, project: project),
       ),
-      const SizedBox(width: 14),
       IconButton.outlined(
         iconSize: 20,
         tooltip: '字体管理',
         icon: const Icon(Icons.font_download_outlined),
         onPressed: () => showProjectFont(context, project: project),
       ),
-      const SizedBox(width: 14),
       IconButton.outlined(
         iconSize: 20,
         tooltip: '打开项目目录',
         icon: const Icon(Icons.file_open_outlined),
         onPressed: () => OpenDir().openNativeDir(path: project.path),
       ),
-      const SizedBox(width: 14),
       FilledButton.icon(
         label: const Text('打包'),
         icon: const Icon(Icons.build),
@@ -166,6 +169,7 @@ class ProjectDetailAppBar extends StatelessWidget {
         ),
         onPressed: () => showProjectBuild(context, project: project),
       ),
+      SizedBox(),
     ]);
   }
 }
