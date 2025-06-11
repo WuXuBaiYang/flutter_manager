@@ -51,3 +51,4 @@ pubspec.lock
 # 忽略签名文件
 *.keystore
 *.g.dart
+*.freezed.dart

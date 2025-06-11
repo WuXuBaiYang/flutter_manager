@@ -1,63 +1,47 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:jtech_base/jtech_base.dart';
 
-/*
-* flutter环境安装包
-* @author wuxubaiyang
-* @Time 2024/10/14 21:37
-*/
-class EnvironmentPackage extends BaseModel {
-  // 下载地址
-  final String url;
+part 'env_package.g.dart';
 
-  // 文件名
-  final String fileName;
+part 'env_package.freezed.dart';
 
-  // 渠道
-  final String channel;
+// flutter环境安装包
+@freezed
+abstract class EnvPackage with _$EnvPackage {
+  const EnvPackage._();
 
-  // 版本
-  final String version;
+  const factory EnvPackage({
+    required String url,
+    required String fileName,
+    required String channel,
+    required String version,
+    required String dartVersion,
+    required String dartArch,
+    String? buildPath,
+    String? downloadPath,
+    String? tempPath,
+  }) = _EnvPackage;
 
-  // dart版本
-  final String dartVersion;
+  factory EnvPackage.fromJson(Map<String, dynamic> json) =>
+      _$EnvPackageFromJson(json);
 
-  // dart架构
-  final String dartArch;
-
-  // 部署路径
-  final String? buildPath;
-
-  // 已下载文件路径
-  final String? downloadPath;
-
-  // 已下载临时文件路径
-  final String? tempPath;
-
-  EnvironmentPackage({
-    required this.url,
-    required this.fileName,
-    required this.channel,
-    required this.version,
-    required this.dartVersion,
-    required this.dartArch,
-    this.tempPath,
-    this.buildPath,
-    this.downloadPath,
-  });
-
-  EnvironmentPackage.from(
-    obj, {
+  static EnvPackage create(
+    Map<String, dynamic> json, {
     required String baseUrl,
-    this.tempPath,
-    this.buildPath,
     String? fileName,
-    this.downloadPath,
-  })  : fileName = fileName ?? basename(obj?['archive'] ?? ''),
-        url = '$baseUrl/${obj?['archive'] ?? ''}',
-        channel = obj?['channel'] ?? '',
-        version = obj?['version'] ?? '',
-        dartVersion = obj?['dart_sdk_version'] ?? '',
-        dartArch = obj?['dart_sdk_arch'] ?? '';
+    String? tempPath,
+    String? buildPath,
+    String? downloadPath,
+  }) {
+    return EnvPackage(
+      url: '$baseUrl/${json['archive'] ?? ''}',
+      fileName: fileName ?? basename(json['archive'] ?? ''),
+      channel: json['channel'] ?? '',
+      version: json['version'] ?? '',
+      dartVersion: json['dart_sdk_version'] ?? '',
+      dartArch: json['dart_sdk_arch'] ?? '',
+    );
+  }
 
   // 判断当前是否满足导入条件（包含部署地址与安装包地址）
   bool get canImport => buildPath != null && downloadPath != null;
@@ -77,30 +61,5 @@ class EnvironmentPackage extends BaseModel {
     return title.contains(keyword) ||
         dartVersion.contains(keyword) ||
         dartArch.contains(keyword);
-  }
-
-  @override
-  EnvironmentPackage copyWith({
-    String? url,
-    String? fileName,
-    String? channel,
-    String? version,
-    String? dartVersion,
-    String? dartArch,
-    String? downloadPath,
-    String? buildPath,
-    String? tempPath,
-  }) {
-    return EnvironmentPackage(
-      url: url ?? this.url,
-      fileName: fileName ?? this.fileName,
-      channel: channel ?? this.channel,
-      version: version ?? this.version,
-      dartVersion: dartVersion ?? this.dartVersion,
-      dartArch: dartArch ?? this.dartArch,
-      downloadPath: downloadPath ?? this.downloadPath,
-      buildPath: buildPath ?? this.buildPath,
-      tempPath: tempPath ?? this.tempPath,
-    );
   }
 }

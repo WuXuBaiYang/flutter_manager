@@ -17,7 +17,7 @@ class ThemeProvider extends BaseThemeProvider {
       appBarTheme: AppBarTheme(
         scrolledUnderElevation: 0,
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         shadowColor: Colors.black26,
         clipBehavior: Clip.antiAlias,
       ),
@@ -33,7 +33,7 @@ class ThemeProvider extends BaseThemeProvider {
         constraints: BoxConstraints.tightFor(height: 45),
         // backgroundColor: WidgetStatePropertyAll(cardColor),
       ),
-      tabBarTheme: const TabBarTheme(
+      tabBarTheme: const TabBarThemeData(
         dividerHeight: 0,
       ),
       sliderTheme: const SliderThemeData(

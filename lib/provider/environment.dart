@@ -31,7 +31,7 @@ class EnvironmentProvider extends BaseProvider {
   }
 
   // 导入压缩包的环境变量
-  Future<Environment?> importArchive(EnvironmentPackage package) async {
+  Future<Environment?> importArchive(EnvPackage package) async {
     if (!package.canImport) return null;
     var buildPath = package.buildPath;
     await extractFileToDisk(

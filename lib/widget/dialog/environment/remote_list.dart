@@ -11,16 +11,16 @@ class EnvironmentRemoteList extends StatelessWidget {
   final _searchControllerMap = <String, TextEditingController>{};
 
   // 渠道安装包信息
-  final Map<String, List<EnvironmentPackage>> channelPackages;
+  final Map<String, List<EnvPackage>> channelPackages;
 
   // 启动下载回调
-  final ValueChanged<EnvironmentPackage>? onStartDownload;
+  final ValueChanged<EnvPackage>? onStartDownload;
 
   // 默认展示下标
   final int initialIndex;
 
   // 复制链接回调
-  final ValueChanged<EnvironmentPackage>? onCopyLink;
+  final ValueChanged<EnvPackage>? onCopyLink;
 
   EnvironmentRemoteList({
     super.key,
@@ -58,7 +58,7 @@ class EnvironmentRemoteList extends StatelessWidget {
 
   // 构建安装包渠道列表
   Widget _buildPackageList(
-      BuildContext context, String channel, List<EnvironmentPackage> packages) {
+      BuildContext context, String channel, List<EnvPackage> packages) {
     final controller = _getSearchController(channel);
     return StatefulBuilder(
       builder: (_, setState) {
@@ -93,7 +93,7 @@ class EnvironmentRemoteList extends StatelessWidget {
   }
 
   // 构建包列表子项
-  Widget _buildPackageListItem(BuildContext context, EnvironmentPackage item) {
+  Widget _buildPackageListItem(BuildContext context, EnvPackage item) {
     final iconData = item.hasDownload
         ? Icons.download_done_rounded
         : (item.hasTemp

@@ -76,8 +76,7 @@ class EnvironmentTool {
   }
 
   // 获取当前平台的环境安装包列表
-  static Future<Map<String, List<EnvironmentPackage>>>
-      getChannelPackages() async {
+  static Future<Map<String, List<EnvPackage>>> getChannelPackages() async {
     var json = localCache.getJson(_envPackageCacheKey);
     if (json == null) {
       final url = _envPackageInfoUrl.replaceAll(
@@ -94,10 +93,10 @@ class EnvironmentTool {
     final tempMap = result.tmp.asMap().map((_, v) {
       return MapEntry(basename(v).replaceAll('.tmp', ''), v);
     });
-    return List<EnvironmentPackage>.from(
+    return List<EnvPackage>.from(
       (json['releases'] ?? []).map((e) {
         final fileName = basename(e?['archive'] ?? '');
-        return EnvironmentPackage.from(e,
+        return EnvPackage.create(e,
             baseUrl: json['base_url'] ?? '',
             fileName: fileName,
             tempPath: tempMap[fileName],
@@ -159,7 +158,7 @@ class EnvironmentTool {
   }
 
   // 获取默认的安装包目录
-  static Future<String?> getInstallPath(EnvironmentPackage package) async {
+  static Future<String?> getInstallPath(EnvPackage package) async {
     final pathName = 'flutter_${package.version}'.replaceAll('.', '_');
     return FileTool.getDirPath(pathName, root: FileDir.applicationDocuments);
   }

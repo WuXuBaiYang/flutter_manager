@@ -67,7 +67,7 @@ class ImportEnvRemoteDialog
 
   // 构建步骤1-选择要下载的环境
   Widget _buildPackageList(BuildContext context) {
-    return LoadingFutureBuilder<Map<String, List<EnvironmentPackage>>>(
+    return LoadingFutureBuilder<Map<String, List<EnvPackage>>>(
       future: EnvironmentTool.getChannelPackages(),
       builder: (_, channelPackages, __) {
         return SizedBox.fromSize(
@@ -111,7 +111,7 @@ class ImportEnvRemoteDialog
 
   // 构建步骤3-导入已下载环境
   Widget _buildPackageImport(BuildContext context) {
-    return createSelector<EnvironmentPackage?>(
+    return createSelector<EnvPackage?>(
       selector: (_, provider) => provider.currentPackage,
       builder: (_, currentPackage, __) {
         return Form(
@@ -138,7 +138,7 @@ class ImportEnvRemoteDialog
 
   // 构建表单项-信息
   Widget _buildFormFieldInfo(
-      BuildContext context, EnvironmentPackage? package) {
+      BuildContext context, EnvPackage? package) {
     return Card(
       child: ListTile(
         title: Text(package?.title ?? ''),
@@ -161,10 +161,10 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
   int get currentStep => _currentStep;
 
   // 当前选择包信息
-  EnvironmentPackage? _currentPackage;
+  EnvPackage? _currentPackage;
 
   // 当前选择包信息
-  EnvironmentPackage? get currentPackage => _currentPackage;
+  EnvPackage? get currentPackage => _currentPackage;
 
   // 下载进度流
   final downloadProgress = StreamController<DownloadInfo>.broadcast();
@@ -173,7 +173,7 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
   CancelToken? _cancelToken;
 
   // 执行下一步
-  Future<void> startNextStep(EnvironmentPackage package) async {
+  Future<void> startNextStep(EnvPackage package) async {
     try {
       // 已有下载路径则跳转到导入页面
       if (package.hasDownload) {
@@ -217,7 +217,7 @@ class ImportEnvRemoteDialogProvider extends BaseProvider {
     return null;
   }
 
-  void copyLink(EnvironmentPackage package) {
+  void copyLink(EnvPackage package) {
     Clipboard.setData(ClipboardData(text: package.url));
     showNoticeSuccess('已复制下载链接');
   }
