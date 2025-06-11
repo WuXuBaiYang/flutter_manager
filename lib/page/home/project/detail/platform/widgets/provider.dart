@@ -62,7 +62,7 @@ class PlatformProvider extends BaseProvider with WindowListener {
   @override
   void onWindowFocus() {
     // 当窗口重新获取焦点的时候刷新数据
-    if (project != null) initialize();
+    if (project != null) Throttle.c(initialize, 'refresh_platforms');
   }
 
   // 初始化平台信息
