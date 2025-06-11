@@ -17,7 +17,5 @@ class Debug {
     );
   }
 
-  static Future<void> debug(BuildContext context) async {
-    showImportEnvRemote(context);
-  }
+  static Future<void> debug(BuildContext context) async {}
 }

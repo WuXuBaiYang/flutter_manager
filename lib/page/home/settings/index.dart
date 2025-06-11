@@ -147,10 +147,12 @@ class HomeSettingsProvider extends BaseProvider {
 
   // 刷新环境
   void refreshEnvironment(Environment environment) async {
-    final result = await context.env.refresh(environment).loading(context);
-    if (!context.mounted) return;
-    showNoticeError('$result', title: '刷新失败');
-    context.env.update(environment);
+    try {
+      final result = await context.env.refresh(environment).loading(context);
+      if (result != null) showNoticeSuccess('刷新成功');
+    } catch (e) {
+      showNoticeError(e.toString(), title: '刷新失败');
+    }
   }
 
   // 打开缓存目录
