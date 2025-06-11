@@ -32,11 +32,8 @@ typedef AndroidSignKeyForm = ({
 * @Time 2023/11/29 14:55
 */
 class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
-  @override
-  PlatformType get platform => PlatformType.android;
-
-  @override
-  String keyFilePath = 'app/build.gradle';
+  // build.gradle(.kts)路径
+  String _buildGradlePath = 'app/build.gradle';
 
   // AndroidManifest.xml相对路径
   final String _manifestPath = 'app/src/main/AndroidManifest.xml';
@@ -44,11 +41,15 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
   // 资源目录
   final String _resPath = 'app/src/main/res';
 
-  // package匹配真正则
-  final _packageRegExp = RegExp(r'applicationId "(.*)"');
+  // package匹配正则
+  late final _packageRegExp = RegExp(
+      _isBuildGradleKts ? r'applicationId = "(.*)"' : r'applicationId "(.*)"');
 
   // 匹配java路径
   final _jdkRegExp = RegExp(r'.*jdk(.*)bin');
+
+  // 判断当前得build.gradle是否为kts版本
+  bool get _isBuildGradleKts => _buildGradlePath.endsWith('.kts');
 
   // 读取manifest文件信息
   Future<XmlDocument> _getManifestDocument(String projectPath) =>
@@ -58,9 +59,22 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
   Future<XmlDocumentFragment> _getManifestFragment(String projectPath) =>
       readPlatformFileXmlFragment(projectPath, _manifestPath);
 
-  // 获取build.gradle文件内容
+  // 获取build.gradle(.kts)文件内容
   Future<String> _getBuildGradleContent(String projectPath) =>
-      readPlatformFile(projectPath, keyFilePath);
+      readPlatformFile(projectPath, _buildGradlePath);
+
+  @override
+  PlatformType get platform => PlatformType.android;
+
+  @override
+  bool isPathAvailable(String projectPath) {
+    final path = join(getPlatformPath(projectPath), 'app/build.gradle');
+    return [File('$path.kts'), File(path)].any((e) {
+      final exists = e.existsSync();
+      if (exists) _buildGradlePath = e.path;
+      return exists;
+    });
+  }
 
   @override
   Future<PlatformInfo<AndroidPlatformInfo>?> getPlatformInfo(
@@ -138,12 +152,11 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
     var content = await _getBuildGradleContent(projectPath);
     final temp = _packageRegExp.pattern.replaceFirst('(.*)', package);
     content = content.replaceFirst(_packageRegExp, temp.replaceAll('\\', ''));
-    return writePlatformFile(projectPath, keyFilePath, content);
+    return writePlatformFile(projectPath, _buildGradlePath, content);
   }
 
   @override
-  Future<List<PlatformPermission>?> getPermissions(
-      String projectPath) async {
+  Future<List<PlatformPermission>?> getPermissions(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getManifestDocument(projectPath))
         .getElement('manifest')

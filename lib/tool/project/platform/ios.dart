@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
@@ -12,11 +14,8 @@ typedef IosPlatformInfo = ();
 * @Time 2023/11/29 14:58
 */
 class IosPlatformTool extends PlatformTool {
-  @override
-  PlatformType get platform => PlatformType.ios;
-
-  @override
-  String keyFilePath = 'Runner/Info.plist';
+  // ios信息配置文件
+  final String _infoPlistPath = 'Runner/Info.plist';
 
   // 图标资源路径
   final String _iconPath = 'Runner/Assets.xcassets/AppIcon.appiconset';
@@ -26,15 +25,22 @@ class IosPlatformTool extends PlatformTool {
 
   // 读取plist文件信息
   Future<XmlDocument> _getPlistDocument(String projectPath) =>
-      readPlatformFileXml(projectPath, keyFilePath);
+      readPlatformFileXml(projectPath, _infoPlistPath);
 
   // 获取plist文件fragment
   Future<XmlDocumentFragment> _getPlistFragment(String projectPath) =>
-      readPlatformFileXmlFragment(projectPath, keyFilePath);
+      readPlatformFileXmlFragment(projectPath, _infoPlistPath);
 
   // 读取图标信息文件信息
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
+
+  @override
+  PlatformType get platform => PlatformType.ios;
+
+  @override
+  bool isPathAvailable(String projectPath) =>
+      File(join(getPlatformPath(projectPath), _infoPlistPath)).existsSync();
 
   @override
   Future<PlatformInfo<IosPlatformInfo>?> getPlatformInfo(
@@ -77,7 +83,7 @@ class IosPlatformTool extends PlatformTool {
         ?.nextElementSibling
       ?..innerText = label;
     if (element?.localName != 'string') return false;
-    return writePlatformFileXml(projectPath, keyFilePath, fragment,
+    return writePlatformFileXml(projectPath, _infoPlistPath, fragment,
         indentAttribute: false);
   }
 
@@ -127,13 +133,12 @@ class IosPlatformTool extends PlatformTool {
         ?.nextElementSibling
       ?..innerText = package;
     if (element?.localName != 'string') return false;
-    return writePlatformFileXml(projectPath, keyFilePath, fragment,
+    return writePlatformFileXml(projectPath, _infoPlistPath, fragment,
         indentAttribute: false);
   }
 
   @override
-  Future<List<PlatformPermission>?> getPermissions(
-      String projectPath) async {
+  Future<List<PlatformPermission>?> getPermissions(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final permissions = (await _getPlistDocument(projectPath))
         .getElement('plist')
@@ -175,6 +180,6 @@ class IosPlatformTool extends PlatformTool {
             XmlElement(XmlName('key'), [], [XmlText(e.value)]),
             XmlElement(XmlName('string'), [], [XmlText(e.input)])
           ]));
-    return writePlatformFileXml(projectPath, keyFilePath, fragment);
+    return writePlatformFileXml(projectPath, _infoPlistPath, fragment);
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform.dart';
 
 // linux平台参数元组
@@ -10,11 +13,8 @@ typedef LinuxPlatformInfo = ();
 * @Time 2023/11/29 14:58
 */
 class LinuxPlatformTool extends PlatformTool {
-  @override
-  PlatformType get platform => PlatformType.linux;
-
-  @override
-  String get keyFilePath => 'main.cc';
+  // main.cc相对路径
+  final String _mainCCPath = 'main.cc';
 
   // my_application.cc相对路径
   final String _myApplicationPath = 'my_application.cc';
@@ -24,6 +24,13 @@ class LinuxPlatformTool extends PlatformTool {
     RegExp(r'gtk_header_bar_set_title\(header_bar, "(.*)"\);'),
     RegExp(r'gtk_window_set_title\(window, "(.*)"\);'),
   ];
+
+  @override
+  PlatformType get platform => PlatformType.linux;
+
+  @override
+  bool isPathAvailable(String projectPath) =>
+      File(join(getPlatformPath(projectPath), _mainCCPath)).existsSync();
 
   @override
   Future<PlatformInfo<LinuxPlatformInfo>?> getPlatformInfo(

@@ -62,7 +62,8 @@ class ProjectGridView extends StatelessWidget {
       );
 
   // 右键菜单
-  ContextMenu get _contextMenu => ContextMenu(entries: [
+  ContextMenu get _contextMenu =>
+      ContextMenu(entries: [
         MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
         MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
         MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
@@ -100,7 +101,7 @@ class ProjectGridView extends StatelessWidget {
           direction: DismissDirection.endToStart,
           onDismissed: (_) => onDelete?.call(item),
           confirmDismiss: (_) =>
-              confirmDismiss?.call(item) ?? Future.value(true),
+          confirmDismiss?.call(item) ?? Future.value(true),
           background: Container(
             color: Colors.redAccent,
             alignment: Alignment.centerRight,
@@ -115,7 +116,10 @@ class ProjectGridView extends StatelessWidget {
 
   // 构建项目子项内容
   Widget _buildItemContent(BuildContext context, Project item) {
-    var bodyStyle = Theme.of(context).textTheme.bodySmall;
+    var bodyStyle = Theme
+        .of(context)
+        .textTheme
+        .bodySmall;
     final color = bodyStyle?.color?.withValues(alpha: 0.4);
     bodyStyle = bodyStyle?.copyWith(color: color);
     const contentPadding = EdgeInsets.symmetric(horizontal: 14);
@@ -127,22 +131,24 @@ class ProjectGridView extends StatelessWidget {
       color: item.color.withValues(alpha: 0.2),
       child: ListTile(
         contentPadding: contentPadding,
-        title: Row(children: [
+        title: Row(spacing: 8, children: [
           ConstrainedBox(
             constraints: BoxConstraints.loose(const Size.fromWidth(105)),
-            child:
-                Text(item.label, maxLines: 1, overflow: TextOverflow.ellipsis),
+            child: Text(
+              item.label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          const SizedBox(width: 8),
           _buildEnvironmentBadge(item),
         ]),
         subtitle: Text(item.path,
             maxLines: 2, style: bodyStyle, overflow: TextOverflow.ellipsis),
         leading: item.logo.isNotEmpty
             ? ClipRRect(
-                borderRadius: borderRadius,
-                child: CustomImage.file(item.logo, size: imageSize),
-              )
+          borderRadius: borderRadius,
+          child: CustomImage.file(item.logo, size: imageSize),
+        )
             : SizedBox.fromSize(size: imageSize),
         trailing: Transform.rotate(
           angle: item.pinned ? 45 : 0,

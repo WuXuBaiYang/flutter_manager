@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter_manager/tool/image.dart';
+import 'package:jtech_base/jtech_base.dart';
 import 'platform.dart';
 
 // web平台参数元组
@@ -10,11 +13,8 @@ typedef WebPlatformInfo = ();
 * @Time 2023/11/29 14:59
 */
 class WebPlatformTool extends PlatformTool {
-  @override
-  PlatformType get platform => PlatformType.web;
-
-  @override
-  String get keyFilePath => 'index.html';
+  // 入口页路径
+  final String _indexPath = 'index.html';
 
   // manifest.json相对路径
   final String _manifestPath = 'manifest.json';
@@ -25,6 +25,13 @@ class WebPlatformTool extends PlatformTool {
   // 读取manifest文件信息
   Future<Map> _getManifestJson(String projectPath) =>
       readPlatformFileJson(projectPath, _manifestPath);
+
+  @override
+  PlatformType get platform => PlatformType.web;
+
+  @override
+  bool isPathAvailable(String projectPath) =>
+      File(join(getPlatformPath(projectPath), _indexPath)).existsSync();
 
   @override
   Future<PlatformInfo<WebPlatformInfo>?> getPlatformInfo(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
@@ -12,11 +14,8 @@ typedef MacosPlatformInfo = ();
 * @Time 2023/11/29 14:59
 */
 class MacosPlatformTool extends PlatformTool {
-  @override
-  PlatformType get platform => PlatformType.macos;
-
-  @override
-  String get keyFilePath => 'Runner/Info.plist';
+  // macos信息配置文件
+  final String _infoPlistPath = 'Runner/Info.plist';
 
   // 图标资源路径
   final String _iconPath = 'Runner/Assets.xcassets/AppIcon.appiconset';
@@ -26,15 +25,22 @@ class MacosPlatformTool extends PlatformTool {
 
   // 读取plist文件信息
   Future<XmlDocument> _getPlistDocument(String projectPath) =>
-      readPlatformFileXml(projectPath, keyFilePath);
+      readPlatformFileXml(projectPath, _infoPlistPath);
 
   // 获取plist文件fragment
   Future<XmlDocumentFragment> _getPlistFragment(String projectPath) =>
-      readPlatformFileXmlFragment(projectPath, keyFilePath);
+      readPlatformFileXmlFragment(projectPath, _infoPlistPath);
 
   // 读取图标信息文件信息
   Future<Map> _getIconInfoJson(String projectPath) =>
       readPlatformFileJson(projectPath, _iconInfoPath);
+
+  @override
+  PlatformType get platform => PlatformType.macos;
+
+  @override
+  bool isPathAvailable(String projectPath) =>
+      File(join(getPlatformPath(projectPath), _infoPlistPath)).existsSync();
 
   @override
   Future<PlatformInfo<MacosPlatformInfo>?> getPlatformInfo(
@@ -68,7 +74,7 @@ class MacosPlatformTool extends PlatformTool {
     if (!isPathAvailable(projectPath)) return false;
     return writePlatformFileXml(
       projectPath,
-      keyFilePath,
+      _infoPlistPath,
       (await _getPlistFragment(projectPath))
         ..getElement('plist')
             ?.getElement('dict')

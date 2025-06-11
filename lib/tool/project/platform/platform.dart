@@ -57,18 +57,12 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   // 平台文件夹路径
   PlatformType get platform;
 
-  // 关键文件相对路径
-  String get keyFilePath;
-
-  // 获取平台文件夹路径
-  String get platformPath => platform.name;
-
   // 判断当前平台路径是否可用
-  bool isPathAvailable(String projectPath) =>
-      File(join(getPlatformPath(projectPath), keyFilePath)).existsSync();
+  bool isPathAvailable(String projectPath);
 
   // 获取平台路径
-  String getPlatformPath(String projectPath) => join(projectPath, platformPath);
+  String getPlatformPath(String projectPath) =>
+      join(projectPath, platform.name);
 
   // 获取平台文件路径
   String getPlatformFilePath(String projectPath, String filePath) =>
@@ -224,13 +218,12 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   }
 
   @override
-  Future<List<PlatformPermission>?> getPermissions(
-          String projectPath) async =>
+  Future<List<PlatformPermission>?> getPermissions(String projectPath) async =>
       null;
 
   @override
-  Future<bool> setPermissions(String projectPath,
-          List<PlatformPermission> permissions) async =>
+  Future<bool> setPermissions(
+          String projectPath, List<PlatformPermission> permissions) async =>
       true;
 }
 

@@ -13,11 +13,8 @@ typedef WindowsPlatformInfo = ();
 * @Time 2023/11/29 14:59
 */
 class WindowsPlatformTool extends PlatformTool {
-  @override
-  PlatformType get platform => PlatformType.windows;
-
-  @override
-  String get keyFilePath => 'runner/main.cpp';
+  // mainCPP文件路径
+  final String _mainCPPPath = 'runner/main.cpp';
 
   // 资源相对路径
   final String _resPath = 'runner/resources';
@@ -27,6 +24,13 @@ class WindowsPlatformTool extends PlatformTool {
 
   // label输入限制
   static final labelValidatorRegExp = RegExp(r'^[a-zA-Z1-9_]+$');
+
+  @override
+  PlatformType get platform => PlatformType.windows;
+
+  @override
+  bool isPathAvailable(String projectPath) =>
+      File(join(getPlatformPath(projectPath), _mainCPPPath)).existsSync();
 
   @override
   Future<PlatformInfo<WindowsPlatformInfo>?> getPlatformInfo(
@@ -45,7 +49,7 @@ class WindowsPlatformTool extends PlatformTool {
   @override
   Future<String?> getLabel(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final content = await readPlatformFile(projectPath, keyFilePath);
+    final content = await readPlatformFile(projectPath, _mainCPPPath);
     return content.regFirstGroup(_labelRegExp.pattern, 1);
   }
 
@@ -54,10 +58,10 @@ class WindowsPlatformTool extends PlatformTool {
     if (!isPathAvailable(projectPath)) return false;
     // 如果输入的label不合法，直接返回false
     if (!labelValidatorRegExp.hasMatch(label)) return false;
-    var content = await readPlatformFile(projectPath, keyFilePath);
+    var content = await readPlatformFile(projectPath, _mainCPPPath);
     final temp = _labelRegExp.pattern.replaceFirst('(.*)', label);
     content = content.replaceFirst(_labelRegExp, temp.replaceAll('\\', ''));
-    await writePlatformFile(projectPath, keyFilePath, content);
+    await writePlatformFile(projectPath, _mainCPPPath, content);
     return true;
   }
 
