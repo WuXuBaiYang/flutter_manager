@@ -87,7 +87,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
   Widget _buildImageType(BuildContext context) {
     return createSelector<ImageType>(
       selector: (_, provider) => provider.action.imageType,
-      builder: (_, imageType, __) {
+      builder: (_, imageType, _) {
         return Row(children: [
           if (imageType == ImageType.ico)
             const Padding(
@@ -142,7 +142,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
         borderRadius: BorderRadius.circular(8),
         child: createSelector<ImageEditorAction>(
           selector: (_, provider) => provider.action,
-          builder: (_, result, __) {
+          builder: (_, result, _) {
             return CustomImageCrop(
               ratio: result.ratio.ratio,
               image: FileImage(File(path)),
@@ -163,7 +163,7 @@ class ImageEditorDialog extends ProviderView<ImageEditorDialogProvider> {
     final ratioDisable = absoluteRatio != null;
     return createSelector<ImageEditorAction>(
       selector: (_, provider) => provider.action,
-      builder: (_, action, __) {
+      builder: (_, action, _) {
         return Row(children: [
           ConstrainedBox(
             constraints: const BoxConstraints.tightFor(width: 170),

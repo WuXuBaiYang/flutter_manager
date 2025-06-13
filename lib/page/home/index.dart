@@ -48,7 +48,7 @@ class HomePage extends ProviderPage<HomeProvider> {
     }).toList();
     return createSelector<int>(
       selector: (_, provider) => provider.currentIndex,
-      builder: (_, currentIndex, __) {
+      builder: (_, currentIndex, _) {
         return Row(children: [
           _buildNavigation(context, currentIndex),
           const VerticalDivider(),

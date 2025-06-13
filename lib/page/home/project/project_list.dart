@@ -78,7 +78,7 @@ class ProjectGridView extends StatelessWidget {
       gridDelegate: _gridDelegate,
       dragWidgetBuilderV2: DragWidgetBuilderV2(
         isScreenshotDragWidget: false,
-        builder: (_, child, __) => child,
+        builder: (_, child, _) => child,
       ),
       itemBuilder: (_, i) {
         final item = projects[i];

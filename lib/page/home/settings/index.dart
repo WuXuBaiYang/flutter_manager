@@ -40,7 +40,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
         // 环境设置
         Selector<EnvironmentProvider, List<Environment>>(
           selector: (_, provider) => provider.environments,
-          builder: (_, environments, __) {
+          builder: (_, environments, _) {
             return SettingItemEnvironment(
               environments: environments,
               onReorder: context.env.reorder,
@@ -56,7 +56,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
         ),
         // 环境缓存设置
         Consumer<EnvironmentProvider>(
-          builder: (_, ___, __) {
+          builder: (_, _, _) {
             return FutureBuilder<DownloadEnvInfo>(
               future: EnvironmentTool.getDownloadInfo(),
               builder: (_, snap) {
@@ -72,7 +72,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
         // 平台排序设置
         Selector<ProjectProvider, List<PlatformType>>(
           selector: (_, provider) => provider.platforms,
-          builder: (_, platforms, __) {
+          builder: (_, platforms, _) {
             return SettingItemPlatformSort(
               platforms: platforms,
               onReorder: context.project.swapPlatformSort,
@@ -83,7 +83,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
         // 主题设置
         Selector<ThemeProvider, ThemeMode>(
           selector: (_, provider) => provider.themeMode,
-          builder: (_, themeMode, __) {
+          builder: (_, themeMode, _) {
             return SettingItemThemeMode(
               themeMode: themeMode,
               brightness: context.theme.brightness,
@@ -95,7 +95,7 @@ class HomeSettingsView extends ProviderView<HomeSettingsProvider> {
         // 主题配色设置
         Selector<ThemeProvider, FlexScheme>(
           selector: (_, provider) => provider.scheme,
-          builder: (_, themeScheme, __) {
+          builder: (_, themeScheme, _) {
             return SettingItemThemeScheme(
               themeScheme: themeScheme,
               settingKey: context.setting.themeSchemeKey,

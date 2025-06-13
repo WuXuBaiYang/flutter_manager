@@ -63,7 +63,7 @@ class ProjectPermissionDialog
   Widget _buildTitle(BuildContext context) {
     return createSelector<int>(
       selector: (_, provider) => provider.selectPermissions.length,
-      builder: (_, count, __) {
+      builder: (_, count, _) {
         return Text('${platform.name}权限（$count）');
       },
     );
@@ -74,11 +74,11 @@ class ProjectPermissionDialog
     final searchController = provider.searchController;
     return LoadingFutureBuilder<List<PlatformPermission>?>(
       future: ProjectTool.getFullPermissions(platform),
-      builder: (_, permissions, __) {
+      builder: (_, permissions, _) {
         if (permissions == null) return const SizedBox();
         return createSelector<List<PlatformPermission>>(
           selector: (_, provider) => provider.selectPermissions,
-          builder: (_, selectPermissions, __) {
+          builder: (_, selectPermissions, _) {
             return StatefulBuilder(
               builder: (_, setState) {
                 final tempList = searchController.text.isNotEmpty
@@ -126,7 +126,7 @@ class ProjectPermissionDialog
     return ListView.separated(
       shrinkWrap: true,
       itemCount: permissions.length,
-      separatorBuilder: (_, __) => const Divider(),
+      separatorBuilder: (_, _) => const Divider(),
       itemBuilder: (_, i) {
         final item = permissions[i];
         return CheckboxListTile(

@@ -64,7 +64,7 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
       key: provider.formKey,
       child: createSelector<Project>(
         selector: (_, provider) => provider.project,
-        builder: (_, project, __) {
+        builder: (_, project, _) {
           return Column(mainAxisSize: MainAxisSize.min, children: [
             Row(children: [
               _buildFieldLogo(context, project),
@@ -131,7 +131,7 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   Widget _buildFieldEnv(BuildContext context, Project project) {
     return Selector<EnvironmentProvider, List<Environment>>(
       selector: (_, provider) => provider.environments,
-      builder: (_, environments, __) {
+      builder: (_, environments, _) {
         return DropdownButtonFormField<Environment>(
           onChanged: (v) {},
           hint: const Text('请选择环境'),

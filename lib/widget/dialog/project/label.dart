@@ -80,7 +80,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
   Widget _buildLinkLabels(BuildContext context) {
     return Selector<ProjectLabelDialogProvider, Map<PlatformType, String?>>(
       selector: (_, provider) => provider.linkLabelMap,
-      builder: (_, linkLabelMap, __) {
+      builder: (_, linkLabelMap, _) {
         if (linkLabelMap.isEmpty) return const SizedBox();
         return Card(
           margin: EdgeInsets.zero,
@@ -110,7 +110,7 @@ class ProjectLabelDialog extends ProviderView<ProjectLabelDialogProvider> {
   Widget _buildLabels(BuildContext context) {
     return Selector<ProjectLabelDialogProvider, Map<PlatformType, String?>>(
       selector: (_, provider) => provider.labelMap,
-      builder: (_, labelMap, __) {
+      builder: (_, labelMap, _) {
         return Column(
           children: List.generate(labelMap.length, (i) {
             final item = labelMap.entries.elementAt(i);

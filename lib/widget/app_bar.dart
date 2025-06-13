@@ -42,7 +42,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (_, theme, __) {
+      builder: (_, theme, _) {
         final brightness = theme.brightness;
         return DragToMoveArea(
           child: AppBar(
@@ -97,7 +97,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget _buildMaximizeButton(Brightness brightness) {
     return Selector<WindowProvider, bool>(
       selector: (_, provider) => provider.maximized,
-      builder: (context, isMaximized, __) {
+      builder: (context, isMaximized, _) {
         if (isMaximized) {
           return WindowCaptionButton.unmaximize(
             brightness: brightness,

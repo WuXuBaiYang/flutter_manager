@@ -91,7 +91,7 @@ class CreateAndroidSignOptions extends StatelessWidget {
     final provider = context.read<AndroidSignKeyDialogProvider>();
     return Selector<AndroidSignKeyDialogProvider, String?>(
       selector: (_, provider) => provider.signKeyInfo?.keyAlg,
-      builder: (_, keyAlg, __) {
+      builder: (_, keyAlg, _) {
         return DropdownButtonFormField<String>(
           value: keyAlg,
           decoration: const InputDecoration(
@@ -119,7 +119,7 @@ class CreateAndroidSignOptions extends StatelessWidget {
     final provider = context.read<AndroidSignKeyDialogProvider>();
     return Selector<AndroidSignKeyDialogProvider, int?>(
       selector: (_, provider) => provider.signKeyInfo?.keySize,
-      builder: (_, keySize, __) {
+      builder: (_, keySize, _) {
         return DropdownButtonFormField<int>(
           value: keySize,
           decoration: const InputDecoration(
@@ -143,7 +143,7 @@ class CreateAndroidSignOptions extends StatelessWidget {
     final provider = context.read<AndroidSignKeyDialogProvider>();
     return Selector<AndroidSignKeyDialogProvider, int?>(
       selector: (_, provider) => provider.signKeyInfo?.validity,
-      builder: (_, validity, __) {
+      builder: (_, validity, _) {
         validity ??= 99 * 365;
         return DropdownButtonFormField<int>(
           value: validity ~/ 365,

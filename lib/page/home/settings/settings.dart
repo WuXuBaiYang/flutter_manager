@@ -113,7 +113,7 @@ class SettingItemEnvironment extends StatelessWidget {
       onReorder: onReorder,
       itemCount: environments.length,
       buildDefaultDragHandles: false,
-      proxyDecorator: (_, index, ___) {
+      proxyDecorator: (_, index, _) {
         final item = environments[index];
         return _buildListItemProxy(item);
       },
@@ -280,7 +280,7 @@ class SettingItemPlatformSort extends StatelessWidget {
       itemCount: platforms.length,
       buildDefaultDragHandles: false,
       scrollDirection: Axis.horizontal,
-      proxyDecorator: (_, index, ___) {
+      proxyDecorator: (_, index, _) {
         final item = platforms[index];
         return Material(
           color: Colors.transparent,

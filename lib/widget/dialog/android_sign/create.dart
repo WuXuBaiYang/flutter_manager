@@ -53,7 +53,7 @@ class CreateAndroidSignDialog
         key: provider.formKey,
         child: createSelector< bool>(
           selector: (_, provider) => provider.samePass,
-          builder: (_, samePass, __) {
+          builder: (_, samePass, _) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,

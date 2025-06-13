@@ -48,7 +48,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
       body: EmptyBoxView(
         hint: '项目不存在',
         isEmpty: project == null,
-        builder: (_, __) {
+        builder: (_, _) {
           if (project == null) return const SizedBox();
           return _buildContent(context, project);
         },
@@ -60,12 +60,12 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
   Widget _buildContent(BuildContext context, Project project) {
     return Selector<PlatformProvider, List<PlatformType>>(
       selector: (_, provider) => provider.platformList,
-      builder: (_, platforms, __) {
+      builder: (_, platforms, _) {
         return DefaultTabController(
           length: range(platforms.length, 1, PlatformType.values.length),
           child: NestedScrollView(
             controller: provider.scrollController,
-            headerSliverBuilder: (_, __) =>
+            headerSliverBuilder: (_, _) =>
                 [_buildAppBar(context, platforms, project)],
             body: _buildTabBarView(context, platforms),
           ),
@@ -79,7 +79,7 @@ class ProjectDetailPage extends ProviderPage<ProjectDetailProvider> {
       BuildContext context, List<PlatformType> platforms, Project project) {
     return createSelector< bool>(
       selector: (_, provider) => provider.isScrollTop,
-      builder: (_, isScrollTop, __) {
+      builder: (_, isScrollTop, _) {
         return ProjectDetailAppBar(
           project: project,
           isCollapsed: isScrollTop,

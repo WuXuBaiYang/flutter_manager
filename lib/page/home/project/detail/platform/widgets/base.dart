@@ -21,11 +21,11 @@ abstract class ProjectPlatformView<T extends Record> extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<PlatformProvider, PlatformInfo<T>?>(
       selector: (_, provider) => provider.getPlatform<T>(platform),
-      builder: (_, platform, __) {
+      builder: (_, platform, _) {
         return EmptyBoxView(
           hint: '无平台信息',
           isEmpty: platform == null,
-          builder: (_, __) {
+          builder: (_, _) {
             if (platform == null) return const SizedBox();
             return _buildPlatformWidget(context, platform);
           },

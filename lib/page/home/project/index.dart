@@ -36,7 +36,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
   Widget _buildContent(BuildContext context) {
     return Selector<ProjectProvider, bool>(
       selector: (_, provider) => provider.hasProject,
-      builder: (_, hasProject, __) {
+      builder: (_, hasProject, _) {
         return EmptyBoxView(
           hint: '添加或拖拽\n项目/环境目录',
           isEmpty: !hasProject,
@@ -54,9 +54,9 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
   // 构建置顶项目集合
   Widget _buildPinnedProjects(BuildContext context) {
     return Selector<ProjectProvider, List<Project>>(
-      shouldRebuild: (_, __) => true,
+      shouldRebuild: (_, _) => true,
       selector: (_, provider) => provider.pinnedProjects,
-      builder: (_, pinnedProjects, __) {
+      builder: (_, pinnedProjects, _) {
         if (pinnedProjects.isEmpty) return const SizedBox();
         return Card(
           child: ConstrainedBox(
@@ -84,9 +84,9 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
   Widget _buildProjects(BuildContext context) {
     final projectProvider = context.project;
     return Selector<ProjectProvider, List<Project>>(
-      shouldRebuild: (_, __) => true,
+      shouldRebuild: (_, _) => true,
       selector: (_, provider) => provider.projects,
-      builder: (_, projects, __) {
+      builder: (_, projects, _) {
         if (projects.isEmpty) return const SizedBox();
         return ProjectGridView(
           projects: projects,

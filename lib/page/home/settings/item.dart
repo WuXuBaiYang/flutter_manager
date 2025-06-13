@@ -50,7 +50,7 @@ class _SettingItem extends State<SettingItem> {
   Widget build(BuildContext context) {
     return Selector<SettingProvider, Key?>(
       selector: (_, provider) => provider.selectedKey,
-      builder: (_, key, __) {
+      builder: (_, key, _) {
         if (key == widget.key) _startTimer(context);
         return ListTile(
           selected: _selected,

@@ -53,7 +53,7 @@ class MyApp extends ProviderView {
   @override
   Widget buildWidget(BuildContext context) {
     return Consumer<ThemeProvider>(
-      builder: (_, theme, __) {
+      builder: (_, theme, _) {
         return MaterialApp.router(
           title: 'Flutter管理',
           theme: theme.themeData,

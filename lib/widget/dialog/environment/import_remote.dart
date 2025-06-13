@@ -37,7 +37,7 @@ class ImportEnvRemoteDialog
   Widget buildWidget(BuildContext context) {
     return createSelector<int>(
       selector: (_, provider) => provider.currentStep,
-      builder: (_, currentStep, __) {
+      builder: (_, currentStep, _) {
         return CustomDialog(
           title: Text(['选择', '下载', '导入'][currentStep]),
           style: CustomDialogStyle(
@@ -69,7 +69,7 @@ class ImportEnvRemoteDialog
   Widget _buildPackageList(BuildContext context) {
     return LoadingFutureBuilder<Map<String, List<EnvPackage>>>(
       future: EnvironmentTool.getChannelPackages(),
-      builder: (_, channelPackages, __) {
+      builder: (_, channelPackages, _) {
         return SizedBox.fromSize(
           size: Size.fromHeight(400),
           child: EnvironmentRemoteList(
@@ -113,7 +113,7 @@ class ImportEnvRemoteDialog
   Widget _buildPackageImport(BuildContext context) {
     return createSelector<EnvPackage?>(
       selector: (_, provider) => provider.currentPackage,
-      builder: (_, currentPackage, __) {
+      builder: (_, currentPackage, _) {
         return Form(
           key: provider.formKey,
           child: Column(mainAxisSize: MainAxisSize.min, children: [

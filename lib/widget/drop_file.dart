@@ -81,7 +81,7 @@ class DropFileView extends ProviderView<DropFileViewProvider> {
         },
         child: createSelector< FileDropState?>(
           selector: (_, provider) => provider.dropState,
-          builder: (_, dropState, __) {
+          builder: (_, dropState, _) {
             final color = dropState?.warning == true
                 ? Colors.red.withValues(alpha: 0.25)
                 : null;

@@ -13,7 +13,7 @@ part 'config.freezed.dart';
 class ConfigProvider extends BaseConfigProvider<AppConfig> {
   ConfigProvider(super.context)
       : super(
-            creator: (json) => AppConfig.fromJson(json),
+            creator: (e) => AppConfig.fromJson(e),
             serializer: (e) => e.toJson());
 }
 

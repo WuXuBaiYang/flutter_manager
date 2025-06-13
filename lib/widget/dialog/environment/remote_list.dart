@@ -79,7 +79,7 @@ class EnvironmentRemoteList extends StatelessWidget {
               child: ListView.separated(
                 shrinkWrap: true,
                 itemCount: tempList.length,
-                separatorBuilder: (_, __) => const Divider(),
+                separatorBuilder: (_, _) => const Divider(),
                 itemBuilder: (_, i) {
                   final item = tempList[i];
                   return _buildPackageListItem(context, item);

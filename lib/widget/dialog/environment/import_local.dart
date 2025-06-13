@@ -58,7 +58,7 @@ class ImportEnvLocalDialog extends ProviderView<ImportEnvLocalDialogProvider> {
   Widget _buildContent(BuildContext context) {
     return createSelector< Environment>(
       selector: (_, provider) => provider.env,
-      builder: (_, env, __) {
+      builder: (_, env, _) {
         return Form(
           key: provider.formKey,
           child: Column(mainAxisSize: MainAxisSize.min, children: [
