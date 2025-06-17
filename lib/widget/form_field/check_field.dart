@@ -1,22 +1,26 @@
 import 'package:flutter/material.dart';
 
 /*
-* 项目置顶表单项
+* 选择表单项
 * @author wuxubaiyang
 * @Time 2023/12/4 19:50
 */
-class ProjectPinnedFormField extends StatelessWidget {
+class CheckFormField extends StatelessWidget {
   // 表单项key
   final Key? fieldKey;
 
   // 初始化值
   final bool? initialValue;
 
+  // 标题
+  final String title;
+
   // 保存回调
   final FormFieldSetter<bool>? onSaved;
 
-  const ProjectPinnedFormField({
+  const CheckFormField({
     super.key,
+    required this.title,
     this.onSaved,
     this.fieldKey,
     this.initialValue,
@@ -44,7 +48,7 @@ class ProjectPinnedFormField extends StatelessWidget {
     return InputDecorator(
       decoration: inputDecoration,
       child: CheckboxListTile(
-        title: const Text('置顶'),
+        title: Text(title),
         onChanged: field.didChange,
         value: field.value ?? false,
         contentPadding: const EdgeInsets.only(right: 4),

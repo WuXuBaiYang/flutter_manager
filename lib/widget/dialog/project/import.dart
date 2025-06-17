@@ -7,7 +7,7 @@ import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/widget/form_field/color_picker.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/project_logo.dart';
-import 'package:flutter_manager/widget/form_field/project_pinned.dart';
+import 'package:flutter_manager/widget/form_field/check_field.dart';
 import 'package:jtech_base/jtech_base.dart';
 
 // 展示项目导入弹窗
@@ -15,9 +15,7 @@ Future<Project?> showImportProject(BuildContext context, {Project? project}) {
   return showDialog<Project>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => ImportProjectDialog(
-      project: project,
-    ),
+    builder: (_) => ImportProjectDialog(project: project),
   );
 }
 
@@ -44,12 +42,9 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
     return CustomDialog(
       scrollable: true,
       title: Text('${isEdit ? '编辑' : '添加'}项目'),
-      content: _buildContent(context),
+      content: _buildContent(),
       actions: [
-        TextButton(
-          onPressed: context.pop,
-          child: const Text('取消'),
-        ),
+        TextButton(onPressed: context.pop, child: const Text('取消')),
         TextButton(
           child: Text(isEdit ? '修改' : '添加'),
           onPressed: () => provider.submit().loading(context),
@@ -59,51 +54,45 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   }
 
   // 构建内容
-  Widget _buildContent(BuildContext context) {
+  Widget _buildContent() {
     return Form(
       key: provider.formKey,
-      child: createSelector<Project>(
-        selector: (_, provider) => provider.project,
-        builder: (_, project, _) {
-          return Column(mainAxisSize: MainAxisSize.min, children: [
-            Row(children: [
-              _buildFieldLogo(context, project),
-              const SizedBox(width: 14),
-              Expanded(child: _buildFieldLabel(context, project)),
-            ]),
-            const SizedBox(height: 8),
-            _buildFieldPath(context, project),
-            const SizedBox(height: 8),
-            _buildFieldEnv(context, project),
-            const SizedBox(height: 8),
-            _buildFieldColor(context, project),
-            const SizedBox(height: 8),
-            _buildFieldPinned(context, project),
-          ]);
-        },
+      child: Column(
+        spacing: 8,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            spacing: 14,
+            children: [
+              _buildFieldLogo(),
+              Expanded(child: _buildFieldLabel()),
+            ],
+          ),
+          _buildFieldPath(),
+          _buildFieldEnv(),
+          _buildFieldColor(),
+          _buildFieldPinned(),
+        ],
       ),
     );
   }
 
   // 构建表单项-项目图标
-  Widget _buildFieldLogo(BuildContext context, Project project) {
+  Widget _buildFieldLogo() {
     return ProjectLogoFormField(
-      initialValue: project.logo,
       fieldKey: provider.logoFormFieldKey,
+      initialValue: provider.project.logo,
       onSaved: (v) => provider.updateFormData(logo: v),
     );
   }
 
   // 构建表单项-项目别名
-  Widget _buildFieldLabel(BuildContext context, Project project) {
-    final decoration = InputDecoration(
-      labelText: '别名',
-      hintText: '请输入别名',
-    );
+  Widget _buildFieldLabel() {
+    final decoration = InputDecoration(labelText: '别名', hintText: '请输入别名');
     return TextFormField(
       decoration: decoration,
-      initialValue: project.label,
       key: provider.labelFormFieldKey,
+      initialValue: provider.project.label,
       onSaved: (v) => provider.updateFormData(label: v),
       validator: (value) {
         if (value?.isNotEmpty != true) return '请输入项目别名';
@@ -113,11 +102,11 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   }
 
   // 构建表单项-项目路径
-  Widget _buildFieldPath(BuildContext context, Project project) {
+  Widget _buildFieldPath() {
     return LocalPathFormField(
       label: '项目路径',
       hint: '请选择项目路径',
-      initialValue: project.path,
+      initialValue: provider.project.path,
       onPathSelected: provider.pathUpdate,
       onSaved: (v) => provider.updateFormData(path: v),
       validator: (v) {
@@ -128,24 +117,21 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   }
 
   // 构建表单项-环境
-  Widget _buildFieldEnv(BuildContext context, Project project) {
+  Widget _buildFieldEnv() {
     return Selector<EnvironmentProvider, List<Environment>>(
       selector: (_, provider) => provider.environments,
       builder: (_, environments, _) {
         return DropdownButtonFormField<Environment>(
           onChanged: (v) {},
           hint: const Text('请选择环境'),
-          value: project.environment ?? environments.firstOrNull,
           onSaved: (v) => provider.updateFormData(environment: v),
+          value: provider.project.environment ?? environments.firstOrNull,
           validator: (v) {
             if (v == null) return '请选择环境';
             return null;
           },
           items: environments
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.title),
-                  ))
+              .map((e) => DropdownMenuItem(value: e, child: Text(e.title)))
               .toList(),
         );
       },
@@ -153,17 +139,18 @@ class ImportProjectDialog extends ProviderView<ImportProjectDialogProvider> {
   }
 
   // 构建表单项-颜色
-  Widget _buildFieldColor(BuildContext context, Project project) {
+  Widget _buildFieldColor() {
     return ColorPickerFormField(
-      initialValue: project.color,
+      initialValue: provider.project.color,
       onSaved: (v) => provider.updateFormData(color: v),
     );
   }
 
   // 构建表单项-置顶
-  Widget _buildFieldPinned(BuildContext context, Project project) {
-    return ProjectPinnedFormField(
-      initialValue: project.pinned,
+  Widget _buildFieldPinned() {
+    return CheckFormField(
+      title: '置顶',
+      initialValue: provider.project.pinned,
       onSaved: (v) => provider.updateFormData(pinned: v),
     );
   }
@@ -177,13 +164,10 @@ class ImportProjectDialogProvider extends BaseProvider {
   final labelFormFieldKey = GlobalKey<FormFieldState<String>>(),
       logoFormFieldKey = GlobalKey<FormFieldState<String>>();
 
-  ImportProjectDialogProvider(super.context, this._project);
+  ImportProjectDialogProvider(super.context, this.project);
 
   // 项目信息
-  Project _project;
-
-  // 获取项目信息
-  Project get project => _project;
+  Project project;
 
   // 导入项目
   Future<Project?> submit() async {
@@ -206,10 +190,9 @@ class ImportProjectDialogProvider extends BaseProvider {
     if (path?.isEmpty ?? true) return;
     final result = await ProjectTool.getProjectInfo(path!);
     if (result == null) return;
+    project = result;
     labelFormFieldKey.currentState?.didChange(result.label);
     logoFormFieldKey.currentState?.didChange(result.logo);
-    _project = result;
-    notifyListeners();
   }
 
   // 更新表单数据
@@ -221,14 +204,13 @@ class ImportProjectDialogProvider extends BaseProvider {
     Color? color,
     bool? pinned,
   }) {
-    _project = _project.copyWith(
-      path: path ?? _project.path,
-      label: label ?? _project.label,
-      logo: logo ?? _project.logo,
-      environment: environment ?? _project.environment,
-      color: color ?? _project.color,
-      pinned: pinned ?? _project.pinned,
+    project = project.copyWith(
+      path: path ?? project.path,
+      label: label ?? project.label,
+      logo: logo ?? project.logo,
+      environment: environment ?? project.environment,
+      color: color ?? project.color,
+      pinned: pinned ?? project.pinned,
     );
-    notifyListeners();
   }
 }

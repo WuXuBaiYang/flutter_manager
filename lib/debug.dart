@@ -16,5 +16,6 @@ class Debug {
     );
   }
 
-  static Future<void> debug(BuildContext context) async {}
+  static Future<void> debug(BuildContext context) async {
+  }
 }

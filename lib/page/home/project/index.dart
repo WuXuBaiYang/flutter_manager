@@ -3,10 +3,11 @@ import 'package:flutter_manager/common/router.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/widget/dialog/project/create.dart';
 import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
+import 'package:flutter_manager/widget/fab_menu.dart';
 import 'package:jtech_base/jtech_base.dart';
-
 import 'project_list.dart';
 
 /*
@@ -25,9 +26,26 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
   Widget buildWidget(BuildContext context) {
     return Scaffold(
       body: _buildContent(context),
-      floatingActionButton: FloatingActionButton(
-        onPressed: provider.addProject,
-        child: const Icon(Icons.add),
+      floatingActionButton: FabMenuButton(
+        duration: const Duration(milliseconds: 120),
+        constraints: const BoxConstraints(
+          maxWidth: 110,
+          minWidth: 60,
+          minHeight: 60,
+        ),
+        items: [
+          ListTile(
+            title: const Text('导入'),
+            onTap: provider.addProject,
+            leading: const Icon(Icons.import_export_rounded),
+          ),
+          ListTile(
+            title: const Text('新建'),
+            onTap: provider.createProject,
+            leading: const Icon(Icons.create_new_folder_outlined),
+          ),
+        ],
+        child: Icon(Icons.add),
       ),
     );
   }
@@ -60,9 +78,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
         if (pinnedProjects.isEmpty) return const SizedBox();
         return Card(
           child: ConstrainedBox(
-            constraints: BoxConstraints.loose(
-              const Size.fromHeight(190),
-            ),
+            constraints: BoxConstraints.loose(const Size.fromHeight(190)),
             child: ProjectGridView(
               projects: pinnedProjects,
               onPinned: context.project.togglePinned,
@@ -92,9 +108,9 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
           projects: projects,
           onReorder: projectProvider.reorder,
           onPinned: projectProvider.togglePinned,
-          padding: const EdgeInsets.all(14).copyWith(
-            bottom: kToolbarHeight + 24,
-          ),
+          padding: const EdgeInsets.all(
+            14,
+          ).copyWith(bottom: kToolbarHeight + 24),
           onDetail: (item) async {
             await router.goProjectDetail(item);
             projectProvider.refresh();
@@ -112,6 +128,18 @@ class HomeProjectProvider extends BaseProvider {
 
   // 添加项目
   void addProject() {
+    if (!checkEnvironment()) return;
+    showImportProject(context);
+  }
+
+  // 新建项目
+  void createProject() {
+    if (!checkEnvironment()) return;
+    showCreateProject(context);
+  }
+
+  // 检查是否已设置环境
+  bool checkEnvironment() {
     if (!context.env.hasEnvironment) {
       showNoticeError(
         '缺少Flutter环境',
@@ -122,9 +150,9 @@ class HomeProjectProvider extends BaseProvider {
           ),
         ],
       );
-      return;
+      return false;
     }
-    showImportProject(context);
+    return true;
   }
 
   // 移除项目
@@ -133,10 +161,7 @@ class HomeProjectProvider extends BaseProvider {
     showNoticeSuccess(
       '${item.label} 项目已移除',
       actions: [
-        TextButton(
-          child: Text('撤销'),
-          onPressed: () => provider.update(item),
-        ),
+        TextButton(child: Text('撤销'), onPressed: () => provider.update(item)),
       ],
     );
   }

@@ -77,6 +77,10 @@ class Environment {
   @Transient()
   String get title => 'Flutter · $version · $channel';
 
+  // 获取bin路径
+  @Transient()
+  String get binPath => join(path, 'bin');
+
   Environment copyWith({
     String? path,
     String? version,

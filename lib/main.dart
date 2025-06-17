@@ -40,15 +40,17 @@ class MyApp extends ProviderView {
 
   @override
   List<SingleChildWidget> loadProviders(BuildContext context) => [
-        ChangeNotifierProvider(create: (context) => ThemeProvider(context)),
-        ChangeNotifierProvider(create: (context) => WindowProvider(context)),
-        ChangeNotifierProvider<EnvironmentProvider>(
-            create: (context) => EnvironmentProvider(context)),
-        ChangeNotifierProvider(create: (context) => ProjectProvider(context)),
-        ChangeNotifierProvider(create: (context) => SettingProvider(context)),
-        ChangeNotifierProvider<ConfigProvider>(
-            create: (context) => ConfigProvider(context)),
-      ];
+    ChangeNotifierProvider(create: (context) => ThemeProvider(context)),
+    ChangeNotifierProvider(create: (context) => WindowProvider(context)),
+    ChangeNotifierProvider<EnvironmentProvider>(
+      create: (context) => EnvironmentProvider(context),
+    ),
+    ChangeNotifierProvider(create: (context) => ProjectProvider(context)),
+    ChangeNotifierProvider(create: (context) => SettingProvider(context)),
+    ChangeNotifierProvider<ConfigProvider>(
+      create: (context) => ConfigProvider(context),
+    ),
+  ];
 
   @override
   Widget buildWidget(BuildContext context) {
