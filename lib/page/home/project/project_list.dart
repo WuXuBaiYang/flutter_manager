@@ -62,11 +62,13 @@ class ProjectGridView extends StatelessWidget {
       );
 
   // 右键菜单
-  ContextMenu get _contextMenu => ContextMenu(entries: [
-        MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
-        MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
-        MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
-      ]);
+  ContextMenu get _contextMenu => ContextMenu(
+    entries: [
+      MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
+      MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
+      MenuItem(value: onDelete, label: '删除', icon: Icons.delete),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -143,18 +145,21 @@ class ProjectGridView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Row(spacing: 8, children: [
-                    ConstrainedBox(
-                      constraints: titleConstraints,
-                      child: Text(
-                        item.label,
-                        maxLines: 1,
-                        style: titleStyle,
-                        overflow: TextOverflow.ellipsis,
+                  Row(
+                    spacing: 8,
+                    children: [
+                      ConstrainedBox(
+                        constraints: titleConstraints,
+                        child: Text(
+                          item.label,
+                          maxLines: 1,
+                          style: titleStyle,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                    _buildEnvironmentBadge(item),
-                  ]),
+                      _buildEnvironmentBadge(item),
+                    ],
+                  ),
                   Text(
                     item.path,
                     maxLines: 2,

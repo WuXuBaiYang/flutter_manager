@@ -4,6 +4,7 @@ import 'package:flutter_manager/database/model/environment.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/model/create_template.dart';
 import 'package:flutter_manager/provider/environment.dart';
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/tool.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/check_field.dart';
@@ -49,17 +50,23 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
   Widget _buildContent() {
     return Form(
       key: provider.formKey,
-      child: Column(
-        spacing: 8,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildNameField(),
-          _buildFieldEnv(),
-          _buildTargetDirField(),
-          _buildUrlField(),
-          _buildDescriptionField(),
-          _buildFinishOpen(),
-        ],
+      child: ScrollConfiguration(
+        behavior: const ScrollBehavior().copyWith(scrollbars: false),
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 8,
+            children: [
+              _buildNameField(),
+              _buildFieldEnv(),
+              _buildTargetDirField(),
+              _buildUrlField(),
+              _buildDescriptionField(),
+              _buildFinishOpen(),
+              Divider(),
+              _buildPlatformList(),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -214,6 +221,148 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
     );
   }
 
+  // 构建平台选择列表
+  Widget _buildPlatformList() {
+    return createSelector(
+      selector: (_, p) => p.platforms,
+      builder: (_, platforms, _) {
+        final selectAll = PlatformType.values.every(platforms.containsKey);
+        return Column(
+          children: [
+            CheckboxListTile(
+              tristate: true,
+              title: Text('平台'),
+              contentPadding: EdgeInsets.only(right: 4),
+              onChanged: (v) => provider.selectAll(v ?? false),
+              value: selectAll ? true : (platforms.isEmpty ? false : null),
+            ),
+            ...PlatformType.values.map(
+              (e) => _buildPlatformListItem(e, platforms[e]),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // 构建平台列表项
+  Widget _buildPlatformListItem(PlatformType type, TemplatePlatform? platform) {
+    return Column(
+      children: [
+        CheckboxListTile(
+          dense: true,
+          value: platform != null,
+          title: Text('- ${type.name}'),
+          contentPadding: EdgeInsets.only(right: 4),
+          onChanged: (v) {
+            if (v == null) return;
+            final platform = v ? TemplatePlatform.create(type: type) : null;
+            provider.updatePlatform(type, platform);
+          },
+        ),
+        switch (type) {
+          PlatformType.android => _buildPlatformAndroidField(
+            platform as TemplatePlatformAndroid?,
+          ),
+          PlatformType.ios => _buildPlatformIosField(
+            platform as TemplatePlatformIos?,
+          ),
+          PlatformType.macos => _buildPlatformMacosField(
+            platform as TemplatePlatformMacos?,
+          ),
+          _ => SizedBox(),
+        },
+      ],
+    );
+  }
+
+  // 构建android平台参数
+  Widget _buildPlatformAndroidField(TemplatePlatformAndroid? platform) {
+    return Column(
+      spacing: 14,
+      children: [
+        TextFormField(
+          autofocus: true,
+          controller: provider.projectNameController,
+          decoration: InputDecoration(
+            labelText: '包名(PackageName)',
+            hintText: '请输入包名',
+          ),
+          onSaved: (v) {
+            if (v == null || platform == null) return;
+            provider.updatePlatform(
+              PlatformType.android,
+              platform.copyWith(packageName: v),
+            );
+          },
+          validator: (v) {
+            if (platform != null && v?.isNotEmpty != true) return '请输入包名';
+            return null;
+          },
+        ),
+        SizedBox(),
+      ],
+    );
+  }
+
+  // 构建ios平台参数
+  Widget _buildPlatformIosField(TemplatePlatformIos? platform) {
+    return Column(
+      spacing: 14,
+      children: [
+        TextFormField(
+          autofocus: true,
+          controller: provider.projectNameController,
+          decoration: InputDecoration(
+            labelText: '包名(BundleId)',
+            hintText: '请输入包名',
+          ),
+          onSaved: (v) {
+            if (v == null || platform == null) return;
+            provider.updatePlatform(
+              PlatformType.ios,
+              platform.copyWith(bundleId: v),
+            );
+          },
+          validator: (v) {
+            if (platform != null && v?.isNotEmpty != true) return '请输入包名';
+            return null;
+          },
+        ),
+        SizedBox(),
+      ],
+    );
+  }
+
+  // 构建macos平台参数
+  Widget _buildPlatformMacosField(TemplatePlatformMacos? platform) {
+    return Column(
+      spacing: 14,
+      children: [
+        TextFormField(
+          autofocus: true,
+          controller: provider.projectNameController,
+          decoration: InputDecoration(
+            labelText: '包名(BundleId)',
+            hintText: '请输入包名',
+          ),
+          onSaved: (v) {
+            if (v == null || platform == null) return;
+            provider.updatePlatform(
+              PlatformType.macos,
+              platform.copyWith(bundleId: v),
+            );
+          },
+          validator: (v) {
+            if (platform != null && v?.isNotEmpty != true) return '请输入包名';
+            return null;
+          },
+        ),
+        SizedBox(),
+      ],
+    );
+  }
+
   // 构建链接标志
   Widget _buildLinkIcon() {
     return Tooltip(message: '右侧为空时与最左侧保持一致', child: Icon(Icons.link, size: 16));
@@ -228,17 +377,42 @@ class CreateProjectProvider extends BaseProvider {
   final projectNameController = TextEditingController(),
       devUrlController = TextEditingController();
 
-  // 表单项项目名/数据库名key
-  final appNameFormFieldKey = GlobalKey<FormFieldState<String>>(),
-      dbNameFormFieldKey = GlobalKey<FormFieldState<String>>();
-
   CreateProjectProvider(super.context);
 
   // 创建项目模板
   CreateTemplate _template = CreateTemplate.empty();
 
+  // 获取平台集合
+  Map<PlatformType, TemplatePlatform> get platforms => _template.platforms;
+
   // 创建项目
   Future<void> submit() async {}
+
+  // 选择/取消选择全部
+  void selectAll(bool selectedAll) {
+    _template = _template.copyWith(
+      platforms: Map.from(
+        selectedAll
+            ? PlatformType.values.asMap().map(
+                (_, v) => MapEntry(v, TemplatePlatform.create(type: v)),
+              )
+            : {},
+      ),
+    );
+    notifyListeners();
+  }
+
+  // 更新指定的平台
+  void updatePlatform(PlatformType type, TemplatePlatform? platform) {
+    final platforms = Map<PlatformType, TemplatePlatform>.from(
+      _template.platforms,
+    );
+    platform == null
+        ? platforms.remove(type)
+        : platforms.addAll({type: platform});
+    _template = _template.copyWith(platforms: platforms);
+    notifyListeners();
+  }
 
   // 更新表单数据
   void updateFormData({

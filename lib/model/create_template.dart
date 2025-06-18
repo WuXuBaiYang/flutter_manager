@@ -34,22 +34,6 @@ abstract class CreateTemplate with _$CreateTemplate {
     platforms: {},
   );
 
-  // 添加一个平台
-  CreateTemplate addPlatform(TemplatePlatform platform) =>
-      copyWith(platforms: {...platforms, platform.platform: platform});
-
-  // 添加android平台
-  CreateTemplate addPlatformAndroid(String packageName) =>
-      addPlatform(TemplatePlatformAndroid.create(packageName: packageName));
-
-  // 添加ios平台
-  CreateTemplate addPlatformIos(String bundleId) =>
-      addPlatform(TemplatePlatformIos.create(bundleId: bundleId));
-
-  // 添加macos平台
-  CreateTemplate addPlatformMacos(String bundleId) =>
-      addPlatform(TemplatePlatformMacos.create(bundleId: bundleId));
-
   // 将参数转化成命令
   String toCommand() =>
       '--flutter-bin "$flutterBin" --project-name $projectName --app-name "${appName ?? projectName}" --db-name "${dbName ?? projectName}" '
@@ -64,14 +48,19 @@ abstract class CreateTemplate with _$CreateTemplate {
 abstract class TemplatePlatform with _$TemplatePlatform {
   const TemplatePlatform._();
 
-  const factory TemplatePlatform({required PlatformType platform}) =
+  const factory TemplatePlatform({required PlatformType type}) =
       _TemplatePlatform;
 
   factory TemplatePlatform.fromJson(Map<String, dynamic> json) =>
       _$TemplatePlatformFromJson(json);
 
-  static TemplatePlatform create({required PlatformType platform}) =>
-      TemplatePlatform(platform: platform);
+  static TemplatePlatform create({required PlatformType type}) =>
+      switch (type) {
+        PlatformType.android => TemplatePlatformAndroid.create(packageName: ''),
+        PlatformType.ios => TemplatePlatformIos.create(bundleId: ''),
+        PlatformType.macos => TemplatePlatformMacos.create(bundleId: ''),
+        _ => TemplatePlatform(type: type),
+      };
 
   // 获取所有参数命令行
   String toCommand() => '';
@@ -85,7 +74,7 @@ abstract class TemplatePlatformAndroid
   const TemplatePlatformAndroid._();
 
   const factory TemplatePlatformAndroid({
-    required PlatformType platform,
+    required PlatformType type,
     required String packageName,
   }) = _TemplatePlatformAndroid;
 
@@ -94,7 +83,7 @@ abstract class TemplatePlatformAndroid
 
   static TemplatePlatformAndroid create({required String packageName}) =>
       TemplatePlatformAndroid(
-        platform: PlatformType.android,
+        type: PlatformType.android,
         packageName: packageName,
       );
 
@@ -111,7 +100,7 @@ abstract class TemplatePlatformIos
   const TemplatePlatformIos._();
 
   const factory TemplatePlatformIos({
-    required PlatformType platform,
+    required PlatformType type,
     required String bundleId,
   }) = _TemplatePlatformIos;
 
@@ -119,7 +108,7 @@ abstract class TemplatePlatformIos
       _$TemplatePlatformIosFromJson(json);
 
   static TemplatePlatformIos create({required String bundleId}) =>
-      TemplatePlatformIos(platform: PlatformType.ios, bundleId: bundleId);
+      TemplatePlatformIos(type: PlatformType.ios, bundleId: bundleId);
 
   // 获取所有参数命令行
   @override
@@ -134,7 +123,7 @@ abstract class TemplatePlatformMacos
   const TemplatePlatformMacos._();
 
   const factory TemplatePlatformMacos({
-    required PlatformType platform,
+    required PlatformType type,
     required String bundleId,
   }) = _TemplatePlatformMacos;
 
@@ -142,7 +131,7 @@ abstract class TemplatePlatformMacos
       _$TemplatePlatformMacosFromJson(json);
 
   static TemplatePlatformMacos create({required String bundleId}) =>
-      TemplatePlatformMacos(platform: PlatformType.macos, bundleId: bundleId);
+      TemplatePlatformMacos(type: PlatformType.macos, bundleId: bundleId);
 
   // 获取所有参数命令行
   @override
