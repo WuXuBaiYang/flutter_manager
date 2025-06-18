@@ -34,8 +34,8 @@ class FabMenuButton extends StatefulWidget {
     this.constraints = const BoxConstraints(
       maxWidth: 140,
       maxHeight: 240,
-      minWidth: 60,
-      minHeight: 60,
+      minWidth: 50,
+      minHeight: 50,
     ),
   });
 

@@ -35,12 +35,28 @@ abstract class CreateTemplate with _$CreateTemplate {
   );
 
   // 将参数转化成命令
-  String toCommand() =>
-      '--flutter-bin "$flutterBin" --project-name $projectName --app-name "${appName ?? projectName}" --db-name "${dbName ?? projectName}" '
-      '--dev-url "$devUrl" --prod-url "${prodUrl ?? devUrl}" '
-      '--target-dir "$targetDir" --description "${description ?? ''}" '
-      '--platforms "${platforms.entries.map((e) => e.key.name).join(',')}" ${platforms.entries.map((e) => e.value.toCommand()).join(' ')}'
-      '${openWhenFinish == true ? '--open-when-finish' : ''}';
+  List<String> toCommand() => [
+    '--flutter-bin',
+    '"$flutterBin"',
+    '--project-name',
+    projectName,
+    '--app-name',
+    appName ?? projectName,
+    '--db-name',
+    dbName ?? projectName,
+    '--dev-url',
+    devUrl,
+    '--prod-url',
+    prodUrl ?? devUrl,
+    '--target-dir',
+    targetDir,
+    '--description',
+    description ?? '',
+    '--platforms',
+    platforms.entries.map((e) => e.key.name).join(','),
+    for (MapEntry e in platforms.entries) ...e.value.toCommand(),
+    openWhenFinish == true ? '--open-when-finish' : '',
+  ];
 }
 
 // 模板平台(基类)
@@ -63,7 +79,7 @@ abstract class TemplatePlatform with _$TemplatePlatform {
       };
 
   // 获取所有参数命令行
-  String toCommand() => '';
+  List<String> toCommand() => [];
 }
 
 // android平台
@@ -89,7 +105,7 @@ abstract class TemplatePlatformAndroid
 
   // 获取所有参数命令行
   @override
-  String toCommand() => '--android-package "$packageName"';
+  List<String> toCommand() => ['--android-package', '"$packageName"'];
 }
 
 // ios平台
@@ -112,7 +128,7 @@ abstract class TemplatePlatformIos
 
   // 获取所有参数命令行
   @override
-  String toCommand() => '--ios-bundle-id "$bundleId"';
+  List<String> toCommand() => ['--ios-bundle-id', '"$bundleId"'];
 }
 
 // macos平台
@@ -135,5 +151,5 @@ abstract class TemplatePlatformMacos
 
   // 获取所有参数命令行
   @override
-  String toCommand() => '--macos-bundle-id "$bundleId"';
+  List<String> toCommand() => ['--macos-bundle-id', '"$bundleId"'];
 }

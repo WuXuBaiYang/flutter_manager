@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/common/router.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
+import 'package:flutter_manager/tool/template.dart';
 import 'package:flutter_manager/widget/dialog/project/create.dart';
 import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/fab_menu.dart';
 import 'package:jtech_base/jtech_base.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'project_list.dart';
 
 /*
@@ -30,8 +33,8 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
         duration: const Duration(milliseconds: 120),
         constraints: const BoxConstraints(
           maxWidth: 110,
-          minWidth: 60,
-          minHeight: 60,
+          minWidth: 55,
+          minHeight: 55,
         ),
         items: [
           ListTile(
@@ -133,9 +136,21 @@ class HomeProjectProvider extends BaseProvider {
   }
 
   // 新建项目
-  void createProject() {
+  void createProject() async {
     if (!checkEnvironment()) return;
-    showCreateProject(context);
+    if (!await TemplateCreate.checkGit()) {
+      showNoticeError(
+        '缺少Git组件，请下载安装或将git添加到运行时环境',
+        actions: [
+          TextButton(
+            onPressed: () => launchUrl(Uri.parse(Common.gitDownloadUrl)),
+            child: Text('去下载'),
+          ),
+        ],
+      );
+      return;
+    }
+    if (context.mounted) showCreateProject(context);
   }
 
   // 检查是否已设置环境

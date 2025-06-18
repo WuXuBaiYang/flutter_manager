@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_manager/database/model/environment.dart';
@@ -149,11 +150,8 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
     return LocalPathFormField(
       label: '项目路径',
       hint: '请选择项目路径',
+      controller: provider.targetDirController,
       onSaved: (v) => provider.updateFormData(targetDir: v),
-      validator: (v) {
-        if (!XTool.isPath(v ?? '')) return '路径不可用';
-        return null;
-      },
     );
   }
 
@@ -174,7 +172,7 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
             ),
             validator: (v) {
               if (v?.isNotEmpty != true) return '请输入开发地址';
-              if (!XTool.isIP(v ?? '') && !XTool.isHttp(v ?? '')) {
+              if (!(XTool.isIP(v ?? '') || XTool.isHttp(v ?? ''))) {
                 return '地址不可用';
               }
               return null;
@@ -191,6 +189,7 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
             ),
             decoration: InputDecoration(labelText: '生产地址', hintText: '请输入生产地址'),
             validator: (v) {
+              if (v?.isNotEmpty != true) return null;
               if (!XTool.isIP(v ?? '') && !XTool.isHttp(v ?? '')) {
                 return '地址不可用';
               }
@@ -364,29 +363,52 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
   }
 
   // 构建链接标志
-  Widget _buildLinkIcon() {
-    return Tooltip(message: '右侧为空时与最左侧保持一致', child: Icon(Icons.link, size: 16));
-  }
+  Widget _buildLinkIcon() =>
+      Tooltip(message: '右侧为空时与最左侧保持一致', child: Icon(Icons.link, size: 16));
 }
 
 class CreateProjectProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
-  // 项目名称/开发地址控制器
-  final projectNameController = TextEditingController(),
-      devUrlController = TextEditingController();
+  // 项目名称/开发地址/目标路径控制器
+  final projectNameController = TextEditingController(
+        text: kDebugMode ? 'jtech_test_a' : null,
+      ),
+      devUrlController = TextEditingController(
+        text: kDebugMode ? 'http://a.b.c' : null,
+      ),
+      targetDirController = TextEditingController(
+        text: kDebugMode ? r'C:\Users\wuxub\Documents\Workspace' : null,
+      );
 
   CreateProjectProvider(super.context);
 
   // 创建项目模板
-  CreateTemplate _template = CreateTemplate.empty();
+  CreateTemplate _template = CreateTemplate.empty().copyWith(
+    platforms: {
+      if (kDebugMode) ...{
+        PlatformType.android: TemplatePlatformAndroid.create(
+          packageName: 'com.jtech.a',
+        ),
+        PlatformType.ios: TemplatePlatformIos.create(bundleId: 'com.jtech.i'),
+        PlatformType.macos: TemplatePlatformMacos.create(
+          bundleId: 'com.jtech.m',
+        ),
+      },
+    },
+  );
 
   // 获取平台集合
   Map<PlatformType, TemplatePlatform> get platforms => _template.platforms;
 
   // 创建项目
-  Future<void> submit() async {}
+  Future<void> submit() async {
+    final formState = formKey.currentState;
+    if (formState?.validate() != true) return;
+    formState?.save();
+    // 使用收集到的字段吊起项目创建流程
+  }
 
   // 选择/取消选择全部
   void selectAll(bool selectedAll) {
