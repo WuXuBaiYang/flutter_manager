@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_manager/model/create_template.dart';
+import 'package:flutter_manager/widget/dialog/project/process.dart';
 
 /*
 * 调试
@@ -17,5 +19,6 @@ class Debug {
   }
 
   static Future<void> debug(BuildContext context) async {
+    showTemplateCreateProcess(context, template: CreateTemplate.empty());
   }
 }

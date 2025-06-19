@@ -55,7 +55,7 @@ class ProjectGridView extends StatelessWidget {
   // 构建网格代理
   SliverGridDelegate get _gridDelegate =>
       const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 400,
+        maxCrossAxisExtent: 500,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
         mainAxisExtent: 80,

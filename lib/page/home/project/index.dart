@@ -5,7 +5,7 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/template.dart';
-import 'package:flutter_manager/widget/dialog/project/create.dart';
+import 'package:flutter_manager/widget/dialog/project/template.dart';
 import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
 import 'package:flutter_manager/widget/fab_menu.dart';
@@ -150,7 +150,10 @@ class HomeProjectProvider extends BaseProvider {
       );
       return;
     }
-    if (context.mounted) showCreateProject(context);
+    if (!context.mounted) return;
+    final result = await showTemplateCreate(context);
+    if (result == null || !context.mounted) return;
+    showImportProject(context, project: result);
   }
 
   // 检查是否已设置环境

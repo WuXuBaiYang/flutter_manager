@@ -18,8 +18,8 @@ part 'template.freezed.dart';
 * @Time 2025/6/18 13:59
 */
 class TemplateCreate {
-  // 开始创建项目
-  static Future<bool> start(
+  // 开始创建项目（返回创建项目地址）
+  static Future<String?> start(
     CreateTemplate template, {
     ValueChanged<List<CreateStep>>? onCreateStep,
     StreamSink<String>? onLog,
@@ -47,18 +47,18 @@ class TemplateCreate {
     }
     // #1-----------检查缓存目录是否存在模板项目，已存在则clone更新，不存在则从github克隆
     final cacheDir = await getApplicationCacheDirectory();
-    final projectPath = join(cacheDir.path, Common.templateName);
+    final templatePath = join(cacheDir.path, Common.templateName);
     updateStep(1, CreateStep.ongoing('拉取/更新模板'));
-    if (!await _updateTemplate(projectPath)) {
+    if (!await _updateTemplate(templatePath)) {
       updateStep(1, CreateStep.error('模板拉取/更新失败，请重试'));
       throw Exception('模板拉取/更新失败，请重试');
     }
     // #2-----------执行模板项目中的创建脚本
     final process = await Process.start(
-      join(projectPath, Common.templateCreateScript),
+      join(templatePath, Common.templateCreateScript),
       template.toCommand(),
       runInShell: true,
-      workingDirectory: projectPath,
+      workingDirectory: templatePath,
     );
     // 监听脚本执行过程日志
     int index = progressList.length;
@@ -73,18 +73,21 @@ class TemplateCreate {
     process.stderr.transform(utf8.decoder).listen((data) {
       onLog?.add(data);
     });
-    return await process.exitCode == 0;
+    if (await process.exitCode != 0) return null;
+    return join(template.targetDir, template.projectName);
   }
 
   // 更新/拉取最新模板源码
-  static Future<bool> _updateTemplate(String projectPath) async {
-    final hasCache = await _checkTemplateCache(projectPath);
+  static Future<bool> _updateTemplate(String templatePath) async {
+    final hasCache = await _checkTemplateCache(templatePath);
     // 存在缓存且缓存正确则放弃并更新源码
     // 不存在缓存则克隆源码
     final cmd = hasCache
         ? ['git', 'reset', '--hard', 'HEAD', '&&', 'git', 'fetch', 'origin']
-        : ['git', 'clone', Common.templateUrl, projectPath];
-    final result = await _execCommand(cmd, workingDirectory: projectPath);
+        : ['git', 'clone', Common.templateUrl, templatePath];
+    // 如果不存在模板源码则创建目录再克隆
+    if (!hasCache) Directory(templatePath).createSync(recursive: true);
+    final result = await _execCommand(cmd, workingDirectory: templatePath);
     return result.exitCode == 0;
   }
 

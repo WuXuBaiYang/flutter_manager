@@ -6,43 +6,42 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/model/create_template.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
+import 'package:flutter_manager/tool/project/project.dart';
 import 'package:flutter_manager/tool/tool.dart';
+import 'package:flutter_manager/widget/dialog/project/process.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/check_field.dart';
 import 'package:jtech_base/jtech_base.dart';
 
-// 展示项目创建弹窗
-Future<Project?> showCreateProject(BuildContext context) {
+// 展示模板项目创建弹窗
+Future<Project?> showTemplateCreate(BuildContext context) {
   return showDialog<Project>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => CreateProjectView(),
+    builder: (_) => TemplateCreateView(),
   );
 }
 
 /*
-* 项目创建弹窗
+* 模板项目创建弹窗
 * @author wuxubaiyang
 * @Time 2025/6/17 14:27
 */
-class CreateProjectView extends ProviderView<CreateProjectProvider> {
-  CreateProjectView({super.key});
+class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
+  TemplateCreateView({super.key});
 
   @override
-  CreateProjectProvider createProvider(BuildContext context) =>
-      CreateProjectProvider(context);
+  TemplateCreateViewProvider createProvider(BuildContext context) =>
+      TemplateCreateViewProvider(context);
 
   @override
   Widget buildWidget(BuildContext context) {
     return CustomDialog(
-      title: Text('创建项目'),
+      title: Text('从模板创建'),
       content: _buildContent(),
       actions: [
         TextButton(onPressed: context.pop, child: const Text('取消')),
-        TextButton(
-          child: Text('创建'),
-          onPressed: () => provider.submit().loading(context),
-        ),
+        TextButton(child: Text('创建'), onPressed: () => provider.submit()),
       ],
     );
   }
@@ -63,6 +62,7 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
               _buildUrlField(),
               _buildDescriptionField(),
               _buildFinishOpen(),
+              _buildAutoAddProject(),
               Divider(),
               _buildPlatformList(),
             ],
@@ -220,6 +220,15 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
     );
   }
 
+  // 完成后自动添加到项目列表
+  Widget _buildAutoAddProject() {
+    return CheckFormField(
+      title: '完成时导入项目',
+      initialValue: provider.addProject,
+      onSaved: (v) => provider.updateAddProject(v ?? false),
+    );
+  }
+
   // 构建平台选择列表
   Widget _buildPlatformList() {
     return createSelector(
@@ -251,7 +260,7 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
         CheckboxListTile(
           dense: true,
           value: platform != null,
-          title: Text('- ${type.name}'),
+          title: Text('- ${type.name.toUpperCase()}'),
           contentPadding: EdgeInsets.only(right: 4),
           onChanged: (v) {
             if (v == null) return;
@@ -367,47 +376,40 @@ class CreateProjectView extends ProviderView<CreateProjectProvider> {
       Tooltip(message: '右侧为空时与最左侧保持一致', child: Icon(Icons.link, size: 16));
 }
 
-class CreateProjectProvider extends BaseProvider {
+class TemplateCreateViewProvider extends BaseProvider {
   // 表单key
   final formKey = GlobalKey<FormState>();
 
   // 项目名称/开发地址/目标路径控制器
-  final projectNameController = TextEditingController(
-        text: kDebugMode ? 'jtech_test_a' : null,
-      ),
-      devUrlController = TextEditingController(
-        text: kDebugMode ? 'http://a.b.c' : null,
-      ),
-      targetDirController = TextEditingController(
-        text: kDebugMode ? r'C:\Users\wuxub\Documents\Workspace' : null,
-      );
-
-  CreateProjectProvider(super.context);
+  final projectNameController = TextEditingController(),
+      devUrlController = TextEditingController(),
+      targetDirController = TextEditingController();
 
   // 创建项目模板
-  CreateTemplate _template = CreateTemplate.empty().copyWith(
-    platforms: {
-      if (kDebugMode) ...{
-        PlatformType.android: TemplatePlatformAndroid.create(
-          packageName: 'com.jtech.a',
-        ),
-        PlatformType.ios: TemplatePlatformIos.create(bundleId: 'com.jtech.i'),
-        PlatformType.macos: TemplatePlatformMacos.create(
-          bundleId: 'com.jtech.m',
-        ),
-      },
-    },
-  );
+  CreateTemplate _template = CreateTemplate.empty();
 
   // 获取平台集合
   Map<PlatformType, TemplatePlatform> get platforms => _template.platforms;
+
+  // 是否自动添加到项目列表
+  bool addProject = true;
+
+  TemplateCreateViewProvider(super.context) {
+    // 开发模式设置测试参数
+    if (kDebugMode) _initTestData();
+  }
 
   // 创建项目
   Future<void> submit() async {
     final formState = formKey.currentState;
     if (formState?.validate() != true) return;
     formState?.save();
-    // 使用收集到的字段吊起项目创建流程
+    final result = await showTemplateCreateProcess(
+      context,
+      template: _template,
+    );
+    if (result == null || !context.mounted) return;
+    context.pop(addProject ? ProjectTool.getProjectInfo(result) : null);
   }
 
   // 选择/取消选择全部
@@ -421,6 +423,12 @@ class CreateProjectProvider extends BaseProvider {
             : {},
       ),
     );
+    notifyListeners();
+  }
+
+  // 更新自动添加到项目列表选项
+  void updateAddProject(bool value) {
+    addProject = value;
     notifyListeners();
   }
 
@@ -459,5 +467,27 @@ class CreateProjectProvider extends BaseProvider {
       projectName: projectName ?? _template.projectName,
       flutterBin: environment?.binPath ?? _template.flutterBin,
     );
+  }
+
+  // 初始化测试数据
+  void _initTestData() async {
+    final dir = await getApplicationDocumentsDirectory();
+    projectNameController.text = 'jtech_test_a';
+    devUrlController.text = 'http://a.b.c';
+    targetDirController.text = join(dir.path, 'dev_test');
+    _template = _template.copyWith(
+      platforms: {
+        if (kDebugMode) ...{
+          PlatformType.android: TemplatePlatformAndroid.create(
+            packageName: 'com.jtech.a',
+          ),
+          PlatformType.ios: TemplatePlatformIos.create(bundleId: 'com.jtech.i'),
+          PlatformType.macos: TemplatePlatformMacos.create(
+            bundleId: 'com.jtech.m',
+          ),
+        },
+      },
+    );
+    notifyListeners();
   }
 }
