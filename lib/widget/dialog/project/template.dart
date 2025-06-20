@@ -7,8 +7,8 @@ import 'package:flutter_manager/model/create_template.dart';
 import 'package:flutter_manager/provider/environment.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:flutter_manager/tool/project/project.dart';
+import 'package:flutter_manager/tool/template.dart';
 import 'package:flutter_manager/tool/tool.dart';
-import 'package:flutter_manager/widget/dialog/project/process.dart';
 import 'package:flutter_manager/widget/form_field/local_path.dart';
 import 'package:flutter_manager/widget/form_field/check_field.dart';
 import 'package:jtech_base/jtech_base.dart';
@@ -41,7 +41,10 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
       content: _buildContent(),
       actions: [
         TextButton(onPressed: context.pop, child: const Text('取消')),
-        TextButton(child: Text('创建'), onPressed: () => provider.submit()),
+        TextButton(
+          child: Text('创建'),
+          onPressed: () => provider.submit().loading(context),
+        ),
       ],
     );
   }
@@ -291,7 +294,7 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
       children: [
         TextFormField(
           autofocus: true,
-          controller: provider.projectNameController,
+          initialValue: platform?.packageName,
           decoration: InputDecoration(
             labelText: '包名(PackageName)',
             hintText: '请输入包名',
@@ -320,7 +323,7 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
       children: [
         TextFormField(
           autofocus: true,
-          controller: provider.projectNameController,
+          initialValue: platform?.bundleId,
           decoration: InputDecoration(
             labelText: '包名(BundleId)',
             hintText: '请输入包名',
@@ -349,7 +352,7 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
       children: [
         TextFormField(
           autofocus: true,
-          controller: provider.projectNameController,
+          initialValue: platform?.bundleId,
           decoration: InputDecoration(
             labelText: '包名(BundleId)',
             hintText: '请输入包名',
@@ -386,7 +389,21 @@ class TemplateCreateViewProvider extends BaseProvider {
       targetDirController = TextEditingController();
 
   // 创建项目模板
-  CreateTemplate _template = CreateTemplate.empty();
+  CreateTemplate _template = CreateTemplate.empty().copyWith(
+    platforms: kDebugMode
+        ? {
+            PlatformType.android: TemplatePlatformAndroid.create(
+              packageName: 'com.jtech.a',
+            ),
+            PlatformType.ios: TemplatePlatformIos.create(
+              bundleId: 'com.jtech.i',
+            ),
+            PlatformType.macos: TemplatePlatformMacos.create(
+              bundleId: 'com.jtech.m',
+            ),
+          }
+        : {},
+  );
 
   // 获取平台集合
   Map<PlatformType, TemplatePlatform> get platforms => _template.platforms;
@@ -399,15 +416,20 @@ class TemplateCreateViewProvider extends BaseProvider {
     if (kDebugMode) _initTestData();
   }
 
+  // 初始化测试数据
+  void _initTestData() async {
+    final dir = await getApplicationDocumentsDirectory();
+    projectNameController.text = 'jtech_test_a';
+    devUrlController.text = 'http://a.b.c';
+    targetDirController.text = join(dir.path, 'dev_test');
+  }
+
   // 创建项目
   Future<void> submit() async {
     final formState = formKey.currentState;
     if (formState?.validate() != true) return;
     formState?.save();
-    final result = await showTemplateCreateProcess(
-      context,
-      template: _template,
-    );
+    final result = await TemplateCreate.start(_template);
     if (result == null || !context.mounted) return;
     context.pop(addProject ? ProjectTool.getProjectInfo(result) : null);
   }
@@ -467,27 +489,5 @@ class TemplateCreateViewProvider extends BaseProvider {
       projectName: projectName ?? _template.projectName,
       flutterBin: environment?.binPath ?? _template.flutterBin,
     );
-  }
-
-  // 初始化测试数据
-  void _initTestData() async {
-    final dir = await getApplicationDocumentsDirectory();
-    projectNameController.text = 'jtech_test_a';
-    devUrlController.text = 'http://a.b.c';
-    targetDirController.text = join(dir.path, 'dev_test');
-    _template = _template.copyWith(
-      platforms: {
-        if (kDebugMode) ...{
-          PlatformType.android: TemplatePlatformAndroid.create(
-            packageName: 'com.jtech.a',
-          ),
-          PlatformType.ios: TemplatePlatformIos.create(bundleId: 'com.jtech.i'),
-          PlatformType.macos: TemplatePlatformMacos.create(
-            bundleId: 'com.jtech.m',
-          ),
-        },
-      },
-    );
-    notifyListeners();
   }
 }

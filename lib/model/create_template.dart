@@ -37,7 +37,7 @@ abstract class CreateTemplate with _$CreateTemplate {
   // 将参数转化成命令
   List<String> toCommand() => [
     '--flutter-bin',
-    '"$flutterBin"',
+    flutterBin,
     '--project-name',
     projectName,
     '--app-name',
@@ -55,7 +55,7 @@ abstract class CreateTemplate with _$CreateTemplate {
     '--platforms',
     platforms.entries.map((e) => e.key.name).join(','),
     for (MapEntry e in platforms.entries) ...e.value.toCommand(),
-    openWhenFinish == true ? '--open-when-finish' : '',
+    if (openWhenFinish == true) '--open-when-finish',
   ];
 }
 
@@ -105,7 +105,7 @@ abstract class TemplatePlatformAndroid
 
   // 获取所有参数命令行
   @override
-  List<String> toCommand() => ['--android-package', '"$packageName"'];
+  List<String> toCommand() => ['--android-package', packageName];
 }
 
 // ios平台
@@ -128,7 +128,7 @@ abstract class TemplatePlatformIos
 
   // 获取所有参数命令行
   @override
-  List<String> toCommand() => ['--ios-bundle-id', '"$bundleId"'];
+  List<String> toCommand() => ['--ios-bundle-id', bundleId];
 }
 
 // macos平台
@@ -151,5 +151,5 @@ abstract class TemplatePlatformMacos
 
   // 获取所有参数命令行
   @override
-  List<String> toCommand() => ['--macos-bundle-id', '"$bundleId"'];
+  List<String> toCommand() => ['--macos-bundle-id', bundleId];
 }

@@ -2,15 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_manager/common/common.dart';
 import 'package:flutter_manager/model/create_template.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:jtech_base/jtech_base.dart';
-
-part 'template.g.dart';
-
-part 'template.freezed.dart';
 
 /*
 * 从模板创建项目
@@ -19,61 +13,23 @@ part 'template.freezed.dart';
 */
 class TemplateCreate {
   // 开始创建项目（返回创建项目地址）
-  static Future<String?> start(
-    CreateTemplate template, {
-    ValueChanged<List<CreateStep>>? onCreateStep,
-    StreamSink<String>? onLog,
-  }) async {
-    final progressList = <CreateStep>[];
-    updateStep(int index, CreateStep step) {
-      progressList.length >= index
-          ? progressList.add(step)
-          : progressList[index] = step;
-      // 将最后一条数据之前的所有数据状态标记为完成
-      for (var i = 0; i < index; i++) {
-        final item = progressList[i];
-        if (item.state == CreateStepState.ongoing) {
-          progressList[i] = CreateStep.finish(item.message);
-        }
-      }
-      onCreateStep?.call(progressList);
-    }
-
-    // #0-----------检查git环境
-    updateStep(0, CreateStep.ongoing('检查git环境'));
-    if (!await checkGit()) {
-      updateStep(0, CreateStep.error('未检测到git环境'));
-      throw Exception('未检测到git环境');
-    }
-    // #1-----------检查缓存目录是否存在模板项目，已存在则clone更新，不存在则从github克隆
+  static Future<String?> start(CreateTemplate template) async {
+    if (!await checkGit()) throw Exception('未检测到git环境');
+    // 检查缓存目录是否存在模板项目，已存在则clone更新，不存在则从github克隆
     final cacheDir = await getApplicationCacheDirectory();
     final templatePath = join(cacheDir.path, Common.templateName);
-    updateStep(1, CreateStep.ongoing('拉取/更新模板'));
     if (!await _updateTemplate(templatePath)) {
-      updateStep(1, CreateStep.error('模板拉取/更新失败，请重试'));
       throw Exception('模板拉取/更新失败，请重试');
     }
-    // #2-----------执行模板项目中的创建脚本
-    final process = await Process.start(
+    // 执行模板项目中的创建脚本
+    final result = await Process.start(
       join(templatePath, Common.templateCreateScript),
       template.toCommand(),
       runInShell: true,
       workingDirectory: templatePath,
+      mode: ProcessStartMode.detached,
     );
-    // 监听脚本执行过程日志
-    int index = progressList.length;
-    process.stdout.transform(utf8.decoder).listen((data) {
-      if (data.startsWith('*st:')) {
-        updateStep(index++, CreateStep.ongoing(data.replaceAll('*st:', '')));
-      } else if (data.startsWith('*fst:')) {
-        updateStep(index++, CreateStep.error(data.replaceAll('*fst:', '')));
-      }
-      onLog?.add(data);
-    });
-    process.stderr.transform(utf8.decoder).listen((data) {
-      onLog?.add(data);
-    });
-    if (await process.exitCode != 0) return null;
+    if (await result.exitCode != 0) return null;
     return join(template.targetDir, template.projectName);
   }
 
@@ -130,32 +86,3 @@ class TemplateCreate {
     return false;
   }
 }
-
-// 项目创建步骤
-@freezed
-abstract class CreateStep with _$CreateStep {
-  const CreateStep._();
-
-  const factory CreateStep({
-    required CreateStepState state,
-    required String message,
-  }) = _CreateStep;
-
-  factory CreateStep.fromJson(Map<String, dynamic> json) =>
-      _$CreateStepFromJson(json);
-
-  // 进行中
-  static CreateStep ongoing(String message) =>
-      CreateStep(state: CreateStepState.ongoing, message: message);
-
-  // 完成
-  static CreateStep finish(String message) =>
-      CreateStep(state: CreateStepState.finish, message: message);
-
-  // 错误
-  static CreateStep error(String message) =>
-      CreateStep(state: CreateStepState.error, message: message);
-}
-
-// 创建步骤状态
-enum CreateStepState { ongoing, finish, error }
