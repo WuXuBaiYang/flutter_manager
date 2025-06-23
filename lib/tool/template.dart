@@ -13,23 +13,30 @@ import 'package:jtech_base/jtech_base.dart';
 */
 class TemplateCreate {
   // 开始创建项目（返回创建项目地址）
-  static Future<String?> start(CreateTemplate template) async {
+  static Future<String?> start(
+    CreateTemplate template, {
+    StreamSink<String>? stdOut,
+    StreamSink<String>? stdErr,
+  }) async {
+    stdOut?.add('*st:检查git环境');
     if (!await checkGit()) throw Exception('未检测到git环境');
     // 检查缓存目录是否存在模板项目，已存在则clone更新，不存在则从github克隆
     final cacheDir = await getApplicationCacheDirectory();
     final templatePath = join(cacheDir.path, Common.templateName);
+    stdOut?.add('*st:拉取/更新模板项目');
     if (!await _updateTemplate(templatePath)) {
       throw Exception('模板拉取/更新失败，请重试');
     }
     // 执行模板项目中的创建脚本
-    final result = await Process.start(
+    final process = await Process.start(
       join(templatePath, Common.templateCreateScript),
       template.toCommand(),
       runInShell: true,
       workingDirectory: templatePath,
-      mode: ProcessStartMode.detached,
     );
-    if (await result.exitCode != 0) return null;
+    stdOut?.addStream(process.stdout.transform(utf8.decoder));
+    stdErr?.addStream(process.stderr.transform(utf8.decoder));
+    if (await process.exitCode != 0) return null;
     return join(template.targetDir, template.projectName);
   }
 
@@ -39,7 +46,7 @@ class TemplateCreate {
     // 存在缓存且缓存正确则放弃并更新源码
     // 不存在缓存则克隆源码
     final cmd = hasCache
-        ? ['git', 'reset', '--hard', 'HEAD', '&&', 'git', 'fetch', 'origin']
+        ? ['git', 'pull', 'origin']
         : ['git', 'clone', Common.templateUrl, templatePath];
     // 如果不存在模板源码则创建目录再克隆
     if (!hasCache) Directory(templatePath).createSync(recursive: true);

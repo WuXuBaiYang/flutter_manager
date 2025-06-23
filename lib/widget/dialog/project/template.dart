@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +45,18 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
         TextButton(onPressed: context.pop, child: const Text('取消')),
         TextButton(
           child: Text('创建'),
-          onPressed: () => provider.submit().loading(context),
+          onPressed: () => provider.submit().loading(
+            context,
+            dismissible: false,
+            hintStream: provider.logStream,
+            style: LoadingOverlayStyle(
+              constraints: BoxConstraints(
+                maxHeight: 100,
+                maxWidth: 160,
+                minWidth: 80,
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -218,7 +231,7 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
   Widget _buildFinishOpen() {
     return CheckFormField(
       title: '完成时打开目录',
-      initialValue: false,
+      initialValue: true,
       onSaved: (v) => provider.updateFormData(openWhenFinish: v),
     );
   }
@@ -411,6 +424,17 @@ class TemplateCreateViewProvider extends BaseProvider {
   // 是否自动添加到项目列表
   bool addProject = true;
 
+  // 日志流控制器
+  final _logController = StreamController<String>.broadcast();
+
+  // 日志标志正则
+  final _logFlagRegex = RegExp(r'\*st:');
+
+  // 获取日志流
+  Stream<String> get logStream => _logController.stream
+      .where((e) => e.contains(_logFlagRegex))
+      .map((e) => e.replaceAll(_logFlagRegex, ''));
+
   TemplateCreateViewProvider(super.context) {
     // 开发模式设置测试参数
     if (kDebugMode) _initTestData();
@@ -429,9 +453,12 @@ class TemplateCreateViewProvider extends BaseProvider {
     final formState = formKey.currentState;
     if (formState?.validate() != true) return;
     formState?.save();
-    final result = await TemplateCreate.start(_template);
+    final result = await TemplateCreate.start(
+      _template,
+      stdOut: _logController.sink,
+    );
     if (result == null || !context.mounted) return;
-    context.pop(addProject ? ProjectTool.getProjectInfo(result) : null);
+    context.pop(addProject ? await ProjectTool.getProjectInfo(result) : null);
   }
 
   // 选择/取消选择全部
