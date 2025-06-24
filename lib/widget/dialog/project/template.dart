@@ -231,7 +231,7 @@ class TemplateCreateView extends ProviderView<TemplateCreateViewProvider> {
   Widget _buildFinishOpen() {
     return CheckFormField(
       title: '完成时打开目录',
-      initialValue: true,
+      initialValue: false,
       onSaved: (v) => provider.updateFormData(openWhenFinish: v),
     );
   }
