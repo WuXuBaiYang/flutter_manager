@@ -23,16 +23,42 @@ class Package {
   @Transient()
   Duration? duration;
 
+  // 获取数据库打包时间
+  int get durationDB => duration?.inMilliseconds ?? 0;
+
+  // 设置数据库打包时间
+  set durationDB(int value) => duration = Duration(milliseconds: value);
+
   // 打包状态
   @Transient()
   PackageStatus status = PackageStatus.none;
+
+  // 获取数据库打包状态
+  int get statusDB => status.index;
+
+  // 设置数据库打包状态
+  set statusDB(int value) => status = PackageStatus.values[value];
 
   // 打包平台
   @Transient()
   PlatformType platformType = PlatformType.android;
 
+  // 获取数据库平台类型
+  int get platformTypeDB => platformType.index;
+
+  // 设置数据库平台类型
+  set platformTypeDB(int value) => platformType = PlatformType.values[value];
+
   // 项目信息
   final projectDB = ToOne<Project>();
+
+  // 获取项目对象
+  @Transient()
+  Project? get project => projectDB.target;
+
+  // 获取项目ID
+  @Transient()
+  int? get projectId => project?.id;
 
   // 创建时间
   @Property(type: PropertyType.date)
@@ -68,32 +94,6 @@ class Package {
   }) {
     projectDB.target = project;
   }
-
-  // 获取数据库打包时间
-  int get durationDB => duration?.inMilliseconds ?? 0;
-
-  // 设置数据库打包时间
-  set durationDB(int value) => duration = Duration(milliseconds: value);
-
-  // 获取数据库打包状态
-  int get statusDB => status.index;
-
-  // 设置数据库打包状态
-  set statusDB(int value) => status = PackageStatus.values[value];
-
-  // 获取数据库平台类型
-  int get platformTypeDB => platformType.index;
-
-  // 设置数据库平台类型
-  set platformTypeDB(int value) => platformType = PlatformType.values[value];
-
-  // 获取项目对象
-  @Transient()
-  Project? get project => projectDB.target;
-
-  // 获取项目ID
-  @Transient()
-  int? get projectId => project?.id;
 
   Package copyWith({
     String? name,
@@ -152,10 +152,4 @@ class Package {
 }
 
 // 打包状态枚举
-enum PackageStatus {
-  prepare,
-  building,
-  success,
-  fail,
-  none,
-}
+enum PackageStatus { prepare, building, success, fail, none }
