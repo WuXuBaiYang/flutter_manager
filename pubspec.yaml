@@ -39,24 +39,24 @@ dependencies:
   image: ^4.5.4
   archive: ^4.0.7
   open_dir: ^0.0.2+1
-  jtech_base: ^0.6.6+6
-  flutter_gen: ^5.10.0
-  url_launcher: ^6.3.1
-  desktop_drop: ^0.6.0
-  window_manager: ^0.5.0
+  jtech_base: ^0.7.2+2
+  flutter_gen: ^5.11.0
+  url_launcher: ^6.3.2
+  desktop_drop: ^0.6.1
+  window_manager: ^0.5.1
   json_annotation: ^4.9.0
   custom_image_crop: ^0.1.1
-  freezed_annotation: ^3.0.0
+  freezed_annotation: ^3.1.0
   flutter_context_menu: ^0.2.4
   reorderable_grid_view: ^2.2.8
   flutter_staggered_grid_view: ^0.7.0
 
 dev_dependencies:
-  freezed: ^3.0.6
+  freezed: ^3.1.0
   build_runner: ^2.5.4
   flutter_lints: ^6.0.0
   json_serializable: ^6.9.5
-  flutter_gen_runner: ^5.10.0
+  flutter_gen_runner: ^5.11.0
   objectbox_generator: ^4.3.0
 
 # For information on the generic Dart part of this file, see the
