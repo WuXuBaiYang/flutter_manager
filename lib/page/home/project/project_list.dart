@@ -19,6 +19,9 @@ class ProjectGridView extends StatelessWidget {
   // 项目集合
   final List<Project> projects;
 
+  // 打包回调
+  final ValueChanged<Project>? onBuild;
+
   // 置顶回调
   final ValueChanged<Project>? onPinned;
 
@@ -45,6 +48,7 @@ class ProjectGridView extends StatelessWidget {
     required this.projects,
     required this.onReorder,
     this.onEdit,
+    this.onBuild,
     this.onPinned,
     this.onDelete,
     this.onDetail,
@@ -64,6 +68,8 @@ class ProjectGridView extends StatelessWidget {
   // 右键菜单
   ContextMenu get _contextMenu => ContextMenu(
     entries: [
+      MenuItem(value: onBuild, label: '打包', icon: Icons.build_rounded),
+      MenuDivider(),
       MenuItem(value: onPinned, label: '置顶', icon: Icons.push_pin_rounded),
       MenuItem(value: onEdit, label: '编辑', icon: Icons.edit),
       MenuItem(value: onDelete, label: '删除', icon: Icons.delete),

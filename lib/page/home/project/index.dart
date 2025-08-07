@@ -5,6 +5,7 @@ import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/main.dart';
 import 'package:flutter_manager/provider/project.dart';
 import 'package:flutter_manager/tool/template.dart';
+import 'package:flutter_manager/widget/dialog/project/build.dart';
 import 'package:flutter_manager/widget/dialog/project/template.dart';
 import 'package:flutter_manager/widget/dialog/project/import.dart';
 import 'package:flutter_manager/widget/empty_box.dart';
@@ -86,6 +87,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
               projects: pinnedProjects,
               onPinned: context.project.togglePinned,
               onReorder: context.project.reorderPinned,
+              onBuild: (p) => showProjectBuild(context, project: p),
               onDelete: (item) => provider.removeProject(context, item),
               onEdit: (item) => showImportProject(context, project: item),
               onDetail: (item) async {
@@ -111,6 +113,7 @@ class HomeProjectView extends ProviderView<HomeProjectProvider> {
           projects: projects,
           onReorder: projectProvider.reorder,
           onPinned: projectProvider.togglePinned,
+          onBuild: (p) => showProjectBuild(context, project: p),
           padding: const EdgeInsets.all(
             14,
           ).copyWith(bottom: kToolbarHeight + 24),
