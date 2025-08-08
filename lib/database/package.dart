@@ -33,22 +33,21 @@ mixin PackageDatabase on BaseDatabase {
   Future<List<Package>> getPackages({
     int pageIndex = 1,
     int pageSize = 15,
-    PackageStatus? status,
-    PlatformType? platform,
+    List<PlatformType> platformList = PlatformType.values,
+    List<PackageStatus> statusList = PackageStatus.values,
   }) async {
     pageSize = max(pageSize, 1);
     pageIndex = max(pageIndex, 1);
+    final queryCondition = Package_.statusDB
+        .oneOf(List.from(statusList.map((e) => e.index)))
+        .and(
+          Package_.platformTypeDB.oneOf(
+            List.from(platformList.map((e) => e.index)),
+          ),
+        );
     final query =
         packageBox
-            .query(
-              Package_.statusDB
-                  .oneOf([if (status != null) status.index])
-                  .and(
-                    Package_.platformTypeDB.oneOf([
-                      if (platform != null) platform.index,
-                    ]),
-                  ),
-            )
+            .query(queryCondition)
             .order(Package_.createAt, flags: Order.descending)
             .build()
           ..offset = (pageIndex - 1) * pageSize

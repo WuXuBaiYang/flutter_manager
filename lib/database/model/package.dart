@@ -10,11 +10,8 @@ class Package {
   // 输出包名
   String name = '';
 
-  // 打包指令后缀
-  String suffix = '';
-
-  // 安装包备份地址(为空代表不执行备份)
-  String? backupPath;
+  // 打包完成之后，安装包输出地址(为空代表不输出)
+  String? outputPath;
 
   // 打包失败异常日志
   String? error;
@@ -72,8 +69,7 @@ class Package {
 
   Package.c({
     required this.name,
-    required this.suffix,
-    required this.backupPath,
+    required this.outputPath,
     required this.error,
     required this.duration,
     required this.status,
@@ -87,18 +83,16 @@ class Package {
 
   Package.create({
     required this.name,
-    required this.suffix,
     required this.platformType,
     required Project project,
-    this.backupPath,
+    this.outputPath,
   }) {
     projectDB.target = project;
   }
 
   Package copyWith({
     String? name,
-    String? suffix,
-    String? backupPath,
+    String? outputPath,
     String? error,
     Duration? duration,
     PackageStatus? status,
@@ -109,8 +103,7 @@ class Package {
   }) {
     return Package.c(
       name: name ?? this.name,
-      suffix: suffix ?? this.suffix,
-      backupPath: backupPath ?? this.backupPath,
+      outputPath: outputPath ?? this.outputPath,
       error: error ?? this.error,
       duration: duration ?? this.duration,
       status: status ?? this.status,
@@ -125,8 +118,7 @@ class Package {
   int get hashCode =>
       id.hashCode &
       name.hashCode &
-      suffix.hashCode &
-      backupPath.hashCode &
+      outputPath.hashCode &
       error.hashCode &
       duration.hashCode &
       status.hashCode &
@@ -140,8 +132,7 @@ class Package {
       other is Package &&
       other.id == id &&
       other.name == name &&
-      other.suffix == suffix &&
-      other.backupPath == backupPath &&
+      other.outputPath == outputPath &&
       other.error == error &&
       other.duration == duration &&
       other.status == status &&

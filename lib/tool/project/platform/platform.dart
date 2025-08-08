@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_manager/database/model/package.dart';
 import 'package:flutter_manager/gen/assets.gen.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
@@ -38,14 +39,17 @@ extension PlatformPermissionExtension on PlatformPermission {
   }
 
   // 实现copyWith
-  PlatformPermission copyWith(
-          {String? name, String? desc, String? value, String? input}) =>
-      (
-        name: name ?? this.name,
-        desc: desc ?? this.desc,
-        value: value ?? this.value,
-        input: input ?? this.input,
-      );
+  PlatformPermission copyWith({
+    String? name,
+    String? desc,
+    String? value,
+    String? input,
+  }) => (
+    name: name ?? this.name,
+    desc: desc ?? this.desc,
+    value: value ?? this.value,
+    input: input ?? this.input,
+  );
 }
 
 /*
@@ -82,14 +86,18 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   // 读取平台文件内容（xml）
   Future<XmlDocument> readPlatformFileXml(
-      String projectPath, String filePath) async {
+    String projectPath,
+    String filePath,
+  ) async {
     final content = await readPlatformFile(projectPath, filePath);
     return XmlDocument.parse(content);
   }
 
   // 读取平台文件内容（xmlFragment）
   Future<XmlDocumentFragment> readPlatformFileXmlFragment(
-      String projectPath, String filePath) async {
+    String projectPath,
+    String filePath,
+  ) async {
     final content = await readPlatformFile(projectPath, filePath);
     return XmlDocumentFragment.parse(content);
   }
@@ -115,7 +123,10 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   // 写入平台文件内容（字符串）
   Future<bool> writePlatformFile(
-      String projectPath, String filePath, String content) async {
+    String projectPath,
+    String filePath,
+    String content,
+  ) async {
     try {
       final file = File(getPlatformFilePath(projectPath, filePath));
       await autoBackup(projectPath, filePath);
@@ -127,7 +138,10 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   // 写入平台文件内容（json）
   Future<bool> writePlatformFileJson(
-      String projectPath, String filePath, Map content) {
+    String projectPath,
+    String filePath,
+    Map content,
+  ) {
     final json = const JsonEncoder.withIndent('  ').convert(content);
     return writePlatformFile(projectPath, filePath, json);
   }
@@ -145,11 +159,13 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
       projectPath,
       filePath,
       fragment.children
-          .map((e) => e.toXmlString(
-                pretty: true,
-                indent: indent,
-                indentAttribute: (e) => indentAttribute,
-              ))
+          .map(
+            (e) => e.toXmlString(
+              pretty: true,
+              indent: indent,
+              indentAttribute: (e) => indentAttribute,
+            ),
+          )
           .join(''),
     );
   }
@@ -164,13 +180,16 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   Future<List<PlatformLogo>?> getLogos(String projectPath) async => null;
 
   @override
-  Future<bool> replaceLogo(String projectPath, String logoPath,
-      {ProgressCallback? progressCallback}) async {
+  Future<bool> replaceLogo(
+    String projectPath,
+    String logoPath, {
+    ProgressCallback? progressCallback,
+  }) async {
     convertImageType(String? suffixes) => {
-          '.png': ImageType.png,
-          '.jpg': ImageType.jpg,
-          '.ico': ImageType.ico,
-        }[suffixes];
+      '.png': ImageType.png,
+      '.jpg': ImageType.jpg,
+      '.ico': ImageType.ico,
+    }[suffixes];
     final logos = await getLogos(projectPath);
     if (logos == null) return false;
     // 遍历图片表，读取原图片信息并将输入logo替换为目标图片
@@ -181,8 +200,13 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
       if (imageType != null) {
         final width = item.size.width.toInt(),
             height = item.size.height.toInt();
-        await ImageTool.resizeFile(logoPath, item.path,
-            width: width, height: height, imageType: imageType);
+        await ImageTool.resizeFile(
+          logoPath,
+          item.path,
+          width: width,
+          height: height,
+          imageType: imageType,
+        );
       }
       progressCallback?.call(++index, logos.length);
     }
@@ -198,20 +222,20 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   @override
   Future<List<PlatformPermission>?> getFullPermissions() async {
     try {
-      final content = await rootBundle.loadString(
-        switch (platform) {
-          PlatformType.android => Assets.permission.android,
-          PlatformType.ios => Assets.permission.ios,
-          _ => '',
-        },
-      );
+      final content = await rootBundle.loadString(switch (platform) {
+        PlatformType.android => Assets.permission.android,
+        PlatformType.ios => Assets.permission.ios,
+        _ => '',
+      });
       return jsonDecode(content)
-          .map<PlatformPermission>((e) => (
-                name: '${e['name']}',
-                desc: '${e['desc']}',
-                value: '${e['value']}',
-                input: '',
-              ))
+          .map<PlatformPermission>(
+            (e) => (
+              name: '${e['name']}',
+              desc: '${e['desc']}',
+              value: '${e['value']}',
+              input: '',
+            ),
+          )
           .toList();
     } catch (_) {}
     return null;
@@ -223,8 +247,9 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
 
   @override
   Future<bool> setPermissions(
-          String projectPath, List<PlatformPermission> permissions) async =>
-      true;
+    String projectPath,
+    List<PlatformPermission> permissions,
+  ) async => true;
 }
 
 /*
@@ -246,8 +271,11 @@ abstract mixin class PlatformToolMixin<T extends Record> {
   Future<List<PlatformLogo>?> getLogos(String projectPath);
 
   // 替换logo
-  Future<bool> replaceLogo(String projectPath, String logoPath,
-      {ProgressCallback? progressCallback});
+  Future<bool> replaceLogo(
+    String projectPath,
+    String logoPath, {
+    ProgressCallback? progressCallback,
+  });
 
   // 获取包名
   Future<String?> getPackage(String projectPath);
@@ -263,15 +291,13 @@ abstract mixin class PlatformToolMixin<T extends Record> {
 
   // 设置权限列表
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermission> permissions);
+    String projectPath,
+    List<PlatformPermission> permissions,
+  );
+
+  // // 构建平台安装包
+  // Future<Stream<Package>> build();
 }
 
 // 支持平台枚举
-enum PlatformType {
-  android,
-  ios,
-  web,
-  windows,
-  macos,
-  linux,
-}
+enum PlatformType { android, ios, web, windows, macos, linux }
