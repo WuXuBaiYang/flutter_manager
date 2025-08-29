@@ -304,11 +304,14 @@ abstract mixin class PlatformToolMixin<T extends Record> {
     S packageConfig,
   ) async {
     final controller = StreamController<Package>.broadcast();
-    // final package = Package.create(
-    //   name: name,
-    //   platformType: platformType,
-    //   project: project,
-    // );
+    final package = Package.create(
+      project: project,
+      name: packageConfig.label ?? '',
+      outputPath: packageConfig.outputPath,
+      platformType: packageConfig.platform,
+    );
+    controller.add(package);
+    ///
     return controller.stream;
   }
 }
