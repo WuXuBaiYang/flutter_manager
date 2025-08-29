@@ -34,12 +34,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  xml: ^6.5.0
+  xml: ^6.6.1
   intl: ^0.20.2
   image: ^4.5.4
   archive: ^4.0.7
   open_dir: ^0.0.2+1
-  jtech_base: ^0.7.2+2
+  jtech_base: ^0.7.3+3
   flutter_gen: ^5.11.0
   url_launcher: ^6.3.2
   desktop_drop: ^0.6.1
@@ -47,7 +47,7 @@ dependencies:
   json_annotation: ^4.9.0
   custom_image_crop: ^0.1.1
   freezed_annotation: ^3.1.0
-  flutter_context_menu: ^0.2.4
+  flutter_context_menu: ^0.3.0
   reorderable_grid_view: ^2.2.8
   flutter_staggered_grid_view: ^0.7.0
 

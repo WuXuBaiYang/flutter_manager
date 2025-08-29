@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flutter_manager/database/model/package.dart';
 import 'package:flutter_manager/gen/assets.gen.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
