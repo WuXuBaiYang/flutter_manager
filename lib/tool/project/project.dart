@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_manager/database/database.dart';
+import 'package:flutter_manager/database/model/package.dart';
 import 'package:flutter_manager/database/model/project.dart';
+import 'package:flutter_manager/model/package_config.dart';
 import 'package:flutter_manager/tool/project/environment.dart';
 import 'package:flutter_manager/tool/project/platform/android.dart';
 import 'package:flutter_manager/tool/project/platform/ios.dart';
@@ -40,19 +42,26 @@ class ProjectTool {
 
   // 创建项目平台
   static Future<bool> createPlatform(
-      Project project, PlatformType platform) async {
+    Project project,
+    PlatformType platform,
+  ) async {
     final environment = database.getEnvById(project.envId);
     if (environment == null) return false;
-    final output = await EnvironmentTool.runCommand(
-        environment.path, ['create', '--platforms', platform.name, '.'],
-        workingDirectory: project.path);
+    final output = await EnvironmentTool.runCommand(environment.path, [
+      'create',
+      '--platforms',
+      platform.name,
+      '.',
+    ], workingDirectory: project.path);
     if (output == null) return false;
     return hasPlatform(project.path, platform);
   }
 
   // 移除项目平台
   static Future<bool> removePlatform(
-      Project project, PlatformType platform) async {
+    Project project,
+    PlatformType platform,
+  ) async {
     await FileTool.clearDir(join(project.path, platform.name));
     return !hasPlatform(project.path, platform);
   }
@@ -108,8 +117,10 @@ class ProjectTool {
   }
 
   // 获取项目图标
-  static Future<String?> getProjectLogo(String projectPath,
-      {double minSize = 50}) async {
+  static Future<String?> getProjectLogo(
+    String projectPath, {
+    double minSize = 50,
+  }) async {
     for (final tool in _platformTools.values) {
       final result = await tool.getLogos(projectPath);
       if (result == null) continue;
@@ -125,7 +136,9 @@ class ProjectTool {
 
   // 获取平台信息
   static Future<T?> getPlatformInfo<T extends Record>(
-      String projectPath, PlatformType platform) async {
+    String projectPath,
+    PlatformType platform,
+  ) async {
     final tool = getPlatformTool(platform);
     return await tool.getPlatformInfo(projectPath) as T?;
   }
@@ -140,53 +153,73 @@ class ProjectTool {
 
   // 根据平台设置项目名
   static Future<bool> setLabel(
-          String projectPath, PlatformType platform, String label) =>
-      getPlatformTool(platform).setLabel(projectPath, label);
+    String projectPath,
+    PlatformType platform,
+    String label,
+  ) => getPlatformTool(platform).setLabel(projectPath, label);
 
   // 根据平台获取图标
   static Future<List<PlatformLogo>?> getLogos(
-          String projectPath, PlatformType platform) =>
-      getPlatformTool(platform).getLogos(projectPath);
+    String projectPath,
+    PlatformType platform,
+  ) => getPlatformTool(platform).getLogos(projectPath);
 
   // 根据平台替换图标
   static Future<bool> replaceLogo(
-          String projectPath, PlatformType platform, String logoPath,
-          {ProgressCallback? progressCallback}) =>
-      getPlatformTool(platform).replaceLogo(projectPath, logoPath,
-          progressCallback: progressCallback);
+    String projectPath,
+    PlatformType platform,
+    String logoPath, {
+    ProgressCallback? progressCallback,
+  }) => getPlatformTool(
+    platform,
+  ).replaceLogo(projectPath, logoPath, progressCallback: progressCallback);
 
   // 根据平台获取项目包名
   static Future<String?> getPackage(
-          String projectPath, PlatformType platform) =>
-      getPlatformTool(platform).getPackage(projectPath);
+    String projectPath,
+    PlatformType platform,
+  ) => getPlatformTool(platform).getPackage(projectPath);
 
   // 根据平台设置项目包名
   static Future<bool> setPackage(
-          String projectPath, PlatformType platform, String package) =>
-      getPlatformTool(platform).setPackage(projectPath, package);
+    String projectPath,
+    PlatformType platform,
+    String package,
+  ) => getPlatformTool(platform).setPackage(projectPath, package);
 
   // 获取完整权限列表
   static Future<List<PlatformPermission>?> getFullPermissions(
-          PlatformType platform) =>
-      getPlatformTool(platform).getFullPermissions();
+    PlatformType platform,
+  ) => getPlatformTool(platform).getFullPermissions();
 
   // 获取平台权限列表
   static Future<List<PlatformPermission>?> getPermissions(
-          String projectPath, PlatformType platform) =>
-      getPlatformTool(platform).getPermissions(projectPath);
+    String projectPath,
+    PlatformType platform,
+  ) => getPlatformTool(platform).getPermissions(projectPath);
 
   // 设置平台权限列表
-  static Future<bool> setPermissions(String projectPath, PlatformType platform,
-          List<PlatformPermission> permissions) =>
-      getPlatformTool(platform).setPermissions(projectPath, permissions);
+  static Future<bool> setPermissions(
+    String projectPath,
+    PlatformType platform,
+    List<PlatformPermission> permissions,
+  ) => getPlatformTool(platform).setPermissions(projectPath, permissions);
 
   // 获取android签名工具路径
   static Future<String?> getJavaKeyToolPath() =>
-      getPlatformTool<AndroidPlatformTool>(PlatformType.android)
-          .getJavaKeyToolPath();
+      getPlatformTool<AndroidPlatformTool>(
+        PlatformType.android,
+      ).getJavaKeyToolPath();
 
   // 生成android端签名
   static Future<bool> genAndroidSignKey(AndroidSignKeyForm form) =>
-      getPlatformTool<AndroidPlatformTool>(PlatformType.android)
-          .genSignKey(form);
+      getPlatformTool<AndroidPlatformTool>(
+        PlatformType.android,
+      ).genSignKey(form);
+
+  // 打包应用
+  static Future<Stream<Package>> buildApp({
+    required Project project,
+    required PackageConfig packageConfig,
+  }) => getPlatformTool(packageConfig.platform).build(project, packageConfig);
 }

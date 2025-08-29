@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:flutter_manager/tool/tool.dart';
@@ -43,7 +44,8 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
 
   // package匹配正则
   late final _packageRegExp = RegExp(
-      _isBuildGradleKts ? r'applicationId = "(.*)"' : r'applicationId "(.*)"');
+    _isBuildGradleKts ? r'applicationId = "(.*)"' : r'applicationId "(.*)"',
+  );
 
   // 匹配java路径
   final _jdkRegExp = RegExp(r'.*jdk(.*)bin');
@@ -78,7 +80,8 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
 
   @override
   Future<PlatformInfo<AndroidPlatformInfo>?> getPlatformInfo(
-      String projectPath) async {
+    String projectPath,
+  ) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformPath(projectPath),
@@ -106,9 +109,9 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
       projectPath,
       _manifestPath,
       (await _getManifestFragment(projectPath))
-        ..getElement('manifest')
-            ?.getElement('application')
-            ?.setAttribute('android:label', label),
+        ..getElement(
+          'manifest',
+        )?.getElement('application')?.setAttribute('android:label', label),
     );
   }
 
@@ -170,29 +173,40 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
 
   @override
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermission> permissions) async {
+    String projectPath,
+    List<PlatformPermission> permissions,
+  ) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getManifestFragment(projectPath);
     final fullPermissions = (await getFullPermissions())?.map((e) => e.value);
     if (fullPermissions == null) return false;
     fragment.getElement('manifest')?.children
-      ?..removeWhere((e) =>
-          e is XmlElement &&
-          e.localName.contains('uses-permission') &&
-          fullPermissions.contains(
-            e.getAttribute('android:name')?.split('.').lastOrNull,
-          ))
-      ..insertAll(0, permissions.map((e) {
-        return XmlElement(XmlName('uses-permission'), [
-          XmlAttribute(XmlName('android:name'), 'android.permission.${e.value}')
-        ]);
-      }));
+      ?..removeWhere(
+        (e) =>
+            e is XmlElement &&
+            e.localName.contains('uses-permission') &&
+            fullPermissions.contains(
+              e.getAttribute('android:name')?.split('.').lastOrNull,
+            ),
+      )
+      ..insertAll(
+        0,
+        permissions.map((e) {
+          return XmlElement(XmlName('uses-permission'), [
+            XmlAttribute(
+              XmlName('android:name'),
+              'android.permission.${e.value}',
+            ),
+          ]);
+        }),
+      );
     return writePlatformFileXml(projectPath, _manifestPath, fragment);
   }
 
   // 获取签名工具路径
   Future<String?> getJavaKeyToolPath() async {
-    final java = Platform.environment['JAVA_HOME'] ??
+    final java =
+        Platform.environment['JAVA_HOME'] ??
         Platform.environment['PATH']
             ?.split(';')
             .firstWhere(_jdkRegExp.hasMatch, orElse: () => '');
@@ -216,8 +230,12 @@ class AndroidPlatformTool extends PlatformTool<AndroidPlatformInfo> {
           'L=${form.dNameL},T=${form.dNameT},C=${form.dNameC}"',
     ];
     final command = 'keytool ${arguments.join(' ')}';
-    final result = await Process.run(command, [],
-        runInShell: true, workingDirectory: form.keytoolPath);
+    final result = await Process.run(
+      command,
+      [],
+      runInShell: true,
+      workingDirectory: form.keytoolPath,
+    );
     return result.exitCode == 0;
   }
 }

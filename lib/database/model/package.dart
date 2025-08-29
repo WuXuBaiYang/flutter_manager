@@ -28,7 +28,7 @@ class Package {
 
   // 打包状态
   @Transient()
-  PackageStatus status = PackageStatus.none;
+  PackageStatus status = PackageStatus.prepare;
 
   // 获取数据库打包状态
   int get statusDB => status.index;
@@ -143,4 +143,4 @@ class Package {
 }
 
 // 打包状态枚举
-enum PackageStatus { prepare, building, success, fail, none }
+enum PackageStatus { prepare, building, success, fail }

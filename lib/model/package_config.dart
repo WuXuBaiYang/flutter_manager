@@ -1,3 +1,4 @@
+import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'package_config.g.dart';
@@ -22,6 +23,9 @@ abstract class PackageConfig with _$PackageConfig {
     if (runBuildRunner) 'dart run build_runner build',
   ];
 
+  // 获取当前平台类型
+  PlatformType get platform => throw UnimplementedError();
+
   factory PackageConfig.fromJson(Map<String, dynamic> json) =>
       _$PackageConfigFromJson(json);
 }
@@ -44,6 +48,9 @@ abstract class AndroidPackageConfig extends PackageConfig
     return [...super.getScriptList(), 'flutter build apk'];
   }
 
+  @override
+  PlatformType get platform => PlatformType.android;
+
   factory AndroidPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$AndroidPackageConfigFromJson(json);
 }
@@ -65,6 +72,9 @@ abstract class IosPackageConfig extends PackageConfig with _$IosPackageConfig {
     return [...super.getScriptList(), 'flutter build ipa'];
   }
 
+  @override
+  PlatformType get platform => PlatformType.ios;
+
   factory IosPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$IosPackageConfigFromJson(json);
 }
@@ -85,6 +95,9 @@ abstract class WebPackageConfig extends PackageConfig with _$WebPackageConfig {
   List<String> getScriptList() {
     return [...super.getScriptList(), 'flutter build web'];
   }
+
+  @override
+  PlatformType get platform => PlatformType.web;
 
   factory WebPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$WebPackageConfigFromJson(json);
@@ -108,6 +121,9 @@ abstract class WindowsPackageConfig extends PackageConfig
     return [...super.getScriptList(), 'flutter build windows'];
   }
 
+  @override
+  PlatformType get platform => PlatformType.windows;
+
   factory WindowsPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$WindowsPackageConfigFromJson(json);
 }
@@ -130,6 +146,9 @@ abstract class MacosPackageConfig extends PackageConfig
     return [...super.getScriptList(), 'flutter build macos'];
   }
 
+  @override
+  PlatformType get platform => PlatformType.macos;
+
   factory MacosPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$MacosPackageConfigFromJson(json);
 }
@@ -151,6 +170,9 @@ abstract class LinuxPackageConfig extends PackageConfig
   List<String> getScriptList() {
     return [...super.getScriptList(), 'flutter build linux'];
   }
+
+  @override
+  PlatformType get platform => PlatformType.linux;
 
   factory LinuxPackageConfig.fromJson(Map<String, dynamic> json) =>
       _$LinuxPackageConfigFromJson(json);

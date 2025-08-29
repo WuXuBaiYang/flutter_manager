@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_manager/tool/image.dart';
@@ -44,7 +45,8 @@ class IosPlatformTool extends PlatformTool {
 
   @override
   Future<PlatformInfo<IosPlatformInfo>?> getPlatformInfo(
-      String projectPath) async {
+    String projectPath,
+  ) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformPath(projectPath),
@@ -74,17 +76,22 @@ class IosPlatformTool extends PlatformTool {
   Future<bool> setLabel(String projectPath, String label) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);
-    final element = fragment
-        .getElement('plist')
-        ?.getElement('dict')
-        ?.childElements
-        .where((e) => e.innerText == 'CFBundleDisplayName')
-        .firstOrNull
-        ?.nextElementSibling
-      ?..innerText = label;
+    final element =
+        fragment
+            .getElement('plist')
+            ?.getElement('dict')
+            ?.childElements
+            .where((e) => e.innerText == 'CFBundleDisplayName')
+            .firstOrNull
+            ?.nextElementSibling
+          ?..innerText = label;
     if (element?.localName != 'string') return false;
-    return writePlatformFileXml(projectPath, _infoPlistPath, fragment,
-        indentAttribute: false);
+    return writePlatformFileXml(
+      projectPath,
+      _infoPlistPath,
+      fragment,
+      indentAttribute: false,
+    );
   }
 
   @override
@@ -124,26 +131,30 @@ class IosPlatformTool extends PlatformTool {
   Future<bool> setPackage(String projectPath, String package) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);
-    final element = fragment
-        .getElement('plist')
-        ?.getElement('dict')
-        ?.childElements
-        .where((e) => e.innerText == 'CFBundleIdentifier')
-        .firstOrNull
-        ?.nextElementSibling
-      ?..innerText = package;
+    final element =
+        fragment
+            .getElement('plist')
+            ?.getElement('dict')
+            ?.childElements
+            .where((e) => e.innerText == 'CFBundleIdentifier')
+            .firstOrNull
+            ?.nextElementSibling
+          ?..innerText = package;
     if (element?.localName != 'string') return false;
-    return writePlatformFileXml(projectPath, _infoPlistPath, fragment,
-        indentAttribute: false);
+    return writePlatformFileXml(
+      projectPath,
+      _infoPlistPath,
+      fragment,
+      indentAttribute: false,
+    );
   }
 
   @override
   Future<List<PlatformPermission>?> getPermissions(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
-    final permissions = (await _getPlistDocument(projectPath))
-        .getElement('plist')
-        ?.getElement('dict')
-        ?.findElements('key');
+    final permissions = (await _getPlistDocument(
+      projectPath,
+    )).getElement('plist')?.getElement('dict')?.findElements('key');
     if (permissions == null) return null;
     final result = <PlatformPermission>[];
     for (PlatformPermission e in await getFullPermissions() ?? []) {
@@ -162,7 +173,9 @@ class IosPlatformTool extends PlatformTool {
 
   @override
   Future<bool> setPermissions(
-      String projectPath, List<PlatformPermission> permissions) async {
+    String projectPath,
+    List<PlatformPermission> permissions,
+  ) async {
     if (!isPathAvailable(projectPath)) return false;
     final fragment = await _getPlistFragment(projectPath);
     final fullPermissions = (await getFullPermissions())?.map((e) => e.value);
@@ -176,10 +189,14 @@ class IosPlatformTool extends PlatformTool {
         if (key == 'key') return flag = fullPermissions.contains(e.innerText);
         return flag = false;
       })
-      ..addAll(permissions.expand((e) => [
+      ..addAll(
+        permissions.expand(
+          (e) => [
             XmlElement(XmlName('key'), [], [XmlText(e.value)]),
-            XmlElement(XmlName('string'), [], [XmlText(e.input)])
-          ]));
+            XmlElement(XmlName('string'), [], [XmlText(e.input)]),
+          ],
+        ),
+      );
     return writePlatformFileXml(projectPath, _infoPlistPath, fragment);
   }
 }

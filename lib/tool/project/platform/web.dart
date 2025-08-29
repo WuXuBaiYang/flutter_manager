@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_manager/tool/image.dart';
@@ -35,7 +36,8 @@ class WebPlatformTool extends PlatformTool {
 
   @override
   Future<PlatformInfo<WebPlatformInfo>?> getPlatformInfo(
-      String projectPath) async {
+    String projectPath,
+  ) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformPath(projectPath),
@@ -67,15 +69,16 @@ class WebPlatformTool extends PlatformTool {
   Future<List<PlatformLogo>?> getLogos(String projectPath) async {
     if (!isPathAvailable(projectPath)) return null;
     final json = await _getManifestJson(projectPath);
-    final faviconSize =
-        await ImageTool.getSize(getPlatformFilePath(projectPath, _faviconPath));
+    final faviconSize = await ImageTool.getSize(
+      getPlatformFilePath(projectPath, _faviconPath),
+    );
     final result = <PlatformLogo>[
       if (faviconSize != null)
         (
           name: 'favicon',
           path: getPlatformFilePath(projectPath, _faviconPath),
           size: faviconSize,
-        )
+        ),
     ];
     for (final item in json['icons'] ?? []) {
       final src = item['src'];

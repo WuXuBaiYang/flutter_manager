@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_manager/tool/tool.dart';
@@ -34,7 +35,8 @@ class LinuxPlatformTool extends PlatformTool {
 
   @override
   Future<PlatformInfo<LinuxPlatformInfo>?> getPlatformInfo(
-      String projectPath) async {
+    String projectPath,
+  ) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformPath(projectPath),

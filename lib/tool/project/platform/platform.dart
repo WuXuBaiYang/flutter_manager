@@ -1,7 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_manager/database/model/package.dart';
+import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/gen/assets.gen.dart';
+import 'package:flutter_manager/model/package_config.dart';
 import 'package:flutter_manager/tool/image.dart';
 import 'package:jtech_base/jtech_base.dart';
 import 'package:xml/xml.dart';
@@ -294,8 +298,19 @@ abstract mixin class PlatformToolMixin<T extends Record> {
     List<PlatformPermission> permissions,
   );
 
-  // // 构建平台安装包
-  // Future<Stream<Package>> build();
+  // 构建平台安装包
+  Future<Stream<Package>> build<S extends PackageConfig>(
+    Project project,
+    S packageConfig,
+  ) async {
+    final controller = StreamController<Package>.broadcast();
+    // final package = Package.create(
+    //   name: name,
+    //   platformType: platformType,
+    //   project: project,
+    // );
+    return controller.stream;
+  }
 }
 
 // 支持平台枚举

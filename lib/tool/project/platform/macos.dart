@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_manager/tool/image.dart';
@@ -44,7 +45,8 @@ class MacosPlatformTool extends PlatformTool {
 
   @override
   Future<PlatformInfo<MacosPlatformInfo>?> getPlatformInfo(
-      String projectPath) async {
+    String projectPath,
+  ) async {
     if (!isPathAvailable(projectPath)) return null;
     return (
       path: getPlatformPath(projectPath),
@@ -77,12 +79,13 @@ class MacosPlatformTool extends PlatformTool {
       _infoPlistPath,
       (await _getPlistFragment(projectPath))
         ..getElement('plist')
-            ?.getElement('dict')
-            ?.childElements
-            .where((e) => e.innerText == 'CFBundleName')
-            .firstOrNull
-            ?.nextElementSibling
-            ?.innerText = label,
+                ?.getElement('dict')
+                ?.childElements
+                .where((e) => e.innerText == 'CFBundleName')
+                .firstOrNull
+                ?.nextElementSibling
+                ?.innerText =
+            label,
       indentAttribute: false,
     );
   }
