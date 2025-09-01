@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter_manager/model/package_config.dart';
 import 'package:flutter_manager/tool/project/platform/platform.dart';
 import 'package:jtech_base/jtech_base.dart';
 
@@ -15,6 +18,9 @@ class Package {
 
   // 打包失败异常日志
   String? error;
+
+  // 日志
+  String? log;
 
   // 打包用时
   @Transient()
@@ -65,6 +71,23 @@ class Package {
   @Property(type: PropertyType.date)
   DateTime updateAt = DateTime.now();
 
+  // 打包配置
+  @Transient()
+  PackageConfig? config;
+
+  // 设置配置信息
+  set configDB(String json) => config = switch (platformType) {
+    PlatformType.android => AndroidPackageConfig.fromJson(jsonDecode(json)),
+    PlatformType.ios => IosPackageConfig.fromJson(jsonDecode(json)),
+    PlatformType.web => WebPackageConfig.fromJson(jsonDecode(json)),
+    PlatformType.windows => WindowsPackageConfig.fromJson(jsonDecode(json)),
+    PlatformType.macos => MacosPackageConfig.fromJson(jsonDecode(json)),
+    PlatformType.linux => LinuxPackageConfig.fromJson(jsonDecode(json)),
+  };
+
+  // 获取配置信息
+  String get configDB => jsonEncode(config?.toJson());
+
   Package();
 
   Package.c({
@@ -77,17 +100,20 @@ class Package {
     required this.createAt,
     required this.updateAt,
     required Project? project,
+    this.config,
   }) {
     projectDB.target = project;
   }
 
   Package.create({
-    required this.name,
-    required this.platformType,
     required Project project,
-    this.outputPath,
+    required PackageConfig packageConfig,
   }) {
     projectDB.target = project;
+    config = packageConfig;
+    name = packageConfig.label ?? '';
+    outputPath = packageConfig.outputPath;
+    platformType = packageConfig.platform;
   }
 
   Package copyWith({

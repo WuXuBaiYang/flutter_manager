@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:flutter_manager/database/database.dart';
 import 'package:flutter_manager/database/model/package.dart';
 import 'package:flutter_manager/database/model/project.dart';
 import 'package:flutter_manager/gen/assets.gen.dart';
@@ -253,6 +254,29 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
     String projectPath,
     List<PlatformPermission> permissions,
   ) async => true;
+
+  // 构建平台应用
+  Future<Stream<Package>> buildApp<S extends PackageConfig>({
+    required Project project,
+    required PackageConfig packageConfig,
+  }) => build(Package.create(project: project, packageConfig: packageConfig));
+
+  // 构建平台安装包
+  Future<Stream<Package>> build<S extends PackageConfig>(
+    Package package,
+  ) async {
+    if ([PackageStatus.fail, PackageStatus.success].contains(package.status)) {
+      throw Exception('Package build failed: ${package.status}');
+    }
+    final controller = StreamController<Package>.broadcast();
+    package = await database.updatePackage(
+      package..status = PackageStatus.prepare,
+    );
+    controller.add(package);
+
+    ///
+    return controller.stream;
+  }
 }
 
 /*
@@ -297,23 +321,6 @@ abstract mixin class PlatformToolMixin<T extends Record> {
     String projectPath,
     List<PlatformPermission> permissions,
   );
-
-  // 构建平台安装包
-  Future<Stream<Package>> build<S extends PackageConfig>(
-    Project project,
-    S packageConfig,
-  ) async {
-    final controller = StreamController<Package>.broadcast();
-    final package = Package.create(
-      project: project,
-      name: packageConfig.label ?? '',
-      outputPath: packageConfig.outputPath,
-      platformType: packageConfig.platform,
-    );
-    controller.add(package);
-    ///
-    return controller.stream;
-  }
 }
 
 // 支持平台枚举

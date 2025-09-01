@@ -221,5 +221,11 @@ class ProjectTool {
   static Future<Stream<Package>> buildApp({
     required Project project,
     required PackageConfig packageConfig,
-  }) => getPlatformTool(packageConfig.platform).build(project, packageConfig);
+  }) => getPlatformTool(
+    packageConfig.platform,
+  ).buildApp(project: project, packageConfig: packageConfig);
+
+  // 打包
+  static Future<Stream<Package>> build(Package package) =>
+      getPlatformTool(package.platformType).build(package);
 }

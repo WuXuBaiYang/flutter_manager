@@ -1,3 +1,4 @@
+import 'package:flutter_manager/database/package.dart';
 import 'package:flutter_manager/objectbox.g.dart';
 
 import 'environment.dart';
@@ -9,7 +10,8 @@ import 'project.dart';
 * @author wuxubaiyang
 * @Time 2024/4/28 9:17
 */
-class Database extends BaseDatabase with EnvironmentDatabase, ProjectDatabase {
+class Database extends BaseDatabase
+    with EnvironmentDatabase, ProjectDatabase, PackageDatabase {
   static final Database _instance = Database._internal();
 
   factory Database() => _instance;
