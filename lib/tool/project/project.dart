@@ -218,7 +218,7 @@ class ProjectTool {
       ).genSignKey(form);
 
   // 打包应用
-  static Future<Stream<Package>> buildApp({
+  static Future<Package> buildApp({
     required Project project,
     required PackageConfig packageConfig,
   }) => getPlatformTool(
@@ -226,6 +226,6 @@ class ProjectTool {
   ).buildApp(project: project, packageConfig: packageConfig);
 
   // 打包
-  static Future<Stream<Package>> build(Package package) =>
+  static Future<Package> build(Package package) =>
       getPlatformTool(package.platformType).build(package);
 }

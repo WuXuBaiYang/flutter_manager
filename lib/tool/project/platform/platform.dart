@@ -256,26 +256,49 @@ abstract class PlatformTool<T extends Record> with PlatformToolMixin<T> {
   ) async => true;
 
   // 构建平台应用
-  Future<Stream<Package>> buildApp<S extends PackageConfig>({
+  Future<Package> buildApp<S extends PackageConfig>({
     required Project project,
     required PackageConfig packageConfig,
   }) => build(Package.create(project: project, packageConfig: packageConfig));
 
   // 构建平台安装包
-  Future<Stream<Package>> build<S extends PackageConfig>(
-    Package package,
-  ) async {
+  Future<Package> build<S extends PackageConfig>(Package package) async {
     if ([PackageStatus.fail, PackageStatus.success].contains(package.status)) {
       throw Exception('Package build failed: ${package.status}');
     }
-    final controller = StreamController<Package>.broadcast();
-    package = await database.updatePackage(
-      package..status = PackageStatus.prepare,
-    );
-    controller.add(package);
-
-    ///
-    return controller.stream;
+    try {
+      package = await database.updatePackage(
+        package
+          ..status = PackageStatus.building
+          ..updateAt = DateTime.now(),
+      );
+      // 遍历执行脚本
+      for (final e in package.config!.getScriptList()) {
+        final arguments = e.split(' ');
+        final result = await Process.run(
+          arguments.first,
+          arguments.sublist(1),
+          workingDirectory: package.project!.path,
+        );
+        if (result.exitCode != 0) throw Exception(result.stderr);
+        final log = '${package.log}\n${result.stdout.toString()}';
+        package = await database.updatePackage(
+          package
+            ..log = log
+            ..updateAt = DateTime.now(),
+        );
+      }
+      // 脚本完成，处理后续内容
+    } catch (e) {
+      Log.e('构建失败');
+      package = await database.updatePackage(
+        package
+          ..status = PackageStatus.fail
+          ..error = e.toString()
+          ..updateAt = DateTime.now(),
+      );
+    }
+    return package;
   }
 }
 
